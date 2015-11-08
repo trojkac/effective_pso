@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSwarmOptimization",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FullyInformedPSOParicle", "FullyInformedPSOParicle\FullyInformedPSOParicle.vcxproj", "{CDC6E8F6-22E3-402B-9791-F3B9FB82F49F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FullyInformedPSOTest", "FullyInformedPSOTest\FullyInformedPSOTest.vcxproj", "{4789483E-254E-48DD-AF7E-984F52D6F898}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{CDC6E8F6-22E3-402B-9791-F3B9FB82F49F}.Release|x64.Build.0 = Release|x64
 		{CDC6E8F6-22E3-402B-9791-F3B9FB82F49F}.Release|x86.ActiveCfg = Release|Win32
 		{CDC6E8F6-22E3-402B-9791-F3B9FB82F49F}.Release|x86.Build.0 = Release|Win32
+		{4789483E-254E-48DD-AF7E-984F52D6F898}.Debug|x64.ActiveCfg = Debug|x64
+		{4789483E-254E-48DD-AF7E-984F52D6F898}.Debug|x64.Build.0 = Debug|x64
+		{4789483E-254E-48DD-AF7E-984F52D6F898}.Debug|x86.ActiveCfg = Debug|Win32
+		{4789483E-254E-48DD-AF7E-984F52D6F898}.Debug|x86.Build.0 = Debug|Win32
+		{4789483E-254E-48DD-AF7E-984F52D6F898}.Release|x64.ActiveCfg = Release|x64
+		{4789483E-254E-48DD-AF7E-984F52D6F898}.Release|x64.Build.0 = Release|x64
+		{4789483E-254E-48DD-AF7E-984F52D6F898}.Release|x86.ActiveCfg = Release|Win32
+		{4789483E-254E-48DD-AF7E-984F52D6F898}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

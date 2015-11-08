@@ -6,43 +6,51 @@
 
 #include <functional>
 
-using namespace System;
 
 namespace ParticleSwarmOptimization {
 
-	public class PSOAlgorithm
+	class PSOAlgorithm
 	{
+	public:
 		PSOAlgorithm(
 			std::function<double(std::vector<double>)> fitness_function, 
 			int iterations
 			) : fitness_function_(fitness_function), max_iterations_(iterations) {}
 
-		std::tuple<std::vector<double>, double> run(std::vector<Particle> particles)
+		std::tuple<std::vector<double>, double> run(std::vector<Particle*> particles) const
 		{
 			int iteration = 0;
-			std::tuple<std::vector<double>, double> global_best;
 
 			for (int i = 0; i < particles.size(); ++i)
 			{
-				particles[i].update_personal_best(fitness_function_);
+				particles[i]->update_personal_best(fitness_function_);
 			}
 
-			while(iteration < max_iterations_)
+			while(iteration++ < max_iterations_)
 			{
-				for each (Particle particle in particles)
+				for (int i = 0; i < particles.size(); ++i)
 				{
-					particle.translate();
-					auto particle_best = particle.update_personal_best(fitness_function_);
-
-					if (std::get<1>(particle_best) > std::get<1>(global_best))
-						global_best = particle_best;
+					particles[i]->translate();
+					auto particle_best = particles[i]->update_personal_best(fitness_function_);
 				}
 
-				for each (Particle particle in particles)
+				for (int i = 0; i < particles.size(); ++i)
 				{
-					particle.update_velocity(fitness_function_);
+					particles[i]->update_velocity(particles);
 				}
 			}
+
+			std::tuple<std::vector<double>, double> global_best = std::make_tuple(std::vector<double>(), -std::numeric_limits<double>::infinity());
+
+			for (int i = 0; i < particles.size(); ++i)
+			{
+				auto temp = std::get<1>(particles[i]->get_personal_best());
+
+				if (std::get<1>(particles[i]->get_personal_best()) > std::get<1>(global_best))
+					global_best = particles[i]->get_personal_best();
+			}
+
+			return global_best;
 		}
 
 	private:

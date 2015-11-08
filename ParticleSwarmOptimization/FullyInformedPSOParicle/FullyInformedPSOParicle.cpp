@@ -2,5 +2,5 @@
 
 #include "stdafx.h"
 
-#include "FullyInformedPSOParicle.h"
+#include "FullyInformedPSOParticle.h"
 
