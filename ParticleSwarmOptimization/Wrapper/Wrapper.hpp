@@ -14,7 +14,7 @@ using namespace System::Runtime::InteropServices;
 namespace ParticleSwarmOptimizationWrapper {
 
 	typedef double(*UnmanagedFitnessfunction)(std::vector<double>); // typedef of unmanaged fitness function
-	public delegate double FitnessFunction(List<double>^ values); // delegate to use in client applications
+	public delegate double FitnessFunction(array<double>^ values); // delegate to use in client applications
 
 	public ref class PSOAlgorithm
 	{
@@ -23,17 +23,14 @@ namespace ParticleSwarmOptimizationWrapper {
 		//managed delegate - used to convert 'outside' delegate to unmanaged delegate
 		delegate double ManagedFitnessFunction(std::vector<double> args);
 		ManagedFitnessFunction^ managedFitness;
+		
 		double nativeFunction(std::vector<double> values)
 		{
-			//TODO: Change conversion from vector to List or change type of arguments
-			List<double> ^vals = gcnew List<double>();
-			for each (auto val in values)
-			{
-				vals->Add(val);
-			}
-
+			array<double> ^vals = gcnew array<double>(values.size());
+			Marshal::Copy(IntPtr((void*)values.data()), vals, 0, values.size());
 			return _fitnessFunction(vals);
 		}
+
 		PSOAlgorithm(FitnessFunction^ fitnessFunction) :
 			_fitnessFunction(fitnessFunction)
 		{
