@@ -20,10 +20,9 @@ namespace ParticleSwarmOptimizationWrapper {
 	{
 		ParticleSwarmOptimization::PSOAlgorithm* _algorithm;
 		FitnessFunction^ _fitnessFunction;
-
 		//managed delegate - used to convert 'outside' delegate to unmanaged delegate
 		delegate double ManagedFitnessFunction(std::vector<double> args);
-
+		ManagedFitnessFunction^ managedFitness;
 		double nativeFunction(std::vector<double> values)
 		{
 			//TODO: Change conversion from vector to List or change type of arguments
@@ -44,11 +43,10 @@ namespace ParticleSwarmOptimizationWrapper {
 		static PSOAlgorithm^ GetAlgorithm(int iterations, FitnessFunction^ fitnessFunction)
 		{
 			auto algorithm = gcnew PSOAlgorithm(fitnessFunction);
-			auto managedFitness = gcnew ManagedFitnessFunction(algorithm, &nativeFunction);
-			auto funcPtr = Marshal::GetFunctionPointerForDelegate(managedFitness);
+			algorithm->managedFitness = gcnew ManagedFitnessFunction(algorithm, &nativeFunction);
+			auto funcPtr = Marshal::GetFunctionPointerForDelegate(algorithm->managedFitness);
 			auto unmanagedFitness = static_cast<UnmanagedFitnessfunction>(funcPtr.ToPointer());
 			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(unmanagedFitness, iterations);
-			GC::KeepAlive(managedFitness);
 			return algorithm;
 		}
 
