@@ -21,7 +21,35 @@ namespace WrapperTests
 
             Assert.AreEqual(1.0, result.Item2,.1);
         }
+        [TestMethod]
+        public void RunAlgorithmWithTargetValue()
+        {
+            FitnessFunction fitnessFunction = values => Math.Max(Math.Sin(values[0] * values[0] + values[1] * values[1]), 1);
+            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(1.0,0.0001, fitnessFunction);
+            List<Particle> particles = new List<Particle>();
+            for (int i = 0; i < 20; i++)
+            {
+                particles.Add(new FullyInformedParticle(2));
+            }
+            var result = algorithm.Run(particles);
 
+            Assert.AreEqual(1.0, result.Item2, .1);
+        }
+
+        [TestMethod]
+        public void RunAlgorithmWithTargetVAlueAndIterationsLimit()
+        {
+            FitnessFunction fitnessFunction = values => Math.Max(Math.Sin(values[0] * values[0] + values[1] * values[1]), 1);
+            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(100,1.0,0.0001 fitnessFunction);
+            List<Particle> particles = new List<Particle>();
+            for (int i = 0; i < 20; i++)
+            {
+                particles.Add(new FullyInformedParticle(2));
+            }
+            var result = algorithm.Run(particles);
+
+            Assert.AreEqual(1.0, result.Item2, .1);
+        }
 
         [TestMethod]
         public void RunSimpleAlgorithmWith1000Iterations()

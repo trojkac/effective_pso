@@ -46,7 +46,24 @@ namespace ParticleSwarmOptimizationWrapper {
 			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(unmanagedFitness, iterations);
 			return algorithm;
 		}
-
+		static PSOAlgorithm^ GetAlgorithm(int iterations, double targetValue, double epsilon, FitnessFunction^ fitnessFunction)
+		{
+			auto algorithm = gcnew PSOAlgorithm(fitnessFunction);
+			algorithm->managedFitness = gcnew ManagedFitnessFunction(algorithm, &nativeFunction);
+			auto funcPtr = Marshal::GetFunctionPointerForDelegate(algorithm->managedFitness);
+			auto unmanagedFitness = static_cast<UnmanagedFitnessfunction>(funcPtr.ToPointer());
+			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(unmanagedFitness,iterations,targetValue,epsilon);
+			return algorithm;
+		}
+		static PSOAlgorithm^ GetAlgorithm(double targetValue, double epsilon,FitnessFunction^ fitnessFunction)
+		{
+			auto algorithm = gcnew PSOAlgorithm(fitnessFunction);
+			algorithm->managedFitness = gcnew ManagedFitnessFunction(algorithm, &nativeFunction);
+			auto funcPtr = Marshal::GetFunctionPointerForDelegate(algorithm->managedFitness);
+			auto unmanagedFitness = static_cast<UnmanagedFitnessfunction>(funcPtr.ToPointer());
+			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(unmanagedFitness, targetValue, epsilon);
+			return algorithm;
+		}
 		Tuple<List<Double>^, Double>^ Run(List<Particle^>^ particles)
 		{
 			std::vector<ParticleSwarmOptimization::Particle*> stdParticles;
