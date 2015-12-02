@@ -24,7 +24,7 @@ int main()
 		particles.emplace_back(p);
 	}
 
-	PSOAlgorithm algorithm(function, 100);
+	PSOAlgorithm algorithm(function, 1.0,0.01);
 	auto result = algorithm.run(particles);
 
 	std::cout << "Result: " << std::get<1>(result) << std::endl;

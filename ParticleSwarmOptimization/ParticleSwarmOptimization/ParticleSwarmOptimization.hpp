@@ -33,7 +33,7 @@ namespace ParticleSwarmOptimization {
 		std::tuple<std::vector<double>, double> run(std::vector<Particle*> particles) const
 		{
 			int iteration = 0;
-			double current_distance_to_target = -target_value_;
+			double current_distance_to_target = std::numeric_limits<double>::infinity();
 			bool use_target_value_condition = target_value_ && delta_;
 			bool use_iterations_condition = max_iterations_ > 0;
 			for (int i = 0; i < particles.size(); ++i)
@@ -49,7 +49,7 @@ namespace ParticleSwarmOptimization {
 					auto particle_best = particles[i]->update_personal_best(fitness_function_);
 					if (use_target_value_condition)
 					{
-						auto particle_distance_to_target = abs(std::get<1>(particle_best) -target_value_);
+						auto particle_distance_to_target = abs(std::get<1>(particle_best) - target_value_);
 						if (particle_distance_to_target < current_distance_to_target)
 						{
 							current_distance_to_target = particle_distance_to_target;
