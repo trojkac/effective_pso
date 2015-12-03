@@ -10,11 +10,10 @@
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Runtime::InteropServices;
-
+using namespace Common;
 namespace ParticleSwarmOptimizationWrapper {
 
 	typedef double(*UnmanagedFitnessfunction)(std::vector<double>); // typedef of unmanaged fitness function
-	public delegate double FitnessFunction(array<double>^ values); // delegate to use in client applications
 
 	public ref class PSOAlgorithm
 	{
