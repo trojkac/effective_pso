@@ -13,7 +13,7 @@ namespace Common
         public ParticleState(double[] location, double fitnessValue)
         {
             FitnessValue = fitnessValue;
-            Location = location;
+            Location = location ;
         }
     }
 }
