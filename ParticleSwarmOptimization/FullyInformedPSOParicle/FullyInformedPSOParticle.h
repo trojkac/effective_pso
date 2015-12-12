@@ -20,10 +20,16 @@ namespace FullyInformedPSOParicle {
 		void init_location()
 		{
 			std::vector<double> location(dimensions_);
-			std::uniform_real_distribution<float> distribution(0.0f, 10.0f); //Values between 0 and 2
+			// this probably should go to static field or we should create ParticlesFactory responsible 
+			// for generating particles with proper distribution of location and in specific limits
+			std::uniform_real_distribution<float> distribution(0.0f, 10.0f); 
 			std::mt19937 engine; // Mersenne twister MT19937
 			auto generator = std::bind(distribution, engine);
 			std::generate(location.begin(), location.end(), generator);
+			// to remove after improving generation logic
+			if (bounds_.size() == dimensions_) {
+				transform(location.begin(), location.end(), bounds_.begin(), location.begin(), &clamp);
+			}
 			location_ = location;
 		}
 
@@ -81,8 +87,11 @@ namespace FullyInformedPSOParicle {
 
 		void translate()
 		{
-			std::transform(location_.begin(), location_.end(), velocity_.begin(),
+			transform(location_.begin(), location_.end(), velocity_.begin(),
 				location_.begin(), std::plus<double>());
+			if (bounds_.size() == dimensions_) {
+				transform(location_.begin(), location_.end(), bounds_.begin(), location_.begin(), &clamp);
+			}
 		}
 
 	private:
