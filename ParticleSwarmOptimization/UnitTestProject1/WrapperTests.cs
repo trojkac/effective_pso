@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ParticleSwarmOptimizationWrapper;
-namespace WrapperTests
+
+namespace Tests
 {
     [TestClass]
-    public class RunPsoAlgorithm
+    public class WrapperTests
     {
         [TestMethod]
         public void RunSimpleAlgorithm()
