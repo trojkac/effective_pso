@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSwarmOptimization", "ParticleSwarmOptimization\ParticleSwarmOptimization.vcxproj", "{F85B7711-D9B8-48B1-BFD7-6D9B4D787DCB}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controller", "Controller\Controller.csproj", "{DFE2DE9A-2440-4D1C-A7FF-C3F00EDA51FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{7E097104-4FCB-40AA-86DB-509BFAB1001B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDAStandardPSO", "CUDAStandardPSO\CUDAStandardPSO.vcxproj", "{B49631EB-251B-46F9-A806-B4F8DF37DCCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -209,6 +211,24 @@ Global
 		{7E097104-4FCB-40AA-86DB-509BFAB1001B}.Release|x64.Build.0 = Release|Any CPU
 		{7E097104-4FCB-40AA-86DB-509BFAB1001B}.Release|x86.ActiveCfg = Release|Any CPU
 		{7E097104-4FCB-40AA-86DB-509BFAB1001B}.Release|x86.Build.0 = Release|Any CPU
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|Win32.Build.0 = Debug|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|x64.ActiveCfg = Debug|x64
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|x64.Build.0 = Debug|x64
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|x86.ActiveCfg = Debug|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Debug|x86.Build.0 = Debug|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|Any CPU.ActiveCfg = Release|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|Win32.ActiveCfg = Release|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|Win32.Build.0 = Release|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|x64.ActiveCfg = Release|x64
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|x64.Build.0 = Release|x64
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|x86.ActiveCfg = Release|Win32
+		{B49631EB-251B-46F9-A806-B4F8DF37DCCD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
