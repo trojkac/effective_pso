@@ -1,4 +1,4 @@
-// FullyInformedPSOParicle.h
+// ParticleSwarmOptimization.h
 
 #pragma once
 
@@ -8,11 +8,11 @@
 
 using namespace ParticleSwarmOptimization;
 
-namespace FullyInformedPSOParicle {
+namespace ParticleSwarmOptimization {
 
-	class FullyInformedParticle : public Particle {
+	class StandardParticle : public Particle {
 	public:
-		FullyInformedParticle(int dimensions) : dimensions_(dimensions)
+		StandardParticle(int dimensions) : dimensions_(dimensions)
 		{
 			personal_best_ = std::make_tuple(std::vector<double>(2), -std::numeric_limits<double>::infinity());
 		}

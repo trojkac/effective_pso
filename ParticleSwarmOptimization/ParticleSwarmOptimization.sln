@@ -5,13 +5,13 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSwarmOptimization", "ParticleSwarmOptimization\ParticleSwarmOptimization.vcxproj", "{F85B7711-D9B8-48B1-BFD7-6D9B4D787DCB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FullyInformedPSOParicle", "FullyInformedPSOParicle\FullyInformedPSOParicle.vcxproj", "{CDC6E8F6-22E3-402B-9791-F3B9FB82F49F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StandardParticle", "StandardParticle\StandardParticle.vcxproj", "{CDC6E8F6-22E3-402B-9791-F3B9FB82F49F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FullyInformedPSOTest", "FullyInformedPSOTest\FullyInformedPSOTest.vcxproj", "{4789483E-254E-48DD-AF7E-984F52D6F898}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PsoTest", "PsoTest\PsoTest.vcxproj", "{4789483E-254E-48DD-AF7E-984F52D6F898}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Wrapper", "Wrapper\Wrapper.vcxproj", "{3A8A6019-EBCB-4626-8E2E-165E69C37C05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "UnitTestProject1\Tests.csproj", "{35412F25-A1C7-4FE0-B7AF-F21A128D05FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{35412F25-A1C7-4FE0-B7AF-F21A128D05FB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F85B7711-D9B8-48B1-BFD7-6D9B4D787DCB} = {F85B7711-D9B8-48B1-BFD7-6D9B4D787DCB}
 		{CDC6E8F6-22E3-402B-9791-F3B9FB82F49F} = {CDC6E8F6-22E3-402B-9791-F3B9FB82F49F}
@@ -25,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controller", "Controller\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{7E097104-4FCB-40AA-86DB-509BFAB1001B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CUDAStandardPSO", "CUDAStandardPSO\CUDAStandardPSO.vcxproj", "{B49631EB-251B-46F9-A806-B4F8DF37DCCD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CudaPso", "CudaPso\CudaPso.vcxproj", "{B49631EB-251B-46F9-A806-B4F8DF37DCCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

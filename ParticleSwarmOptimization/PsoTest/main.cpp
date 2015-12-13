@@ -1,12 +1,9 @@
 #include "ParticleSwarmOptimization.hpp"
-#include "FullyInformedPSOParticle.h"
+#include "StandardParticle.hpp"
 
 #include <iostream>
 
 using namespace ParticleSwarmOptimization;
-using namespace FullyInformedPSOParicle;
-
-#include <cmath>
 
 double function(std::vector<double> values)
 {
@@ -22,7 +19,7 @@ int main()
 
 	for (int i = 0; i < 20; ++i)
 	{
-		Particle* p = new FullyInformedParticle(2);
+		Particle* p = new StandardParticle(2);
 		p->bounds(bounds);
 		p->init_velocity();
 		p->init_location();

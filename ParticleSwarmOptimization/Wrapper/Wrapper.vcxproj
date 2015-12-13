@@ -77,7 +77,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FullyInformedParticle.hpp" />
+    <ClInclude Include="StandardParticle.hpp" />
     <ClInclude Include="Particle.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stdafx.h" />
