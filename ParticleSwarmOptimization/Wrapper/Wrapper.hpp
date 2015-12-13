@@ -3,8 +3,8 @@
 #pragma once
 
 #include <functional>
-#include "ParticleSwarmOptimization\Particle.hpp"
-#include "ParticleSwarmOptimization\ParticleSwarmOptimization.hpp"
+#include "PsoAlgorithm\Particle.hpp"
+#include "PsoAlgorithm\PsoAlgorithm.hpp"
 #include ".\Particle.hpp"
 
 using namespace System;

@@ -48,10 +48,6 @@
       <Project>{7e097104-4fcb-40aa-86db-509bfab1001b}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Distributor\Distributor.csproj">
-      <Project>{ca914f58-3060-4c9d-b168-77d11d891040}</Project>
-      <Name>Distributor</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Wrapper\Wrapper.vcxproj">
       <Project>{3a8a6019-ebcb-4626-8e2e-165e69c37c05}</Project>
       <Name>Wrapper</Name>

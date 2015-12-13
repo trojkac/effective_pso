@@ -1,4 +1,4 @@
-// ParticleSwarmOptimization.h
+// PsoAlgorithm.hpp
 
 #pragma once
 

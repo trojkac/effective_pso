@@ -2,5 +2,5 @@
 
 #include "stdafx.h"
 
-#include "ParticleSwarmOptimization.hpp"
+#include "PsoAlgorithm.hpp"
 

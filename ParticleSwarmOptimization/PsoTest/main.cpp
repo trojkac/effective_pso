@@ -1,4 +1,4 @@
-#include "ParticleSwarmOptimization.hpp"
+#include "PsoAlgorithm.hpp"
 #include "StandardParticle.hpp"
 
 #include <iostream>
