@@ -11,11 +11,11 @@ namespace Node
         private IPsoService _psoClient;
         private ParticleState _bestKnownState;
 
-        public ProxyParticle(NodeInfo sourceNode)
+        public ProxyParticle(NetworkNodeInfo sourceNetworkNode)
         {
-            _sourceNodeId = sourceNode.Id;
+            _sourceNodeId = sourceNetworkNode.Id;
             _bestKnownState = new ParticleState(new[]{0.0},double.PositiveInfinity);
-            _psoClient = new PsoServiceClient("particleProxtClientTcp", sourceNode.Address.ToString());
+            _psoClient = new PsoServiceClient("particleProxtClientTcp", sourceNetworkNode.Address.ToString());
         }
         /// <summary>
         /// Function called by the other particle in local swarm to know this particle's personal best

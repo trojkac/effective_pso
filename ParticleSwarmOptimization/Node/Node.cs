@@ -14,47 +14,67 @@ namespace Node
         private const int Miliseconds = 1000;
         private Timer _timer;
 
-        private readonly NodeInfo _myInfo;
+        public NetworkNodeInfo MyInfo { get; set; }
         private PsoRingManager _psoRingManager;
 
         //CONST
-        private readonly HashSet<NodeInfo> _bootstrappingPeers;
+        public HashSet<NetworkNodeInfo> BootstrappingPeers { get; set; }
 
         //INPUT
-        //private NodeInfo _w;
-        //private NodeInfo _x;
+        //private NetworkNodeInfo _w;
+        //private NetworkNodeInfo _x;
         //private int _c;
-        //private NodeInfo _z;
-        private NodeInfo _s;
+        //private NetworkNodeInfo _z;
+        private NetworkNodeInfo _s;
 
         //VAR
-        private readonly HashSet<NodeInfo> _peers;  //S
-        private readonly HashSet<NodeInfo> _searchMonitorNodes;  //B
-        private readonly HashSet<NodeInfo> _closerPeerSearchNodes;  //W
-        private readonly List<NodeInfo> _neighbors;  //Gamma   //czy nie trzeba uważać na przypadek, gdy to jest puste?
+        private readonly HashSet<NetworkNodeInfo> _peers;  //S
+        private readonly HashSet<NetworkNodeInfo> _searchMonitorNodes;  //B
+        private readonly HashSet<NetworkNodeInfo> _closerPeerSearchNodes;  //W
+        private readonly List<NetworkNodeInfo> _neighbors;  //Gamma   //czy nie trzeba uważać na przypadek, gdy to jest puste?
 
-
-        public Node(HashSet<NodeInfo> bootstrap, NodeInfo myInfo)
+        public Node(EndpointAddress endpointAddress)
         {
-            _bootstrappingPeers = bootstrap;
-            _myInfo = myInfo;
-            _peers = new HashSet<NodeInfo>();
-            _searchMonitorNodes = new HashSet<NodeInfo>();
-            _closerPeerSearchNodes = new HashSet<NodeInfo>();
-            _neighbors = new List<NodeInfo>();
+            MyInfo = new NetworkNodeInfo(endpointAddress);
+            BootstrappingPeers = new HashSet<NetworkNodeInfo>();
+            _peers = new HashSet<NetworkNodeInfo>();
+            _searchMonitorNodes = new HashSet<NetworkNodeInfo>();
+            _closerPeerSearchNodes = new HashSet<NetworkNodeInfo>();
+            _neighbors = new List<NetworkNodeInfo>();
             _psoRingManager = new PsoRingManager();
-            StartP2PAlgorithm();
         }
 
-        public NodeInfo GetClosestNeighbor()
+        public Node(HashSet<NetworkNodeInfo> bootstrap, EndpointAddress endpointAddress)
+        {
+            BootstrappingPeers = bootstrap;
+            MyInfo = new NetworkNodeInfo(endpointAddress);
+            _peers = new HashSet<NetworkNodeInfo>();
+            _searchMonitorNodes = new HashSet<NetworkNodeInfo>();
+            _closerPeerSearchNodes = new HashSet<NetworkNodeInfo>();
+            _neighbors = new List<NetworkNodeInfo>();
+            _psoRingManager = new PsoRingManager();
+        }
+
+        public Node(HashSet<NetworkNodeInfo> bootstrap, NetworkNodeInfo myInfo)
+        {
+            BootstrappingPeers = bootstrap;
+            MyInfo = myInfo;
+            _peers = new HashSet<NetworkNodeInfo>();
+            _searchMonitorNodes = new HashSet<NetworkNodeInfo>();
+            _closerPeerSearchNodes = new HashSet<NetworkNodeInfo>();
+            _neighbors = new List<NetworkNodeInfo>();
+            _psoRingManager = new PsoRingManager();
+        }
+
+        public NetworkNodeInfo GetClosestNeighbor()
         {
             int minDistance = Int32.MaxValue;
-            NodeInfo closestNeighbor = null;
-            foreach (NodeInfo nodeInfo in _peers)
+            NetworkNodeInfo closestNeighbor = null;
+            foreach (NetworkNodeInfo nodeInfo in _peers)
             {
-                if (NodeInfo.Distance(_myInfo, nodeInfo) < minDistance)
+                if (NetworkNodeInfo.Distance(MyInfo, nodeInfo) < minDistance)
                 {
-                    minDistance = NodeInfo.Distance(_myInfo, nodeInfo);
+                    minDistance = NetworkNodeInfo.Distance(MyInfo, nodeInfo);
                     closestNeighbor = nodeInfo;
                 }
             }
@@ -88,9 +108,9 @@ namespace Node
 
         //Service part
 
-        public void CloserPeerSearch(NodeInfo source)  //A3
+        public void CloserPeerSearch(NetworkNodeInfo source)  //A3
         {
-            if (NodeInfo.Distance(_myInfo,source) < _neighbors.Min(n => NodeInfo.Distance(_myInfo, n)))
+            if (NetworkNodeInfo.Distance(MyInfo,source) < _neighbors.Min(n => NetworkNodeInfo.Distance(MyInfo, n)))
             {
                 _searchMonitorNodes.Add(source);
                 NodeServiceClient nodeServiceClient = new NodeServiceClient(source);
@@ -103,12 +123,12 @@ namespace Node
             }
         }
        
-        public void SuccessorCandidate(NodeInfo candidate)  //A4
+        public void SuccessorCandidate(NetworkNodeInfo candidate)  //A4
         {
             _closerPeerSearchNodes.Add(candidate);
         }
         
-        public void GetNeighbor(NodeInfo from, int j)  //A6
+        public void GetNeighbor(NetworkNodeInfo from, int j)  //A6
         {
             if (_neighbors.Count > j)
             {
@@ -117,9 +137,9 @@ namespace Node
             }
         }
 
-        public void UpdateNeighbor(NodeInfo newNeighbor, int c) //A7
+        public void UpdateNeighbor(NetworkNodeInfo newNeighbor, int c) //A7
         {
-            if (NodeInfo.Distance(_neighbors[c], newNeighbor) < NodeInfo.Distance(_neighbors[c], _myInfo))  //is it ok?
+            if (NetworkNodeInfo.Distance(_neighbors[c], newNeighbor) < NetworkNodeInfo.Distance(_neighbors[c], MyInfo))  //is it ok?
             {
                 _neighbors[c + 1] = newNeighbor;
             }  //what if not?
@@ -138,24 +158,24 @@ namespace Node
             
             public NodeServiceClient(Binding binding, EndpointAddress remotAddress) : base(binding, remotAddress) { }
             
-            public NodeServiceClient(NodeInfo nodeInfo) : this(new NetTcpBinding(), nodeInfo.Address) { }  //configuration for NetTcpBinding?
+            public NodeServiceClient(NetworkNodeInfo networkNodeInfo) : this(new NetTcpBinding(), networkNodeInfo.Address) { }  //configuration for NetTcpBinding?
 
-            public void CloserPeerSearch(NodeInfo source)
+            public void CloserPeerSearch(NetworkNodeInfo source)
             {
                 Channel.CloserPeerSearch(source);
             }
 
-            public void SuccessorCandidate(NodeInfo candidate)
+            public void SuccessorCandidate(NetworkNodeInfo candidate)
             {
                 Channel.SuccessorCandidate(candidate);
             }
 
-            public void GetNeighbor(NodeInfo from, int which)
+            public void GetNeighbor(NetworkNodeInfo from, int which)
             {
                 Channel.GetNeighbor(from, which);
             }
 
-            public void UpdateNeighbor(NodeInfo newNeighbor, int which)
+            public void UpdateNeighbor(NetworkNodeInfo newNeighbor, int which)
             {
                 Channel.UpdateNeighbor(newNeighbor,which);
             }
@@ -176,11 +196,11 @@ namespace Node
         public void A2()
         {
             Random random = new Random();  //do klasy?
-            int r = random.Next(0, _neighbors.Count > 0 ? _bootstrappingPeers.Count + 1 : _bootstrappingPeers.Count);
-            _s = r < _bootstrappingPeers.Count ? _bootstrappingPeers.ElementAt(r) : _neighbors[0];
+            int r = random.Next(0, _neighbors.Count > 0 ? BootstrappingPeers.Count + 1 : BootstrappingPeers.Count);
+            _s = r < BootstrappingPeers.Count ? BootstrappingPeers.ElementAt(r) : _neighbors[0];
 
             NodeServiceClient nodeServiceClient = new NodeServiceClient(_s);
-            nodeServiceClient.CloserPeerSearch(_myInfo);
+            nodeServiceClient.CloserPeerSearch(MyInfo);
         }
 
         public void A5()
@@ -188,7 +208,7 @@ namespace Node
             for(int i=0; i<_neighbors.Count;++i)
             {
                 NodeServiceClient nodeServiceClient = new NodeServiceClient(_neighbors[i]);
-                nodeServiceClient.GetNeighbor(_myInfo, i);
+                nodeServiceClient.GetNeighbor(MyInfo, i);
             }
         }
     }

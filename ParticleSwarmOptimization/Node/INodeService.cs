@@ -6,15 +6,15 @@ namespace Node
     public interface INodeService
     {
         [OperationContract]
-        void CloserPeerSearch(NodeInfo source);
+        void CloserPeerSearch(NetworkNodeInfo source);
 
         [OperationContract]
-        void SuccessorCandidate(NodeInfo candidate);
+        void SuccessorCandidate(NetworkNodeInfo candidate);
 
         [OperationContract]
-        void GetNeighbor(NodeInfo from, int which);
+        void GetNeighbor(NetworkNodeInfo from, int which);
 
         [OperationContract]
-        void UpdateNeighbor(NodeInfo newNeighbor, int which);
+        void UpdateNeighbor(NetworkNodeInfo newNeighbor, int which);
     }
 }

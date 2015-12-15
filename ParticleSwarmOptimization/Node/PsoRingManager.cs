@@ -6,8 +6,8 @@ namespace Node
 {
     public class PsoRingManager : IPsoManager, IPsoService
     {
-        private Tuple<NodeInfo, ProxyParticle> _left;
-        private Tuple<NodeInfo, ProxyParticle> _right;
+        private Tuple<NetworkNodeInfo, ProxyParticle> _left;
+        private Tuple<NetworkNodeInfo, ProxyParticle> _right;
 
         public PsoRingManager()
         {
@@ -38,14 +38,14 @@ namespace Node
         /// successor. For details of nodes topology see
         ///  https://ccl.northwestern.edu/papers/2005/ShakerReevesP2P.pdf
         /// </summary>
-        /// <param name="allNodes">All nodes </param>
-        /// <param name="currentNode">Current node info</param>
-        public void UpdatePsoNeighborhood(NodeInfo[] allNodes, NodeInfo currentNode)
+        /// <param name="allNetworkNodes">All nodes </param>
+        /// <param name="currentNetworkNode">Current node info</param>
+        public void UpdatePsoNeighborhood(NetworkNodeInfo[] allNetworkNodes, NetworkNodeInfo currentNetworkNode)
         {
 
             //TODO: Finish ring creation, check if left or right changed, update left and right
-            var directNeighbours = allNodes.OrderBy(node => node.Distance(currentNode)).Take(2).ToArray();
-            if (directNeighbours[0] - currentNode < 0)
+            var directNeighbours = allNetworkNodes.OrderBy(node => node.Distance(currentNetworkNode)).Take(2).ToArray();
+            if (directNeighbours[0] - currentNetworkNode < 0)
             {
 
             }

@@ -48,7 +48,7 @@
     <Compile Include="INodeService.cs" />
     <Compile Include="IPsoManager.cs" />
     <Compile Include="IPsoService.cs" />
-    <Compile Include="NodeInfo.cs" />
+    <Compile Include="NetworkNodeInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="ProxyParticle.cs" />
