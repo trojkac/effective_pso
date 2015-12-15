@@ -1,5 +1,4 @@
 ﻿using Common;
-using ParticleSwarmOptimizationWrapper;
 
 namespace Controller
 {

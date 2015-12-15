@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Linq;
-using System.ServiceModel;
 using Common;
 
 namespace Node
 {
     public class PsoRingManager : IPsoManager, IPsoService
     {
-
         private Tuple<NodeInfo, ProxyParticle> _left;
         private Tuple<NodeInfo, ProxyParticle> _right;
+
+        public PsoRingManager()
+        {
+        }
 
         public ParticleState GetBestState(int nodeId)
         {
@@ -37,11 +39,11 @@ namespace Node
             var directNeighbours = allNodes.OrderBy(node => node.Distance(currentNode)).Take(2).ToArray();
             if (directNeighbours[0] - currentNode < 0)
             {
-                
+
             }
             else
             {
-                
+
             }
         }
     }
