@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.ServiceModel.Description;
 using Common;
 
 namespace Node
@@ -7,12 +8,14 @@ namespace Node
     public class ProxyParticle
     {
         private int _sourceNodeId;
-        private EndPoint _targetNodeAddress;
-        private ParticleState BestKnownState;
-        public ProxyParticle(int sourceNodeId, EndPoint targetNodeAddress)
+        private IPsoService _psoClient;
+        private ParticleState _bestKnownState;
+
+        public ProxyParticle(NodeInfo sourceNode)
         {
-            _sourceNodeId = sourceNodeId;
-            _targetNodeAddress = targetNodeAddress;
+            _sourceNodeId = sourceNode.Id;
+            _bestKnownState = new ParticleState(new[]{0.0},double.PositiveInfinity);
+            _psoClient = new PsoServiceClient("particleProxtClientTcp", sourceNode.Address.ToString());
         }
         /// <summary>
         /// Function called by the other particle in local swarm to know this particle's personal best
@@ -21,12 +24,15 @@ namespace Node
         /// <returns></returns>
         public ParticleState GetPersonalBest()
         {
-            //TODO: Call to _targetNodeAddress;
-            //TODO: It has to be wrapped by C++ particle inheriting from Particle abstract class
-            throw new NotImplementedException();
+            var s = _psoClient.GetBestState(_sourceNodeId);
+            if (s.FitnessValue < _bestKnownState.FitnessValue)
+            {
+                _bestKnownState = s;
+            }
+            return _bestKnownState;
         }
         /// <summary>
-        /// Function called from remote node
+        /// Function called from remote node via IPsoManager
         /// </summary>
         /// <returns>Best position of the local connected particle</returns>
         public ParticleState GetLocalBest()
