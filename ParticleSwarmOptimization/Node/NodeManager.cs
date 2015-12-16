@@ -17,9 +17,10 @@ namespace Node
             NodeService = nodeService;
         }
 
-        public void StartNodeService()
+        public void StartNodeService()  //wystartowany NodeService nie jest tym z pola klasy NodeManager
         {
-            _serviceHost = new ServiceHost(typeof(INodeService), NodeService.MyInfo.Address.Uri);
+            _serviceHost = new ServiceHost(NodeService,NodeService.MyInfo.Address.Uri);
+
             _serviceHost.Open();
 
             TimerCallback timerCallback = RunP2PAlgorithm;

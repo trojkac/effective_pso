@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.ServiceModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Node;
@@ -14,7 +15,7 @@ namespace Tests
         public void TestMethod1()
         {
             Uri uri1 = new Uri("net.tcp://localhost:1234//NodeService");
-            Uri uri2 = new Uri("net.tcp//localhost:1235//NodeService");
+            Uri uri2 = new Uri("net.tcp://localhost:1235//NodeService");
 
             EndpointAddress endpointAddress1 = new EndpointAddress(uri1);
             EndpointAddress endpointAddress2 = new EndpointAddress(uri2);
@@ -27,6 +28,8 @@ namespace Tests
 
             node1.StartNodeService();
             node2.StartNodeService();
+
+            Console.ReadKey();
         }
     }
 }
