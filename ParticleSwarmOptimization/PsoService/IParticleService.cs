@@ -1,11 +1,10 @@
-﻿
 using System.ServiceModel;
 using Common;
 
-namespace Node
+namespace PsoService
 {
     [ServiceContract]
-    public interface IPsoService
+    public interface IParticleService
     {
         /// <summary>
         ///     Returns best known position of particle which is in neighborhood (in terms of PSO algorithm) o

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Node;
-using Node = Node.Node;
+
 
 namespace Tests
 {
@@ -21,9 +21,9 @@ namespace Tests
 
             HashSet<NetworkNodeInfo> bootstrap = new HashSet<NetworkNodeInfo>();
 
-            global::Node.Node node1 = new global::Node.Node(endpointAddress1);
+            var node1 = new Node.Node(endpointAddress1);
             bootstrap.Add(node1.GetMyNetworkNodeInfo());
-            global::Node.Node node2 = new global::Node.Node(bootstrap, endpointAddress2);
+            var node2 = new Node.Node(bootstrap, endpointAddress2);
 
             node1.StartNodeService();
             node2.StartNodeService();

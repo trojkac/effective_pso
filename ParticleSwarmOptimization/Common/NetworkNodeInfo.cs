@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.ServiceModel;
 
-namespace Node
+namespace Common
 {
     [DataContract]
     public class NetworkNodeInfo : IComparable<NetworkNodeInfo>

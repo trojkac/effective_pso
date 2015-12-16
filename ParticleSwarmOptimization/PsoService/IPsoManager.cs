@@ -1,4 +1,6 @@
-﻿namespace Node
+using Common;
+
+namespace PsoService
 {
     public interface IPsoManager
     {

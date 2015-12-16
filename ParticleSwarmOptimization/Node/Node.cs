@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using System.ServiceModel;
+using Common;
+using PsoService;
 
 namespace Node
 {
     public class Node
     {
         public NodeManager NodeManager { get; set; }
-        public PsoRingManager PsoRingManager { get; set; }
+        public IPsoManager PsoRingManager { get; set; }
 
-        public Node(NodeManager nodeManager, PsoRingManager psoRingManager)
+        public Node(NodeManager nodeManager, IPsoManager psoRingManager)
         {
             NodeManager = nodeManager;
             PsoRingManager = psoRingManager;

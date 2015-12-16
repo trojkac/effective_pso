@@ -1,16 +1,16 @@
-﻿using System.ServiceModel;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Common;
 
-namespace Node
+namespace PsoService
 {
-    public class PsoServiceClient : ClientBase<IPsoService>, IPsoService
+    public class ParticleServiceClient : ClientBase<IParticleService>, IParticleService
     {
-        public PsoServiceClient(string endpointConfigurationName, string address)
+        public ParticleServiceClient(string endpointConfigurationName, string address)
             : base(endpointConfigurationName, address)
         {
         }
-        public PsoServiceClient(Binding binding, EndpointAddress address)
+        public ParticleServiceClient(Binding binding, EndpointAddress address)
             : base(binding,address)
         {
         }
