@@ -49,8 +49,11 @@
     <Compile Include="IPsoManager.cs" />
     <Compile Include="IPsoService.cs" />
     <Compile Include="NetworkNodeInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Node.cs" />
+    <Compile Include="NodeManager.cs" />
+    <Compile Include="NodeServiceClient.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="NodeService.cs" />
     <Compile Include="ProxyParticle.cs" />
     <Compile Include="PsoRingManager.cs" />
     <Compile Include="PsoServiceClient.cs" />
