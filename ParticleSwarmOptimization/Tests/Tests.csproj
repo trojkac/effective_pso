@@ -65,6 +65,10 @@
       <Project>{78963D19-F2E3-41D3-90B4-6F03AECF9C0B}</Project>
       <Name>Node</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PsoService\PsoService.csproj">
+      <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
+      <Name>PsoService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Wrapper\Wrapper.vcxproj">
       <Project>{3a8a6019-ebcb-4626-8e2e-165e69c37c05}</Project>
       <Name>Wrapper</Name>

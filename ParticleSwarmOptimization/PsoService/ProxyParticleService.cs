@@ -1,18 +1,16 @@
+
 using System;
-using System.Diagnostics;
-using System.Net;
 using System.ServiceModel;
-using System.ServiceModel.Description;
 using Common;
 
-namespace Node
+namespace PsoService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class ProxyParticleService : IPsoService
+    public class ProxyParticleService : IParticleService
     {
         private static int _counter = 1;
        
-        private IPsoService _psoClient;
+        private IParticleService _particleClient;
         private ParticleState _bestKnownState;
         private ServiceHost _host;
         public int Id { get; private set; }
@@ -20,7 +18,7 @@ namespace Node
         private ProxyParticleService(string remoteNeighborAddress)
         {
             _bestKnownState = new ParticleState(new[] { 0.0 }, double.PositiveInfinity);
-            _psoClient = new PsoServiceClient("particleProxyClientTcp", remoteNeighborAddress);
+            _particleClient = new ParticleServiceClient("particleProxyClientTcp", remoteNeighborAddress);
             Id = _counter++;
         }
 
@@ -43,7 +41,7 @@ namespace Node
 
         public void UpdateRemoteAddress(string address)
         {
-            _psoClient = new PsoServiceClient("particleProxyClientTcp", address);
+            _particleClient = new ParticleServiceClient("particleProxyClientTcp", address);
         }
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace Node
         /// <returns></returns>
         public ParticleState GetRemoteBest()
         {
-            var s = _psoClient.GetBestState();
+            var s = _particleClient.GetBestState();
             if (s.FitnessValue < _bestKnownState.FitnessValue)
             {
                 _bestKnownState = s;

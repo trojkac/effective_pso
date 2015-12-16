@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.ServiceModel;
+using Common;
 
 namespace Node
 {

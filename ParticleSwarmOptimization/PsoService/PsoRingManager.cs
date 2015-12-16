@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Linq;
 using Common;
 
-namespace Node
+namespace PsoService
 {
     public class PsoRingManager : IPsoManager
     {
