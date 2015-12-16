@@ -1,48 +1,70 @@
 using System;
+using System.Diagnostics;
 using System.Net;
+using System.ServiceModel;
 using System.ServiceModel.Description;
 using Common;
 
 namespace Node
 {
-    public class ProxyParticle
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
+    public class ProxyParticle : IPsoService
     {
-        private int _sourceNodeId;
+        private static int _counter = 1;
+       
         private IPsoService _psoClient;
         private ParticleState _bestKnownState;
+        private ServiceHost _host;
+        public int Id { get; private set; }
 
-        public ProxyParticle(NetworkNodeInfo sourceNetworkNode)
+        private ProxyParticle(string remoteNeighborAddress)
         {
-            _sourceNodeId = sourceNetworkNode.Id;
-            _bestKnownState = new ParticleState(new[]{0.0},double.PositiveInfinity);
-            _psoClient = new PsoServiceClient("particleProxtClientTcp", sourceNetworkNode.Address.ToString());
+            _bestKnownState = new ParticleState(new[] { 0.0 }, double.PositiveInfinity);
+            _psoClient = new PsoServiceClient("particleProxyClientTcp", remoteNeighborAddress);
+            Id = _counter++;
         }
+
+        public static ProxyParticle CreateProxyParticle(string remoteAddress,int nodeId)
+        {
+            var particle = new ProxyParticle(remoteAddress);
+            particle._host = new ServiceHost(particle, new Uri(String.Format("net.tcp://localhost/{0}/particle/",nodeId)));
+            return particle;
+        }
+
+        public void Open()
+        {
+            _host.Open();
+        }
+
+        public void Close()
+        {
+            _host.Close();
+        }
+
+        public void UpdateRemoteAddress(string address)
+        {
+            _psoClient = new PsoServiceClient("particleProxyClientTcp", address);
+        }
+
         /// <summary>
         /// Function called by the other particle in local swarm to know this particle's personal best
         /// which is personal best of the linked particle in the other swarm
         /// </summary>
         /// <returns></returns>
-        public ParticleState GetPersonalBest()
+        public ParticleState GetRemoteBest()
         {
-            var s = _psoClient.GetBestState(_sourceNodeId);
+            var s = _psoClient.GetBestState();
             if (s.FitnessValue < _bestKnownState.FitnessValue)
             {
                 _bestKnownState = s;
             }
             return _bestKnownState;
         }
-        /// <summary>
-        /// Function called from remote node via IPsoManager
-        /// </summary>
-        /// <returns>Best position of the local connected particle</returns>
-        public ParticleState GetLocalBest()
+
+
+        public ParticleState GetBestState()
         {
-            //TODO: It has to get best position of the linked particle somehow...
-            throw new NotImplementedException();
-            
-        } 
-
-
-
+            return _bestKnownState;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ServiceModel;
+using System.ServiceModel.Channels;
 using Common;
 
 namespace Node
@@ -9,16 +10,13 @@ namespace Node
             : base(endpointConfigurationName, address)
         {
         }
-
-        public PsoServiceClient(EndpointAddress endpoint)
-            : base()
+        public PsoServiceClient(Binding binding, EndpointAddress address)
+            : base(binding,address)
         {
-            
         }
-
-        public ParticleState GetBestState(int nodeId)
+        public ParticleState GetBestState()
         {
-            return base.Channel.GetBestState(nodeId);
+            return base.Channel.GetBestState();
         }
     }
 }

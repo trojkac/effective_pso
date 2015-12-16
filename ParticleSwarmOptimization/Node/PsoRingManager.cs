@@ -4,7 +4,7 @@ using Common;
 
 namespace Node
 {
-    public class PsoRingManager : IPsoManager, IPsoService
+    public class PsoRingManager : IPsoManager
     {
         private Tuple<NetworkNodeInfo, ProxyParticle> _left;
         private Tuple<NetworkNodeInfo, ProxyParticle> _right;
@@ -13,23 +13,6 @@ namespace Node
         {
         }
 		
-        /// <summary>
-        /// Operation exposed for ProxyParticles of the other nodes
-        /// </summary>
-        /// <param name="nodeId">Source of request</param>
-        /// <returns>Best known position of appropriate proxy particle</returns>
-        public ParticleState GetBestState(int nodeId)
-        {
-            //Check wheter nodeId is left or right and return appropriate ProxyParticle::GetLocalBest()
-            // If it is neither left nor right nodeId we have to decide what to do:
-            //  1) respond with an error, 
-            //  2) respond with a fitness value which won't be considered (Infinity for minimalization),
-            //=>3) respond with any of left/right best known solution
-            return _left != null && _left.Item1.Id == nodeId ? 
-                _left.Item2.GetLocalBest()  : 
-                _right.Item2.GetLocalBest() ?? new ParticleState(new double[]{1.0},double.PositiveInfinity ) ;
-
-        }
 
         /// <summary>
         /// Updates PSO neighborhood depending on the nodes network topology.
