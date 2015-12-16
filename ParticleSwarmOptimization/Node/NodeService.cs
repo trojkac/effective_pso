@@ -87,9 +87,9 @@ namespace Node
             _peers.UnionWith(_searchMonitorNodes);
             _peers.UnionWith(_neighbors);
 
-            if (GetClosestNeighbor() != null)
+            if (GetClosestNeighbor(MyInfo) != null)
             {
-                _neighbors.Insert(0, GetClosestNeighbor());
+                _neighbors.Insert(0, GetClosestNeighbor(MyInfo));
             }
             _searchMonitorNodes.Clear();
             _closerPeerSearchNodes.Clear();
