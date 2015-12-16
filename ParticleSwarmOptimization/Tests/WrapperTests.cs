@@ -22,7 +22,7 @@ namespace Tests
             List<Particle> particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
             {
-                particles.Add(new FullyInformedParticle(2));
+                particles.Add(new StandardParticle(2));
             }
             var result = algorithm.Run(particles);
 
@@ -41,7 +41,7 @@ namespace Tests
             List<Particle> particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
             {
-                particles.Add(new FullyInformedParticle(2));
+                particles.Add(new StandardParticle(2));
             }
             var result = algorithm.Run(particles);
 
@@ -61,7 +61,7 @@ namespace Tests
             List<Particle> particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
             {
-                particles.Add(new FullyInformedParticle(2));
+                particles.Add(new StandardParticle(2));
             }
             var result = algorithm.Run(particles);
 
@@ -81,7 +81,7 @@ namespace Tests
             List<Particle> particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
             {
-                particles.Add(new FullyInformedParticle(2));
+                particles.Add(new StandardParticle(2));
             }
             var result = algorithm.Run(particles);
 

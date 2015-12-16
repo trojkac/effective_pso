@@ -75,6 +75,4 @@ namespace ParticleSwarmOptimizationWrapper {
 			return gcnew Tuple<List<Double>^, Double>(gcnew List<Double>(), std::get<1>(result));
 		}
 	};
-
-
 }

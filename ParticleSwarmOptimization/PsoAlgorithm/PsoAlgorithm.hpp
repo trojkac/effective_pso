@@ -32,18 +32,18 @@ namespace ParticleSwarmOptimization {
 
 		std::tuple<std::vector<double>, double> run(std::vector<Particle*> particles) const
 		{
-			int iteration = 0;
-			double current_distance_to_target = std::numeric_limits<double>::infinity();
-			bool use_target_value_condition = target_value_ && delta_;
-			bool use_iterations_condition = max_iterations_ > 0;
-			for (int i = 0; i < particles.size(); ++i)
+			auto iteration = 0;
+			auto current_distance_to_target = std::numeric_limits<double>::infinity();
+			auto use_target_value_condition = target_value_ && delta_;
+			auto use_iterations_condition = max_iterations_ > 0;
+			for (auto i = 0; i < particles.size(); ++i)
 			{
 				particles[i]->update_personal_best(fitness_function_);
 			}
 
 			while ((!use_iterations_condition || iteration++ < max_iterations_) && (!use_target_value_condition || current_distance_to_target > delta_))
 			{
-				for (int i = 0; i < particles.size(); ++i)
+				for (auto i = 0; i < particles.size(); ++i)
 				{
 					particles[i]->translate();
 					auto particle_best = particles[i]->update_personal_best(fitness_function_);
@@ -57,15 +57,16 @@ namespace ParticleSwarmOptimization {
 					}
 				}
 
-				for (int i = 0; i < particles.size(); ++i)
+				for (auto i = 0; i < particles.size(); ++i)
 				{
-					particles[i]->update_velocity(particles);
+					particles[i]->update_neighborhood(particles);
+					particles[i]->update_velocity();
 				}
 			}
 
-			std::tuple<std::vector<double>, double> global_best = std::make_tuple(std::vector<double>(), -std::numeric_limits<double>::infinity());
+			auto global_best = std::make_tuple(std::vector<double>(), -std::numeric_limits<double>::infinity());
 
-			for (int i = 0; i < particles.size(); ++i)
+			for (auto i = 0; i < particles.size(); ++i)
 			{
 				auto temp = std::get<1>(particles[i]->get_personal_best());
 

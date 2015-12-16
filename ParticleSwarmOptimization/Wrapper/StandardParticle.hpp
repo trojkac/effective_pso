@@ -3,12 +3,12 @@
 #include "StandardParticle\StandardParticle.hpp"
 namespace ParticleSwarmOptimizationWrapper
 {
-	public ref class FullyInformedParticle : public Particle
+	public ref class StandardParticle : public Particle
 	{
 		ParticleSwarmOptimization::StandardParticle* _nativeParticle;
 
 	public:
-		FullyInformedParticle(int n):
+		StandardParticle(int n):
 			_nativeParticle(new ParticleSwarmOptimization::StandardParticle(n))
 		{
 			_nativeParticle->init_location();

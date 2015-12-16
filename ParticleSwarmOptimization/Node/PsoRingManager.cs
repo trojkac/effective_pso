@@ -6,8 +6,8 @@ namespace Node
 {
     public class PsoRingManager : IPsoManager
     {
-        private Tuple<NetworkNodeInfo, ProxyParticle> _left;
-        private Tuple<NetworkNodeInfo, ProxyParticle> _right;
+        private Tuple<NetworkNodeInfo, ProxyParticleService> _left;
+        private Tuple<NetworkNodeInfo, ProxyParticleService> _right;
 
         public PsoRingManager()
         {

@@ -50,14 +50,22 @@ namespace ParticleSwarmOptimization {
 				(personal_best_ = std::make_tuple(location_, value)) : personal_best_;
 		}
 
-		void update_velocity(std::vector<Particle*> all_particles)
+		void update_neighborhood(std::vector<Particle*> all_particles)
+		{
+			if (neighborhood_.size() <= 0 )
+			{
+				neighborhood_ = all_particles;
+			}
+		}
+
+		void update_velocity()
 		{
 			std::tuple<std::vector<double>, double> global_best = personal_best_;
 
-			for (int i = 0; i < all_particles.size(); ++i)
+			for (int i = 0; i < neighborhood_.size(); ++i)
 			{
-				if (std::get<1>(all_particles[i]->get_personal_best()) > std::get<1>(global_best))
-					global_best = all_particles[i]->get_personal_best();
+				if (std::get<1>(neighborhood_[i]->get_personal_best()) > std::get<1>(global_best))
+					global_best = neighborhood_[i]->get_personal_best();
 			}
 
 			std::vector<double> to_personal_best(dimensions_);

@@ -8,7 +8,7 @@ using Common;
 namespace Node
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class ProxyParticle : IPsoService
+    public class ProxyParticleService : IPsoService
     {
         private static int _counter = 1;
        
@@ -17,16 +17,16 @@ namespace Node
         private ServiceHost _host;
         public int Id { get; private set; }
 
-        private ProxyParticle(string remoteNeighborAddress)
+        private ProxyParticleService(string remoteNeighborAddress)
         {
             _bestKnownState = new ParticleState(new[] { 0.0 }, double.PositiveInfinity);
             _psoClient = new PsoServiceClient("particleProxyClientTcp", remoteNeighborAddress);
             Id = _counter++;
         }
 
-        public static ProxyParticle CreateProxyParticle(string remoteAddress,int nodeId)
+        public static ProxyParticleService CreateProxyParticle(string remoteAddress,int nodeId)
         {
-            var particle = new ProxyParticle(remoteAddress);
+            var particle = new ProxyParticleService(remoteAddress);
             particle._host = new ServiceHost(particle, new Uri(String.Format("net.tcp://localhost/{0}/particle/",nodeId)));
             return particle;
         }
@@ -66,5 +66,10 @@ namespace Node
         {
             return _bestKnownState;
         }
+        public void UpdateBestState(ParticleState state)
+        {
+            _bestKnownState = state;
+        }
+        
     }
 }
