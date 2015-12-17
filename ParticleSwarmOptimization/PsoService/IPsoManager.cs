@@ -12,13 +12,16 @@ namespace PsoService
         /// <param name="currentNetworkNode"> Current's node info</param>
         void UpdatePsoNeighborhood(Tuple<NetworkNodeInfo,Uri[]>[] allNetworkNodes, NetworkNodeInfo currentNetworkNode);
 
-
         /// <summary>
         /// Returns ProxyParticle endpoints URIs to be used by other particles
         /// </summary>
         /// <returns>array of base addresses of IProxyService used in this PsoManager</returns>
         Uri[] GetProxyParticlesAddresses();
 
+        PsoSettings CurrentProblem();
+
+
+        ParticleState Run(FitnessFunction fitnessFunction, PsoSettings psoSettings);
 
     }
 }

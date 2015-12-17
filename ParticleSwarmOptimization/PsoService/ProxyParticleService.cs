@@ -33,11 +33,23 @@ namespace PsoService
             Id = _counter++;
         }
 
+        private ProxyParticleService()
+        {
+            _bestKnownState = ParticleState.WorstState;
+            Id = _counter++;
+        }
 
-        public static ProxyParticleService CreateProxyParticle(string remoteAddress,int nodeId)
+
+        public static ProxyParticleService CreateProxyParticle(string remoteAddress, int nodeId)
         {
             var particle = new ProxyParticleService(remoteAddress);
-            particle._host = new ServiceHost(particle, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}",PortFinder.FreeTcpPort(),nodeId,particle.Id)));
+            particle._host = new ServiceHost(particle, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
+            return particle;
+        }
+        public static ProxyParticleService CreateProxyParticle(int nodeId)
+        {
+            var particle = new ProxyParticleService();
+            particle._host = new ServiceHost(particle, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
             return particle;
         }
 
@@ -54,6 +66,8 @@ namespace PsoService
         public void UpdateRemoteAddress(string address)
         {
             _particleClient = new ParticleServiceClient("particleProxyClientTcp", address);
+            RemoteAddress = new Uri(address);
+
         }
 
         /// <summary>
@@ -63,6 +77,10 @@ namespace PsoService
         /// <returns></returns>
         public ParticleState GetRemoteBest()
         {
+            if (_particleClient == null)
+            {
+                return ParticleState.WorstState;
+            }
             var s = _particleClient.GetBestState();
             if (s.FitnessValue < _bestKnownState.FitnessValue)
             {
@@ -83,6 +101,7 @@ namespace PsoService
 
         public void UpdateRemoteAddress(Uri address)
         {
+            RemoteAddress = address;
             _particleClient = new ParticleServiceClient("particleProxyClientTcp", address.ToString());
         }
     }

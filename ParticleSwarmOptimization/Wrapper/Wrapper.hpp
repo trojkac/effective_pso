@@ -6,6 +6,7 @@
 #include "PsoAlgorithm\Particle.hpp"
 #include "PsoAlgorithm\PsoAlgorithm.hpp"
 #include ".\Particle.hpp"
+#include ".\WrapperHelper.hpp"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -63,7 +64,7 @@ namespace ParticleSwarmOptimizationWrapper {
 			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(unmanagedFitness, targetValue, epsilon);
 			return algorithm;
 		}
-		Tuple<List<Double>^, Double>^ Run(List<Particle^>^ particles)
+		ParticleState^ Run(List<Particle^>^ particles)
 		{
 			std::vector<ParticleSwarmOptimization::Particle*> stdParticles;
 			for each (auto particle in particles)
@@ -72,7 +73,7 @@ namespace ParticleSwarmOptimizationWrapper {
 				stdParticles.emplace_back(native);
 			}
 			auto result = _algorithm->run(stdParticles);
-			return gcnew Tuple<List<Double>^, Double>(gcnew List<Double>(), std::get<1>(result));
+			return tuple_to_particle_state(result);
 		}
 	};
 }

@@ -77,16 +77,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ProxyParticle.h" />
+    <ClInclude Include="ProxyParticleWrapper.hpp" />
+    <ClInclude Include="ProxyParticle.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="StandardParticle.hpp" />
     <ClInclude Include="Particle.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="Wrapper.hpp" />
+    <ClInclude Include="WrapperHelper.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="FullyInformedParticle.cpp" />
+    <ClCompile Include="ProxyParticleWrapper.cpp" />
+    <ClCompile Include="StandardParticle.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -107,8 +112,8 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Node\Node.csproj">
-      <Project>{78963d19-f2e3-41d3-90b4-6f03aecf9c0b}</Project>
+    <ProjectReference Include="..\PsoService\PsoService.csproj">
+      <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

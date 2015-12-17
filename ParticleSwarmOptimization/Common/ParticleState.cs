@@ -10,6 +10,14 @@ namespace Common
         [DataMember]
         public double[] Location { get; set; }
 
+        public static ParticleState WorstState
+        {
+            get
+            {
+                return new ParticleState(null, double.NegativeInfinity);
+            }
+        }
+
         public ParticleState(double[] location, double fitnessValue)
         {
             FitnessValue = fitnessValue;
