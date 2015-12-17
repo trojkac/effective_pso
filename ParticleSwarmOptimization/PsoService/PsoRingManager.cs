@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Common;
 
@@ -12,30 +13,44 @@ namespace PsoService
         public PsoRingManager()
         {
         }
-		
 
-        /// <summary>
-        /// Updates PSO neighborhood depending on the nodes network topology.
-        /// PsoRingManager creates ring topology for PSO where left neighbor
-        ///  to the current node is its predecessor and right neighbor is its 
-        /// successor. For details of nodes topology see
-        ///  https://ccl.northwestern.edu/papers/2005/ShakerReevesP2P.pdf
-        /// </summary>
-        /// <param name="allNetworkNodes">All nodes </param>
-        /// <param name="currentNetworkNode">Current node info</param>
-        public void UpdatePsoNeighborhood(NetworkNodeInfo[] allNetworkNodes, NetworkNodeInfo currentNetworkNode)
+        public void UpdatePsoNeighborhood(Tuple<NetworkNodeInfo, Uri[]>[] allNetworkNodes,
+            NetworkNodeInfo currentNetworkNode)
         {
-
-            //TODO: Finish ring creation, check if left or right changed, update left and right
-            var directNeighbours = allNetworkNodes.OrderBy(node => node.Distance(currentNetworkNode)).Take(2).ToArray();
-            if (directNeighbours[0] - currentNetworkNode < 0)
+            //do nothing if there is only current network in collection
+            if (allNetworkNodes.Length <= 1)
+                return;
+            var nodes = allNetworkNodes.OrderBy(t => t.Item1.Id).ToArray();
+            Tuple<NetworkNodeInfo, Uri[]> previous = null, next = null;
+            for (int index = 0; index < nodes.Length; index++)
             {
+                var node = nodes[index];
+                if (node.Item1.Id != currentNetworkNode.Id) continue;
 
+                previous = nodes[(index - 1 + nodes.Length) % nodes.Length];
+                next = nodes[(index + 1) % nodes.Length];
+                break;
             }
-            else
+            if (previous == null || next == null)
             {
-
+                throw new ArgumentException("allNetworkNodes should include this node itself");
             }
+            if (previous.Item1.Id != _left.Item1.Id || !previous.Item2.Contains(_left.Item2.RemoteAddress))
+            {
+                _left.Item2.UpdateRemoteAddress(previous.Item2[0]);
+            }
+            if (next.Item1.Id != _right.Item1.Id || !next.Item2.Contains(_right.Item2.RemoteAddress))
+            {
+                _right.Item2.UpdateRemoteAddress(next.Item2[next.Item2.Length - 1]);
+            }
+        }
+
+        public Uri[] GetProxyParticlesAddresses()
+        {
+            var uris = new List<Uri>();
+            if (_left != null) uris.Add(_left.Item2.Address);
+            if (_right != null) uris.Add(_right.Item2.Address);
+            return uris.ToArray();
         }
     }
 }

@@ -1,5 +1,7 @@
+using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using Common;
 
 namespace PsoService
@@ -14,6 +16,7 @@ namespace PsoService
             : base(binding,address)
         {
         }
+
         public ParticleState GetBestState()
         {
             return base.Channel.GetBestState();

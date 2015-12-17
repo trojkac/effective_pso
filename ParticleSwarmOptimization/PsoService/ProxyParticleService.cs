@@ -1,5 +1,7 @@
 
 using System;
+using System.Linq;
+using System.Net.Sockets;
 using System.ServiceModel;
 using Common;
 
@@ -9,23 +11,33 @@ namespace PsoService
     public class ProxyParticleService : IParticleService
     {
         private static int _counter = 1;
-       
+
         private IParticleService _particleClient;
         private ParticleState _bestKnownState;
         private ServiceHost _host;
         public int Id { get; private set; }
 
+        public Uri Address
+        {
+            get { return _host.BaseAddresses.First(); }
+        }
+
+        public Uri RemoteAddress { get; private set; }
+
+
         private ProxyParticleService(string remoteNeighborAddress)
         {
             _bestKnownState = new ParticleState(new[] { 0.0 }, double.PositiveInfinity);
             _particleClient = new ParticleServiceClient("particleProxyClientTcp", remoteNeighborAddress);
+            RemoteAddress = new Uri(remoteNeighborAddress);
             Id = _counter++;
         }
+
 
         public static ProxyParticleService CreateProxyParticle(string remoteAddress,int nodeId)
         {
             var particle = new ProxyParticleService(remoteAddress);
-            particle._host = new ServiceHost(particle, new Uri(String.Format("net.tcp://localhost/{0}/particle/",nodeId)));
+            particle._host = new ServiceHost(particle, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}",PortFinder.FreeTcpPort(),nodeId,particle.Id)));
             return particle;
         }
 
@@ -68,6 +80,10 @@ namespace PsoService
         {
             _bestKnownState = state;
         }
-        
+
+        public void UpdateRemoteAddress(Uri address)
+        {
+            _particleClient = new ParticleServiceClient("particleProxyClientTcp", address.ToString());
+        }
     }
 }
