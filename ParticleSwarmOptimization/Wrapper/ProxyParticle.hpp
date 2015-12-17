@@ -1,56 +1,19 @@
-#include "PsoAlgorithm\Particle.hpp"
 #include <msclr\auto_gcroot.h>
+#include <functional>
 #include "Particle.hpp"
+#include "PsoAlgorithm\Particle.hpp"
+#include "WrapperHelper.hpp"
 
-using namespace System;
-using namespace System::Collections::Generic;
-using namespace System::Runtime::InteropServices;
-using namespace Common;
-//managed
-namespace ParticleSwarmOptimizationWrapper
-{
-	public ref class ProxyParticle : ParticleSwarmOptimizationWrapper::Particle
-	{
-		ParticleSwarmOptimization::ProxyParticle* _nativeParticle;
-
-	public:
-		ProxyParticle(int n, Node::ProxyParticleService^ service)
-		{
-			ParticleSwarmOptimization::ProxyParticleBox* box = new ParticleSwarmOptimization::ProxyParticleBox(service);
-			_nativeParticle = new ParticleSwarmOptimization::ProxyParticle(n, box);
-			_nativeParticle->init_location();
-			_nativeParticle->init_velocity();
-		};
-
-		ParticleSwarmOptimization::Particle* nativeParticle() override
-		{
-			return _nativeParticle;
-		};
-	};
-}
 //native
 namespace ParticleSwarmOptimization
 {
-	std::tuple<std::vector<double>, double> particle_state_to_tuple(ParticleState^ src)
-	{
-		pin_ptr<double> x = &(src->Location[0]);
-		auto v = std::vector<double>();
-		v.assign(x, x + src->Location->Length);
-		return std::make_tuple(v, src->FitnessValue);
 
-	}
-	ParticleState^ tuple_to_particle_state(std::tuple<std::vector<double>, double> src)
-	{
-		array<double> ^vals = gcnew array<double>(std::get<0>(src).size());
-		Marshal::Copy(IntPtr((void*)std::get<0>(src).data()), vals, 0, std::get<0>(src).size());
-		return gcnew ParticleState(vals, std::get<1>(src));
-	}
 	class ProxyParticleBox
 	{
 	public:
-		msclr::auto_gcroot<Node::ProxyParticleService^> proxyService;
+		msclr::auto_gcroot<PsoService::ProxyParticleService^> proxyService;
 
-		ProxyParticleBox(Node::ProxyParticleService^ proxy) :
+		ProxyParticleBox(PsoService::ProxyParticleService^ proxy) :
 			proxyService(proxy)
 		{
 		}
@@ -60,9 +23,6 @@ namespace ParticleSwarmOptimization
 			auto remote_best = proxyService->GetBestState();
 
 		}
-
-
-
 	};
 
 	class ProxyParticle : public  ParticleSwarmOptimization::Particle

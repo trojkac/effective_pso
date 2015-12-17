@@ -50,7 +50,10 @@ namespace Common
         [DataMember]
         public double Epsilon;
 
-
-
+        /// <summary>
+        /// Number of dimensions
+        /// </summary>
+        [DataMember]
+        public int Dimensions;
     }
 }

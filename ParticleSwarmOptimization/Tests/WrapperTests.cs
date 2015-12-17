@@ -26,7 +26,7 @@ namespace Tests
             }
             var result = algorithm.Run(particles);
 
-            Assert.AreEqual(1.0, result.Item2, .1);
+            Assert.AreEqual(1.0, result.FitnessValue, .1);
         }
         [TestMethod]
         public void RunAlgorithmWithTargetValue()
@@ -45,7 +45,7 @@ namespace Tests
             }
             var result = algorithm.Run(particles);
 
-            Assert.AreEqual(1.0, result.Item2, .1);
+            Assert.AreEqual(1.0, result.FitnessValue, .1);
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace Tests
             }
             var result = algorithm.Run(particles);
 
-            Assert.AreEqual(1.0, result.Item2, .1);
+            Assert.AreEqual(1.0, result.FitnessValue, .1);
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace Tests
             }
             var result = algorithm.Run(particles);
 
-            Assert.AreEqual(1.0, result.Item2, .1);
+            Assert.AreEqual(1.0, result.FitnessValue, .1);
         }
     }
 }

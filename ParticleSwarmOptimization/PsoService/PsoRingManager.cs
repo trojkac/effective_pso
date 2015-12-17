@@ -9,11 +9,13 @@ namespace PsoService
     {
         private Tuple<NetworkNodeInfo, ProxyParticleService> _left;
         private Tuple<NetworkNodeInfo, ProxyParticleService> _right;
+        public PsoSettings PsoSettings;
 
-        public PsoRingManager()
+        public PsoRingManager(int nodeId)
         {
+            _left = new Tuple<NetworkNodeInfo, ProxyParticleService>(null,ProxyParticleService.CreateProxyParticle(nodeId));
+            _right = new Tuple<NetworkNodeInfo, ProxyParticleService>(null,ProxyParticleService.CreateProxyParticle(nodeId));
         }
-
         public void UpdatePsoNeighborhood(Tuple<NetworkNodeInfo, Uri[]>[] allNetworkNodes,
             NetworkNodeInfo currentNetworkNode)
         {
@@ -35,11 +37,11 @@ namespace PsoService
             {
                 throw new ArgumentException("allNetworkNodes should include this node itself");
             }
-            if (previous.Item1.Id != _left.Item1.Id || !previous.Item2.Contains(_left.Item2.RemoteAddress))
+            if (_left.Item1 ==null || previous.Item1.Id != _left.Item1.Id || !previous.Item2.Contains(_left.Item2.RemoteAddress))
             {
                 _left.Item2.UpdateRemoteAddress(previous.Item2[0]);
             }
-            if (next.Item1.Id != _right.Item1.Id || !next.Item2.Contains(_right.Item2.RemoteAddress))
+            if (_right.Item1 == null || next.Item1.Id != _right.Item1.Id || !next.Item2.Contains(_right.Item2.RemoteAddress))
             {
                 _right.Item2.UpdateRemoteAddress(next.Item2[next.Item2.Length - 1]);
             }
@@ -51,6 +53,16 @@ namespace PsoService
             if (_left != null) uris.Add(_left.Item2.Address);
             if (_right != null) uris.Add(_right.Item2.Address);
             return uris.ToArray();
+        }
+
+        public PsoSettings CurrentProblem()
+        {
+            return PsoSettings;
+        }
+
+        public ParticleState Run(FitnessFunction fitnessFunction, PsoSettings psoSettings)
+        {
+            throw new NotImplementedException();
         }
     }
 }

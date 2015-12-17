@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller.cs" />
     <Compile Include="IPsoController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -47,6 +48,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PsoService\PsoService.csproj">
+      <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
+      <Name>PsoService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Wrapper\Wrapper.vcxproj">
       <Project>{3a8a6019-ebcb-4626-8e2e-165e69c37c05}</Project>
