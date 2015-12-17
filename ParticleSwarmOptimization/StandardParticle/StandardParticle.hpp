@@ -5,27 +5,26 @@
 #include <algorithm>
 #include <random>
 
-
 using namespace ParticleSwarmOptimization;
 
 namespace ParticleSwarmOptimization {
 
 	class StandardParticle : public Particle {
 	public:
-		StandardParticle(int dimensions) : dimensions_(dimensions)
+	    explicit StandardParticle(int dimensions) : dimensions_(dimensions)
 		{
-			personal_best_ = std::make_tuple(std::vector<double>(2), -std::numeric_limits<double>::infinity());
+			personal_best_ = make_tuple(std::vector<double>(2), -std::numeric_limits<double>::infinity());
 		}
 
-		void init_location()
+		void init_location() override
 		{
 			std::vector<double> location(dimensions_);
 			// this probably should go to static field or we should create ParticlesFactory responsible 
 			// for generating particles with proper distribution of location and in specific limits
 			std::uniform_real_distribution<float> distribution(0.0f, 10.0f); 
 			std::mt19937 engine; // Mersenne twister MT19937
-			auto generator = std::bind(distribution, engine);
-			std::generate(location.begin(), location.end(), generator);
+			auto generator = bind(distribution, engine);
+			generate(location.begin(), location.end(), generator); 
 			// to remove after improving generation logic
 			if (bounds_.size() == dimensions_) {
 				transform(location.begin(), location.end(), bounds_.begin(), location.begin(), &clamp);
@@ -33,24 +32,24 @@ namespace ParticleSwarmOptimization {
 			location_ = location;
 		}
 
-		void init_velocity()
+		void init_velocity() override
 		{
 			std::vector<double> velocity(dimensions_);
 			std::uniform_real_distribution<float> distribution(0.0f, 2.0f); //Values between 0 and 2
 			std::mt19937 engine; // Mersenne twister MT19937
 			auto generator = std::bind(distribution, engine);
-			std::generate(velocity.begin(), velocity.end(), generator);
+			generate(velocity.begin(), velocity.end(), generator);
 			velocity_ = velocity;
 		}
 
-		std::tuple<std::vector<double>, double> update_personal_best(std::function<double(std::vector<double>)> function)
+		std::tuple<std::vector<double>, double> update_personal_best(std::function<double(std::vector<double>)> function) override
 		{
 			auto value = function(location_);
 			return std::get<1>(personal_best_) < value ?
-				(personal_best_ = std::make_tuple(location_, value)) : personal_best_;
+				(personal_best_ = make_tuple(location_, value)) : personal_best_;
 		}
 
-		void update_neighborhood(std::vector<Particle*> all_particles)
+		void update_neighborhood(std::vector<Particle*> all_particles) override
 		{
 			if (neighborhood_.size() <= 0 )
 			{
@@ -58,7 +57,7 @@ namespace ParticleSwarmOptimization {
 			}
 		}
 
-		void update_velocity()
+		void update_velocity() override
 		{
 			std::tuple<std::vector<double>, double> global_best = personal_best_;
 
@@ -71,10 +70,10 @@ namespace ParticleSwarmOptimization {
 			std::vector<double> to_personal_best(dimensions_);
 			std::vector<double> to_global_best(dimensions_);
 
-			std::transform(std::get<0>(personal_best_).begin(), std::get<0>(personal_best_).end(), 
+			transform(std::get<0>(personal_best_).begin(), std::get<0>(personal_best_).end(), 
 				location_.begin(), to_personal_best.begin(), std::minus<double>());
 
-			std::transform(std::get<0>(global_best).begin(), std::get<0>(global_best).end(), location_.begin(), to_global_best.begin(),
+			transform(std::get<0>(global_best).begin(), std::get<0>(global_best).end(), location_.begin(), to_global_best.begin(),
 				std::minus<double>());
 
 			std::random_device rd;
@@ -83,17 +82,17 @@ namespace ParticleSwarmOptimization {
 			double phi1 = uniform_dist(e1);
 			double phi2 = uniform_dist(e1);
 
-			std::transform(to_personal_best.begin(), to_personal_best.end(), to_personal_best.begin(),
-				std::bind1st(std::multiplies<double>(), phi1));
+			transform(to_personal_best.begin(), to_personal_best.end(), to_personal_best.begin(),
+				bind1st(std::multiplies<double>(), phi1));
 
-			std::transform(to_global_best.begin(), to_global_best.end(), to_global_best.begin(),
-				std::bind1st(std::multiplies<double>(), phi2));
+			transform(to_global_best.begin(), to_global_best.end(), to_global_best.begin(),
+				bind1st(std::multiplies<double>(), phi2));
 
-			std::transform(velocity_.begin(), velocity_.end(), to_global_best.begin(), velocity_.begin(), std::plus<double>());
-			std::transform(velocity_.begin(), velocity_.end(), to_personal_best.begin(), velocity_.begin(), std::plus<double>());
+			transform(velocity_.begin(), velocity_.end(), to_global_best.begin(), velocity_.begin(), std::plus<double>());
+			transform(velocity_.begin(), velocity_.end(), to_personal_best.begin(), velocity_.begin(), std::plus<double>());
 		}
 
-		void translate()
+		void translate() override
 		{
 			transform(location_.begin(), location_.end(), velocity_.begin(),
 				location_.begin(), std::plus<double>());
