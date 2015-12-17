@@ -14,8 +14,8 @@ namespace Tests
         [TestMethod]
         public void TestMethod1()
         {
-            Uri uri1 = new Uri("net.tcp://localhost:1234");
-            Uri uri2 = new Uri("net.tcp://localhost:1235");
+            Uri uri1 = new Uri("net.tcp://localhost:7777");
+            Uri uri2 = new Uri("net.tcp://localhost:7778");
 
             EndpointAddress endpointAddress1 = new EndpointAddress(uri1);
             EndpointAddress endpointAddress2 = new EndpointAddress(uri2);
@@ -27,6 +27,7 @@ namespace Tests
             var node2 = new Node.Node(bootstrap, endpointAddress2);
 
             node1.StartNodeService();
+            Debug.WriteLine("node1.StartNodeService()");
             node2.StartNodeService();
 
             Console.ReadKey();

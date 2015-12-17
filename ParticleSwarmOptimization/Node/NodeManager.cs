@@ -31,8 +31,6 @@ namespace Node
                 String relativeAddress = "NodeService";
                 _serviceHost.AddServiceEndpoint(typeof(INodeService), binding, relativeAddress);
 
-                //do we have to configure metadata exchange here?
-
                 //starting service
                 Debug.WriteLine("Otwieram serwer pod adresem: " + NodeService.MyInfo.Address + relativeAddress);
                 _serviceHost.Open();

@@ -105,9 +105,13 @@ namespace Node
 
             _s = r < BootstrappingPeers.Count ? BootstrappingPeers.ElementAt(r) : _neighbors[0];
 
-            NodeServiceClient nodeServiceClient = new NodeServiceClient(_s);
-            nodeServiceClient = new NodeServiceClient(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:8733"));
-            nodeServiceClient.CloserPeerSearch(MyInfo);
+            ChannelFactory<INodeService> myChannelFactory = new ChannelFactory<INodeService>(new NetTcpBinding(), _s.Address);
+
+            INodeService client = myChannelFactory.CreateChannel();
+            client.CloserPeerSearch(MyInfo);
+
+            //NodeServiceClient nodeServiceClient = new NodeServiceClient(_s);
+            //nodeServiceClient.CloserPeerSearch(MyInfo);
         }
 
         public void A5()
@@ -116,8 +120,13 @@ namespace Node
 
             for (int i = 0; i < _neighbors.Count; ++i)
             {
-                NodeServiceClient nodeServiceClient = new NodeServiceClient(_neighbors[i]);
-                nodeServiceClient.GetNeighbor(MyInfo, i);
+                ChannelFactory<INodeService> myChannelFactory = new ChannelFactory<INodeService>(new NetTcpBinding(), _neighbors[i].Address);
+
+                INodeService client = myChannelFactory.CreateChannel();
+                client.GetNeighbor(MyInfo, i);
+
+                //NodeServiceClient nodeServiceClient = new NodeServiceClient(_neighbors[i]);
+                //nodeServiceClient.GetNeighbor(MyInfo, i);
             }
         }
 

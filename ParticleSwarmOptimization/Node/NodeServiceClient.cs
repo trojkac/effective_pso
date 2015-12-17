@@ -1,5 +1,6 @@
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using Common;
 
 namespace Node
@@ -21,12 +22,12 @@ namespace Node
         }
 
         public NodeServiceClient(string endpointConfigurationName, EndpointAddress remoteAddress)
-            : base(endpointConfigurationName, remoteAddress)
+            : base(endpointConfigurationName, new EndpointAddress(remoteAddress.Uri))
         {
         }
 
-        public NodeServiceClient(Binding binding, EndpointAddress remotAddress)
-            : base(binding, remotAddress)
+        public NodeServiceClient(Binding binding, EndpointAddress remoteAddress)
+            : base(binding, new EndpointAddress(remoteAddress.Uri))
         {
         }
 
