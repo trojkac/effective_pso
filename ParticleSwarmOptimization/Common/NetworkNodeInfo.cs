@@ -14,7 +14,7 @@ namespace Common
         public int Id;
 
         [DataMember]
-        public EndpointAddress Address;
+        public EndpointAddress Address;  //base address in most (all?) cases
 
         public NetworkNodeInfo(EndpointAddress endpointAddress)
         {

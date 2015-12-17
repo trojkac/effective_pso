@@ -1,5 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.Threading;
 
 namespace Node
@@ -17,14 +20,30 @@ namespace Node
             NodeService = nodeService;
         }
 
-        public void StartNodeService()  //wystartowany NodeService nie jest tym z pola klasy NodeManager
+        public void StartNodeService()
         {
-            _serviceHost = new ServiceHost(NodeService,NodeService.MyInfo.Address.Uri);
+            _serviceHost = new ServiceHost(NodeService, NodeService.MyInfo.Address.Uri);
 
-            _serviceHost.Open();
+            try
+            {
+                //adding service endpoint
+                Binding binding = new NetTcpBinding();
+                String relativeAddress = "NodeService";
+                _serviceHost.AddServiceEndpoint(typeof(INodeService), binding, relativeAddress);
 
-            TimerCallback timerCallback = RunP2PAlgorithm;
-            _timer = new Timer(timerCallback, null, Miliseconds, Timeout.Infinite);
+                //do we have to configure metadata exchange here?
+
+                //starting service
+                Debug.WriteLine("Otwieram serwer pod adresem: " + NodeService.MyInfo.Address + relativeAddress);
+                _serviceHost.Open();
+
+                TimerCallback timerCallback = RunP2PAlgorithm;
+                _timer = new Timer(timerCallback, null, Miliseconds, Timeout.Infinite);
+            }
+            catch (CommunicationException ce)
+            {
+                _serviceHost.Abort();
+            }
         }
 
         public void RunP2PAlgorithm(Object stateInfo)
@@ -48,6 +67,7 @@ namespace Node
 
         public void CloseNodeService()
         {
+            Debug.WriteLine("Zamykam serwer pod adresem: " + NodeService.MyInfo.Address);
             _serviceHost.Close();
         }
     }

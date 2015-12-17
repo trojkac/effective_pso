@@ -37,7 +37,7 @@ namespace Node
         }
 
         public void CloseNodeService()
-        {           
+        {
             NodeManager.CloseNodeService();
         }
 

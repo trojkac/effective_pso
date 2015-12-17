@@ -31,36 +31,33 @@ namespace Node
         private readonly List<NetworkNodeInfo> _neighbors;
         //Gamma   //czy nie trzeba uważać na przypadek, gdy to jest puste?
 
-        public NodeService() { }
+        public NodeService()
+        {
+            _peers = new HashSet<NetworkNodeInfo>();
+            _searchMonitorNodes = new HashSet<NetworkNodeInfo>();
+            _closerPeerSearchNodes = new HashSet<NetworkNodeInfo>();
+            _neighbors = new List<NetworkNodeInfo>();
+        }
 
         public NodeService(EndpointAddress endpointAddress)
+            : this()
         {
             MyInfo = new NetworkNodeInfo(endpointAddress);
             BootstrappingPeers = new HashSet<NetworkNodeInfo>();
-            _peers = new HashSet<NetworkNodeInfo>();
-            _searchMonitorNodes = new HashSet<NetworkNodeInfo>();
-            _closerPeerSearchNodes = new HashSet<NetworkNodeInfo>();
-            _neighbors = new List<NetworkNodeInfo>();
         }
 
         public NodeService(HashSet<NetworkNodeInfo> bootstrap, EndpointAddress endpointAddress)
+            : this()
         {
             BootstrappingPeers = bootstrap;
             MyInfo = new NetworkNodeInfo(endpointAddress);
-            _peers = new HashSet<NetworkNodeInfo>();
-            _searchMonitorNodes = new HashSet<NetworkNodeInfo>();
-            _closerPeerSearchNodes = new HashSet<NetworkNodeInfo>();
-            _neighbors = new List<NetworkNodeInfo>();
         }
 
         public NodeService(HashSet<NetworkNodeInfo> bootstrap, NetworkNodeInfo myInfo)
+            : this()
         {
             BootstrappingPeers = bootstrap;
             MyInfo = myInfo;
-            _peers = new HashSet<NetworkNodeInfo>();
-            _searchMonitorNodes = new HashSet<NetworkNodeInfo>();
-            _closerPeerSearchNodes = new HashSet<NetworkNodeInfo>();
-            _neighbors = new List<NetworkNodeInfo>();
         }
 
         public NetworkNodeInfo GetClosestNeighbor(NetworkNodeInfo x)  //what if it returns null?
@@ -80,7 +77,7 @@ namespace Node
 
         public void A1()
         {
-            Debug.WriteLine("NodeService o adresie: " + MyInfo.Address + " wyoknuje A1()");
+            Debug.WriteLine("NodeService o adresie: " + MyInfo.Address + " wykonuje A1()");
 
             if (_s != null) _peers.Add(_s);
             _peers.UnionWith(_closerPeerSearchNodes);
@@ -97,7 +94,7 @@ namespace Node
 
         public void A2()
         {
-            Debug.WriteLine("NodeService o adresie: " + MyInfo.Address + " wyoknuje A2()");
+            Debug.WriteLine("NodeService o adresie: " + MyInfo.Address + " wykonuje A2()");
 
             Random random = new Random(); //do klasy?
             int r = random.Next(0, _neighbors.Count > 0 ? BootstrappingPeers.Count + 1 : BootstrappingPeers.Count);
@@ -109,12 +106,13 @@ namespace Node
             _s = r < BootstrappingPeers.Count ? BootstrappingPeers.ElementAt(r) : _neighbors[0];
 
             NodeServiceClient nodeServiceClient = new NodeServiceClient(_s);
+            nodeServiceClient = new NodeServiceClient(new NetTcpBinding(), new EndpointAddress("net.tcp://localhost:8733"));
             nodeServiceClient.CloserPeerSearch(MyInfo);
         }
 
         public void A5()
         {
-            Debug.WriteLine("NodeService o adresie: " + MyInfo.Address + " wyoknuje A5()");
+            Debug.WriteLine("NodeService o adresie: " + MyInfo.Address + " wykonuje A5()");
 
             for (int i = 0; i < _neighbors.Count; ++i)
             {
