@@ -2,6 +2,12 @@
 
 #pragma once
 
+#ifdef DEBUG
+#define SEED(x) 100
+#else
+#define SEED(x) x
+#endif
+
 #include <algorithm>
 #include <functional>
 #include <vector>
@@ -23,7 +29,7 @@ namespace CppUtils {
         {
             std::uniform_real_distribution<float> distribution(min, max);
             std::random_device rd;
-            std::default_random_engine e(rd());
+            std::default_random_engine e(SEED(rd()));
 
             return distribution(e);
         }
@@ -33,9 +39,10 @@ namespace CppUtils {
             auto result = std::vector<double>();
 
             std::uniform_real_distribution<float> distribution(min, max);
-            std::mt19937 engine;
+            std::random_device rd;
+            std::default_random_engine engine(SEED(rd()));
             auto generator = bind(distribution, engine);
-            generate(result.begin(), result.end(), generator);
+            std::generate(result.begin(), result.end(), generator);
 
             return result;
         }
