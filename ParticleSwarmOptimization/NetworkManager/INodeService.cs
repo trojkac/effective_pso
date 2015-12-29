@@ -1,7 +1,7 @@
-﻿using System.ServiceModel;
+using System.ServiceModel;
 using Common;
 
-namespace Node
+namespace NetworkManager
 {
     [ServiceContract]
     public interface INodeService

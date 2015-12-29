@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NetworkNodeInfo.cs" />
     <Compile Include="ParticleState.cs" />
     <Compile Include="PortFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
