@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using System.ServiceModel;
 
 namespace NetworkManager
 {
     [DataContract]
     public class NetworkNodeInfo : IComparable<NetworkNodeInfo>
     {
+        [DataMember]
         private const int M = 100;
         private static int _lowestAvailableId;
 
@@ -14,10 +14,10 @@ namespace NetworkManager
         public int Id;
 
         [DataMember]
-        public EndpointAddress TcpAddress;
+        public string TcpAddress;
 
         [DataMember]
-        public EndpointAddress PipeAddress;
+        public string PipeAddress;
 
         public NetworkNodeInfo()
         {
@@ -27,8 +27,8 @@ namespace NetworkManager
         public NetworkNodeInfo(string tcpAddress, string pipeAddress)
             : this()
         {
-            TcpAddress = new EndpointAddress(tcpAddress);
-            PipeAddress = new EndpointAddress(pipeAddress);
+            TcpAddress = tcpAddress;
+            PipeAddress = pipeAddress;
         }
 
         public NetworkNodeInfo(int id, string tcpAddress, string pipeAddress)
@@ -37,8 +37,8 @@ namespace NetworkManager
                 throw new ArgumentOutOfRangeException(String.Format("Id should be a value between 0 and {0}", M - 1));
 
             Id = id;
-            TcpAddress = new EndpointAddress(tcpAddress);
-            PipeAddress = new EndpointAddress(pipeAddress);
+            TcpAddress = tcpAddress;
+            PipeAddress = pipeAddress;
         }
 
         public int Distance(NetworkNodeInfo from)  //d(from.Id, Id)

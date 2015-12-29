@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
-using Common;
 
 namespace NetworkManager
 {
@@ -105,7 +102,7 @@ namespace NetworkManager
 
         public void A1()
         {
-            //Debug.WriteLine("NodeService o adresie: " + Info.EndpointAddress + " wykonuje A1()");
+            Debug.WriteLine("NodeService o adresie: " + Info.TcpAddress + " wykonuje A1()");
 
             if (_s != null) _peers.Add(_s);
             _peers.UnionWith(_closerPeerSearchNodes);
@@ -122,7 +119,7 @@ namespace NetworkManager
 
         public void A2()
         {
-            //Debug.WriteLine("NodeService o adresie: " + Info.EndpointAddress + " wykonuje A2()");
+            Debug.WriteLine("NodeService o adresie: " + Info.TcpAddress + " wykonuje A2()");
 
             Random random = new Random(); //do klasy?
             int r = random.Next(0, _neighbors.Count > 0 ? BootstrappingPeers.Count + 1 : BootstrappingPeers.Count);
@@ -144,7 +141,7 @@ namespace NetworkManager
 
         public void A5()
         {
-            //Debug.WriteLine("NodeService o adresie: " + Info.EndpointAddress + " wykonuje A5()");
+            Debug.WriteLine("NodeService o adresie: " + Info.TcpAddress + " wykonuje A5()");
 
             for (int i = 0; i < _neighbors.Count; ++i)
             {
@@ -160,31 +157,38 @@ namespace NetworkManager
 
         public void CloserPeerSearch(NetworkNodeInfo source) //A3
         {
-            //Debug.WriteLine("NodeService o adresie: " + source.EndpointAddress + " wywołuje A3() na serwisie o adresie: " + Info.EndpointAddress);
+            Debug.WriteLine("NodeService o adresie: " + source.TcpAddress + " wywołuje A3() na serwisie o adresie: " + Info.TcpAddress);
 
-            if (NetworkNodeInfo.Distance(Info, source) < _neighbors.Min(n => NetworkNodeInfo.Distance(n, source)))
+            if (_neighbors.Count == 0)
             {
-                _searchMonitorNodes.Add(source);
-                NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(source.TcpAddress);
-                nodeServiceClient.SuccessorCandidate(_neighbors[0]);
+                return;
             }
             else
             {
-                NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(GetClosestNeighbor(source).TcpAddress);
-                nodeServiceClient.CloserPeerSearch(source);
+                if (NetworkNodeInfo.Distance(Info, source) < _neighbors.Min(n => NetworkNodeInfo.Distance(n, source)))
+                {
+                    _searchMonitorNodes.Add(source);
+                    NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(source.TcpAddress);
+                    nodeServiceClient.SuccessorCandidate(_neighbors[0]);
+                }
+                else
+                {
+                    NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(GetClosestNeighbor(source).TcpAddress);
+                    nodeServiceClient.CloserPeerSearch(source);
+                }
             }
         }
 
         public void SuccessorCandidate(NetworkNodeInfo candidate) //A4
         {
-            //Debug.WriteLine("NodeService o adresie: " + candidate.EndpointAddress + " wywołuje A4() na serwisie o adresie: " + Info.EndpointAddress);
+            Debug.WriteLine("NodeService o adresie: " + candidate.TcpAddress + " wywołuje A4() na serwisie o adresie: " + Info.TcpAddress);
 
             _closerPeerSearchNodes.Add(candidate);
         }
 
         public void GetNeighbor(NetworkNodeInfo from, int j) //A6
         {
-            //Debug.WriteLine("NodeService o adresie: " + from.EndpointAddress + " wywołuje A3() na serwisie o adresie: " + Info.EndpointAddress);
+            Debug.WriteLine("NodeService o adresie: " + from.TcpAddress + " wywołuje A3() na serwisie o adresie: " + Info.TcpAddress);
 
             if (_neighbors.Count > j)
             {
@@ -195,7 +199,7 @@ namespace NetworkManager
 
         public void UpdateNeighbor(NetworkNodeInfo newNeighbor, int c) //A7
         {
-            //Debug.WriteLine("NodeService o adresie: " + newNeighbor.EndpointAddress + " wywołuje A7() na serwisie o adresie: " + Info.EndpointAddress);
+            Debug.WriteLine("NodeService o adresie: " + newNeighbor.TcpAddress + " wywołuje A7() na serwisie o adresie: " + Info.TcpAddress);
 
             if (NetworkNodeInfo.Distance(_neighbors[c], newNeighbor) <
                 NetworkNodeInfo.Distance(_neighbors[c], Info)) //is it ok?

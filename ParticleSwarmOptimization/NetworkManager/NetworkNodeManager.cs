@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace NetworkManager
 {
     public class NetworkNodeManager
     {
-        private const int Miliseconds = 3000;
+        private const int Miliseconds = 8000;
         private Timer _timer;
 
         public NodeService NodeService { get; set; }
@@ -41,14 +38,14 @@ namespace NetworkManager
 
         public NetworkNodeManager()
         {
-            NodeService = new NodeService(_tcpPort,_pipeName);
+            NodeService = new NodeService(_tcpPort, _pipeName);
         }
 
         public NetworkNodeManager(int tcpPort, string pipeName)
-            : this()
         {
             _tcpPort = tcpPort;
             _pipeName = pipeName;
+            NodeService = new NodeService(_tcpPort, _pipeName);
         }
 
         public void StartTcpNodeService()

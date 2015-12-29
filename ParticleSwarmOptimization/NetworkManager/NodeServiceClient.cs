@@ -1,6 +1,5 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Channels;
-using Common;
 
 namespace NetworkManager
 {
