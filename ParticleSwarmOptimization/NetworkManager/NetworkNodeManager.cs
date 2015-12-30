@@ -10,7 +10,7 @@ namespace NetworkManager
 {
     public class NetworkNodeManager
     {
-        private const int Miliseconds = 8000;
+        private const int Miliseconds = 500;
         private Timer _timer;
 
         public NodeService NodeService { get; set; }

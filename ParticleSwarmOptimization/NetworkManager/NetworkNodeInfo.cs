@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace NetworkManager
 {
     [DataContract]
-    public class NetworkNodeInfo : IComparable<NetworkNodeInfo>
+    public class NetworkNodeInfo : IComparable<NetworkNodeInfo>, IEquatable<NetworkNodeInfo>
     {
         [DataMember]
         private const int M = 100;
@@ -69,6 +69,16 @@ namespace NetworkManager
         public int CompareTo(NetworkNodeInfo obj)
         {
             return Id - obj.Id;
+        }
+
+        public bool Equals(NetworkNodeInfo other)
+        {
+            return TcpAddress.Equals(other.TcpAddress) && PipeAddress.Equals(other.PipeAddress);
+        }
+
+        public override int GetHashCode()
+        {
+            return (TcpAddress + PipeAddress).GetHashCode();
         }
     }
 }

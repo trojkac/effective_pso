@@ -9,6 +9,8 @@ namespace NetworkManager
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class NodeService : INodeService
     {
+        private System.Object _lockObject = new System.Object();
+
         public NetworkNodeInfo Info { get; set; }
 
         //CONST
@@ -49,27 +51,6 @@ namespace NetworkManager
             Info = new NetworkNodeInfo(tcpAddress, pipeAddress);
         }
 
-        //public NodeService(EndpointAddress endpointAddress)
-        //    : this()
-        //{
-        //    Info = new NetworkNodeInfo(endpointAddress);
-        //    BootstrappingPeers = new HashSet<NetworkNodeInfo>();
-        //}
-
-        //public NodeService(HashSet<NetworkNodeInfo> bootstrap, EndpointAddress endpointAddress)
-        //    : this()
-        //{
-        //    BootstrappingPeers = bootstrap;
-        //    Info = new NetworkNodeInfo(endpointAddress);
-        //}
-
-        //public NodeService(HashSet<NetworkNodeInfo> bootstrap, NetworkNodeInfo info)
-        //    : this()
-        //{
-        //    BootstrappingPeers = bootstrap;
-        //    Info = info;
-        //}
-
         public List<NetworkNodeInfo> GetNeighbors()
         {
             return _neighbors;
@@ -89,6 +70,7 @@ namespace NetworkManager
         {
             int minDistance = Int32.MaxValue;
             NetworkNodeInfo closestNeighbor = null;
+
             foreach (NetworkNodeInfo nodeInfo in _neighbors)
             {
                 if (NetworkNodeInfo.Distance(nodeInfo, x) < minDistance)
@@ -97,6 +79,7 @@ namespace NetworkManager
                     closestNeighbor = nodeInfo;
                 }
             }
+
             return closestNeighbor;
         }
 
@@ -104,54 +87,54 @@ namespace NetworkManager
         {
             Debug.WriteLine("NodeService o adresie: " + Info.TcpAddress + " wykonuje A1()");
 
-            if (_s != null) _peers.Add(_s);
-            _peers.UnionWith(_closerPeerSearchNodes);
-            _peers.UnionWith(_searchMonitorNodes);
-            _peers.UnionWith(_neighbors);
-
-            if (GetClosestNeighbor(Info) != null)
+            lock (_lockObject)
             {
-                _neighbors.Insert(0, GetClosestNeighbor(Info));
+                if (_s != null) _peers.Add(_s);
+                _peers.UnionWith(_closerPeerSearchNodes);
+                _peers.UnionWith(_searchMonitorNodes);
+                _peers.UnionWith(_neighbors);
+
+
+                if (GetClosestNeighbor(Info) != null)
+                {
+                    _neighbors.Insert(0, GetClosestNeighbor(Info));
+                }
+                _searchMonitorNodes.Clear();
+                _closerPeerSearchNodes.Clear();
             }
-            _searchMonitorNodes.Clear();
-            _closerPeerSearchNodes.Clear();
         }
 
         public void A2()
         {
             Debug.WriteLine("NodeService o adresie: " + Info.TcpAddress + " wykonuje A2()");
 
-            Random random = new Random(); //do klasy?
-            int r = random.Next(0, _neighbors.Count > 0 ? BootstrappingPeers.Count + 1 : BootstrappingPeers.Count);
-            if (_neighbors.Count == 0 && BootstrappingPeers.Count == 0)
+            lock (_lockObject)
             {
-                return;
+                Random random = new Random(); //do klasy?
+                int r = random.Next(0, _neighbors.Count > 0 ? BootstrappingPeers.Count + 1 : BootstrappingPeers.Count);
+                if (_neighbors.Count == 0 && BootstrappingPeers.Count == 0)
+                {
+                    return;
+                }
+
+                _s = r < BootstrappingPeers.Count ? BootstrappingPeers.ElementAt(r) : _neighbors[0];
+
+                NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(_s.TcpAddress);
+                nodeServiceClient.CloserPeerSearch(Info);
             }
-
-            _s = r < BootstrappingPeers.Count ? BootstrappingPeers.ElementAt(r) : _neighbors[0];
-
-            //ChannelFactory<INodeService> myChannelFactory = new ChannelFactory<INodeService>(new NetTcpBinding(), _s.TcpAddress);
-
-            //INodeService client = myChannelFactory.CreateChannel();
-            //client.CloserPeerSearch(Info);
-
-            NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(_s.TcpAddress);
-            nodeServiceClient.CloserPeerSearch(Info);
         }
 
         public void A5()
         {
             Debug.WriteLine("NodeService o adresie: " + Info.TcpAddress + " wykonuje A5()");
 
-            for (int i = 0; i < _neighbors.Count; ++i)
+            lock (_lockObject)
             {
-                //ChannelFactory<INodeService> myChannelFactory = new ChannelFactory<INodeService>(new NetTcpBinding(), _neighbors[i].TcpAddress);
-
-                //INodeService client = myChannelFactory.CreateChannel();
-                //client.GetNeighbor(Info, i);
-
-                NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(_neighbors[i].TcpAddress);
-                nodeServiceClient.GetNeighbor(Info, i);
+                for (int i = 0; i < _neighbors.Count; ++i)
+                {
+                    NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(_neighbors[i].TcpAddress);
+                    nodeServiceClient.GetNeighbor(Info, i);
+                }
             }
         }
 
@@ -159,22 +142,27 @@ namespace NetworkManager
         {
             Debug.WriteLine("NodeService o adresie: " + source.TcpAddress + " wywołuje A3() na serwisie o adresie: " + Info.TcpAddress);
 
-            if (_neighbors.Count == 0)
+            lock (_lockObject)
             {
-                return;
-            }
-            else
-            {
-                if (NetworkNodeInfo.Distance(Info, source) < _neighbors.Min(n => NetworkNodeInfo.Distance(n, source)))
+                if (_neighbors.Count == 0)
                 {
                     _searchMonitorNodes.Add(source);
-                    NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(source.TcpAddress);
-                    nodeServiceClient.SuccessorCandidate(_neighbors[0]);
                 }
                 else
                 {
-                    NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(GetClosestNeighbor(source).TcpAddress);
-                    nodeServiceClient.CloserPeerSearch(source);
+                    if (NetworkNodeInfo.Distance(Info, source) <
+                        _neighbors.Min(n => NetworkNodeInfo.Distance(n, source)))
+                    {
+                        _searchMonitorNodes.Add(source);
+                        NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(source.TcpAddress);
+                        nodeServiceClient.SuccessorCandidate(_neighbors[0]);
+                    }
+                    else
+                    {
+                        NodeServiceClient nodeServiceClient =
+                            new TcpNodeServiceClient(GetClosestNeighbor(source).TcpAddress);
+                        nodeServiceClient.CloserPeerSearch(source);
+                    }
                 }
             }
         }
@@ -183,17 +171,23 @@ namespace NetworkManager
         {
             Debug.WriteLine("NodeService o adresie: " + candidate.TcpAddress + " wywołuje A4() na serwisie o adresie: " + Info.TcpAddress);
 
-            _closerPeerSearchNodes.Add(candidate);
+            lock (_lockObject)
+            {
+                _closerPeerSearchNodes.Add(candidate);
+            }
         }
 
         public void GetNeighbor(NetworkNodeInfo from, int j) //A6
         {
             Debug.WriteLine("NodeService o adresie: " + from.TcpAddress + " wywołuje A3() na serwisie o adresie: " + Info.TcpAddress);
 
-            if (_neighbors.Count > j)
+            lock (_lockObject)
             {
-                NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(from.TcpAddress);
-                nodeServiceClient.UpdateNeighbor(_neighbors[j], j);
+                if (_neighbors.Count > j)
+                {
+                    NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(from.TcpAddress);
+                    nodeServiceClient.UpdateNeighbor(_neighbors[j], j);
+                }
             }
         }
 
@@ -201,14 +195,17 @@ namespace NetworkManager
         {
             Debug.WriteLine("NodeService o adresie: " + newNeighbor.TcpAddress + " wywołuje A7() na serwisie o adresie: " + Info.TcpAddress);
 
-            if (NetworkNodeInfo.Distance(_neighbors[c], newNeighbor) <
-                NetworkNodeInfo.Distance(_neighbors[c], Info)) //is it ok?
+            lock (_lockObject)
             {
-                _neighbors[c + 1] = newNeighbor;
-            }
-            else
-            {
-                _neighbors.RemoveAt(c + 1);
+                if (NetworkNodeInfo.Distance(_neighbors[c], newNeighbor) <
+                    NetworkNodeInfo.Distance(_neighbors[c], Info)) //is it ok?
+                {
+                    _neighbors[c + 1] = newNeighbor;
+                }
+                else
+                {
+                    _neighbors.RemoveAt(c + 1);
+                }
             }
         }
     }
