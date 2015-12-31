@@ -43,12 +43,12 @@ namespace NetworkManager
 
         public int Distance(NetworkNodeInfo from)  //d(from.Id, Id)
         {
-            return Math.Abs((Id - from.Id) % M);  //modulo?
+            return (Id + M - from.Id) % M;  //modulo?
         }
 
         public static int Distance(NetworkNodeInfo from, NetworkNodeInfo to)
         {
-            return Math.Abs((to.Id - from.Id) % M);
+            return (to.Id + M - from.Id) % M;  // ile id trzeba przejść, aby z from.Id dojść do to.Id idąc tylko w prawo
         }
 
         public static bool operator <(NetworkNodeInfo x, NetworkNodeInfo y)
