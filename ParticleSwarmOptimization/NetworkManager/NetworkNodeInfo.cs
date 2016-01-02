@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace NetworkManager
@@ -41,29 +42,51 @@ namespace NetworkManager
             PipeAddress = pipeAddress;
         }
 
-        public int Distance(NetworkNodeInfo from)  //d(from.Id, Id)
-        {
-            return (Id + M - from.Id) % M;  //modulo?
-        }
-
         public static int Distance(NetworkNodeInfo from, NetworkNodeInfo to)
         {
             return (to.Id + M - from.Id) % M;  // ile id trzeba przejść, aby z from.Id dojść do to.Id idąc tylko w prawo
         }
 
-        public static bool operator <(NetworkNodeInfo x, NetworkNodeInfo y)
+        //returns networkNodeInfo with id closest (from the left) to to.Id
+        public static NetworkNodeInfo GetClosestPeer(NetworkNodeInfo to, ICollection<NetworkNodeInfo> infos)
         {
-            return x.Id < y.Id;  //modulo?
+            int minDistance = Int32.MaxValue;
+            NetworkNodeInfo closestPeer = null;
+
+            foreach (NetworkNodeInfo nodeInfo in infos)
+            {
+                if (NetworkNodeInfo.Distance(nodeInfo, to) < minDistance)
+                {
+                    minDistance = NetworkNodeInfo.Distance(nodeInfo, to);
+                    closestPeer = nodeInfo;
+                }
+            }
+
+            return closestPeer;
         }
 
-        public static bool operator >(NetworkNodeInfo x, NetworkNodeInfo y)
+        //returns NetworkNodeInfo with id closest (from the right) to to.Id
+        public static NetworkNodeInfo GetBestSuccessorCandidate(NetworkNodeInfo to, ICollection<NetworkNodeInfo> infos)
         {
-            return x.Id > y.Id;  //modulo?
+            int minDistance = Int32.MaxValue;
+            NetworkNodeInfo closestPeer = null;
+
+            foreach (NetworkNodeInfo nodeInfo in infos)
+            {
+                if (NetworkNodeInfo.Distance(to, nodeInfo) < minDistance)
+                {
+                    minDistance = NetworkNodeInfo.Distance(to, nodeInfo);
+                    closestPeer = nodeInfo;
+                }
+            }
+
+            return closestPeer;
         }
 
-        public static int operator -(NetworkNodeInfo x, NetworkNodeInfo y)
+        //returns true iff v is between u and w, i.e. v is strictly closer to u than w is and u != v (u < v < w)
+        public static bool IsBetween(NetworkNodeInfo v, NetworkNodeInfo u, NetworkNodeInfo w)
         {
-            return x.Id - y.Id;  //modulo?
+            return Distance(u, v) < Distance(u, w) && Distance(u, v) > 0;
         }
 
         public int CompareTo(NetworkNodeInfo obj)
@@ -73,12 +96,12 @@ namespace NetworkManager
 
         public bool Equals(NetworkNodeInfo other)
         {
-            return TcpAddress.Equals(other.TcpAddress) && PipeAddress.Equals(other.PipeAddress);
+            return TcpAddress.Equals(other.TcpAddress) && PipeAddress.Equals(other.PipeAddress);  //or by Id
         }
 
         public override int GetHashCode()
         {
-            return (TcpAddress + PipeAddress).GetHashCode();
+            return (TcpAddress + PipeAddress).GetHashCode(); //TODO: maybe change it?
         }
     }
 }
