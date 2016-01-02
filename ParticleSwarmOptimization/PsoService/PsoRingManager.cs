@@ -8,14 +8,14 @@ namespace PsoService
 {
     public class PsoRingManager : IPsoManager
     {
-        private Tuple<NetworkNodeInfo, ProxyParticleService> _left;
-        private Tuple<NetworkNodeInfo, ProxyParticleService> _right;
+        private Tuple<NetworkNodeInfo, ProxyParticle> _left;
+        private Tuple<NetworkNodeInfo, ProxyParticle> _right;
         public PsoSettings PsoSettings;
 
         public PsoRingManager(int nodeId)
         {
-            _left = new Tuple<NetworkNodeInfo, ProxyParticleService>(null,ProxyParticleService.CreateProxyParticle(nodeId));
-            _right = new Tuple<NetworkNodeInfo, ProxyParticleService>(null,ProxyParticleService.CreateProxyParticle(nodeId));
+            _left = new Tuple<NetworkNodeInfo, ProxyParticle>(null,ProxyParticle.CreateProxyParticle(nodeId));
+            _right = new Tuple<NetworkNodeInfo, ProxyParticle>(null,ProxyParticle.CreateProxyParticle(nodeId));
         }
         public void UpdatePsoNeighborhood(Tuple<NetworkNodeInfo, Uri[]>[] allNetworkNodes,
             NetworkNodeInfo currentNetworkNode)

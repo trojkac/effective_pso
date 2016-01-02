@@ -14,5 +14,7 @@ namespace PsoService
         /// </returns>
         [OperationContract]
         ParticleState GetBestState();
+
+        void UpdateBestState(ParticleState state);
     }
 }

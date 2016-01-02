@@ -16,7 +16,7 @@ namespace ParticleSwarmOptimizationWrapper
 		ParticleSwarmOptimization::ProxyParticle* _nativeParticle;
 
 	public:
-		ProxyParticle(int n, PsoService::ProxyParticleService^ service)
+		ProxyParticle(int n, PsoService::ProxyParticle^ service)
 		{
 			ParticleSwarmOptimization::ProxyParticleBox* box = new ParticleSwarmOptimization::ProxyParticleBox(service);
 			_nativeParticle = new ParticleSwarmOptimization::ProxyParticle(n, box);

@@ -7,7 +7,7 @@ using PsoService;
 
 namespace Controller
 {
-    class Controller : IPsoController
+    public class Controller : IPsoController
     {
         private List<Particle> CreateParticles(Tuple<PsoParticleType, int>[] particlesParameters, int dimenstions)
         {
@@ -33,12 +33,11 @@ namespace Controller
             return algorithm.Run(particles);
         }
 
-        public ParticleState Run(FitnessFunction fitnessFunction, PsoSettings psoSettings, ProxyParticleService[] proxyParticleServices)
+        public ParticleState Run(FitnessFunction fitnessFunction, PsoSettings psoSettings, PsoService.ProxyParticle[] proxyParticleServices)
         {
             var algorithm = PSOAlgorithm.GetAlgorithm(psoSettings.Iterations, fitnessFunction);
             var particles = CreateParticles(psoSettings.Particles, psoSettings.Dimensions);
-            particles.AddRange(proxyParticleServices.Select(p => new ProxyParticle(psoSettings.Dimensions,p)));
-           
+            particles.AddRange(proxyParticleServices.Select(p => new ParticleSwarmOptimizationWrapper.ProxyParticle(psoSettings.Dimensions,p)));
             return algorithm.Run(particles);
         }
 
