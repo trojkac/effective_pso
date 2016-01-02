@@ -6,13 +6,12 @@ using Common;
 
 namespace PsoService
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class ProxyParticleService : IParticleService
+    public class ProxyParticle
     {
         private static int _counter = 1;
 
         private IParticleService _particleClient;
-        private ParticleState _bestKnownState;
+        private IParticleService _particleService;
         private ServiceHost _host;
         public int Id { get; private set; }
 
@@ -24,31 +23,29 @@ namespace PsoService
         public Uri RemoteAddress { get; private set; }
 
 
-        private ProxyParticleService(string remoteNeighborAddress)
+        private ProxyParticle(string remoteNeighborAddress)
         {
-            _bestKnownState = new ParticleState(new[] { 0.0 }, double.PositiveInfinity);
-            _particleClient = new ParticleServiceClient("particleProxyClientTcp", remoteNeighborAddress);
+            _particleClient = ParticleServiceClient.CreateClient(remoteNeighborAddress);
             RemoteAddress = new Uri(remoteNeighborAddress);
             Id = _counter++;
         }
 
-        private ProxyParticleService()
+        private ProxyParticle()
         {
-            _bestKnownState = ParticleState.WorstState;
             Id = _counter++;
         }
 
 
-        public static ProxyParticleService CreateProxyParticle(string remoteAddress, int nodeId)
+        public static ProxyParticle CreateProxyParticle(string remoteAddress, int nodeId)
         {
-            var particle = new ProxyParticleService(remoteAddress);
-            particle._host = new ServiceHost(particle, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
+            var particle = new ProxyParticle(remoteAddress) { _particleService = new ParticleService() };
+            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
             return particle;
         }
-        public static ProxyParticleService CreateProxyParticle(int nodeId)
+        public static ProxyParticle CreateProxyParticle(int nodeId)
         {
-            var particle = new ProxyParticleService();
-            particle._host = new ServiceHost(particle, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
+            var particle = new ProxyParticle() { _particleService = new ParticleService() };
+            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
             return particle;
         }
 
@@ -66,7 +63,6 @@ namespace PsoService
         {
             _particleClient = new ParticleServiceClient("particleProxyClientTcp", address);
             RemoteAddress = new Uri(address);
-
         }
 
         /// <summary>
@@ -81,27 +77,24 @@ namespace PsoService
                 return ParticleState.WorstState;
             }
             var s = _particleClient.GetBestState();
-            if (s.FitnessValue < _bestKnownState.FitnessValue)
-            {
-                _bestKnownState = s;
-            }
-            return _bestKnownState;
+            _particleService.UpdateBestState(s);
+            return _particleService.GetBestState();
         }
 
 
         public ParticleState GetBestState()
         {
-            return _bestKnownState;
+            return _particleService.GetBestState();
         }
         public void UpdateBestState(ParticleState state)
         {
-            _bestKnownState = state;
+            _particleService.UpdateBestState(state);
         }
 
         public void UpdateRemoteAddress(Uri address)
         {
             RemoteAddress = address;
-            _particleClient = new ParticleServiceClient("particleProxyClientTcp", address.ToString());
+            _particleClient = ParticleServiceClient.CreateClient(address.ToString());
         }
     }
 }

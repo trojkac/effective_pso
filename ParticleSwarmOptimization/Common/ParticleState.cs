@@ -23,5 +23,12 @@ namespace Common
             FitnessValue = fitnessValue;
             Location = location ;
         }
+
+        public ParticleState()
+        {
+            var worst = WorstState;
+            FitnessValue = worst.FitnessValue;
+            Location = worst.Location;
+        }
     }
 }

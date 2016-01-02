@@ -11,9 +11,9 @@ namespace ParticleSwarmOptimization
 	class ProxyParticleBox
 	{
 	public:
-		msclr::auto_gcroot<PsoService::ProxyParticleService^> proxyService;
+		msclr::auto_gcroot<PsoService::ProxyParticle^> proxyService;
 
-		ProxyParticleBox(PsoService::ProxyParticleService^ proxy) :
+		ProxyParticleBox(PsoService::ProxyParticle^ proxy) :
 			proxyService(proxy)
 		{
 		}
@@ -35,15 +35,17 @@ namespace ParticleSwarmOptimization
 			proxy_particle_(box)
 		{
 			personal_best_ = std::make_tuple(std::vector<double>(2), -std::numeric_limits<double>::infinity());
+			coupled_particle_ = NULL;
 			box->proxyService->Open();
 		}
 
 		void update_neighborhood(std::vector<Particle*> all_particles)
 		{
-			if (coupled_particle_ == NULL)
+			int i = 0;
+			while(coupled_particle_ == NULL || coupled_particle_->id() == id())
 			{
 				//TODO: take random particle
-				coupled_particle_ = all_particles[0];
+				coupled_particle_ = all_particles[i++];
 			}
 		}
 
@@ -59,11 +61,14 @@ namespace ParticleSwarmOptimization
 				personal_best_ = remote_best;
 				proxy_particle_->proxyService->UpdateBestState(tuple_to_particle_state(personal_best_));
 			}
-			auto coupled_best = coupled_particle_->get_personal_best();
-			if (std::get<1>(personal_best_) < std::get<1>(coupled_best))
+			if (coupled_particle_ != NULL)
 			{
-				personal_best_ = coupled_best;
-				proxy_particle_->proxyService->UpdateBestState(tuple_to_particle_state(personal_best_));
+				auto coupled_best = coupled_particle_->get_personal_best();
+				if (std::get<1>(personal_best_) < std::get<1>(coupled_best))
+				{
+					personal_best_ = coupled_best;
+					proxy_particle_->proxyService->UpdateBestState(tuple_to_particle_state(personal_best_));
+				}
 			}
 			return personal_best_;
 		}
