@@ -15,6 +15,6 @@ namespace NetworkManager
         void GetNeighbor(NetworkNodeInfo from, int which);
 
         [OperationContract]
-        void UpdateNeighbor(NetworkNodeInfo newNeighbor, int which);
+        void UpdateNeighbor(NetworkNodeInfo potentialNeighbor, int which);
     }
 }
