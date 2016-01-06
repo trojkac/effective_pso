@@ -55,7 +55,7 @@
       <Name>PsoService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Wrapper\Wrapper.vcxproj">
-      <Project>{3a8a6019-ebcb-4626-8e2e-165e69c37c05}</Project>
+      <Project>{5a383eb5-e20f-4645-9365-32e97f4fdfbd}</Project>
       <Name>Wrapper</Name>
     </ProjectReference>
   </ItemGroup>

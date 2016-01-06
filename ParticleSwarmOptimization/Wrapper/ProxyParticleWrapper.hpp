@@ -1,8 +1,7 @@
 ﻿#pragma once
-#include "PsoAlgorithm\Particle.hpp"
-#include <msclr\auto_gcroot.h>
+#include "native\Particle.hpp"
 #include "Particle.hpp"
-#include ".\ProxyParticle.hpp"
+#include "ProxyParticle.hpp"
 
 using namespace System;
 using namespace System::Collections::Generic;

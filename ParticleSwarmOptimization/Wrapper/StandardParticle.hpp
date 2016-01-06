@@ -1,6 +1,6 @@
 #pragma once
-#include ".\Particle.hpp"
-#include "StandardParticle\StandardParticle.hpp"
+#include "Particle.hpp"
+#include "native\StandardParticle.hpp"
 namespace ParticleSwarmOptimizationWrapper
 {
 	public ref class StandardParticle : public Particle

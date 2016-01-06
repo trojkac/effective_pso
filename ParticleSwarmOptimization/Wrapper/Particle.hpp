@@ -1,5 +1,5 @@
 #pragma once
-#include "PsoAlgorithm\Particle.hpp"
+#include "native\Particle.hpp"
 namespace ParticleSwarmOptimizationWrapper
 {
 

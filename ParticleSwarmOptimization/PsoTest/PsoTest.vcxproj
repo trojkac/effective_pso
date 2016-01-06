@@ -147,14 +147,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FullyInformedPSOParicle\FullyInformedPSOParicle.vcxproj">
-      <Project>{cdc6e8f6-22e3-402b-9791-f3b9fb82f49f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\ParticleSwarmOptimization\ParticleSwarmOptimization.vcxproj">
-      <Project>{f85b7711-d9b8-48b1-bfd7-6d9b4d787dcb}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -5,3 +5,9 @@
 #pragma once
 
 
+#include <vector>
+#include <functional>
+#include <algorithm>
+#include <random>
+#include <msclr\auto_gcroot.h>
+
