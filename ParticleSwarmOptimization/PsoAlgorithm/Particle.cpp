@@ -1,4 +1,4 @@
 ﻿#include "Particle.hpp"
 #include "Stdafx.h"
 
-int ParticleSwarmOptimization::Particle::counter_ = 0;
+//int ParticleSwarmOptimization::Particle::counter_ = 0;

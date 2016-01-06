@@ -11,7 +11,7 @@ namespace ParticleSwarmOptimization
 		}
 		Particle()
 		{
-			id_ = ++counter_;
+			//id_ = ++counter_;
 		}
 		virtual void init_location() = 0;
 		virtual void init_velocity() = 0;
@@ -36,7 +36,7 @@ namespace ParticleSwarmOptimization
 		static double clamp(double, std::tuple<double,double>);
 	private:
 		int id_;
-		static int counter_;
+		//static int counter_;
 	};
 	inline void Particle::bounds(std::vector<std::tuple<double, double>> bounds)
 	{
