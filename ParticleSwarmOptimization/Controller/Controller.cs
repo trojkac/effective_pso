@@ -8,7 +8,7 @@ namespace Controller
 {
     public class Controller : IPsoController
     {
-        private List<Particle> CreateParticles(Tuple<PsoParticleType, int>[] particlesParameters, int dimenstions)
+        private List<Particle> CreateParticles(Tuple<PsoParticleType, int>[] particlesParameters, int dimensions)
         {
             var particles = new List<Particle>();
             foreach (var particleTuple in particlesParameters)
@@ -17,7 +17,7 @@ namespace Controller
                 {
                     case PsoParticleType.FullyInformed:
                     case PsoParticleType.Standard:
-                        particles.AddRange(Enumerable.Repeat(new StandardParticle(dimenstions), particleTuple.Item2));
+                        particles.AddRange(Enumerable.Repeat(new StandardParticle(dimensions), particleTuple.Item2));
                         break;
                 }
             }
@@ -25,7 +25,6 @@ namespace Controller
         }
         public ParticleState Run(FitnessFunction fitnessFunction, PsoSettings psoSettings)
         {
-            
             var algorithm = PSOAlgorithm.GetAlgorithm(psoSettings.Iterations, fitnessFunction);
 
             var particles = CreateParticles(psoSettings.Particles, psoSettings.Dimensions);
@@ -36,7 +35,7 @@ namespace Controller
         {
             var algorithm = PSOAlgorithm.GetAlgorithm(psoSettings.Iterations, fitnessFunction);
             var particles = CreateParticles(psoSettings.Particles, psoSettings.Dimensions);
-            particles.AddRange(proxyParticleServices.Select(p => new ParticleSwarmOptimizationWrapper.ProxyParticle(psoSettings.Dimensions,p)));
+            particles.AddRange(proxyParticleServices.Select(p => new ParticleSwarmOptimizationWrapper.ProxyParticle(psoSettings.Dimensions, p)));
             return algorithm.Run(particles);
         }
 

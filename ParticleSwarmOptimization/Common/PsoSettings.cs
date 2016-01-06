@@ -8,12 +8,11 @@ namespace Common
     /// </summary>
     /// <param name="values">fitness function argument which is N dimensional vector</param>
     /// <returns></returns>
-    public delegate double FitnessFunction(double[] values); 
+    public delegate double FitnessFunction(double[] values);
     [DataContract]
     public struct PsoSettings
     {
-
-        [DataMember] 
+        [DataMember]
         public FitnessFunction FitnessFunction;
 
         /// <summary>
@@ -21,7 +20,7 @@ namespace Common
         /// </summary>
         [DataMember]
         public Tuple<PsoParticleType, int>[] Particles;
-        
+
         /// <summary>
         /// Nx2 array where N is dimension of the search space.
         /// In this array minimum and maximum of each dimension are stored.
