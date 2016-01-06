@@ -120,7 +120,7 @@ namespace NetworkManager
         }
 
         public void RunP2PAlgorithm(Object stateInfo)
-        {          
+        {
             switch (random.Next(0, 3))
             {
                 case 0:
@@ -151,6 +151,11 @@ namespace NetworkManager
         {
             List<Uri> addresses = new List<Uri>();
             return addresses;
-        } 
+        }
+
+        public Object SendMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)
+        {
+            return NodeService.ReceiveMessage(msg, src, dst);
+        }
     }
 }

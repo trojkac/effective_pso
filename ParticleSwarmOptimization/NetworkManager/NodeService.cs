@@ -230,5 +230,30 @@ namespace NetworkManager
                 //}
             }
         }
+
+        public Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)
+        {
+            if (dst == Info)
+            {
+                //Message for me - do sth
+                return null;
+            }
+
+            if (src == Info)
+            {
+                //I sent it - couldn't find destination
+                return null;
+            }
+
+            //msg for someone else - send it to my successor
+            try
+            {
+                NodeServiceClient client = new TcpNodeServiceClient(Successor);
+                return client.ReceiveMessage(msg, src, dst);
+            }
+            catch (Exception e) { }
+
+            return null;
+        }
     }
 }

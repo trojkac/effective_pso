@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 
 namespace NetworkManager
@@ -28,6 +29,11 @@ namespace NetworkManager
         public void UpdateNeighbor(NetworkNodeInfo newNeighbor, int which)
         {
             Proxy.UpdateNeighbor(newNeighbor, which);
+        }
+
+        public Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)
+        {
+            return Proxy.ReceiveMessage(msg, src, dst);
         }
     }
 

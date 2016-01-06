@@ -1,3 +1,4 @@
+using System;
 using System.ServiceModel;
 
 namespace NetworkManager
@@ -16,5 +17,8 @@ namespace NetworkManager
 
         [OperationContract]
         void UpdateNeighbor(NetworkNodeInfo potentialNeighbor, int which);
+
+        [OperationContract]
+        Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst);
     }
 }
