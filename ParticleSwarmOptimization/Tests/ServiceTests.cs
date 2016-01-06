@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Node;
 
@@ -25,6 +26,28 @@ namespace Tests
             vcpu3.NetworkNodeManager.AddBootstrappingPeer(vcpu2.GetMyNetworkNodeInfo());
 
             Console.ReadKey();
+        }
+
+        [TestMethod]
+        public void IdTest()
+        {
+            string ipString = "net.tcp://" + IPAddress.Loopback + ":8012/NodeService";   //"net.pipe://localhost/NodeService/" + pipeName)"
+
+            string[] parts = ipString.Split('/');
+            string[] iparts = parts[2].Split(':');
+
+            Byte[] bytes = (IPAddress.Parse(iparts[0])).GetAddressBytes();
+
+            ulong ip = (ulong)(BitConverter.ToInt32(bytes, 0));
+            ulong port = (ulong)(Int32.Parse(iparts[1]));
+
+            ulong id = (ip << 32) + port;
+
+            var ipb = BitConverter.GetBytes(ip);
+            var portb = BitConverter.GetBytes(port);
+            var idb = BitConverter.GetBytes(id);
+
+            return;
         }
     }
 }

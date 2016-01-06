@@ -28,6 +28,7 @@ namespace Tests
 
             Assert.AreEqual(1.0, result.FitnessValue, .1);
         }
+
         [TestMethod]
         public void RunAlgorithmWithTargetValue()
         {
@@ -57,7 +58,7 @@ namespace Tests
                 var y = values[1] * values[1];
                 return Math.Sin(x + y) / (x * y + 1);
             };
-            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(100, 1.0, 0.1 ,fitnessFunction);
+            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(100, 1.0, 0.1, fitnessFunction);
             List<Particle> particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
             {

@@ -40,7 +40,7 @@ namespace NetworkManager
         public NodeService(int tcpPort, string pipeName)
             : this()
         {
-            Info = new NetworkNodeInfo("net.tcp://localhost:" + tcpPort + "/NodeService", "net.pipe://localhost/NodeService/" + pipeName);
+            Info = new NetworkNodeInfo("net.tcp://" + "127.0.0.1" + ":" + tcpPort + "/NodeService", "net.pipe://" + "127.0.0.1" + "/NodeService/" + pipeName);
         }
 
         public NodeService(string tcpAddress, string pipeAddress)
@@ -67,7 +67,7 @@ namespace NetworkManager
         //Neighbor Update part I - aktualizacja następnika
         public void A1()
         {
-            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " wykonuje NeighborUpdate part I");
+            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " wykonuje Neighbor Update part I");
 
             lock (_lockObject)
             {

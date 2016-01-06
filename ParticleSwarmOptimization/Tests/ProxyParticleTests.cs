@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using System.Linq;
 using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -82,7 +80,7 @@ namespace Tests
         [TestMethod]
         public void CommunicationInAlgorithm()
         {
-             var particle1 = ProxyParticle.CreateProxyParticle(1);
+            var particle1 = ProxyParticle.CreateProxyParticle(1);
             var particle2 = ProxyParticle.CreateProxyParticle(2);
             particle1.UpdateRemoteAddress(particle2.Address);
             var state = new ParticleState {FitnessValue = 5.0, Location = new[] {0.0}};
