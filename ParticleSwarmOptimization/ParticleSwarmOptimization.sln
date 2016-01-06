@@ -31,6 +31,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkManager", "NetworkMa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CudaPso", "CudaPso\CudaPso.vcxproj", "{79A1E516-D418-40EB-9337-3E55B45FF945}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterface", "UserInterface\UserInterface.csproj", "{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ParameterFiles", "ParameterFiles", "{12BFD9CF-2FD2-4A2E-91E0-418587495468}"
+	ProjectSection(SolutionItems) = preProject
+		NodeParams1.txt = NodeParams1.txt
+		PsoParams1.txt = PsoParams1.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -245,6 +253,20 @@ Global
 		{79A1E516-D418-40EB-9337-3E55B45FF945}.Release|x64.Build.0 = Release|x64
 		{79A1E516-D418-40EB-9337-3E55B45FF945}.Release|x86.ActiveCfg = Release|Win32
 		{79A1E516-D418-40EB-9337-3E55B45FF945}.Release|x86.Build.0 = Release|Win32
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Release|Win32.ActiveCfg = Release|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Release|x64.ActiveCfg = Release|Any CPU
+		{44FE6EAD-6A8F-44C9-942C-4175BD7CDF03}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

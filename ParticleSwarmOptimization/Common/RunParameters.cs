@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Common
 {
@@ -10,7 +11,7 @@ namespace Common
         public int NrOfVCpu { get; set; }
         public bool IsGpu { get; set; }
         public Tuple<double, double>[] SearchSpace { get; set; }
-        public string[] PeerAddresses { get; set; }
+        public List<string> PeerAddresses { get; set; }
 
         public RunParameters()
         {

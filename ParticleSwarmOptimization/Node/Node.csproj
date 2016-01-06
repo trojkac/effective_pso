@@ -46,6 +46,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GpuManager.cs" />
+    <Compile Include="MachineManager.cs" />
     <Compile Include="VCpuManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
