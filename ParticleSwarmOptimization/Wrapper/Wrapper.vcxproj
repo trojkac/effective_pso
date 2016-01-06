@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{3A8A6019-EBCB-4626-8E2E-165E69C37C05}</ProjectGuid>
+    <ProjectGuid>{5A383EB5-E20F-4645-9365-32E97F4FDFBD}</ProjectGuid>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>Wrapper</RootNamespace>
@@ -53,7 +53,6 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -77,22 +76,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ProxyParticleWrapper.hpp" />
-    <ClInclude Include="ProxyParticle.hpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="StandardParticle.hpp" />
+    <ClInclude Include="native\Particle.hpp" />
+    <ClInclude Include="native\PsoAlgorithm.hpp" />
+    <ClInclude Include="native\StandardParticle.hpp" />
     <ClInclude Include="Particle.hpp" />
+    <ClInclude Include="ProxyParticle.hpp" />
+    <ClInclude Include="ProxyParticleWrapper.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="StandardParticle.hpp" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="Wrapper.hpp" />
     <ClInclude Include="WrapperHelper.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="ParticleNative.cpp" />
+    <ClCompile Include="StandardParticleNative.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ProxyParticleWrapper.cpp" />
     <ClCompile Include="StandardParticle.cpp" />
-    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -1,4 +1,5 @@
 #include "PsoAlgorithm.hpp"
+#include "..\Stdafx.h"
 
 ParticleSwarmOptimization::PSOAlgorithm::PSOAlgorithm(std::function<double(std::vector<double>)> fitness_function, int iterations): fitness_function_(fitness_function), max_iterations_(iterations)
 {}

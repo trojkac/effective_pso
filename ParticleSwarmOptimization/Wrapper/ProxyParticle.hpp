@@ -1,7 +1,5 @@
-#include <msclr\auto_gcroot.h>
-#include <functional>
 #include "Particle.hpp"
-#include "PsoAlgorithm\Particle.hpp"
+#include "native\Particle.hpp"
 #include "WrapperHelper.hpp"
 
 //native

@@ -3,10 +3,13 @@
 #pragma once
 
 #include <functional>
-#include "PsoAlgorithm\Particle.hpp"
-#include "PsoAlgorithm\PsoAlgorithm.hpp"
-#include ".\Particle.hpp"
-#include ".\WrapperHelper.hpp"
+#include <vector>
+#include "native\PsoAlgorithm.hpp"
+#include "native\Particle.hpp"
+#include "Particle.hpp"
+#include "WrapperHelper.hpp"
+
+
 
 using namespace System;
 using namespace System::Collections::Generic;

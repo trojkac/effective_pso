@@ -24,19 +24,28 @@
     <ClInclude Include="Particle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Wrapper.hpp">
+    <ClInclude Include="ProxyParticle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProxyParticleWrapper.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StandardParticle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Wrapper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="WrapperHelper.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProxyParticle.hpp">
+    <ClInclude Include="native\Particle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProxyParticleWrapper.hpp">
+    <ClInclude Include="native\PsoAlgorithm.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="native\StandardParticle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,10 +62,16 @@
     <ClCompile Include="Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ProxyParticleWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="StandardParticle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProxyParticleWrapper.cpp">
+    <ClCompile Include="StandardParticleNative.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleNative.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
