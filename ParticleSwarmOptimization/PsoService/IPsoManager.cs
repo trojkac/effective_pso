@@ -21,7 +21,6 @@ namespace PsoService
 
         PsoSettings CurrentProblem();
 
-
         ParticleState Run(FitnessFunction fitnessFunction, PsoSettings psoSettings);
 
     }

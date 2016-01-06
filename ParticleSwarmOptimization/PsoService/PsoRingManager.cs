@@ -14,9 +14,10 @@ namespace PsoService
 
         public PsoRingManager(int nodeId)
         {
-            _left = new Tuple<NetworkNodeInfo, ProxyParticle>(null,ProxyParticle.CreateProxyParticle(nodeId));
-            _right = new Tuple<NetworkNodeInfo, ProxyParticle>(null,ProxyParticle.CreateProxyParticle(nodeId));
+            _left = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
+            _right = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
         }
+
         public void UpdatePsoNeighborhood(Tuple<NetworkNodeInfo, Uri[]>[] allNetworkNodes,
             NetworkNodeInfo currentNetworkNode)
         {
@@ -38,7 +39,7 @@ namespace PsoService
             {
                 throw new ArgumentException("allNetworkNodes should include this node itself");
             }
-            if (_left.Item1 ==null || previous.Item1.Id != _left.Item1.Id || !previous.Item2.Contains(_left.Item2.RemoteAddress))
+            if (_left.Item1 == null || previous.Item1.Id != _left.Item1.Id || !previous.Item2.Contains(_left.Item2.RemoteAddress))
             {
                 _left.Item2.UpdateRemoteAddress(previous.Item2[0]);
             }

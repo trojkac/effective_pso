@@ -137,7 +137,6 @@ namespace NetworkManager
             _timer.Change(Miliseconds, Timeout.Infinite);
         }
 
-
         public void AddBootstrappingPeer(NetworkNodeInfo peerInfo)
         {
             NodeService.AddBootstrappingPeer(peerInfo);
@@ -147,5 +146,11 @@ namespace NetworkManager
         {
             NodeService.SetBootstrappingPeers(peers);
         }
+
+        public List<Uri> GetAllProxyParticleAddresses()
+        {
+            List<Uri> addresses = new List<Uri>();
+            return addresses;
+        } 
     }
 }
