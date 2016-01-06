@@ -10,6 +10,7 @@ namespace NetworkManager
 {
     public class NetworkNodeManager
     {
+        private Random random = new Random();
         private const int Miliseconds = 4000;
         private Timer _timer;
 
@@ -119,8 +120,7 @@ namespace NetworkManager
         }
 
         public void RunP2PAlgorithm(Object stateInfo)
-        {
-            Random random = new Random();
+        {          
             switch (random.Next(0, 3))
             {
                 case 0:

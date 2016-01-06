@@ -1,5 +1,6 @@
 using NetworkManager;
 using PsoService;
+using Controller;
 
 namespace Node
 {
@@ -33,7 +34,6 @@ namespace Node
         }
 
         public VCpuManager(int tcpPort, string pipeName)
-            : this()
         {
             NetworkNodeManager = new NetworkNodeManager(tcpPort, pipeName);
         }
@@ -68,6 +68,7 @@ namespace Node
         }
 
         // PSO PART
+        public IPsoController PsoController { get; set; }
 
         public IPsoManager PsoRingManager { get; set; }
     }
