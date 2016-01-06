@@ -11,6 +11,7 @@ namespace PsoService
             : base(endpointConfigurationName, address)
         {
         }
+
         public ParticleServiceClient(Binding binding, EndpointAddress address)
             : base(binding, address)
         {

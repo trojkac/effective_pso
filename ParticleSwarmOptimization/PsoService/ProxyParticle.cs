@@ -22,7 +22,6 @@ namespace PsoService
 
         public Uri RemoteAddress { get; private set; }
 
-
         private ProxyParticle(string remoteNeighborAddress)
         {
             _particleClient = ParticleServiceClient.CreateClient(remoteNeighborAddress);
@@ -35,17 +34,16 @@ namespace PsoService
             Id = _counter++;
         }
 
-
         public static ProxyParticle CreateProxyParticle(string remoteAddress, int nodeId)
         {
             var particle = new ProxyParticle(remoteAddress) { _particleService = new ParticleService() };
-            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
+            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://127.0.0.1:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
             return particle;
         }
         public static ProxyParticle CreateProxyParticle(int nodeId)
         {
             var particle = new ProxyParticle() { _particleService = new ParticleService() };
-            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://localhost:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
+            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://127.0.0.1:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
             return particle;
         }
 
@@ -80,7 +78,6 @@ namespace PsoService
             _particleService.UpdateBestState(s);
             return _particleService.GetBestState();
         }
-
 
         public ParticleState GetBestState()
         {

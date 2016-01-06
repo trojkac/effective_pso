@@ -2,7 +2,7 @@ namespace Common
 {
     public enum PsoImplementationType
     {
-        CpuSequential, 
+        CpuSequential,
         CpuParallel,
         CudaParallel,
         Any
