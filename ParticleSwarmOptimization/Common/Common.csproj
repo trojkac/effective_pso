@@ -48,7 +48,8 @@
     <Compile Include="PsoImplementationType.cs" />
     <Compile Include="PsoParticleType.cs" />
     <Compile Include="PsoSettings.cs" />
-    <Compile Include="RunParameters.cs" />
+    <Compile Include="UserNodeParameters.cs" />
+    <Compile Include="UserPsoParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

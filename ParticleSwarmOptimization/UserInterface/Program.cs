@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using Common;
 using Microsoft.SqlServer.Server;
+using Node;
 
 namespace UserInterface
 {
@@ -18,18 +19,21 @@ namespace UserInterface
             Console.WriteLine("Podaj ścieżkę do pliku z parametrami węzła");
             string nodePath = Console.ReadLine();
 
-            RunParameters parameters = new RunParameters();
+            UserNodeParameters nodeParams = new UserNodeParameters();
+            UserPsoParameters psoParams = new UserPsoParameters();
             ParametersReader reader = new ParametersReader();
 
-            if (!reader.ReadNodeParametersFile(parameters, nodePath))
+            if (!reader.ReadNodeParametersFile(nodeParams, nodePath))
             {
                 Console.WriteLine("Nie udało się wczytać pliku z danymi węzła");
             }
 
-            if (!reader.ReadPsoParametersFile(parameters, psoPath))
+            if (!reader.ReadPsoParametersFile(psoParams, psoPath))
             {
                 Console.WriteLine("Nie udało się wczytać pliku z danymi PSO");
             }
+
+            MachineManager machineManager = new MachineManager();
         }
 
         public class ParametersReader
@@ -46,7 +50,7 @@ namespace UserInterface
                 return true;
             }
 
-            public bool ReadNodeParametersFile(RunParameters parameters, string path, bool relativePath = true)
+            public bool ReadNodeParametersFile(UserNodeParameters parameters, string path, bool relativePath = true)
             {
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string vcpus = lines[0];
@@ -105,7 +109,7 @@ namespace UserInterface
                 return true;
             }
 
-            public bool ReadPsoParametersFile(RunParameters parameters, string path, bool relativePath = true)
+            public bool ReadPsoParametersFile(UserPsoParameters parameters, string path, bool relativePath = true)
             {
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string functionType = lines[0];
