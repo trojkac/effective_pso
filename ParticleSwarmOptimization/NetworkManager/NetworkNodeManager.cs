@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.Threading;
+using PsoService;
 
 namespace NetworkManager
 {
@@ -13,6 +14,8 @@ namespace NetworkManager
         private Random random = new Random();
         private const int Miliseconds = 4000;
         private Timer _timer;
+
+        public IPsoManager PsoManager { get; private set; }
 
         public NodeService NodeService { get; set; }
 
@@ -47,6 +50,12 @@ namespace NetworkManager
             _tcpPort = tcpPort;
             _pipeName = pipeName;
             NodeService = new NodeService(_tcpPort, _pipeName);
+        }
+
+        public NetworkNodeManager(int tcpPort, string pipeName, IPsoManager psoManager)
+            : this(tcpPort, pipeName)
+        {
+            PsoManager = psoManager;
         }
 
         public void StartTcpNodeService()
@@ -147,10 +156,9 @@ namespace NetworkManager
             NodeService.SetBootstrappingPeers(peers);
         }
 
-        public List<Uri> GetAllProxyParticleAddresses()
+        public Tuple<NetworkNodeInfo, Uri[]>[] GetAllProxyParticlesAddresses()
         {
-            List<Uri> addresses = new List<Uri>();
-            return addresses;
+            return NodeService.GetProxyParticlesAddresses(NodeService.Info);
         }
 
         public Object SendMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)

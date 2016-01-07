@@ -1,3 +1,5 @@
+using System;
+using System.Threading;
 using NetworkManager;
 using PsoService;
 using Controller;
@@ -6,6 +8,9 @@ namespace Node
 {
     public class VCpuManager
     {
+        private const int Miliseconds = 4000;
+        private Timer _timer;
+
         //public VCpuManager(NetworkNodeManager networkNodeManager, IPsoManager psoRingManager)
         //{
         //    NetworkNodeManager = networkNodeManager;
@@ -40,7 +45,7 @@ namespace Node
 
         // NETWORK PART
 
-        public NetworkNodeManager NetworkNodeManager { get; set; }  // mo¿e zrobiæ z tego interfejs jak IPsoManager?
+        public NetworkNodeManager NetworkNodeManager { get; set; }  // mo¿na zrobiæ z tego interfejs jak IPsoManager
 
         public void StartTcpNodeService()
         {
@@ -60,6 +65,17 @@ namespace Node
         public void ClosePipeNodeService()
         {
             NetworkNodeManager.ClosePipeNodeService();
+        }
+
+        public void StartPeriodicallyUpdatingNeighborhood()
+        {
+            TimerCallback timerCallback = UpdateNeighborhood;
+            _timer = new Timer(timerCallback, null, Miliseconds, Timeout.Infinite);
+        }
+
+        public void UpdateNeighborhood(Object stateInfo)
+        {
+            PsoRingManager.UpdatePsoNeighborhood(NetworkNodeManager.GetAllProxyParticlesAddresses(), NetworkNodeManager.NodeService.Info);
         }
 
         public NetworkNodeInfo GetMyNetworkNodeInfo()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
@@ -34,6 +35,11 @@ namespace NetworkManager
         public Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)
         {
             return Proxy.ReceiveMessage(msg, src, dst);
+        }
+
+        public Tuple<NetworkNodeInfo, Uri[]>[] GetProxyParticlesAddresses(NetworkNodeInfo src)
+        {
+            return Proxy.GetProxyParticlesAddresses(src);
         }
     }
 

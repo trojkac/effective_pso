@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace NetworkManager
@@ -20,5 +21,8 @@ namespace NetworkManager
 
         [OperationContract]
         Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst);
+
+        [OperationContract]
+        Tuple<NetworkNodeInfo, Uri[]>[] GetProxyParticlesAddresses(NetworkNodeInfo src);
     }
 }

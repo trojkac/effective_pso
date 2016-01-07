@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
+using PsoService;
 
 namespace NetworkManager
 {
@@ -12,8 +13,20 @@ namespace NetworkManager
         private System.Object _lockObject = new System.Object();
         private Random random = new Random();
 
+        public IPsoManager PsoManager { get; private set; }
+
         public NetworkNodeInfo Info { get; set; }
-        public NetworkNodeInfo Successor { get { return _neighbors[0]; } }
+        public NetworkNodeInfo Successor
+        {
+            get
+            {
+                if (_neighbors.Count > 0)
+                {
+                    return _neighbors[0];
+                }
+                return null;
+            }
+        }
 
         //CONST
         public HashSet<NetworkNodeInfo> BootstrappingPeers { get; set; }
@@ -47,6 +60,18 @@ namespace NetworkManager
             : this()
         {
             Info = new NetworkNodeInfo(tcpAddress, pipeAddress);
+        }
+
+        public NodeService(int tcpPort, string pipeAddress, IPsoManager psoManager)
+            : this(tcpPort, pipeAddress)
+        {
+            PsoManager = psoManager;
+        }
+
+        public NodeService(string tcpAddress, string pipeAddress, IPsoManager psoManager)
+            : this(tcpAddress, pipeAddress)
+        {
+            PsoManager = psoManager;
         }
 
         public List<NetworkNodeInfo> GetNeighbors()
@@ -250,6 +275,26 @@ namespace NetworkManager
             {
                 NodeServiceClient client = new TcpNodeServiceClient(Successor);
                 return client.ReceiveMessage(msg, src, dst);
+            }
+            catch (Exception e) { }
+
+            return null;
+        }
+
+        public Tuple<NetworkNodeInfo, Uri[]>[] GetProxyParticlesAddresses(NetworkNodeInfo src)
+        {
+            if (Successor == null || Successor == src)  //dotarliśmy do końca -> wracamy
+            {
+                Tuple<NetworkNodeInfo, Uri[]>[] result = new Tuple<NetworkNodeInfo, Uri[]>[1];
+                result[0] = new Tuple<NetworkNodeInfo, Uri[]>(Info, PsoManager.GetProxyParticlesAddresses());
+                return result;
+            }
+            try
+            {
+                NodeServiceClient client = new TcpNodeServiceClient(Successor);
+                List<Tuple<NetworkNodeInfo, Uri[]>> resultList = client.GetProxyParticlesAddresses(src).ToList();
+                resultList.Add(new Tuple<NetworkNodeInfo, Uri[]>(Info, PsoManager.GetProxyParticlesAddresses()));
+                return resultList.ToArray();
             }
             catch (Exception e) { }
 
