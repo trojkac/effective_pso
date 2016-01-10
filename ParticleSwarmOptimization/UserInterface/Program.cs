@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
 using Common;
-using Microsoft.SqlServer.Server;
 using Node;
 
 namespace UserInterface
@@ -13,27 +10,50 @@ namespace UserInterface
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Podaj ścieżkę do pliku z parametrami PSO");
-            string psoPath = Console.ReadLine();
+            UserNodeParameters nodeParams = ReadNodeParameters();
+            UserFunctionParameters functionParams = ReadFunctionParameters();
+            UserPsoParameters psoParams = ReadPsoParameters();
 
+            MachineManager machineManager = new MachineManager(nodeParams, functionParams);
+        }
+
+        public static UserNodeParameters ReadNodeParameters()
+        {
             Console.WriteLine("Podaj ścieżkę do pliku z parametrami węzła");
             string nodePath = Console.ReadLine();
 
             UserNodeParameters nodeParams = new UserNodeParameters();
-            UserPsoParameters psoParams = new UserPsoParameters();
-            ParametersReader reader = new ParametersReader();
-
-            if (!reader.ReadNodeParametersFile(nodeParams, nodePath))
+            if (!ParametersReader.ReadNodeParametersFile(nodeParams, nodePath))
             {
                 Console.WriteLine("Nie udało się wczytać pliku z danymi węzła");
             }
+            return nodeParams;
+        }
 
-            if (!reader.ReadPsoParametersFile(psoParams, psoPath))
+        public static UserFunctionParameters ReadFunctionParameters()
+        {
+            Console.WriteLine("Podaj ścieżkę do pliku z parametrami funkcji");
+            string functionPath = Console.ReadLine();
+
+            UserFunctionParameters functionParams = new UserFunctionParameters();
+            if (!ParametersReader.ReadFunctionParametersFile(functionParams, functionPath))
+            {
+                Console.WriteLine("Nie udało się wczytać pliku z danymi funkcji");
+            }
+            return functionParams;
+        }
+
+        public static UserPsoParameters ReadPsoParameters()
+        {
+            Console.WriteLine("Podaj ścieżkę do pliku z parametrami PSO");
+            string psoPath = Console.ReadLine();
+
+            UserPsoParameters psoParams = new UserPsoParameters();
+            if (!ParametersReader.ReadPsoParametersFile(psoParams, psoPath))
             {
                 Console.WriteLine("Nie udało się wczytać pliku z danymi PSO");
             }
-
-            MachineManager machineManager = new MachineManager();
+            return psoParams;
         }
 
         public class ParametersReader
@@ -50,7 +70,7 @@ namespace UserInterface
                 return true;
             }
 
-            public bool ReadNodeParametersFile(UserNodeParameters parameters, string path, bool relativePath = true)
+            public static bool ReadNodeParametersFile(UserNodeParameters parameters, string path, bool relativePath = true)
             {
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string vcpus = lines[0];
@@ -109,7 +129,7 @@ namespace UserInterface
                 return true;
             }
 
-            public bool ReadPsoParametersFile(UserPsoParameters parameters, string path, bool relativePath = true)
+            public static bool ReadFunctionParametersFile(UserFunctionParameters parameters, string path, bool relativePath = true)
             {
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string functionType = lines[0];
@@ -170,6 +190,57 @@ namespace UserInterface
                 parameters.Dimension = dim;
                 parameters.Coefficients = coeff;
                 parameters.SearchSpace = sspace;
+
+                return true;
+            }
+
+            public static bool ReadPsoParametersFile(UserPsoParameters parameters, string path, bool relativePath = true)
+            {
+                string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
+                string iterationsLimitCondition = lines[0];
+                string condition = lines[1];
+                string standard = lines[2];
+                string fullyInformed = lines[3];
+
+                bool isIterations;
+                if (!bool.TryParse(iterationsLimitCondition, out isIterations))
+                {
+                    Console.WriteLine("iterationsLimitCondition");
+                    return false;
+                }
+
+                double cond;
+                if (!double.TryParse(condition, out cond))
+                {
+                    Console.WriteLine("Condition");
+                    return false;
+                }
+
+                int std;
+                if (!int.TryParse(standard, out std))
+                {
+                    Console.WriteLine("Standard particles");
+                    return false;
+                }
+
+                int fi;
+                if (!int.TryParse(fullyInformed, out fi))
+                {
+                    Console.WriteLine("Fully Informed Particles");
+                    return false;
+                }
+
+                parameters.FullyInformedParticles = fi;
+                parameters.StandardParticles = std;
+                parameters.IterationsLimitCondition = isIterations;
+                if (isIterations)
+                {
+                    parameters.Iterations = (int)cond;
+                }
+                else
+                {
+                    parameters.TargetValue = cond;
+                }
 
                 return true;
             }

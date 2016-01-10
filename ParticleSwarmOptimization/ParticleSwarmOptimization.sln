@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{35412F25-A1C7-4FE0-B7AF-F21A128D05FB}"
 EndProject
@@ -23,6 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserInterface", "UserInterf
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ParameterFiles", "ParameterFiles", "{12BFD9CF-2FD2-4A2E-91E0-418587495468}"
 	ProjectSection(SolutionItems) = preProject
+		FunctionParams1.txt = FunctionParams1.txt
 		NodeParams1.txt = NodeParams1.txt
 		PsoParams1.txt = PsoParams1.txt
 	EndProjectSection

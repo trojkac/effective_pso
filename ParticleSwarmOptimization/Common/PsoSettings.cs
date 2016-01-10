@@ -43,6 +43,7 @@ namespace Common
         /// </summary>
         [DataMember]
         public double TargetValue;
+
         /// <summary>
         /// Specifies how accurate should be the result if the target value is given
         /// </summary>
