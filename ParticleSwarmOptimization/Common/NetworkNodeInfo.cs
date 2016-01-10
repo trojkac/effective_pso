@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Runtime.Serialization;
 
-namespace NetworkManager
+namespace Common
 {
     [DataContract]
     public class NetworkNodeInfo : IComparable<NetworkNodeInfo>

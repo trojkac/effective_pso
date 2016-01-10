@@ -65,6 +65,10 @@
       <Project>{dfe2de9a-2440-4d1c-a7ff-c3f00eda51fb}</Project>
       <Name>Controller</Name>
     </ProjectReference>
+    <ProjectReference Include="..\IPsoManager\IPsoManager.csproj">
+      <Project>{7D525ACF-3DEE-46F4-882B-DF8C5E341994}</Project>
+      <Name>IPsoManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetworkManager\NetworkManager.csproj">
       <Project>{f46e4d5d-06d4-45cd-a440-9dfaf32c6aab}</Project>
       <Name>NetworkManager</Name>

@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using Common;
-using NetworkManager;
 
 namespace PsoService
 {
@@ -11,7 +10,7 @@ namespace PsoService
         /// </summary>
         /// <param name="allNetworkNodes"> All nodes in the cluster with collection of URIs of proxy particles for every node </param>
         /// <param name="currentNetworkNode"> Current's node info</param>
-        void UpdatePsoNeighborhood(Tuple<NetworkNodeInfo,Uri[]>[] allNetworkNodes, NetworkNodeInfo currentNetworkNode);
+        void UpdatePsoNeighborhood(Tuple<NetworkNodeInfo, Uri[]>[] allNetworkNodes, NetworkNodeInfo currentNetworkNode);
 
         /// <summary>
         /// Returns ProxyParticle endpoints URIs to be used by other particles

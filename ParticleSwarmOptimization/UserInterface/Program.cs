@@ -198,9 +198,12 @@ namespace UserInterface
             {
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string iterationsLimitCondition = lines[0];
-                string condition = lines[1];
-                string standard = lines[2];
-                string fullyInformed = lines[3];
+                string iterations = lines[1];
+                string targetValueCondition = lines[2];
+                string targetValue = lines[3];
+                string epsilon = lines[4];
+                string standard = lines[5];
+                string fullyInformed = lines[6];
 
                 bool isIterations;
                 if (!bool.TryParse(iterationsLimitCondition, out isIterations))
@@ -209,10 +212,31 @@ namespace UserInterface
                     return false;
                 }
 
-                double cond;
-                if (!double.TryParse(condition, out cond))
+                int iters;
+                if (!int.TryParse(iterations, out iters))
                 {
                     Console.WriteLine("Condition");
+                    return false;
+                }
+
+                bool isTargetValue;
+                if (!bool.TryParse(targetValueCondition, out isTargetValue))
+                {
+                    Console.WriteLine("targetValueCondition");
+                    return false;
+                }
+
+                double target;
+                if (!double.TryParse(targetValue, out target))
+                {
+                    Console.WriteLine("targetValue");
+                    return false;
+                }
+
+                double eps;
+                if (!double.TryParse(epsilon, out eps))
+                {
+                    Console.WriteLine("Epsilon");
                     return false;
                 }
 
@@ -233,14 +257,10 @@ namespace UserInterface
                 parameters.FullyInformedParticles = fi;
                 parameters.StandardParticles = std;
                 parameters.IterationsLimitCondition = isIterations;
-                if (isIterations)
-                {
-                    parameters.Iterations = (int)cond;
-                }
-                else
-                {
-                    parameters.TargetValue = cond;
-                }
+                parameters.Iterations = iters;
+                parameters.Epsilon = eps;
+                parameters.TargetValueCondition = isTargetValue;
+                parameters.TargetValue = target;
 
                 return true;
             }

@@ -21,6 +21,13 @@ namespace Common
             }
             return value;
         }
+
+        public QuadraticFunction(UserFunctionParameters functionParams)
+        {
+            Dimension = functionParams.Dimension;
+            Coefficients = new double[Dimension];
+            functionParams.Coefficients.CopyTo(Coefficients, 0);
+        }
     }
 
     public class RastriginFunction : AbstractFitnessFunction
@@ -32,6 +39,13 @@ namespace Common
         {
             throw new NotImplementedException();
         }
+
+        public RastriginFunction(UserFunctionParameters functionParams)
+        {
+            Dimension = functionParams.Dimension;
+            Coefficients = new double[Dimension];
+            functionParams.Coefficients.CopyTo(Coefficients, 0);
+        }
     }
 
     public class RosenbrockFunction : AbstractFitnessFunction
@@ -42,6 +56,13 @@ namespace Common
         public override double Calculate(double[] vector)
         {
             throw new NotImplementedException();
+        }
+
+        public RosenbrockFunction(UserFunctionParameters functionParams)
+        {
+            Dimension = functionParams.Dimension;
+            Coefficients = new double[Dimension];
+            functionParams.Coefficients.CopyTo(Coefficients, 0);
         }
     }
 }
