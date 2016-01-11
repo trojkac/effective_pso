@@ -12,6 +12,8 @@ namespace Node
         private const int Miliseconds = 4000;
         private Timer _timer;
 
+        private UserNodeParameters _nodeParams;
+
         //public VCpuManager(NetworkNodeManager networkNodeManager, IPsoManager psoRingManager)
         //{
         //    NetworkNodeManager = networkNodeManager;

@@ -14,7 +14,7 @@ namespace UserInterface
             UserFunctionParameters functionParams = ReadFunctionParameters();
             UserPsoParameters psoParams = ReadPsoParameters();
 
-            MachineManager machineManager = new MachineManager(nodeParams, functionParams);
+            MachineManager machineManager = new MachineManager(nodeParams, functionParams, psoParams);
         }
 
         public static UserNodeParameters ReadNodeParameters()
@@ -75,6 +75,7 @@ namespace UserInterface
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string vcpus = lines[0];
                 string isgpu = lines[1];
+                string ports = lines[2];
 
 
                 int nrOfVCpu;
@@ -96,10 +97,51 @@ namespace UserInterface
                     return false;
                 }
 
-                List<string> addresses = new List<string>();
-                if (lines.Length > 2)
+                List<int> portList = new List<int>();
+                string[] nrs = lines[2].Split(',');
+                try
                 {
-                    string[] peers = lines[2].Split(',');
+                    for (int i = 0; i < nrs.Length; i++)
+                    {
+                        int p;
+                        if (int.TryParse(nrs[i], out p))
+                        {
+                            portList.Add(p);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Napotkano niepoprawny numer portu");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Ports");
+                    return false;
+                }
+
+                List<string> pipes = new List<string>();
+                if (lines.Length > 3)
+                {
+                    string[] pps = lines[3].Split(',');
+                    try
+                    {
+                        for (int i = 0; i < pps.Length; i++)
+                        {
+                            pipes.Add(pps[i]);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Błąd przy wczytywaniu pipes");
+                        return false;
+                    }
+                }
+
+                List<string> addresses = new List<string>();
+                if (lines.Length > 4)
+                {
+                    string[] peers = lines[4].Split(',');
                     try
                     {
                         for (int i = 0; i < peers.Length; i++)
@@ -124,6 +166,8 @@ namespace UserInterface
 
                 parameters.NrOfVCpu = nrOfVCpu;
                 parameters.IsGpu = isGpu;
+                parameters.Ports = portList;
+                parameters.Pipes = pipes;
                 parameters.PeerAddresses = addresses;
 
                 return true;
