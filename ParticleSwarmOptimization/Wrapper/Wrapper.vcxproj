@@ -76,6 +76,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="native\Function.hpp" />
+    <ClInclude Include="native\GenericFunction.hpp" />
     <ClInclude Include="native\Particle.hpp" />
     <ClInclude Include="native\PsoAlgorithm.hpp" />
     <ClInclude Include="native\StandardParticle.hpp" />
@@ -90,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="Function.cpp" />
     <ClCompile Include="ParticleNative.cpp" />
     <ClCompile Include="StandardParticleNative.cpp" />
     <ClCompile Include="Particle.cpp" />
