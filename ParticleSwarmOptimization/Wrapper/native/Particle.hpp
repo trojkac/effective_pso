@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Stdafx.h"
-
+#include "Function.hpp" 
 namespace ParticleSwarmOptimization
 {
 	class Particle {
@@ -15,7 +15,7 @@ namespace ParticleSwarmOptimization
 		}
 		virtual void init_location() = 0;
 		virtual void init_velocity() = 0;
-		virtual std::tuple<std::vector<double>, double> update_personal_best(std::function<double(std::vector<double>)> function) = 0;
+		virtual std::tuple<std::vector<double>, double> update_personal_best(Function *function) = 0;
 
 		virtual std::tuple<std::vector<double>, double> get_personal_best()
 		{

@@ -1,5 +1,6 @@
 #include "Particle.hpp"
 #include "native\Particle.hpp"
+#include "native\Function.hpp"
 #include "WrapperHelper.hpp"
 
 //native
@@ -51,7 +52,7 @@ namespace ParticleSwarmOptimization
 		{
 			return personal_best_;
 		}
-		std::tuple<std::vector<double>, double> update_personal_best(std::function<double(std::vector<double>)> function)
+		std::tuple<std::vector<double>, double> update_personal_best(Function *function) override
 		{
 			auto remote_best = particle_state_to_tuple(proxy_particle_->proxyService->GetRemoteBest());
 			if (std::get<1>(personal_best_) < std::get<1>(remote_best))

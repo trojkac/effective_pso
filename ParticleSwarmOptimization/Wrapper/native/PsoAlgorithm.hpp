@@ -4,7 +4,7 @@
 
 #include "Particle.hpp"
 
-#include <functional>
+#include "Function.hpp"
 
 
 namespace ParticleSwarmOptimization {
@@ -13,23 +13,26 @@ namespace ParticleSwarmOptimization {
 	{
 	public:
 		PSOAlgorithm(
-			std::function<double(std::vector<double>)> fitness_function,
+			Function *fitness_function,
 			int iterations
 			) : fitness_function_(fitness_function), max_iterations_(iterations) {}
 
 		PSOAlgorithm(
-			std::function<double(std::vector<double>)> fitness_function,
+			Function *fitness_function,
 			double target_value,
 			double delta
 			) : fitness_function_(fitness_function), max_iterations_(0), target_value_(target_value), delta_(delta) {}
 
 		PSOAlgorithm(
-			std::function<double(std::vector<double>)> fitness_function,
+			Function  *fitness_function,
 			int iterations,
 			double target_value,
 			double delta
 			) : fitness_function_(fitness_function), max_iterations_(iterations), target_value_(target_value), delta_(delta) {}
-
+		~PSOAlgorithm()
+		{
+			delete(fitness_function_);
+		}
 		std::tuple<std::vector<double>, double> run(std::vector<Particle*> particles) const
 		{
 			auto iteration = 0;
@@ -78,7 +81,7 @@ namespace ParticleSwarmOptimization {
 		}
 
 	private:
-		std::function<double(std::vector<double>)> fitness_function_;
+		Function* fitness_function_;
 		int max_iterations_;
 		double target_value_;
 		double delta_;

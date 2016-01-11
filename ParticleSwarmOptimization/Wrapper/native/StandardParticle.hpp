@@ -4,6 +4,7 @@
 
 #include "../Stdafx.h"
 #include "Particle.hpp"
+#include "Function.hpp"
 using namespace ParticleSwarmOptimization;
 
 namespace ParticleSwarmOptimization {
@@ -41,9 +42,9 @@ namespace ParticleSwarmOptimization {
 			velocity_ = velocity;
 		}
 
-		std::tuple<std::vector<double>, double> update_personal_best(std::function<double(std::vector<double>)> function) override
+		std::tuple<std::vector<double>, double> update_personal_best(Function *function) override
 		{
-			auto value = function(location_);
+			auto value = function->evaluate(location_);
 			return std::get<1>(personal_best_) < value ?
 				(personal_best_ = make_tuple(location_, value)) : personal_best_;
 		}

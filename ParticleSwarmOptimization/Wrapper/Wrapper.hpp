@@ -6,6 +6,7 @@
 #include <vector>
 #include "native\PsoAlgorithm.hpp"
 #include "native\Particle.hpp"
+#include "native\GenericFunction.hpp"
 #include "Particle.hpp"
 #include "WrapperHelper.hpp"
 
@@ -44,27 +45,24 @@ namespace ParticleSwarmOptimizationWrapper {
 		{
 			auto algorithm = gcnew PSOAlgorithm(fitnessFunction);
 			algorithm->managedFitness = gcnew ManagedFitnessFunction(algorithm, &nativeFunction);
-			auto funcPtr = Marshal::GetFunctionPointerForDelegate(algorithm->managedFitness);
-			auto unmanagedFitness = static_cast<UnmanagedFitnessfunction>(funcPtr.ToPointer());
-			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(unmanagedFitness, iterations);
+			Function* genericFunction = generate_function_object(algorithm->managedFitness, fitnessFunction);
+			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(genericFunction, iterations);
 			return algorithm;
 		}
 		static PSOAlgorithm^ GetAlgorithm(int iterations, double targetValue, double epsilon, FitnessFunction^ fitnessFunction)
 		{
 			auto algorithm = gcnew PSOAlgorithm(fitnessFunction);
 			algorithm->managedFitness = gcnew ManagedFitnessFunction(algorithm, &nativeFunction);
-			auto funcPtr = Marshal::GetFunctionPointerForDelegate(algorithm->managedFitness);
-			auto unmanagedFitness = static_cast<UnmanagedFitnessfunction>(funcPtr.ToPointer());
-			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(unmanagedFitness,iterations,targetValue,epsilon);
+			Function* genericFunction = generate_function_object(algorithm->managedFitness, fitnessFunction);
+			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(genericFunction,iterations,targetValue,epsilon);
 			return algorithm;
 		}
 		static PSOAlgorithm^ GetAlgorithm(double targetValue, double epsilon,FitnessFunction^ fitnessFunction)
 		{
 			auto algorithm = gcnew PSOAlgorithm(fitnessFunction);
 			algorithm->managedFitness = gcnew ManagedFitnessFunction(algorithm, &nativeFunction);
-			auto funcPtr = Marshal::GetFunctionPointerForDelegate(algorithm->managedFitness);
-			auto unmanagedFitness = static_cast<UnmanagedFitnessfunction>(funcPtr.ToPointer());
-			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(unmanagedFitness, targetValue, epsilon);
+			Function* genericFunction = generate_function_object(algorithm->managedFitness, fitnessFunction);
+			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(genericFunction, targetValue, epsilon);
 			return algorithm;
 		}
 		ParticleState^ Run(List<Particle^>^ particles)
@@ -78,5 +76,13 @@ namespace ParticleSwarmOptimizationWrapper {
 			auto result = _algorithm->run(stdParticles);
 			return tuple_to_particle_state(result);
 		}
+	private:
+		static Function* generate_function_object(ManagedFitnessFunction^ managedFitness, FitnessFunction^ function)
+		{
+			auto funcPtr = Marshal::GetFunctionPointerForDelegate(managedFitness);
+			auto unmanagedFitness = static_cast<UnmanagedFitnessfunction>(funcPtr.ToPointer());
+			return new GenericFunction(unmanagedFitness, "generic");
+		}
+
 	};
 }
