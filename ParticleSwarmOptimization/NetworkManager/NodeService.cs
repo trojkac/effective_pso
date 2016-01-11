@@ -75,6 +75,11 @@ namespace NetworkManager
             PsoManager = psoManager;
         }
 
+        public void AddIPsoManager(IPsoManager psoManager)
+        {
+            PsoManager = psoManager;
+        }
+
         public List<NetworkNodeInfo> GetNeighbors()
         {
             return _neighbors;

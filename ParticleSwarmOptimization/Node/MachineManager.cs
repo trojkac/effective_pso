@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Common;
 
 namespace Node
@@ -34,17 +35,33 @@ namespace Node
         {
             foreach (VCpuManager vCpuManager in _vCpuManagers)
             {
+                foreach (VCpuManager cpuManager in _vCpuManagers)
+                {
+                    if (vCpuManager.GetMyNetworkNodeInfo() != cpuManager.GetMyNetworkNodeInfo())
+                    {
+                        vCpuManager.AddBootstrappingPeer(cpuManager.GetMyNetworkNodeInfo());
+                    }
+                }
+            }
+
+            foreach (VCpuManager vCpuManager in _vCpuManagers)
+            {
                 vCpuManager.StartTcpNodeService();
+            }
+
+            foreach (VCpuManager vCpuManager in _vCpuManagers)
+            {
+                vCpuManager.StartPeriodicallyUpdatingNeighborhood();
             }
         }
 
         public void StartPsoAlgorithm()
         {
             PsoSettings psoSettings = new PsoSettings(_psoParams, _functionParams);
-            foreach (VCpuManager vCpuManager in _vCpuManagers)
+            Parallel.ForEach(_vCpuManagers, (cpuMgr) =>
             {
-                vCpuManager.PsoController.Run(psoSettings.FitnessFunction, psoSettings);
-            }
+                cpuMgr.PsoController.Run(psoSettings.FitnessFunction, psoSettings);
+            });
         }
     }
 }

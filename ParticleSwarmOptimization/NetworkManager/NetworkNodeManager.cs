@@ -13,7 +13,7 @@ namespace NetworkManager
     public class NetworkNodeManager
     {
         private Random random = new Random();
-        private const int Miliseconds = 4000;
+        private const int P2PMilis = 2048;
         private Timer _timer;
 
         public IPsoManager PsoManager { get; private set; }
@@ -57,6 +57,12 @@ namespace NetworkManager
             : this(tcpPort, pipeName)
         {
             PsoManager = psoManager;
+        }
+
+        public void AddIPsoManager(IPsoManager psoManager)
+        {
+            PsoManager = psoManager;
+            NodeService.AddIPsoManager(psoManager);
         }
 
         public void StartTcpNodeService()
@@ -126,7 +132,7 @@ namespace NetworkManager
         public void StartP2PTimer()
         {
             TimerCallback timerCallback = RunP2PAlgorithm;
-            _timer = new Timer(timerCallback, null, Miliseconds, Timeout.Infinite);
+            _timer = new Timer(timerCallback, null, P2PMilis, Timeout.Infinite);
         }
 
         public void RunP2PAlgorithm(Object stateInfo)
@@ -144,7 +150,7 @@ namespace NetworkManager
                     break;
             }
 
-            _timer.Change(Miliseconds, Timeout.Infinite);
+            _timer.Change(P2PMilis, Timeout.Infinite);
         }
 
         public void AddBootstrappingPeer(NetworkNodeInfo peerInfo)

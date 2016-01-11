@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Common;
 using Node;
@@ -16,6 +17,7 @@ namespace UserInterface
 
             MachineManager machineManager = new MachineManager(nodeParams, functionParams, psoParams);
             
+            Debug.WriteLine("starting cluster formation");
             machineManager.StartClusterFormation();
 
             Console.ReadKey();
@@ -87,7 +89,7 @@ namespace UserInterface
 
 
                 int nrOfVCpu;
-                if (!Int32.TryParse(vcpus, out nrOfVCpu))
+                if (!int.TryParse(vcpus, out nrOfVCpu))
                 {
                     Console.WriteLine("Liczba VCpu powinna być liczbą całkowitą");
                     return false;
@@ -198,7 +200,7 @@ namespace UserInterface
                 }
 
                 int dim;
-                if (!Int32.TryParse(dimension, out dim))
+                if (!int.TryParse(dimension, out dim))
                 {
                     Console.WriteLine("Liczba wymiarów powinna być liczbą całkowitą");
                     return false;

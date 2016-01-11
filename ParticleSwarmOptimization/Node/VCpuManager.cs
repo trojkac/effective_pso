@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using Common;
 using NetworkManager;
@@ -9,7 +10,7 @@ namespace Node
 {
     public class VCpuManager
     {
-        private const int Miliseconds = 4000;
+        private const int UpdateNeighborhoodMilis = 1024;
         private Timer _timer;
 
         private UserNodeParameters _nodeParams;
@@ -46,6 +47,7 @@ namespace Node
             NetworkNodeManager = new NetworkNodeManager(tcpPort, pipeName);
             PsoController = new PsoController();
             PsoRingManager = new PsoRingManager(NetworkNodeManager.NodeService.Info.Id);
+            NetworkNodeManager.AddIPsoManager(PsoRingManager);
         }
 
         // NETWORK PART
@@ -75,17 +77,24 @@ namespace Node
         public void StartPeriodicallyUpdatingNeighborhood()
         {
             TimerCallback timerCallback = UpdateNeighborhood;
-            _timer = new Timer(timerCallback, null, Miliseconds, Timeout.Infinite);
+            _timer = new Timer(timerCallback, null, UpdateNeighborhoodMilis, Timeout.Infinite);
         }
 
         public void UpdateNeighborhood(Object stateInfo)
         {
+            Debug.WriteLine("Node " + NetworkNodeManager.NodeService.Info.Id + " rozpoczyna UpdateNeighborhood");
             PsoRingManager.UpdatePsoNeighborhood(NetworkNodeManager.GetAllProxyParticlesAddresses(), NetworkNodeManager.NodeService.Info);
+            _timer.Change(UpdateNeighborhoodMilis, Timeout.Infinite);
         }
 
         public NetworkNodeInfo GetMyNetworkNodeInfo()
         {
             return NetworkNodeManager.NodeService.Info;
+        }
+
+        public void AddBootstrappingPeer(NetworkNodeInfo peer)
+        {
+            NetworkNodeManager.NodeService.AddBootstrappingPeer(peer);
         }
 
         // PSO PART
