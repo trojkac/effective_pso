@@ -11,7 +11,7 @@ namespace PsoService
         private Tuple<NetworkNodeInfo, ProxyParticle> _right;
         public PsoSettings PsoSettings;
 
-        public PsoRingManager(int nodeId)
+        public PsoRingManager(ulong nodeId)
         {
             _left = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
             _right = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
