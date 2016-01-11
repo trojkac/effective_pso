@@ -44,6 +44,8 @@ namespace Node
         public VCpuManager(int tcpPort, string pipeName)
         {
             NetworkNodeManager = new NetworkNodeManager(tcpPort, pipeName);
+            PsoController = new PsoController();
+            PsoRingManager = new PsoRingManager(NetworkNodeManager.NodeService.Info.Id);
         }
 
         // NETWORK PART

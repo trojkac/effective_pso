@@ -6,7 +6,7 @@ using ParticleSwarmOptimizationWrapper;
 
 namespace Controller
 {
-    public class Controller : IPsoController
+    public class PsoController : IPsoController
     {
         private List<Particle> CreateParticles(Tuple<PsoParticleType, int>[] particlesParameters, int dimensions)
         {

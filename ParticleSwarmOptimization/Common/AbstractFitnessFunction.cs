@@ -17,7 +17,7 @@ namespace Common
             double value = 0;
             for (int i = 0; i < vector.Length; i++)
             {
-                value += Coefficients[i] * vector[i];
+                value += Coefficients[i] * vector[i] * vector[i];
             }
             return value;
         }

@@ -61,7 +61,7 @@ namespace NetworkManager
 
         public void StartTcpNodeService()
         {
-            string serviceAddress = "net.tcp://localhost:" + _tcpPort + "/NodeService";
+            string serviceAddress = "net.tcp://127.0.0.1:" + _tcpPort + "/NodeService";
             Uri serviceUri = new Uri(serviceAddress);
 
             _tcpHost = new ServiceHost(NodeService, serviceUri);
