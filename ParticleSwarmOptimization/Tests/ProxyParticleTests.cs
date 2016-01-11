@@ -88,7 +88,7 @@ namespace Tests
 
             particle2.Open();
 
-            var controller = new Controller.Controller();
+            var controller = new Controller.PsoController();
             
             var result = controller.Run(x => -x[0]*x[0]+5,
                 new PsoSettings()

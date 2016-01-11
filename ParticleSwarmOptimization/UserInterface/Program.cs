@@ -15,6 +15,14 @@ namespace UserInterface
             UserPsoParameters psoParams = ReadPsoParameters();
 
             MachineManager machineManager = new MachineManager(nodeParams, functionParams, psoParams);
+            
+            machineManager.StartClusterFormation();
+
+            Console.ReadKey();
+
+            machineManager.StartPsoAlgorithm();
+            
+            Console.ReadKey();
         }
 
         public static UserNodeParameters ReadNodeParameters()

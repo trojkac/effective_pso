@@ -63,28 +63,29 @@ namespace Common
             Iterations = 0;
             FitnessFunction = null;
 
+            AbstractFitnessFunction function = null;
+
             switch (functionParams.FitnessFunctionType)
             {
                 case FitnessFunctionType.Quadratic:
                     {
-                        AbstractFitnessFunction function = new QuadraticFunction(functionParams);
-                        FitnessFunction = function.Calculate;
+                        function = new QuadraticFunction(functionParams);
                         goto default;
                     }
                 case FitnessFunctionType.Rastrigin:
                     {
-                        AbstractFitnessFunction function = new RastriginFunction(functionParams);
-                        FitnessFunction = function.Calculate;
+                        function = new RastriginFunction(functionParams);
                         goto default;
                     }
                 case FitnessFunctionType.Rosenbrock:
                     {
-                        AbstractFitnessFunction function = new RosenbrockFunction(functionParams);
-                        FitnessFunction = function.Calculate;
+                        function = new RosenbrockFunction(functionParams);
                         goto default;
                     }
                 default:
                     {
+                        FitnessFunction = function.Calculate;
+
                         Particles = new Tuple<PsoParticleType, int>[2];
                         Particles[0] = new Tuple<PsoParticleType, int>(PsoParticleType.Standard, psoParams.StandardParticles);
                         Particles[1] = new Tuple<PsoParticleType, int>(PsoParticleType.FullyInformed, psoParams.FullyInformedParticles);

@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller.cs" />
+    <Compile Include="PsoController.cs" />
     <Compile Include="IPsoController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -38,9 +38,9 @@ namespace Node
             }
         }
 
-        public void StartPsoAlgorithm(UserPsoParameters psoParams, UserFunctionParameters functionParams)
+        public void StartPsoAlgorithm()
         {
-            PsoSettings psoSettings = new PsoSettings(psoParams, functionParams);
+            PsoSettings psoSettings = new PsoSettings(_psoParams, _functionParams);
             foreach (VCpuManager vCpuManager in _vCpuManagers)
             {
                 vCpuManager.PsoController.Run(psoSettings.FitnessFunction, psoSettings);
