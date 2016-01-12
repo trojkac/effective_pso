@@ -1,16 +1,36 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Common
 {
+    [DataContract]
     public abstract class AbstractFitnessFunction
     {
+        public static AbstractFitnessFunction GetFitnessFunction(UserFunctionParameters parameters)
+        {
+            switch (parameters.FitnessFunctionType)
+            {
+                case FitnessFunctionType.Quadratic:
+                    return new QuadraticFunction(parameters);
+                case FitnessFunctionType.Rastrigin:
+                    return new RastriginFunction(parameters);
+                case FitnessFunctionType.Rosenbrock:
+                    return new RosenbrockFunction(parameters);
+                default:
+                    throw new ArgumentException("Unknown function type.");
+            }
+        }
+
         public abstract double Calculate(double[] vector);
+        [DataMember]
+        public int Dimension;
+        [DataMember]
+        public double[] Coefficients;
     }
 
     public class QuadraticFunction : AbstractFitnessFunction
     {
-        public int Dimension;
-        public double[] Coefficients;
+
 
         public override double Calculate(double[] vector)
         {
@@ -32,8 +52,6 @@ namespace Common
 
     public class RastriginFunction : AbstractFitnessFunction
     {
-        public int Dimension;
-        public double[] Coefficients;
 
         public override double Calculate(double[] vector)
         {
@@ -50,8 +68,6 @@ namespace Common
 
     public class RosenbrockFunction : AbstractFitnessFunction
     {
-        public int Dimension;
-        public double[] Coefficients;
 
         public override double Calculate(double[] vector)
         {

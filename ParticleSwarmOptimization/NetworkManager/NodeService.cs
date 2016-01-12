@@ -13,8 +13,12 @@ namespace NetworkManager
     public class NodeService : INodeService, IReconnaissance
     {
         public event UpdateNeighborhoodHandler NeighborhoodChangedEvent;
+        public event StartCalculationsHandler StartCalculations;
         public NetworkNodeInfo Info { get; set; }
         public IPsoManager PsoManager { get; private set; }
+        /// <summary>
+        /// List of all nodes in cluster (including the current one).
+        /// </summary>
         public List<NetworkNodeInfo> KnownNodes { get; private set; }
 
 
@@ -52,7 +56,8 @@ namespace NetworkManager
 
         public void StartCalculation(PsoSettings settings)
         {
-            throw new NotImplementedException();
+            Debug.WriteLine("{0}: starting calculations.", Info.Id);
+            if (StartCalculations != null) StartCalculations(settings);
         }
 
 

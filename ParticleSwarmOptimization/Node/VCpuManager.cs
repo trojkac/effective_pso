@@ -21,7 +21,10 @@ namespace Node
             PsoController = psoController ?? new PsoController();
             PsoRingManager = psoRingManager ?? new PsoRingManager(NetworkNodeManager.NodeService.Info.Id);
             NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses = PsoRingManager.GetProxyParticlesAddresses();
+
+
             NetworkNodeManager.NodeService.NeighborhoodChangedEvent += PsoRingManager.UpdatePsoNeighborhood;
+            NetworkNodeManager.NodeService.StartCalculations += Run;
         }
 
         // NETWORK PART
@@ -56,9 +59,15 @@ namespace Node
         public IPsoManager PsoRingManager { get; set; }
         public IPsoController PsoController { get; set; }
 
-        public void Run(FitnessFunction fitnessFunction, PsoSettings psoSettings)
+        public void Run( PsoSettings psoSettings)
         {
-            PsoController.Run(fitnessFunction, psoSettings, PsoRingManager.GetProxyParticles());
+            PsoController.Run(psoSettings, PsoRingManager.GetProxyParticles());
+        }
+
+        public void StartCalculations(PsoSettings settings)
+        {
+            NetworkNodeManager.StartCalculations(settings);
+            Run(settings);
         }
     }
 }

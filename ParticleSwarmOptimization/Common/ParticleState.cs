@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Common
 {
@@ -10,12 +12,12 @@ namespace Common
         [DataMember]
         public double[] Location { get; set; }
 
-        public static ParticleState WorstState
+       
+
+        public static ParticleState WorstState(int dim)
         {
-            get
-            {
-                return new ParticleState(null, double.NegativeInfinity);
-            }
+            return new ParticleState(Enumerable.Repeat(0.0,dim).ToArray(), double.NegativeInfinity);
+
         }
 
         public ParticleState(double[] location, double fitnessValue)
@@ -24,11 +26,16 @@ namespace Common
             Location = location ;
         }
 
-        public ParticleState()
+        public ParticleState(int dim)
         {
-            var worst = WorstState;
+            var worst = WorstState(dim);
             FitnessValue = worst.FitnessValue;
             Location = worst.Location;
+        }
+
+        public ParticleState()
+        {
+            // TODO: Complete member initialization
         }
     }
 }

@@ -12,21 +12,12 @@ namespace Common
     [DataContract]
     public struct PsoSettings
     {
-        [DataMember]
-        public FitnessFunction FitnessFunction;
 
         /// <summary>
         /// Collection specifying types of particles and number of particles of each type
         /// </summary>
         [DataMember]
         public Tuple<PsoParticleType, int>[] Particles;
-
-        /// <summary>
-        /// Nx2 array where N is dimension of the search space.
-        /// In this array minimum and maximum of each dimension are stored.
-        /// </summary>
-        [DataMember]
-        public double[][] SearchSpace;
 
         [DataMember(IsRequired = true)]
         public bool IterationsLimitCondition;
@@ -56,65 +47,34 @@ namespace Common
         [DataMember]
         public int Dimensions;
 
+        [DataMember]
+        public UserFunctionParameters FunctionParameters;
         public PsoSettings(UserPsoParameters psoParams, UserFunctionParameters functionParams)
         {
             Epsilon = 0;
             TargetValue = 0;
             Iterations = 0;
-            FitnessFunction = null;
+            Particles = new Tuple<PsoParticleType, int>[2];
+            FunctionParameters = functionParams;
+            Particles[0] = new Tuple<PsoParticleType, int>(PsoParticleType.Standard, psoParams.StandardParticles);
+            Particles[1] = new Tuple<PsoParticleType, int>(PsoParticleType.FullyInformed, psoParams.FullyInformedParticles);
 
-            AbstractFitnessFunction function = null;
 
-            switch (functionParams.FitnessFunctionType)
+            IterationsLimitCondition = psoParams.IterationsLimitCondition;
+            if (IterationsLimitCondition)
             {
-                case FitnessFunctionType.Quadratic:
-                    {
-                        function = new QuadraticFunction(functionParams);
-                        goto default;
-                    }
-                case FitnessFunctionType.Rastrigin:
-                    {
-                        function = new RastriginFunction(functionParams);
-                        goto default;
-                    }
-                case FitnessFunctionType.Rosenbrock:
-                    {
-                        function = new RosenbrockFunction(functionParams);
-                        goto default;
-                    }
-                default:
-                    {
-                        FitnessFunction = function.Calculate;
-
-                        Particles = new Tuple<PsoParticleType, int>[2];
-                        Particles[0] = new Tuple<PsoParticleType, int>(PsoParticleType.Standard, psoParams.StandardParticles);
-                        Particles[1] = new Tuple<PsoParticleType, int>(PsoParticleType.FullyInformed, psoParams.FullyInformedParticles);
-
-                        SearchSpace = new double[functionParams.Dimension][];
-                        for (int i = 0; i < functionParams.Dimension; i++)
-                        {
-                            SearchSpace[i] = new double[2];
-                            SearchSpace[i][0] = functionParams.SearchSpace[i].Item1;
-                            SearchSpace[i][1] = functionParams.SearchSpace[i].Item2;
-                        }
-
-                        IterationsLimitCondition = psoParams.IterationsLimitCondition;
-                        if (IterationsLimitCondition)
-                        {
-                            Iterations = psoParams.Iterations;
-                        }
-
-                        TargetValueCondition = psoParams.TargetValueCondition;
-                        if (TargetValueCondition)
-                        {
-                            TargetValue = psoParams.TargetValue;
-                            Epsilon = psoParams.Epsilon;
-                        }
-
-                        Dimensions = functionParams.Dimension;
-                        break;
-                    }
+                Iterations = psoParams.Iterations;
             }
+
+            TargetValueCondition = psoParams.TargetValueCondition;
+            if (TargetValueCondition)
+            {
+                TargetValue = psoParams.TargetValue;
+                Epsilon = psoParams.Epsilon;
+            }
+
+            Dimensions = functionParams.Dimension;
+
         }
     }
 }

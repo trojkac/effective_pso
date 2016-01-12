@@ -36,7 +36,7 @@ namespace Node
             PsoSettings psoSettings = new PsoSettings(_psoParams, _functionParams);
             Parallel.ForEach(_vCpuManagers, (cpuMgr) =>
             {
-                cpuMgr.Run(psoSettings.FitnessFunction, psoSettings);
+                cpuMgr.Run( psoSettings);
             });
         }
     }

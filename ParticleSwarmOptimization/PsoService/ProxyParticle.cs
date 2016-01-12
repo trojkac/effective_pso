@@ -72,7 +72,7 @@ namespace PsoService
         {
             if (_particleClient == null)
             {
-                return ParticleState.WorstState;
+                return ParticleState.WorstState(1);
             }
             var s = _particleClient.GetBestState();
             _particleService.UpdateBestState(s);

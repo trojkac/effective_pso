@@ -83,24 +83,16 @@ namespace Tests
             var particle1 = ProxyParticle.CreateProxyParticle(1);
             var particle2 = ProxyParticle.CreateProxyParticle(2);
             particle1.UpdateRemoteAddress(particle2.Address);
-            var state = new ParticleState {FitnessValue = 5.0, Location = new[] {0.0}};
+            var state = new ParticleState {FitnessValue = -9.0, Location = new[] {3.0}};
             particle2.UpdateBestState(state);
 
             particle2.Open();
 
             var controller = new Controller.PsoController();
             
-            var result = controller.Run(x => -x[0]*x[0]+5,
-                new PsoSettings()
-                {
-                    Dimensions = 1,
-                    Epsilon = 0,
-                    Iterations = 2,
-                    IterationsLimitCondition = true,
-                    Particles = new[] {new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 1)},
-                }, new []{particle1}
-                );
-
+            controller.Run(PsoSettingsFactory.QuadraticFunction1DFrom3To5(), new []{particle1});
+            
+            var result = controller.RunningAlgorithm.Result;
             Assert.AreEqual(state.FitnessValue, result.FitnessValue);
             Assert.AreEqual(true, result.Location.SequenceEqual(state.Location));
 

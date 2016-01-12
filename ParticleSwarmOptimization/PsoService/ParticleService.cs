@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System.Diagnostics;
+using System.ServiceModel;
 using Common;
 
 namespace PsoService
@@ -24,11 +25,12 @@ namespace PsoService
 
         public ParticleService()
         {
-            _bestKnownState = ParticleState.WorstState;
+            _bestKnownState = ParticleState.WorstState(1);
         }
 
         public ParticleState GetBestState()
         {
+            Debug.WriteLine("Is asked about state.");
             return BestKnownState;
         }
 

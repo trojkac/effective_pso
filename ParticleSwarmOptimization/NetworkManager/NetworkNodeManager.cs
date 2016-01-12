@@ -9,8 +9,6 @@ using Common;
 
 namespace NetworkManager
 {
-    public delegate void UpdateNeighborhoodHandler(NetworkNodeInfo[] neighbors, NetworkNodeInfo currentNode);
-
     public class NetworkNodeManager
     {
 
@@ -36,12 +34,16 @@ namespace NetworkManager
 
         public NodeService NodeService { get; set; }
 
+        /// <summary>
+        /// Returns list containing clients for all nodes in neighborhood except this node.
+        /// </summary>
         public List<NodeServiceClient> NodeServiceClients
         {
             get
             {
                 return NodeService
                     .KnownNodes
+                    .Where(node => node.Id != NodeService.Info.Id)
                     .Select(neighbor => new TcpNodeServiceClient(neighbor))
                     .Cast<NodeServiceClient>()
                     .ToList();
@@ -53,6 +55,15 @@ namespace NetworkManager
             var client = new TcpNodeServiceClient(info);
             client.Register(NodeService.Info);
         }
+
+        public void StartCalculations(PsoSettings settings)
+        {
+            foreach (var client in NodeServiceClients)
+            {
+                client.StartCalculation(settings);
+            }
+        }
+
         public void StartTcpNodeService()
         {
             var serviceAddress = "net.tcp://127.0.0.1:" + _tcpPort + "/NodeService";
