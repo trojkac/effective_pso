@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IReconnaissance.cs" />
     <Compile Include="NetworkNodeManager.cs" />
     <Compile Include="NodeService.cs" />
     <Compile Include="INodeService.cs" />
@@ -52,9 +53,9 @@
       <Project>{1ABBF21A-D8D4-4AE0-A3CA-F8BE3D11B84B}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\IPsoManager\IPsoManager.csproj">
-      <Project>{7D525ACF-3DEE-46F4-882B-DF8C5E341994}</Project>
-      <Name>IPsoManager</Name>
+    <ProjectReference Include="..\PsoService\PsoService.csproj">
+      <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
+      <Name>PsoService</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

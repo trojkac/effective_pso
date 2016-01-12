@@ -10,7 +10,7 @@ namespace Tests
     public class ServiceTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void ClusterRegister()
         {
             VCpuManager vcpu1 = new VCpuManager(8888, "pipe1");
             VCpuManager vcpu2 = new VCpuManager(8889, "pipe2");
@@ -20,12 +20,12 @@ namespace Tests
             vcpu2.StartTcpNodeService();
             vcpu3.StartTcpNodeService();
 
-            vcpu1.NetworkNodeManager.AddBootstrappingPeer(vcpu2.GetMyNetworkNodeInfo());
-            vcpu2.NetworkNodeManager.AddBootstrappingPeer(vcpu1.GetMyNetworkNodeInfo());
-            vcpu3.NetworkNodeManager.AddBootstrappingPeer(vcpu1.GetMyNetworkNodeInfo());
-            vcpu3.NetworkNodeManager.AddBootstrappingPeer(vcpu2.GetMyNetworkNodeInfo());
+            vcpu1.NetworkNodeManager.Register(vcpu2.GetMyNetworkNodeInfo());
 
-            Console.ReadKey();
+
+            Assert.AreEqual(2,vcpu1.NetworkNodeManager.NodeService.KnownNodes.Count);
+            Assert.AreEqual(2, vcpu2.NetworkNodeManager.NodeService.KnownNodes.Count);
+
         }
 
         [TestMethod]

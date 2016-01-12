@@ -9,26 +9,24 @@ namespace PsoService
     {
         private Tuple<NetworkNodeInfo, ProxyParticle> _left;
         private Tuple<NetworkNodeInfo, ProxyParticle> _right;
-        public PsoSettings PsoSettings;
-
         public PsoRingManager(ulong nodeId)
         {
             _left = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
             _right = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
         }
 
-        public void UpdatePsoNeighborhood(Tuple<NetworkNodeInfo, Uri[]>[] allNetworkNodes,
+        public void UpdatePsoNeighborhood(NetworkNodeInfo[] allNetworkNodes,
             NetworkNodeInfo currentNetworkNode)
         {
             //do nothing if there is only current network in collection
-            if (allNetworkNodes.Length <= 1)
+            if (allNetworkNodes == null || allNetworkNodes.Length < 1)
                 return;
-            var nodes = allNetworkNodes.OrderBy(t => t.Item1.Id).ToArray();
-            Tuple<NetworkNodeInfo, Uri[]> previous = null, next = null;
+            var nodes = allNetworkNodes.OrderBy(t => t.Id).ToArray();
+            NetworkNodeInfo previous = null, next = null;
             for (int index = 0; index < nodes.Length; index++)
             {
                 var node = nodes[index];
-                if (node.Item1.Id != currentNetworkNode.Id) continue;
+                if (node.Id != currentNetworkNode.Id) continue;
 
                 previous = nodes[(index - 1 + nodes.Length) % nodes.Length];
                 next = nodes[(index + 1) % nodes.Length];
@@ -38,13 +36,13 @@ namespace PsoService
             {
                 throw new ArgumentException("allNetworkNodes should include this node itself");
             }
-            if (_left.Item1 == null || previous.Item1.Id != _left.Item1.Id || !previous.Item2.Contains(_left.Item2.RemoteAddress))
+            if (_left.Item1 == null || previous.Id != _left.Item1.Id || !previous.ProxyParticlesAddresses.Contains(_left.Item2.RemoteAddress))
             {
-                _left.Item2.UpdateRemoteAddress(previous.Item2[0]);
+                _left.Item2.UpdateRemoteAddress(previous.ProxyParticlesAddresses[0]);
             }
-            if (_right.Item1 == null || next.Item1.Id != _right.Item1.Id || !next.Item2.Contains(_right.Item2.RemoteAddress))
+            if (_right.Item1 == null || next.Id != _right.Item1.Id || !next.ProxyParticlesAddresses.Contains(_right.Item2.RemoteAddress))
             {
-                _right.Item2.UpdateRemoteAddress(next.Item2[next.Item2.Length - 1]);
+                _right.Item2.UpdateRemoteAddress(next.ProxyParticlesAddresses[next.ProxyParticlesAddresses.Length - 1]);
             }
         }
 
@@ -56,14 +54,9 @@ namespace PsoService
             return uris.ToArray();
         }
 
-        public PsoSettings CurrentProblem()
+        public ProxyParticle[] GetProxyParticles()
         {
-            return PsoSettings;
-        }
-
-        public ParticleState Run(FitnessFunction fitnessFunction, PsoSettings psoSettings)
-        {
-            throw new NotImplementedException();
+            return new[] {_left.Item2, _right.Item2};
         }
     }
 }

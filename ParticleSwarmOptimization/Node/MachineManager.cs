@@ -31,36 +31,12 @@ namespace Node
             }
         }
 
-        public void StartClusterFormation()
-        {
-            foreach (VCpuManager vCpuManager in _vCpuManagers)
-            {
-                foreach (VCpuManager cpuManager in _vCpuManagers)
-                {
-                    if (vCpuManager.GetMyNetworkNodeInfo() != cpuManager.GetMyNetworkNodeInfo())
-                    {
-                        vCpuManager.AddBootstrappingPeer(cpuManager.GetMyNetworkNodeInfo());
-                    }
-                }
-            }
-
-            foreach (VCpuManager vCpuManager in _vCpuManagers)
-            {
-                vCpuManager.StartTcpNodeService();
-            }
-
-            foreach (VCpuManager vCpuManager in _vCpuManagers)
-            {
-                vCpuManager.StartPeriodicallyUpdatingNeighborhood();
-            }
-        }
-
         public void StartPsoAlgorithm()
         {
             PsoSettings psoSettings = new PsoSettings(_psoParams, _functionParams);
             Parallel.ForEach(_vCpuManagers, (cpuMgr) =>
             {
-                cpuMgr.PsoController.Run(psoSettings.FitnessFunction, psoSettings);
+                cpuMgr.Run(psoSettings.FitnessFunction, psoSettings);
             });
         }
     }

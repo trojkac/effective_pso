@@ -5,41 +5,28 @@ using Common;
 
 namespace NetworkManager
 {
-    public abstract class NodeServiceClient
+    public abstract class NodeServiceClient : INodeService
     {
         public EndpointAddress Address;
         public Binding Binding;
         public IChannelFactory<INodeService> ChannelFactory;
         public INodeService Proxy;
 
-        public void CloserPeerSearch(NetworkNodeInfo source)
+
+        public void UpdateNodes(NetworkNodeInfo[] nodes)
         {
-            Proxy.CloserPeerSearch(source);
+            Proxy.UpdateNodes(nodes);
         }
 
-        public void SuccessorCandidate(NetworkNodeInfo candidate)
+        public void Register(NetworkNodeInfo source)
         {
-            Proxy.SuccessorCandidate(candidate);
+            Proxy.Register(source);
         }
 
-        public void GetNeighbor(NetworkNodeInfo from, int which)
+        
+        public void StartCalculation(PsoSettings settings)
         {
-            Proxy.GetNeighbor(from, which);
-        }
-
-        public void UpdateNeighbor(NetworkNodeInfo newNeighbor, int which)
-        {
-            Proxy.UpdateNeighbor(newNeighbor, which);
-        }
-
-        public Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)
-        {
-            return Proxy.ReceiveMessage(msg, src, dst);
-        }
-
-        public Tuple<NetworkNodeInfo, Uri[]>[] GetProxyParticlesAddresses(NetworkNodeInfo src)
-        {
-            return Proxy.GetProxyParticlesAddresses(src);
+            Proxy.StartCalculation(settings);
         }
     }
 

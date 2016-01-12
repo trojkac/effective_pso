@@ -18,8 +18,6 @@ namespace UserInterface
             MachineManager machineManager = new MachineManager(nodeParams, functionParams, psoParams);
             
             Debug.WriteLine("starting cluster formation");
-            machineManager.StartClusterFormation();
-
             Console.ReadKey();
 
             machineManager.StartPsoAlgorithm();

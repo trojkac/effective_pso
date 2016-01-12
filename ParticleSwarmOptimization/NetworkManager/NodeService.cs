@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using Common;
 using PsoService;
@@ -9,302 +10,62 @@ using PsoService;
 namespace NetworkManager
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    public class NodeService : INodeService
+    public class NodeService : INodeService, IReconnaissance
     {
-        private System.Object _lockObject = new System.Object();
-        private Random random = new Random();
-
-        public IPsoManager PsoManager { get; private set; }
-
+        public event UpdateNeighborhoodHandler NeighborhoodChangedEvent;
         public NetworkNodeInfo Info { get; set; }
-        public NetworkNodeInfo Successor
-        {
-            get
-            {
-                if (_neighbors.Count > 0)
-                {
-                    return _neighbors[0];
-                }
-                return null;
-            }
-        }
+        public IPsoManager PsoManager { get; private set; }
+        public List<NetworkNodeInfo> KnownNodes { get; private set; }
 
-        //CONST
-        public HashSet<NetworkNodeInfo> BootstrappingPeers { get; set; }
-
-        //INPUT
-        private NetworkNodeInfo _s;
-
-        //VAR
-        private readonly HashSet<NetworkNodeInfo> _peers; //S
-        private readonly HashSet<NetworkNodeInfo> _successorCandidatesFromSearchMonitor; //B
-        private readonly HashSet<NetworkNodeInfo> _successorCandidatesFormCloserPeerSearch; //W
-
-        private readonly List<NetworkNodeInfo> _neighbors; //Gamma   //czy nie trzeba uważać na przypadek, gdy to jest puste?  //zakładam, że węzeł nie może mieć wśród swoich sąsiadów siebie
-
-        public NodeService()
-        {
-            _peers = new HashSet<NetworkNodeInfo>();
-            _successorCandidatesFromSearchMonitor = new HashSet<NetworkNodeInfo>();
-            _successorCandidatesFormCloserPeerSearch = new HashSet<NetworkNodeInfo>();
-            _neighbors = new List<NetworkNodeInfo>();
-            BootstrappingPeers = new HashSet<NetworkNodeInfo>();
-        }
 
         public NodeService(int tcpPort, string pipeName)
             : this()
         {
             Info = new NetworkNodeInfo("net.tcp://" + "127.0.0.1" + ":" + tcpPort + "/NodeService", "net.pipe://" + "127.0.0.1" + "/NodeService/" + pipeName);
+            KnownNodes.Add(Info);
+            PsoManager = new PsoRingManager(Info.Id);
+        }
+        private NodeService()
+        {
+            KnownNodes = new List<NetworkNodeInfo>();
         }
 
-        public NodeService(string tcpAddress, string pipeAddress)
-            : this()
-        {
-            Info = new NetworkNodeInfo(tcpAddress, pipeAddress);
-        }
 
-        public NodeService(int tcpPort, string pipeAddress, IPsoManager psoManager)
-            : this(tcpPort, pipeAddress)
+        public void UpdateNodes(NetworkNodeInfo[] nodes)
         {
-            PsoManager = psoManager;
-        }
-
-        public NodeService(string tcpAddress, string pipeAddress, IPsoManager psoManager)
-            : this(tcpAddress, pipeAddress)
-        {
-            PsoManager = psoManager;
-        }
-
-        public void AddIPsoManager(IPsoManager psoManager)
-        {
-            PsoManager = psoManager;
-        }
-
-        public List<NetworkNodeInfo> GetNeighbors()
-        {
-            return _neighbors;
-        }
-
-        public void AddBootstrappingPeer(NetworkNodeInfo peerInfo)
-        {
-            BootstrappingPeers.Add(peerInfo);
-        }
-
-        public void SetBootstrappingPeers(HashSet<NetworkNodeInfo> bootstrappingPeers)
-        {
-            BootstrappingPeers = bootstrappingPeers;
-        }
-
-        //Neighbor Update part I - aktualizacja następnika
-        public void A1()
-        {
-            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " wykonuje Neighbor Update part I");
-
-            lock (_lockObject)
+            foreach (var networkNodeInfo in nodes)
             {
-                _peers.Clear();
-                if (_s != null) { _peers.Add(_s); }
-                _peers.UnionWith(_successorCandidatesFormCloserPeerSearch);
-                _peers.UnionWith(_successorCandidatesFromSearchMonitor);
-                _peers.UnionWith(_neighbors);
-
-                _peers.Remove(Info);
-
-                NetworkNodeInfo closestPeer = NetworkNodeInfo.GetBestSuccessorCandidate(Info, _peers);
-                if (closestPeer != null)
-                {
-                    _neighbors.Remove(closestPeer);
-                    _neighbors.Insert(0, closestPeer);
-                }
-                _successorCandidatesFromSearchMonitor.Clear();
-                _successorCandidatesFormCloserPeerSearch.Clear();
+                if (KnownNodes.Contains(networkNodeInfo)) continue;
+                Debug.WriteLine("{0}: updating nodes", Info.Id);
+                KnownNodes = new List<NetworkNodeInfo>(nodes);
+                if (NeighborhoodChangedEvent != null) NeighborhoodChangedEvent(KnownNodes.ToArray(), Info);
             }
         }
 
-        //sending Closer-Peer Search from Info
-        public void A2()
+        public void Register(NetworkNodeInfo source)
         {
-            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " inicjuje Closer-Peer Search");
+            Debug.WriteLine("{0}: registering new node", Info.Id);
+            KnownNodes.Add(source);
+            if (NeighborhoodChangedEvent != null) NeighborhoodChangedEvent(KnownNodes.ToArray(), Info);
+            BroadcastNeighborhoodList();
+        }
 
-            lock (_lockObject)
+        public void StartCalculation(PsoSettings settings)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        private void BroadcastNeighborhoodList()
+        {
+            Debug.WriteLine("{0}: broadcasting neighbors list", Info.Id);
+            foreach (var networkNodeInfo in KnownNodes)
             {
-                int r = random.Next(0, _neighbors.Count > 0 ? BootstrappingPeers.Count + 1 : BootstrappingPeers.Count);
-                if (_neighbors.Count == 0 && BootstrappingPeers.Count == 0)
-                {
-                    return;
-                }
-
-                _s = r < BootstrappingPeers.Count ? BootstrappingPeers.ElementAt(r) : _neighbors[0];
-
-                if (!_s.Equals(Info))
-                {
-                    try
-                    {
-                        NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(_s.TcpAddress);
-                        nodeServiceClient.CloserPeerSearch(Info);
-                    }
-                    catch (Exception e) { }
-                }
+                if (networkNodeInfo.Id == Info.Id) continue;
+                NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(networkNodeInfo.TcpAddress);
+                nodeServiceClient.UpdateNodes(KnownNodes.ToArray());
             }
         }
 
-        //receiving Closer-Peer Search from 'source'
-        public void CloserPeerSearch(NetworkNodeInfo source) //A3
-        {
-            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " otrzymał zapytanie Closer-Peer Search od serwisu o adresie TCP: " + source.TcpAddress);
-
-            lock (_lockObject)
-            {
-                if (source.Equals(Info))
-                {
-                    return;
-                }
-
-                if (_neighbors.Count == 0)
-                {
-                    _successorCandidatesFromSearchMonitor.Add(source);
-                }
-                else
-                {
-                    if (NetworkNodeInfo.Distance(Info, source) <=
-                        _neighbors.Min(n => NetworkNodeInfo.Distance(n, source)))
-                    {
-                        _successorCandidatesFromSearchMonitor.Add(source);
-
-                        try
-                        {
-                            NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(source.TcpAddress);
-                            nodeServiceClient.SuccessorCandidate(_neighbors[0]);
-                        }
-                        catch (Exception e) { }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            NodeServiceClient nodeServiceClient =
-                                new TcpNodeServiceClient(NetworkNodeInfo.GetClosestPeer(source, _neighbors).TcpAddress);
-                            nodeServiceClient.CloserPeerSearch(source);
-                        }
-                        catch (Exception e) { }
-                    }
-                }
-            }
-        }
-
-        //receiving SuccessorCandidate - 'candidate'
-        public void SuccessorCandidate(NetworkNodeInfo candidate) //A4
-        {
-            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " otrzymał successorCandidate o adresie TCP: " + candidate.TcpAddress);
-
-            lock (_lockObject)
-            {
-                _successorCandidatesFormCloserPeerSearch.Add(candidate);  //nie trzeba tu sprawdzać, czy nie dodajemy Info, bo to jest robione w A1
-            }
-        }
-
-        //initiating Neighbor Update part II - próba poprawienia sąsiadów o większych numerach
-        public void A5()
-        {
-            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " wykonuje Neighbor Update part II");
-
-            lock (_lockObject)
-            {
-                for (int i = 1; i < _neighbors.Count; ++i)
-                {
-                    try
-                    {
-                        NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(_neighbors[i].TcpAddress);
-                        nodeServiceClient.GetNeighbor(Info, i);
-                    }
-                    catch (Exception e) { }
-                }
-            }
-        }
-
-        //receiving Neighbor Update part II
-        public void GetNeighbor(NetworkNodeInfo from, int j) //A6
-        {
-            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " otrzymał zapytanie o sąsiada nr " + j + " od serwisu o adresie TCP: " + from.TcpAddress);
-
-            lock (_lockObject)
-            {
-                if (_neighbors.Count > j)
-                {
-                    try
-                    {
-                        NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(from.TcpAddress);
-                        nodeServiceClient.UpdateNeighbor(_neighbors[j], j);
-                    }
-                    catch (Exception e) { }
-                }
-            }
-        }
-
-        //receiving result of Neighbor Update part II
-        public void UpdateNeighbor(NetworkNodeInfo potentialNeighbor, int c) //A7
-        {
-            Debug.WriteLine("NodeService o adresie TCP: " + Info.TcpAddress + " otrzymał kandydata na sąsiada nr " + c + " o adresie TCP: " + potentialNeighbor.TcpAddress);
-
-            lock (_lockObject)
-            {
-                if (NetworkNodeInfo.IsBetween(_neighbors[c], Info, potentialNeighbor) && !_neighbors.Contains(potentialNeighbor))
-                {
-                    _neighbors[c + 1] = potentialNeighbor;
-                }
-                //else
-                //{
-                //    if (_neighbors.Count > c + 1)
-                //    {
-                //        _neighbors.RemoveAt(c + 1); // co znaczy _neighbors[c+1] = NIL?
-                //    }
-                //}
-            }
-        }
-
-        public Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)
-        {
-            if (dst == Info)
-            {
-                //Message for me - do sth
-                return null;
-            }
-
-            if (src == Info)
-            {
-                //I sent it - couldn't find destination
-                return null;
-            }
-
-            //msg for someone else - send it to my successor
-            try
-            {
-                NodeServiceClient client = new TcpNodeServiceClient(Successor);
-                return client.ReceiveMessage(msg, src, dst);
-            }
-            catch (Exception e) { }
-
-            return null;
-        }
-
-        public Tuple<NetworkNodeInfo, Uri[]>[] GetProxyParticlesAddresses(NetworkNodeInfo src)
-        {
-            if (Successor == null || Successor == src)  //dotarliśmy do końca -> wracamy
-            {
-                Tuple<NetworkNodeInfo, Uri[]>[] result = new Tuple<NetworkNodeInfo, Uri[]>[1];
-                result[0] = new Tuple<NetworkNodeInfo, Uri[]>(Info, PsoManager.GetProxyParticlesAddresses());
-                return result;
-            }
-            try
-            {
-                NodeServiceClient client = new TcpNodeServiceClient(Successor);
-                List<Tuple<NetworkNodeInfo, Uri[]>> resultList = client.GetProxyParticlesAddresses(src).ToList();
-                resultList.Add(new Tuple<NetworkNodeInfo, Uri[]>(Info, PsoManager.GetProxyParticlesAddresses()));
-                return resultList.ToArray();
-            }
-            catch (Exception e) { }
-
-            return null;
-        }
     }
 }
