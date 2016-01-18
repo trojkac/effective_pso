@@ -6,6 +6,12 @@ namespace Common
     [DataContract]
     public abstract class AbstractFitnessFunction
     {
+        public AbstractFitnessFunction(UserFunctionParameters functionParams)
+        {
+            Dimension = functionParams.Dimension;
+            Coefficients = new double[Dimension];
+            functionParams.Coefficients.CopyTo(Coefficients, 0);
+        }
         public static AbstractFitnessFunction GetFitnessFunction(UserFunctionParameters parameters)
         {
             switch (parameters.FitnessFunctionType)
@@ -37,16 +43,15 @@ namespace Common
             double value = 0;
             for (int i = 0; i < vector.Length; i++)
             {
-                value += -Coefficients[i] * vector[i] * vector[i];
+                value += Coefficients[i] * vector[i] * vector[i];
             }
             return value;
         }
 
         public QuadraticFunction(UserFunctionParameters functionParams)
+            : base(functionParams)
         {
-            Dimension = functionParams.Dimension;
-            Coefficients = new double[Dimension];
-            functionParams.Coefficients.CopyTo(Coefficients, 0);
+
         }
     }
 
@@ -59,10 +64,8 @@ namespace Common
         }
 
         public RastriginFunction(UserFunctionParameters functionParams)
+            : base(functionParams)
         {
-            Dimension = functionParams.Dimension;
-            Coefficients = new double[Dimension];
-            functionParams.Coefficients.CopyTo(Coefficients, 0);
         }
     }
 
@@ -75,10 +78,8 @@ namespace Common
         }
 
         public RosenbrockFunction(UserFunctionParameters functionParams)
+            : base(functionParams)
         {
-            Dimension = functionParams.Dimension;
-            Coefficients = new double[Dimension];
-            functionParams.Coefficients.CopyTo(Coefficients, 0);
         }
     }
 }

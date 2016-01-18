@@ -83,7 +83,7 @@ namespace Tests
             var particle1 = ProxyParticle.CreateProxyParticle(1);
             var particle2 = ProxyParticle.CreateProxyParticle(2);
             particle1.UpdateRemoteAddress(particle2.Address);
-            var state = new ParticleState {FitnessValue = -9.0, Location = new[] {3.0}};
+            var state = new ParticleState {FitnessValue = 9.0, Location = new[] {3.0}};
             particle2.UpdateBestState(state);
 
             particle2.Open();

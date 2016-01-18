@@ -16,7 +16,7 @@ namespace PsoService
             }
             set
             {
-                if (value.FitnessValue > _bestKnownState.FitnessValue)
+                if (value.FitnessValue < _bestKnownState.FitnessValue)
                 {
                     _bestKnownState = value;
                 }
@@ -30,7 +30,6 @@ namespace PsoService
 
         public ParticleState GetBestState()
         {
-            Debug.WriteLine("Is asked about state.");
             return BestKnownState;
         }
 

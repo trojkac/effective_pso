@@ -13,7 +13,7 @@ namespace ParticleSwarmOptimization {
 	public:
 	    explicit StandardParticle(int dimensions) : dimensions_(dimensions)
 		{
-			personal_best_ = make_tuple(std::vector<double>(2), -std::numeric_limits<double>::infinity());
+			personal_best_ = make_tuple(std::vector<double>(2), std::numeric_limits<double>::infinity());
 		}
 
 		void init_location() override
@@ -45,7 +45,7 @@ namespace ParticleSwarmOptimization {
 		std::tuple<std::vector<double>, double> update_personal_best(Function *function) override
 		{
 			auto value = function->evaluate(location_);
-			return std::get<1>(personal_best_) < value ?
+			return std::get<1>(personal_best_) > value ?
 				(personal_best_ = make_tuple(location_, value)) : personal_best_;
 		}
 

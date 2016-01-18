@@ -34,7 +34,7 @@ namespace Tests
                 var y = values[1] * values[1];
                 return Math.Sin(x + y) / (x * y + 1);
             };
-            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(1.0, 0.1, fitnessFunction);
+            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(-1, 0.5, fitnessFunction);
             List<Particle> particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
             {
@@ -42,7 +42,7 @@ namespace Tests
             }
             var result = algorithm.Run(particles);
 
-            Assert.AreEqual(1.0, result.FitnessValue, .1);
+            Assert.AreEqual(-.5, result.FitnessValue, .5);
         }
 
         [TestMethod]
@@ -54,7 +54,7 @@ namespace Tests
                 var y = values[1] * values[1];
                 return Math.Sin(x + y) / (x * y + 1);
             };
-            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(100, 1.0, 0.1, fitnessFunction);
+            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(100, -0.5, 0.1, fitnessFunction);
             List<Particle> particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
             {
@@ -62,7 +62,7 @@ namespace Tests
             }
             var result = algorithm.Run(particles);
 
-            Assert.AreEqual(1.0, result.FitnessValue, .1);
+            Assert.AreEqual(-.5, result.FitnessValue, .5);
         }
 
         [TestMethod]
@@ -74,7 +74,7 @@ namespace Tests
                 var y = values[1] * values[1];
                 return Math.Sin(x + y) / (x * y + 1);
             };
-            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(1000, fitnessFunction);
+            PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(4000, fitnessFunction);
             List<Particle> particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
             {
@@ -82,7 +82,7 @@ namespace Tests
             }
             var result = algorithm.Run(particles);
 
-            Assert.AreEqual(1.0, result.FitnessValue, .1);
+            Assert.AreEqual(-.50, result.FitnessValue, .5);
         }
     }
 }

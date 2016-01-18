@@ -16,7 +16,7 @@ namespace Common
 
         public static ParticleState WorstState(int dim)
         {
-            return new ParticleState(Enumerable.Repeat(0.0,dim).ToArray(), double.NegativeInfinity);
+            return new ParticleState(Enumerable.Repeat(0.0,dim).ToArray(), double.PositiveInfinity);
 
         }
 

@@ -52,12 +52,10 @@ namespace Tests
             settings.Iterations = 1000;
             settings.IterationsLimitCondition = true;
             vcpu1.StartCalculations(settings);
-            PsoController contrl = new PsoController();
-            contrl.Run(settings);
-
+           
             var result = vcpu1.PsoController.RunningAlgorithm.Result;
 
-            Assert.AreEqual(-9.0,result.FitnessValue,0.1);
+            Assert.AreEqual(9.0,result.FitnessValue,0.1);
         }
 
         [TestMethod]
