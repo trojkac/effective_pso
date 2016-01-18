@@ -54,6 +54,7 @@
     <Compile Include="DistributorTests.cs" />
     <Compile Include="ProxyParticleTests.cs" />
     <Compile Include="ServiceTests.cs" />
+    <Compile Include="CudafyPSOTests.cs" />
     <Compile Include="WrapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -73,6 +74,10 @@
     <ProjectReference Include="..\Node\Node.csproj">
       <Project>{78963D19-F2E3-41D3-90B4-6F03AECF9C0B}</Project>
       <Name>Node</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PSOCudafy\PSOCudafy.csproj">
+      <Project>{eb864d6e-bc8d-4761-853d-1c565248accf}</Project>
+      <Name>PSOCudafy</Name>
     </ProjectReference>
     <ProjectReference Include="..\PsoService\PsoService.csproj">
       <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
