@@ -11,7 +11,6 @@ namespace Common
         [DataMember]
         private const ulong M = UInt64.MaxValue;
 
-        [DataMember]
         public ulong Id
         {
             get

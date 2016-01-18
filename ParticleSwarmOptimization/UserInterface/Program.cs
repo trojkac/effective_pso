@@ -17,11 +17,17 @@ namespace UserInterface
 
             MachineManager machineManager = new MachineManager(nodeParams, functionParams, psoParams);
             
-            Debug.WriteLine("starting cluster formation");
+            Debug.WriteLine("starting cluster formation on machine");
             machineManager.StartClusterFormation();
 
             Console.ReadKey();
 
+            Debug.WriteLine("starting periodically updating neighborhood on machine");
+            machineManager.StartPeriodicallyUpdatingNeighborhood();
+
+            Console.ReadKey();
+
+            Debug.WriteLine("starting pso algorithm on machine");
             machineManager.StartPsoAlgorithm();
             
             Console.ReadKey();

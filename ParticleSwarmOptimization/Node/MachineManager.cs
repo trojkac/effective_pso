@@ -44,12 +44,15 @@ namespace Node
                 }
             }
 
-            foreach (VCpuManager vCpuManager in _vCpuManagers)
+            foreach (VCpuManager vCpuManager in _vCpuManagers)  //->Parallel
             {
                 vCpuManager.StartTcpNodeService();
             }
+        }
 
-            foreach (VCpuManager vCpuManager in _vCpuManagers)
+        public void StartPeriodicallyUpdatingNeighborhood()
+        {
+            foreach (VCpuManager vCpuManager in _vCpuManagers)  //->Parallel
             {
                 vCpuManager.StartPeriodicallyUpdatingNeighborhood();
             }
@@ -58,10 +61,13 @@ namespace Node
         public void StartPsoAlgorithm()
         {
             PsoSettings psoSettings = new PsoSettings(_psoParams, _functionParams);
+            List<ParticleState> results = new List<ParticleState>();
             Parallel.ForEach(_vCpuManagers, (cpuMgr) =>
             {
-                cpuMgr.PsoController.Run(psoSettings.FitnessFunction, psoSettings);
+                results.Add(cpuMgr.PsoController.Run(psoSettings.FitnessFunction, psoSettings));
             });
+            return;
+            
         }
     }
 }

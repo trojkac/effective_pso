@@ -291,9 +291,13 @@ namespace NetworkManager
         {
             if (Successor == null || Successor == src)  //dotarliśmy do końca -> wracamy
             {
-                Tuple<NetworkNodeInfo, Uri[]>[] result = new Tuple<NetworkNodeInfo, Uri[]>[1];
-                result[0] = new Tuple<NetworkNodeInfo, Uri[]>(Info, PsoManager.GetProxyParticlesAddresses());
-                return result;
+                if (Info != src)
+                {
+                    Tuple<NetworkNodeInfo, Uri[]>[] result = new Tuple<NetworkNodeInfo, Uri[]>[1];
+                    result[0] = new Tuple<NetworkNodeInfo, Uri[]>(Info, PsoManager.GetProxyParticlesAddresses());
+                    return result;
+                }
+                else return null;
             }
             try
             {

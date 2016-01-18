@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -165,7 +166,21 @@ namespace NetworkManager
 
         public Tuple<NetworkNodeInfo, Uri[]>[] GetAllProxyParticlesAddresses()
         {
-            return NodeService.GetProxyParticlesAddresses(NodeService.Info);
+            List<Tuple<NetworkNodeInfo, Uri[]>> others;
+            Tuple<NetworkNodeInfo, Uri[]>[] result = NodeService.GetProxyParticlesAddresses(NodeService.Info);
+
+            if (result == null)
+            {
+                others = new List<Tuple<NetworkNodeInfo, Uri[]>>();
+            }
+            else
+            {
+                others = result.ToList();
+            }
+
+            others.Add(new Tuple<NetworkNodeInfo, Uri[]>(NodeService.Info, PsoManager.GetProxyParticlesAddresses()));
+
+            return others.ToArray();
         }
 
         public Object SendMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)
