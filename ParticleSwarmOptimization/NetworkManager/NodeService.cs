@@ -22,10 +22,10 @@ namespace NetworkManager
         public List<NetworkNodeInfo> KnownNodes { get; private set; }
 
 
-        public NodeService(int tcpPort, string pipeName)
+        public NodeService(string tcpAddress, int tcpPort, string pipeName)
             : this()
         {
-            Info = new NetworkNodeInfo("net.tcp://" + "127.0.0.1" + ":" + tcpPort + "/NodeService", "net.pipe://" + "127.0.0.1" + "/NodeService/" + pipeName);
+            Info = new NetworkNodeInfo("net.tcp://" + tcpAddress + ":" + tcpPort + "/NodeService", "net.pipe://" + "127.0.0.1" + "/NodeService/" + pipeName);
             KnownNodes.Add(Info);
             PsoManager = new PsoRingManager(Info.Id);
         }

@@ -37,13 +37,13 @@ namespace PsoService
         public static ProxyParticle CreateProxyParticle(string remoteAddress, int nodeId)
         {
             var particle = new ProxyParticle(remoteAddress) { _particleService = new ParticleService() };
-            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://127.0.0.1:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
+            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://0.0.0.0:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
             return particle;
         }
         public static ProxyParticle CreateProxyParticle(ulong nodeId)
         {
             var particle = new ProxyParticle() { _particleService = new ParticleService() };
-            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://127.0.0.1:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
+            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://0.0.0.0:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
             return particle;
         }
 

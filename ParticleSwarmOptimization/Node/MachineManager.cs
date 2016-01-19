@@ -20,10 +20,10 @@ namespace Node
             _psoParams = psoParams;
 
             _vCpuManagers = new List<VCpuManager>();
-            for (int i = 0; i < nodeParams.NrOfVCpu; i++)
-            {
-                _vCpuManagers.Add(new VCpuManager(nodeParams.Ports[i], nodeParams.Pipes[i]));
-            }
+//            for (int i = 0; i < nodeParams.NrOfVCpu; i++)
+//            {
+//                _vCpuManagers.Add(new VCpuManager(nodeParams.Ports[i], nodeParams.Pipes[i]));
+//            }
 
             if (nodeParams.IsGpu)
             {

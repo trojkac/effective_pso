@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using Common;
 using NetworkManager;
@@ -15,13 +17,20 @@ namespace Node
 
         // GENERAL PART
 
-        public VCpuManager(int tcpPort, string pipeName, IPsoController psoController  = null, IPsoManager psoRingManager = null)
+        public VCpuManager(string tcpAddress,int tcpPort, string pipeName, IPsoController psoController  = null, IPsoManager psoRingManager = null)
         {
-            NetworkNodeManager = new NetworkNodeManager(tcpPort, pipeName);
+            NetworkNodeManager = new NetworkNodeManager(tcpAddress,tcpPort, pipeName);
             PsoController = psoController ?? new PsoController();
             PsoRingManager = psoRingManager ?? new PsoRingManager(NetworkNodeManager.NodeService.Info.Id);
             NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses = PsoRingManager.GetProxyParticlesAddresses();
 
+            var uris = new List<Uri>();
+            foreach (var address in NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses)
+            {
+                var str = address.AbsoluteUri.Replace("0.0.0.0", tcpAddress);
+                uris.Add(new Uri(str));
+            }
+            NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses = uris.ToArray();
 
             NetworkNodeManager.NodeService.NeighborhoodChangedEvent += PsoRingManager.UpdatePsoNeighborhood;
             NetworkNodeManager.NodeService.StartCalculations += Run;

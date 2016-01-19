@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using Common;
 using Controller;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Node;
@@ -13,9 +14,9 @@ namespace Tests
         [TestMethod]
         public void ClusterRegister()
         {
-            VCpuManager vcpu1 = new VCpuManager(8888, "pipe1");
-            VCpuManager vcpu2 = new VCpuManager(8889, "pipe2");
-            VCpuManager vcpu3 = new VCpuManager(8890, "pipe3 ");
+            VCpuManager vcpu1 = new VCpuManager("192.168.142.32",8888, "pipe1");
+            VCpuManager vcpu2 = new VCpuManager("192.168.142.32", 8889, "pipe2");
+            VCpuManager vcpu3 = new VCpuManager("192.168.142.32", 8890, "pipe3 ");
 
             vcpu1.StartTcpNodeService();
             vcpu2.StartTcpNodeService();
@@ -38,16 +39,17 @@ namespace Tests
         [TestMethod]
         public void ClusterCalculations()
         {
-            VCpuManager vcpu1 = new VCpuManager(8888, "pipe1");
-            VCpuManager vcpu2 = new VCpuManager(8889, "pipe2");
-            VCpuManager vcpu3 = new VCpuManager(8890, "pipe3 ");
+            VCpuManager vcpu1 = new VCpuManager("192.168.142.32", 8888, "pipe1");
+            VCpuManager vcpu2 = new VCpuManager("192.168.142.32", 8889, "pipe2");
+            VCpuManager vcpu3 = new VCpuManager("192.168.142.32", 8890, "pipe3 ");
 
             vcpu1.StartTcpNodeService();
             vcpu2.StartTcpNodeService();
             vcpu3.StartTcpNodeService();
 
-            vcpu1.NetworkNodeManager.Register(vcpu2.GetMyNetworkNodeInfo());
-            vcpu3.NetworkNodeManager.Register(vcpu1.GetMyNetworkNodeInfo());
+            vcpu3.NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.142.32:8889/NodeService", ""));
+
+            vcpu1.NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.142.32:8889/NodeService",""));
             var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
             settings.Dimensions = 20;
             settings.FunctionParameters.Dimension = settings.Dimensions;

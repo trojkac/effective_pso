@@ -14,21 +14,22 @@ namespace NetworkManager
 
         private readonly string _pipeName = "NodeServicePipe";
 
+        
         private readonly int _tcpPort = 8080;
         private ServiceHost _pipeHost;
 
         private ServiceHost _tcpHost;
 
-        public NetworkNodeManager()
+        public NetworkNodeManager(string tcpAddress)
         {
-            NodeService = new NodeService(_tcpPort, _pipeName);
+            NodeService = new NodeService(tcpAddress, _tcpPort, _pipeName);
         }
 
-        public NetworkNodeManager(int tcpPort, string pipeName)
+        public NetworkNodeManager(string tcpAddress,int tcpPort, string pipeName)
         {
             _tcpPort = tcpPort;
             _pipeName = pipeName;
-            NodeService = new NodeService(_tcpPort, _pipeName);
+            NodeService = new NodeService(tcpAddress, _tcpPort, _pipeName);
         }
 
 
