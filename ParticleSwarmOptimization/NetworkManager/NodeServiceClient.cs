@@ -22,8 +22,8 @@ namespace NetworkManager
         {
             Proxy.Register(source);
         }
-
         
+
         public void StartCalculation(PsoSettings settings)
         {
             Proxy.StartCalculation(settings);

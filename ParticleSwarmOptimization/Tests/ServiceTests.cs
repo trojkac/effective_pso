@@ -73,6 +73,20 @@ namespace Tests
         }
 
         [TestMethod]
+        public void ClusterCalculations2()
+        {
+            int cpuCores = 8;
+            VCpuManager[] vcpus = new VCpuManager[cpuCores];
+            for (int i = 0; i < cpuCores; i++)
+            {
+                vcpus[i] = new VCpuManager("192.168.143.82", 8881 + i, i.ToString());
+                vcpus[i].StartTcpNodeService();
+                vcpus[i].NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.143.83:8881/NodeService", ""));
+            }
+            Console.ReadKey();
+        }
+
+        [TestMethod]
         public void IdTest()
         {
             string ipString = "net.tcp://" + IPAddress.Loopback + ":8012/NodeService";   //"net.pipe://localhost/NodeService/" + pipeName)"
