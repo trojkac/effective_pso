@@ -32,8 +32,8 @@ namespace Node
             }
             NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses = uris.ToArray();
 
-            NetworkNodeManager.NodeService.NeighborhoodChangedEvent += PsoRingManager.UpdatePsoNeighborhood;
-            NetworkNodeManager.NodeService.NeighborhoodChangedEvent += RunOthers;
+            NetworkNodeManager.NodeService.NeighborhoodChanged += PsoRingManager.UpdatePsoNeighborhood;
+            NetworkNodeManager.NodeService.RegisterNode += RunOnNode;
             NetworkNodeManager.NodeService.StartCalculations += Run;
         }
 
@@ -84,12 +84,11 @@ namespace Node
             Run(settings);
         }
 
-        private void RunOthers(NetworkNodeInfo[] allNetworkNodes, NetworkNodeInfo currentNetworkNode)
+        private void RunOnNode(NetworkNodeInfo newNode)
         {
             if (PsoController.CalculationsRunning)
             {
-                NetworkNodeManager.StartCalculations(PsoController.RunningSettings);
-
+                NetworkNodeManager.StartCalculations(PsoController.RunningSettings,newNode);
             }
         }
     }

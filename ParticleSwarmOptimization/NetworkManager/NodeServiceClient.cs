@@ -18,9 +18,9 @@ namespace NetworkManager
             Proxy.UpdateNodes(nodes);
         }
 
-        public void Register(NetworkNodeInfo source)
+        public NetworkNodeInfo[] Register(NetworkNodeInfo source)
         {
-            Proxy.Register(source);
+            return Proxy.Register(source);
         }
 
         

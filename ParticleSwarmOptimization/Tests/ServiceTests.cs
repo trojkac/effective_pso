@@ -36,6 +36,7 @@ namespace Tests
 
         }
 
+
         [TestMethod]
         public void ClusterCalculations()
         {
@@ -49,23 +50,16 @@ namespace Tests
                 {
                     vcpus[i].NetworkNodeManager.Register(vcpus[i-1].GetMyNetworkNodeInfo());
                 }
+                else
+                {
+                    var settings = PsoSettingsFactory.QuadraticFunction20D();
+                    vcpus[0].StartCalculations(settings);
+                }
             }
 
 
 
-            var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
-            settings.Dimensions = 20;
-            settings.FunctionParameters.Dimension = settings.Dimensions;
-            settings.Iterations = 100000;
-            settings.IterationsLimitCondition = true;
-            settings.FunctionParameters.SearchSpace = new Tuple<double, double>[settings.Dimensions];
-            settings.FunctionParameters.Coefficients = new double[settings.Dimensions];
-            for (int i = 0; i < settings.Dimensions; i++)
-            {
-                settings.FunctionParameters.SearchSpace[i] = new Tuple<double, double>(-4.0, 4.0);
-                settings.FunctionParameters.Coefficients[i] = 1;
-            }
-            vcpus[1].StartCalculations(settings);
+
 
             var result = vcpus[1].PsoController.RunningAlgorithm.Result;
 
