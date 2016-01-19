@@ -18,7 +18,7 @@ namespace Tests
                     Iterations = 1,
                     IterationsLimitCondition = true,
                     TargetValueCondition = false,
-                    Particles = new[] {new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 10)},
+                    Particles = new[] {new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 40)},
                     FunctionParameters = new UserFunctionParameters()
                     {
                         Dimension = 1,

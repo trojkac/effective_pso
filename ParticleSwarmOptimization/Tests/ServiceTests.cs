@@ -49,13 +49,22 @@ namespace Tests
             vcpu1.NetworkNodeManager.Register(vcpu2.GetMyNetworkNodeInfo());
             vcpu3.NetworkNodeManager.Register(vcpu1.GetMyNetworkNodeInfo());
             var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
-            settings.Iterations = 1000;
+            settings.Dimensions = 20;
+            settings.FunctionParameters.Dimension = settings.Dimensions;
+            settings.Iterations = 100;
             settings.IterationsLimitCondition = true;
+            settings.FunctionParameters.SearchSpace = new Tuple<double, double>[settings.Dimensions];
+            settings.FunctionParameters.Coefficients = new double[settings.Dimensions];
+            for (int i = 0; i < settings.Dimensions; i++)
+            {
+                settings.FunctionParameters.SearchSpace[i] = new Tuple<double, double>(-4.0,4.0);
+                settings.FunctionParameters.Coefficients[i] = 1;
+            }
             vcpu1.StartCalculations(settings);
            
             var result = vcpu1.PsoController.RunningAlgorithm.Result;
 
-            Assert.AreEqual(9.0,result.FitnessValue,0.1);
+            Assert.AreEqual(0.0,result.FitnessValue,0.1);
         }
 
         [TestMethod]

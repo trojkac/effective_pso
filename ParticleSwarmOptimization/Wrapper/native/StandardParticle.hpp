@@ -78,15 +78,18 @@ namespace ParticleSwarmOptimization {
 
 			std::random_device rd;
 			std::default_random_engine e1(rd());
-			std::uniform_real_distribution<float> uniform_dist(0.0f, 1.0f);
+			std::uniform_real_distribution<float> uniform_dist(0.0f, 1.4f);
 			double phi1 = uniform_dist(e1);
 			double phi2 = uniform_dist(e1);
-
+			double omega = 0.64;
+			//1.4, 1.4, 0.64
 			transform(to_personal_best.begin(), to_personal_best.end(), to_personal_best.begin(),
 				bind1st(std::multiplies<double>(), phi1));
 
 			transform(to_global_best.begin(), to_global_best.end(), to_global_best.begin(),
 				bind1st(std::multiplies<double>(), phi2));
+			//przemnozyc przez omege
+			transform(velocity_.begin(), velocity_.end(), velocity_.begin(), bind1st(std::multiplies<double>(), omega));
 
 			transform(velocity_.begin(), velocity_.end(), to_global_best.begin(), velocity_.begin(), std::plus<double>());
 			transform(velocity_.begin(), velocity_.end(), to_personal_best.begin(), velocity_.begin(), std::plus<double>());

@@ -33,7 +33,7 @@ namespace ParticleSwarmOptimization
 			dimensions_(dimensions),
 			proxy_particle_(box)
 		{
-			personal_best_ = std::make_tuple(std::vector<double>(2), -std::numeric_limits<double>::infinity());
+			personal_best_ = std::make_tuple(std::vector<double>(2), std::numeric_limits<double>::infinity());
 			coupled_particle_ = NULL;
 			box->proxyService->Open();
 		}
