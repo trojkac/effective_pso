@@ -5,7 +5,11 @@
 #include "Particle.hpp"
 
 #include "Function.hpp"
-
+#include <iostream>
+#include <fstream>
+#include <ctime>
+#include <iomanip>
+#include <string>
 
 namespace ParticleSwarmOptimization {
 
@@ -28,7 +32,7 @@ namespace ParticleSwarmOptimization {
 			double target_value,
 			double delta
 			) :
-			iteration_(0), 
+			iteration_(0),
 			fitness_function_(fitness_function),
 			max_iterations_(0),
 			use_iterations_condition_(false),
@@ -44,26 +48,40 @@ namespace ParticleSwarmOptimization {
 			) :
 			iteration_(0),
 			fitness_function_(fitness_function),
-			max_iterations_(iterations), 
+			max_iterations_(iterations),
 			use_iterations_condition_(true),
-			target_value_(target_value), 
+			target_value_(target_value),
 			delta_(delta),
 			use_target_value_condition_(true)
-			{}
+		{}
 		~PSOAlgorithm()
 		{
 			delete(fitness_function_);
 		}
-		std::tuple<std::vector<double>, double> run(std::vector<Particle*> particles)
+		std::tuple<std::vector<double>, double> run(std::vector<Particle*> particles, std::string id)
 		{
+			std::ofstream file;
+
+			auto t = std::time(nullptr);
+			struct tm * now = std::localtime(&t);
+
+			char buffer[80];
+			strftime(buffer, 80, "%Y-%m-%d.", now);
+
+			file.open(buffer + id);
+
 			auto current_distance_to_target = std::numeric_limits<double>::infinity();
 			for (auto i = 0; i < particles.size(); ++i)
 			{
 				particles[i]->update_personal_best(fitness_function_);
 			}
 
+			int log_iterations = 0;
+			int log_interval = 10;
+
 			while (condition_check())
 			{
+				++log_iterations;
 				for (auto i = 0; i < particles.size(); ++i)
 				{
 					particles[i]->translate();
@@ -75,7 +93,20 @@ namespace ParticleSwarmOptimization {
 					particles[i]->update_neighborhood(particles);
 					particles[i]->update_velocity();
 				}
-			}			
+
+				//LOGUJ
+				if (log_iterations % log_interval == 0)
+				{
+					for (int i = 0; i < particles.size(); i++)
+					{
+						file << "particle: ";
+						file << i;
+						file << " best value: ";
+						file << std::get<1>(particles[i]->get_personal_best());
+						file << std::endl;
+					}
+				}
+			}
 			return fitness_function_->best_evaluation();
 		}
 
@@ -99,7 +130,7 @@ namespace ParticleSwarmOptimization {
 		}
 		inline double distance_to_target(double particle_best)
 		{
-			return abs(particle_best-target_value_);
+			return abs(particle_best - target_value_);
 		}
 
 	};
