@@ -12,6 +12,7 @@ namespace NetworkManager
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class NodeService : INodeService, IReconnaissance
     {
+
         public event UpdateNeighborhoodHandler NeighborhoodChangedEvent;
         public event StartCalculationsHandler StartCalculations;
         public NetworkNodeInfo Info { get; set; }
