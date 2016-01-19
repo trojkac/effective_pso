@@ -54,7 +54,9 @@ namespace NetworkManager
         public void Register(NetworkNodeInfo info)
         {
             var client = new TcpNodeServiceClient(info);
-            client.Register(NodeService.Info);
+            var neighbors = client.Register(NodeService.Info);
+            NodeService.UpdateNodes(neighbors);
+
         }
 
         public void StartCalculations(PsoSettings settings)
@@ -63,6 +65,12 @@ namespace NetworkManager
             {
                 client.StartCalculation(settings);
             }
+        }
+
+        public void StartCalculations(PsoSettings settings, NetworkNodeInfo target)
+        {
+            var client = new TcpNodeServiceClient(target);
+            client.StartCalculation(settings);
         }
 
         public void StartTcpNodeService()

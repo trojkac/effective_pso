@@ -11,7 +11,7 @@ namespace NetworkManager
         void UpdateNodes(NetworkNodeInfo[] nodes);
 
         [OperationContract]
-        void Register(NetworkNodeInfo source);
+        NetworkNodeInfo[] Register(NetworkNodeInfo source);
 
         [OperationContract]
         void StartCalculation(PsoSettings settings);

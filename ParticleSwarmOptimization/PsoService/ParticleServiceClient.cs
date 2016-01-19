@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Common;
@@ -19,7 +20,15 @@ namespace PsoService
 
         public ParticleState GetBestState()
         {
-            return base.Channel.GetBestState();
+            try
+            {
+                return base.Channel.GetBestState();
+            }
+            catch
+            {
+                Debug.WriteLine(String.Format("Cannot connect to: {0}", base.Endpoint.Address.ToString()));
+                return ParticleState.WorstState(1);
+            }
         }
 
         public void UpdateBestState(ParticleState state)
