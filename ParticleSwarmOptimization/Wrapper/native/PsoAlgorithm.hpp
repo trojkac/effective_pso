@@ -16,6 +16,7 @@ namespace ParticleSwarmOptimization {
 			Function *fitness_function,
 			int iterations
 			) :
+			iteration_(0),
 			fitness_function_(fitness_function),
 			max_iterations_(iterations),
 			use_iterations_condition_(true),
@@ -26,7 +27,9 @@ namespace ParticleSwarmOptimization {
 			Function *fitness_function,
 			double target_value,
 			double delta
-			) : fitness_function_(fitness_function), 
+			) :
+			iteration_(0), 
+			fitness_function_(fitness_function),
 			max_iterations_(0),
 			use_iterations_condition_(false),
 			target_value_(target_value),
@@ -38,7 +41,9 @@ namespace ParticleSwarmOptimization {
 			int iterations,
 			double target_value,
 			double delta
-			) : fitness_function_(fitness_function),
+			) :
+			iteration_(0),
+			fitness_function_(fitness_function),
 			max_iterations_(iterations), 
 			use_iterations_condition_(true),
 			target_value_(target_value), 
@@ -51,21 +56,18 @@ namespace ParticleSwarmOptimization {
 		}
 		std::tuple<std::vector<double>, double> run(std::vector<Particle*> particles)
 		{
-			auto iteration = 0;
 			auto current_distance_to_target = std::numeric_limits<double>::infinity();
 			for (auto i = 0; i < particles.size(); ++i)
 			{
 				particles[i]->update_personal_best(fitness_function_);
 			}
 
-			while (condition_check(current_distance_to_target,iteration))
+			while (condition_check())
 			{
 				for (auto i = 0; i < particles.size(); ++i)
 				{
 					particles[i]->translate();
 					auto particle_best = particles[i]->update_personal_best(fitness_function_);
-					if (use_target_value_condition_) 
-						update_distance_to_target(particle_best, current_distance_to_target);
 				}
 
 				for (auto i = 0; i < particles.size(); ++i)
@@ -73,19 +75,8 @@ namespace ParticleSwarmOptimization {
 					particles[i]->update_neighborhood(particles);
 					particles[i]->update_velocity();
 				}
-			}
-
-			auto global_best = std::make_tuple(std::vector<double>(), std::numeric_limits<double>::infinity());
-
-			for (auto i = 0; i < particles.size(); ++i)
-			{
-				auto temp = std::get<1>(particles[i]->get_personal_best());
-
-				if (std::get<1>(particles[i]->get_personal_best()) < std::get<1>(global_best))
-					global_best = particles[i]->get_personal_best();
-			}
-
-			return global_best;
+			}			
+			return fitness_function_->best_evaluation();
 		}
 
 	private:
@@ -95,19 +86,20 @@ namespace ParticleSwarmOptimization {
 		bool use_iterations_condition_;
 		double target_value_;
 		double delta_;
+		int iteration_;
 
-		inline bool condition_check(double distance_to_target, int &iteration)
+		inline bool condition_check()
 		{
-			return (!use_iterations_condition_ || iteration++ < max_iterations_) && (!use_target_value_condition_ || distance_to_target > delta_);
+			return (!use_iterations_condition_ || iteration_++ < max_iterations_) && (!use_target_value_condition_ || distance_to_target(fitness_function_->best_evaluation()) > delta_);
 		}
 
-		inline void update_distance_to_target(std::tuple<std::vector<double>,double> particle_best, double &current_distance_to_target)
+		inline double distance_to_target(std::tuple<std::vector<double>, double> particle_best)
 		{
-			auto particle_distance_to_target = abs(std::get<1>(particle_best) -target_value_);
-			if (particle_distance_to_target < current_distance_to_target)
-			{
-				current_distance_to_target = particle_distance_to_target;
-			}
+			return abs(std::get<1>(particle_best) -target_value_);
+		}
+		inline double distance_to_target(double particle_best)
+		{
+			return abs(particle_best-target_value_);
 		}
 
 	};

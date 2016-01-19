@@ -17,6 +17,7 @@ namespace ParticleSwarmOptimization
 		std::string name(){ return name_; };
 		int id(){ return id_; }
 		virtual double evaluate(std::vector<double> X) = 0;
+		virtual std::tuple<std::vector<double>,double> best_evaluation() = 0;
 	protected:
 		std::string name_;
 	private:
