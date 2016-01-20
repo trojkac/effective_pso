@@ -57,10 +57,13 @@ namespace PsoService
             if (_left.Item1 == null || previous.Id != _left.Item1.Id || !previous.ProxyParticlesAddresses.Contains(_left.Item2.RemoteAddress))
             {
                 _left.Item2.UpdateRemoteAddress(previous.ProxyParticlesAddresses[0]);
+                _left = new Tuple<NetworkNodeInfo, ProxyParticle>(previous, _left.Item2);
             }
             if (_right.Item1 == null || next.Id != _right.Item1.Id || !next.ProxyParticlesAddresses.Contains(_right.Item2.RemoteAddress))
             {
                 _right.Item2.UpdateRemoteAddress(next.ProxyParticlesAddresses[next.ProxyParticlesAddresses.Length - 1]);
+                _right = new Tuple<NetworkNodeInfo, ProxyParticle>(next, _right.Item2);
+
             }
         }
 
