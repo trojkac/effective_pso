@@ -10,9 +10,11 @@ namespace Controller
     public delegate void CalculationCompletedHandler(ParticleState result);
     public class PsoController : IPsoController
     {
-        public PsoController()
+        private ulong _nodeId;
+        public PsoController(ulong nodeId)
         {
             CalculationsRunning = false;
+            _nodeId = nodeId;
         }
 
         public event CalculationCompletedHandler CalculationsCompleted;
@@ -58,7 +60,7 @@ namespace Controller
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 CalculationsRunning = true;
-                var r = algorithm.Run(particles);
+                var r = algorithm.Run(particles, _nodeId.ToString());
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
                 return r;
             });
@@ -81,7 +83,7 @@ namespace Controller
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 CalculationsRunning = true;
-                var r = algorithm.Run(particles);
+                var r = algorithm.Run(particles,_nodeId.ToString());
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
                 return r;
             });

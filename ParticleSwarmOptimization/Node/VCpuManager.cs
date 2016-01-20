@@ -20,7 +20,7 @@ namespace Node
         public VCpuManager(string tcpAddress,int tcpPort, string pipeName, IPsoController psoController  = null, IPsoManager psoRingManager = null)
         {
             NetworkNodeManager = new NetworkNodeManager(tcpAddress,tcpPort, pipeName);
-            PsoController = psoController ?? new PsoController();
+            PsoController = psoController ?? new PsoController(NetworkNodeManager.NodeService.Info.Id);
             PsoRingManager = psoRingManager ?? new PsoRingManager(NetworkNodeManager.NodeService.Info.Id);
             NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses = PsoRingManager.GetProxyParticlesAddresses();
 

@@ -88,7 +88,7 @@ namespace Tests
 
             particle2.Open();
 
-            var controller = new Controller.PsoController();
+            var controller = new Controller.PsoController(123);
             
             controller.Run(PsoSettingsFactory.QuadraticFunction1DFrom3To5(), new []{particle1});
             
