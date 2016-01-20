@@ -7,6 +7,6 @@ namespace CudaPsoWrapper
 {
     void CudaPSOAlgorithm::run()
     {
-        run();
+        runCuda(localEndpoint, remoteEndpoint, iterationsCount, 100, 1, 10);
     }
 }

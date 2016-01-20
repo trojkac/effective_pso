@@ -26,9 +26,9 @@ namespace ParticleSwarmOptimization
         void update_neighborhood(std::vector<ParticleSwarmOptimization::Particle*> all_particles) override
         {
             int i = 0;
+
             while(coupled_particle_ == NULL || coupled_particle_->id() == id())
             {
-                //TODO: take random particle
                 coupled_particle_ = all_particles[i++];
             }
         }
@@ -42,7 +42,7 @@ namespace ParticleSwarmOptimization
         {
             auto remote_best = *remote_endpoint_;
 
-            if(std::get<1>(personal_best_) < std::get<1>(remote_best))
+            if(std::get<1>(personal_best_) > std::get<1>(remote_best))
             {
                 personal_best_ = remote_best;
                 local_endpoint_ = new std::tuple<std::vector<double>, double>(personal_best_);
@@ -51,7 +51,7 @@ namespace ParticleSwarmOptimization
             if(coupled_particle_ != NULL)
             {
                 auto coupled_best = coupled_particle_->get_personal_best();
-                if(std::get<1>(personal_best_) < std::get<1>(coupled_best))
+                if(std::get<1>(personal_best_) > std::get<1>(coupled_best))
                 {
                     personal_best_ = coupled_best;
                     local_endpoint_ = new std::tuple<std::vector<double>, double>(personal_best_);

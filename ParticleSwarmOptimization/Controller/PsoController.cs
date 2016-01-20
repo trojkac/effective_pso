@@ -54,7 +54,7 @@ namespace Controller
             unsafe
             {
                 var cudaParticle =
-                    CudaPraticleWrapperFactory.Create(cudaAlgorithm.getRemoteEndpoint(), cudaAlgorithm.getLocalEndpoint());
+                    CudaPraticleWrapperFactory.Create(cudaAlgorithm.getLocalEndpoint(), cudaAlgorithm.getRemoteEndpoint());
                 particles.Add(cudaParticle);
             }
 
@@ -87,7 +87,7 @@ namespace Controller
             unsafe
             {
                 var cudaParticle =
-                    CudaPraticleWrapperFactory.Create(cudaAlgorithm.getRemoteEndpoint(), cudaAlgorithm.getLocalEndpoint());
+                    CudaPraticleWrapperFactory.Create(cudaAlgorithm.getLocalEndpoint(), cudaAlgorithm.getRemoteEndpoint());
                 particles.Add(cudaParticle);
             }
 
