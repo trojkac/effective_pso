@@ -34,7 +34,7 @@ namespace Tests
             var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
             settings.Dimensions = 20;
             settings.FunctionParameters.Dimension = settings.Dimensions;
-            settings.Iterations = 10000;
+            settings.Iterations = 1000;
             settings.IterationsLimitCondition = true;
             settings.FunctionParameters.SearchSpace = new Tuple<double, double>[settings.Dimensions];
             settings.FunctionParameters.Coefficients = new double[settings.Dimensions];

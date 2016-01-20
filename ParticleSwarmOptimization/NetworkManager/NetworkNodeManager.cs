@@ -124,11 +124,11 @@ namespace NetworkManager
             try
             {
                 _tcpHost.Open();
-                _statusTimer = new Timer(CheckStatuses, null, 5000, 10000);
+               // _statusTimer = new Timer(CheckStatuses, null, 5000, 10000);
             }
             catch (CommunicationException ce)
             {
-                _statusTimer.Dispose();
+               // _statusTimer.Dispose();
                 _tcpHost.Abort();
                 
             }
