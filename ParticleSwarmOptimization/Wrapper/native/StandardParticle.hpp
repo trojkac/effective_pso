@@ -10,9 +10,14 @@ using namespace ParticleSwarmOptimization;
 namespace ParticleSwarmOptimization {
 
 	class StandardParticle : public Particle {
+	private:
+		int iters_from_last_best_change;
+		const int restart_iters = 100;
+
 	public:
 	    explicit StandardParticle(int dimensions) : dimensions_(dimensions)
 		{
+			iters_from_last_best_change = 0;
 			personal_best_ = make_tuple(std::vector<double>(2), std::numeric_limits<double>::infinity());
 		}
 
@@ -45,8 +50,23 @@ namespace ParticleSwarmOptimization {
 		std::tuple<std::vector<double>, double> update_personal_best(Function *function) override
 		{
 			auto value = function->evaluate(location_);
-			return std::get<1>(personal_best_) > value ?
-				(personal_best_ = make_tuple(location_, value)) : personal_best_;
+
+			if (std::get<1>(personal_best_)>value)
+			{
+				personal_best_ = make_tuple(location_, value);
+				iters_from_last_best_change = 0;
+			}
+			else
+			{
+				if (++iters_from_last_best_change>restart_iters)
+				{
+					iters_from_last_best_change = 0;
+					init_location();
+					//init_velocity();
+				}
+			}
+
+			return personal_best_;
 		}
 
 		void update_neighborhood(std::vector<Particle*> all_particles) override
