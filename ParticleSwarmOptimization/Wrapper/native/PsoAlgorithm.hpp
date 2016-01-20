@@ -122,6 +122,14 @@ namespace ParticleSwarmOptimization {
 							file << *i << ' ';
 						file << "]" << std::endl;
 						file << std::endl;
+
+						auto velo = particles[i]->get_velocity();
+						file << " velocity: [ ";
+						for (std::vector<double>::const_iterator i = velo.begin(); i != velo.end(); ++i)
+							file << *i << ' ';
+						file << "]" << std::endl;
+						file << std::endl;
+
 					}
 				}
 				++log_iterations;

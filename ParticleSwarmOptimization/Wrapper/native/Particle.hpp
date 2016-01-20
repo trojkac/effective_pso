@@ -21,6 +21,10 @@ namespace ParticleSwarmOptimization
 		{
 			return personal_best_;
 		}
+		virtual std::vector<double> get_velocity()
+		{
+			return velocity_;
+		}
 		virtual void update_neighborhood(std::vector<Particle*> all_particles) = 0;
 		virtual void update_velocity() = 0;
 		virtual void translate() = 0;

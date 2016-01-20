@@ -44,7 +44,7 @@ namespace Tests
             VCpuManager[] vcpus = new VCpuManager[cpuCores];
             for (int i = 0; i < cpuCores; i++)
             {
-                vcpus[i] = new VCpuManager("192.168.143.98", 8881 + i, i.ToString());
+                vcpus[i] = new VCpuManager("192.168.111.228", 8881 + i, i.ToString());
                 vcpus[i].StartTcpNodeService();
                 if (i > 0)
                 {
