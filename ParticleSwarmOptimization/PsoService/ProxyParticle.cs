@@ -7,13 +7,20 @@ using Common;
 
 namespace PsoService
 {
+    public delegate void ParticleCommunicationBreakdown();
     public class ProxyParticle
     {
+        public event ParticleCommunicationBreakdown CommunicationBreakdown;
         private static int _counter = 1;
 
         private IParticleService _particleClient;
         private IParticleService _particleService;
         private ServiceHost _host;
+        public NetworkNodeInfo RemoteNode{
+            get{
+                return new NetworkNodeInfo(RemoteAddress.Authority,"");
+            }
+        }
         public int Id { get; private set; }
 
         public Uri Address
@@ -35,12 +42,6 @@ namespace PsoService
             Id = _counter++;
         }
 
-        public static ProxyParticle CreateProxyParticle(string remoteAddress, int nodeId)
-        {
-            var particle = new ProxyParticle(remoteAddress) { _particleService = new ParticleService() };
-            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://0.0.0.0:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
-            return particle;
-        }
         public static ProxyParticle CreateProxyParticle(ulong nodeId)
         {
             var particle = new ProxyParticle() { _particleService = new ParticleService() };
@@ -83,6 +84,7 @@ namespace PsoService
             }
             catch
             {
+                if (CommunicationBreakdown != null) CommunicationBreakdown();
                 Debug.WriteLine(String.Format("{0} cannot connect to: {1}",Address,RemoteAddress));
             }
 

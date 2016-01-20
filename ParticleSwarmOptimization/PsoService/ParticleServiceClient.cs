@@ -22,6 +22,7 @@ namespace PsoService
         {
 
                 return base.Channel.GetBestState();            
+
         }
 
         public void UpdateBestState(ParticleState state)

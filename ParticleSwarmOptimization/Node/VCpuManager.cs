@@ -35,6 +35,9 @@ namespace Node
             NetworkNodeManager.NodeService.NeighborhoodChanged += PsoRingManager.UpdatePsoNeighborhood;
             NetworkNodeManager.NodeService.RegisterNode += RunOnNode;
             NetworkNodeManager.NodeService.StartCalculations += Run;
+            PsoRingManager.CommunicationLost += NetworkNodeManager.NodeService.Deregister;
+
+            
         }
 
         // NETWORK PART

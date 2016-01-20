@@ -53,21 +53,7 @@ namespace NetworkManager
             }
         }
 
-        public void CheckStatuses(object o)
-        {
-            foreach (var neighbor in NodeService.KnownNodes.Where(node => node.Id != NodeService.Info.Id))
-            {
-                try
-                {
-                    var client = new TcpNodeServiceClient(neighbor);
-                    client.CheckStatus();
-                }
-                catch
-                {
-                    NodeService.Deregister(neighbor);
-                }
-            }
-        }
+     
 
         public void Register(NetworkNodeInfo info)
         {

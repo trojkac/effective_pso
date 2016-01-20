@@ -5,14 +5,32 @@ using Common;
 
 namespace PsoService
 {
+    public delegate void CommunicationBreakdown(NetworkNodeInfo brokenNode);
     public class PsoRingManager : IPsoManager
     {
+        public event CommunicationBreakdown CommunicationLost;
         private Tuple<NetworkNodeInfo, ProxyParticle> _left;
         private Tuple<NetworkNodeInfo, ProxyParticle> _right;
         public PsoRingManager(ulong nodeId)
         {
             _left = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
             _right = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
+
+            _left.Item2.CommunicationBreakdown += OnLeftCommunicationFailure;
+            _right.Item2.CommunicationBreakdown += OnRightCommunicationFailure;
+
+
+        }
+
+        void OnLeftCommunicationFailure()
+        {
+            if(CommunicationLost != null)
+            CommunicationLost(_left.Item1);
+        }
+        void OnRightCommunicationFailure()
+        {
+            if (CommunicationLost != null)
+                CommunicationLost(_right.Item1);
         }
 
         public void UpdatePsoNeighborhood(NetworkNodeInfo[] allNetworkNodes,

@@ -19,5 +19,6 @@ namespace PsoService
         Uri[] GetProxyParticlesAddresses();
 
         ProxyParticle[] GetProxyParticles();
+        event CommunicationBreakdown CommunicationLost;
     }
 }
