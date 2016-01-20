@@ -1,5 +1,6 @@
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using Common;
@@ -74,9 +75,19 @@ namespace PsoService
             {
                 return ParticleState.WorstState(1);
             }
-            var s = _particleClient.GetBestState();
-            _particleService.UpdateBestState(s);
+            try
+            {
+                var s = _particleClient.GetBestState();
+                _particleService.UpdateBestState(s);
+            }
+            catch
+            {
+                Debug.WriteLine(String.Format("{0} cannot connect to: {1}",Address,RemoteAddress));
+            }
+
             return _particleService.GetBestState();
+
+          
         }
 
         public ParticleState GetBestState()

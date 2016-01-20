@@ -14,7 +14,7 @@ namespace Tests
         [TestMethod]
         public void ClusterRegister()
         {
-            VCpuManager vcpu1 = new VCpuManager("192.168.142.32",8888, "pipe1");
+            VCpuManager vcpu1 = new VCpuManager("192.168.142.32", 8888, "pipe1");
             VCpuManager vcpu2 = new VCpuManager("192.168.142.32", 8889, "pipe2");
             VCpuManager vcpu3 = new VCpuManager("192.168.142.32", 8890, "pipe3 ");
 
@@ -36,37 +36,48 @@ namespace Tests
 
         }
 
+
         [TestMethod]
         public void ClusterCalculations()
         {
-            VCpuManager vcpu1 = new VCpuManager("192.168.218.1", 8888, "pipe1");
-            VCpuManager vcpu2 = new VCpuManager("192.168.218.1", 8889, "pipe2");
-            VCpuManager vcpu3 = new VCpuManager("192.168.218.1", 8890, "pipe3 ");
-
-            vcpu1.StartTcpNodeService();
-            vcpu2.StartTcpNodeService();
-            vcpu3.StartTcpNodeService();
-
-            vcpu3.NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.218.1:8889/NodeService", ""));
-
-            vcpu1.NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.218.1:8889/NodeService", ""));
-            var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
-            settings.Dimensions = 20;
-            settings.FunctionParameters.Dimension = settings.Dimensions;
-            settings.Iterations = 1000;
-            settings.IterationsLimitCondition = true;
-            settings.FunctionParameters.SearchSpace = new Tuple<double, double>[settings.Dimensions];
-            settings.FunctionParameters.Coefficients = new double[settings.Dimensions];
-            for (int i = 0; i < settings.Dimensions; i++)
+            int cpuCores = 8;
+            VCpuManager[] vcpus = new VCpuManager[cpuCores];
+            for (int i = 0; i < cpuCores; i++)
             {
-                settings.FunctionParameters.SearchSpace[i] = new Tuple<double, double>(-4.0,4.0);
-                settings.FunctionParameters.Coefficients[i] = 1;
+                vcpus[i] = new VCpuManager("127.0.0.1", 8881 + i, i.ToString());
+                vcpus[i].StartTcpNodeService();
+                if (i > 0)
+                {
+                    vcpus[i].NetworkNodeManager.Register(vcpus[i-1].GetMyNetworkNodeInfo());
+                }
+                else
+                {
+                    var settings = PsoSettingsFactory.QuadraticFunction20D();
+                    vcpus[0].StartCalculations(settings);
+                }
             }
-            vcpu1.StartCalculations(settings);
-           
-            var result = vcpu1.PsoController.RunningAlgorithm.Result;
 
-            Assert.AreEqual(0.0,result.FitnessValue,0.1);
+
+
+
+
+            var result = vcpus[1].PsoController.RunningAlgorithm.Result;
+
+            Assert.AreEqual(0.0, result.FitnessValue, 0.1);
+        }
+
+        [TestMethod]
+        public void ClusterCalculations2()
+        {
+            int cpuCores = 8;
+            VCpuManager[] vcpus = new VCpuManager[cpuCores];
+            for (int i = 0; i < cpuCores; i++)
+            {
+                vcpus[i] = new VCpuManager("192.168.143.82", 8881 + i, i.ToString());
+                vcpus[i].StartTcpNodeService();
+                vcpus[i].NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.143.83:8881/NodeService", ""));
+            }
+            Console.ReadKey();
         }
 
         [TestMethod]
