@@ -15,23 +15,55 @@ namespace NetworkManager
 
         public void UpdateNodes(NetworkNodeInfo[] nodes)
         {
-            Proxy.UpdateNodes(nodes);
+            try
+            {
+                Proxy.UpdateNodes(nodes);
+            }
+            catch
+            {
+
+            }
         }
 
         public NetworkNodeInfo[] Register(NetworkNodeInfo source)
         {
-            return Proxy.Register(source);
+            try
+            {
+                return Proxy.Register(source);
+
+            }
+            catch
+            {
+
+            }
+            return null;
         }
 
         public void Deregister(NetworkNodeInfo brokenNodeInfo)
         {
-            Proxy.Deregister(brokenNodeInfo);
+            try
+            {
+                Proxy.Deregister(brokenNodeInfo);
+
+            }
+            catch
+            {
+
+            }
         }
 
 
         public void StartCalculation(PsoSettings settings)
         {
-            Proxy.StartCalculation(settings);
+            try
+            {
+                Proxy.StartCalculation(settings);
+
+            }
+            catch
+            {
+
+            }
         }
 
         public void CheckStatus()
