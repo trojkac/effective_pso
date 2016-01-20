@@ -60,7 +60,12 @@ namespace Common
 
         public override double Calculate(double[] vector)
         {
-            throw new NotImplementedException();
+            double value = 0;
+            for (int i = 0; i < vector.Length; i++)
+            {
+                value += vector[i] * vector[i] + Math.Cos(2 * Math.PI * vector[i]);
+            }
+            return value;
         }
 
         public RastriginFunction(UserFunctionParameters functionParams)
@@ -74,7 +79,12 @@ namespace Common
 
         public override double Calculate(double[] vector)
         {
-            throw new NotImplementedException();
+            double value = 0;
+            for (int i = 0; i < vector.Length-1; i++)
+            {
+                value += ((1 - vector[i])*(1 - vector[i]) + 100 * (vector[i + 1] - vector[i] * vector[i]) *(vector[i + 1] - vector[i] * vector[i]));
+            }
+            return value;
         }
 
         public RosenbrockFunction(UserFunctionParameters functionParams)

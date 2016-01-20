@@ -32,7 +32,7 @@ namespace Tests
         public static PsoSettings QuadraticFunction20D()
         {
             var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
-            settings.Dimensions = 10;
+            settings.Dimensions = 20;
             settings.FunctionParameters.Dimension = settings.Dimensions;
             settings.Iterations = 6000;
             settings.IterationsLimitCondition = true;
@@ -46,5 +46,47 @@ namespace Tests
             }
             return settings;
         }
+        public static PsoSettings Rosenbrock()
+        {
+            return new PsoSettings()
+            {
+                Dimensions = 3,
+                Epsilon = 0,
+                Iterations = 5000,
+                IterationsLimitCondition = true,
+                TargetValueCondition = false,
+                Particles = new[] { new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 20) },
+                FunctionParameters = new UserFunctionParameters()
+                {
+                    Dimension = 3,
+                    Coefficients = new[] { 1.0 },
+                    FitnessFunctionType = FitnessFunctionType.Rosenbrock,
+                    SearchSpace = new[] { new Tuple<double, double>(-4, 4), }
+
+                }
+            };
+        }
+
+        public static PsoSettings Rastrigin()
+        {
+            return new PsoSettings()
+            {
+                Dimensions = 2,
+                Epsilon = 0,
+                Iterations = 5000,
+                IterationsLimitCondition = true,
+                TargetValueCondition = false,
+                Particles = new[] { new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 20) },
+                FunctionParameters = new UserFunctionParameters()
+                {
+                    Dimension = 2,
+                    Coefficients = new[] { 1.0 },
+                    FitnessFunctionType = FitnessFunctionType.Rastrigin,
+                    SearchSpace = new[] { new Tuple<double, double>(-4, 4), }
+
+                }
+            };
+        }
+
     }
 }

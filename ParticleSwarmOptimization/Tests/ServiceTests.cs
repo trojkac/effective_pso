@@ -52,7 +52,7 @@ namespace Tests
                 }
                 else
                 {
-                    var settings = PsoSettingsFactory.QuadraticFunction20D();
+                    var settings = PsoSettingsFactory.Rastrigin();
                     vcpus[0].StartCalculations(settings);
                 }
             }
