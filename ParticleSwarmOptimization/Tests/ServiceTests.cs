@@ -44,7 +44,7 @@ namespace Tests
             VCpuManager[] vcpus = new VCpuManager[cpuCores];
             for (int i = 0; i < cpuCores; i++)
             {
-                vcpus[i] = new VCpuManager("192.168.143.99", 8881 + i, i.ToString());
+                vcpus[i] = new VCpuManager("192.168.143.98", 8881 + i, i.ToString());
                 vcpus[i].StartTcpNodeService();
                 if (i > 0)
                 {
@@ -56,10 +56,6 @@ namespace Tests
                     vcpus[0].StartCalculations(settings);
                 }
             }
-
-
-
-
 
             var result = vcpus[1].PsoController.RunningAlgorithm.Result;
 
@@ -73,7 +69,7 @@ namespace Tests
             VCpuManager[] vcpus = new VCpuManager[cpuCores];
             for (int i = 0; i < cpuCores; i++)
             {
-                vcpus[i] = new VCpuManager("192.168.143.100", 8881 + i, i.ToString());
+                vcpus[i] = new VCpuManager("192.168.143.98", 8881 + i, i.ToString());
                 vcpus[i].StartTcpNodeService();
                 vcpus[i].NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.143.99:8881/NodeService", ""));
             }

@@ -9,7 +9,7 @@
 #include "native\GenericFunction.hpp"
 #include "Particle.hpp"
 #include "WrapperHelper.hpp"
-
+#include <msclr\marshal_cppstd.h>
 
 
 using namespace System;
@@ -65,7 +65,7 @@ namespace ParticleSwarmOptimizationWrapper {
 			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(genericFunction, targetValue, epsilon);
 			return algorithm;
 		}
-		ParticleState^ Run(List<Particle^>^ particles, std::string id)
+		ParticleState^ Run(List<Particle^>^ particles, System::String^ id)
 		{
 			std::vector<ParticleSwarmOptimization::Particle*> stdParticles;
 			for each (auto particle in particles)
@@ -73,7 +73,8 @@ namespace ParticleSwarmOptimizationWrapper {
 				ParticleSwarmOptimization::Particle* native = particle->nativeParticle();
 				stdParticles.emplace_back(native);
 			}
-			auto result = _algorithm->run(stdParticles, id);
+			std::string unmanaged = msclr::interop::marshal_as<std::string>(id);
+			auto result = _algorithm->run(stdParticles, unmanaged);
 			return tuple_to_particle_state(result);
 		}
 

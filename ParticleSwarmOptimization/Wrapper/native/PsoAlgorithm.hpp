@@ -10,6 +10,10 @@
 #include <ctime>
 #include <iomanip>
 #include <string>
+#include <time.h>
+#include <stdio.h>
+#include <chrono>
+#include <cstdarg>
 
 namespace ParticleSwarmOptimization {
 
@@ -65,10 +69,20 @@ namespace ParticleSwarmOptimization {
 			auto t = std::time(nullptr);
 			struct tm * now = std::localtime(&t);
 
-			char buffer[80];
-			strftime(buffer, 80, "%Y-%m-%d_", now);
+			char filename[80];
+			strftime(filename, 80, "%Y-%m-%d_%H%M%S_", now);
 
-			file.open(buffer + id);
+			//////strcpy(filename, "C:/Users/rosiakh/Source/Repos/effective_pso/ParticleSwarmOptimization/Tests/bin/Debug");
+			///////strcat(filename, fmt("-%d-%d-%d@%d.%d.%d.txt",
+			//////////	now->tm_hour, now->tm_min, now->tm_sec,
+				/////////now->tm_mday, now->tm_mon + 1,
+				/////////now->tm_year + 1900).c_str());
+			//strcat(filename, id);
+
+			//std::string dateTime = std::currentDateTime();
+
+			file.open(filename + id);
+
 
 			auto current_distance_to_target = std::numeric_limits<double>::infinity();
 			for (auto i = 0; i < particles.size(); ++i)
@@ -81,7 +95,7 @@ namespace ParticleSwarmOptimization {
 
 			while (condition_check())
 			{
-				++log_iterations;
+				
 				for (auto i = 0; i < particles.size(); ++i)
 				{
 					particles[i]->translate();
@@ -97,7 +111,7 @@ namespace ParticleSwarmOptimization {
 				//LOGUJ
 				if (log_iterations % log_interval == 0)
 				{
-					file << "iterations: " << log_iterations;
+					file << std::endl << "iterations: " << log_iterations << std::endl;
 					for (int i = 0; i < particles.size(); i++)
 					{
 						file << "prtcl: " << i << " best: ";
@@ -110,6 +124,7 @@ namespace ParticleSwarmOptimization {
 						file << std::endl;
 					}
 				}
+				++log_iterations;
 			}
 			file.close();
 			return fitness_function_->best_evaluation();
@@ -136,6 +151,27 @@ namespace ParticleSwarmOptimization {
 		inline double distance_to_target(double particle_best)
 		{
 			return abs(particle_best - target_value_);
+		}
+
+		std::string fmt(const std::string& fmt, ...) {
+			int size = 200;
+			std::string str;
+			va_list ap;
+			while (1) {
+				str.resize(size);
+				va_start(ap, fmt);
+				int n = vsnprintf((char*)str.c_str(), size, fmt.c_str(), ap);
+				va_end(ap);
+				if (n > -1 && n < size) {
+					str.resize(n);
+					return str;
+				}
+				if (n > -1)
+					size = n + 1;
+				else
+					size *= 2;
+			}
+			return str;
 		}
 
 	};
