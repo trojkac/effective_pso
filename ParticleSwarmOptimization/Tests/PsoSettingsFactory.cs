@@ -34,10 +34,11 @@ namespace Tests
             var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
             settings.Dimensions = 20;
             settings.FunctionParameters.Dimension = settings.Dimensions;
-            settings.Iterations = 1000;
+            settings.Iterations = 6000;
             settings.IterationsLimitCondition = true;
             settings.FunctionParameters.SearchSpace = new Tuple<double, double>[settings.Dimensions];
             settings.FunctionParameters.Coefficients = new double[settings.Dimensions];
+            settings.Particles = new[] { new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 15) };
             for (int i = 0; i < settings.Dimensions; i++)
             {
                 settings.FunctionParameters.SearchSpace[i] = new Tuple<double, double>(-4.0, 4.0);
@@ -45,5 +46,47 @@ namespace Tests
             }
             return settings;
         }
+        public static PsoSettings Rosenbrock()
+        {
+            return new PsoSettings()
+            {
+                Dimensions = 3,
+                Epsilon = 0,
+                Iterations = 5000,
+                IterationsLimitCondition = true,
+                TargetValueCondition = false,
+                Particles = new[] { new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 20) },
+                FunctionParameters = new UserFunctionParameters()
+                {
+                    Dimension = 3,
+                    Coefficients = new[] { 1.0 },
+                    FitnessFunctionType = FitnessFunctionType.Rosenbrock,
+                    SearchSpace = new[] { new Tuple<double, double>(-4, 4), }
+
+                }
+            };
+        }
+
+        public static PsoSettings Rastrigin()
+        {
+            return new PsoSettings()
+            {
+                Dimensions = 2,
+                Epsilon = 0,
+                Iterations = 5000,
+                IterationsLimitCondition = true,
+                TargetValueCondition = false,
+                Particles = new[] { new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 20) },
+                FunctionParameters = new UserFunctionParameters()
+                {
+                    Dimension = 2,
+                    Coefficients = new[] { 1.0 },
+                    FitnessFunctionType = FitnessFunctionType.Rastrigin,
+                    SearchSpace = new[] { new Tuple<double, double>(-4, 4), }
+
+                }
+            };
+        }
+
     }
 }
