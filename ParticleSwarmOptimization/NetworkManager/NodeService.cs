@@ -64,19 +64,36 @@ namespace NetworkManager
             
         }
 
+        public void Deregister(NetworkNodeInfo brokenNodeInfo)
+        {
+            Debug.WriteLine("{0}: deregistering node {1}",Info.Id,brokenNodeInfo.Id);
+            var node = KnownNodes.First(n => n.Id == brokenNodeInfo.Id);
+            KnownNodes.Remove(node);
+            BroadcastNeighborhoodList();
+            Task.Factory.StartNew(() =>
+            {
+                if (NeighborhoodChanged != null) NeighborhoodChanged(KnownNodes.ToArray(), Info);
+            });
+        }
+
         public void StartCalculation(PsoSettings settings)
         {
             Debug.WriteLine("{0}: starting calculations.", Info.Id);
             if (StartCalculations != null) StartCalculations(settings);
         }
 
+        public void CheckStatus()
+        {
+            
+        }
 
-        private void BroadcastNeighborhoodList(NetworkNodeInfo skipNode)
+
+        private void BroadcastNeighborhoodList(NetworkNodeInfo skipNode = null)
         {
             Debug.WriteLine("{0}: broadcasting neighbors list", Info.Id);
             foreach (var networkNodeInfo in KnownNodes)
             {
-                if (networkNodeInfo.Id == Info.Id || networkNodeInfo.Id == skipNode.Id) continue;
+                if (networkNodeInfo.Id == Info.Id ||(skipNode != null && networkNodeInfo.Id == skipNode.Id)) continue;
                 NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(networkNodeInfo.TcpAddress);
                 nodeServiceClient.UpdateNodes(KnownNodes.ToArray());
             }

@@ -66,7 +66,6 @@ namespace Controller
                 CalculationsRunning = true;
                 var r = algorithm.Run(particles);
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
-                CalculationsRunning = false;
                 return r;
             });
         }

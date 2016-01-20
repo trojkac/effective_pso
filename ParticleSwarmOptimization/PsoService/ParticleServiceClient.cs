@@ -20,15 +20,8 @@ namespace PsoService
 
         public ParticleState GetBestState()
         {
-            try
-            {
-                return base.Channel.GetBestState();
-            }
-            catch
-            {
-                Debug.WriteLine(String.Format("Cannot connect to: {0}", base.Endpoint.Address.ToString()));
-                return ParticleState.WorstState(1);
-            }
+
+                return base.Channel.GetBestState();            
         }
 
         public void UpdateBestState(ParticleState state)

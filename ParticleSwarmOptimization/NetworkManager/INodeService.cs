@@ -14,6 +14,12 @@ namespace NetworkManager
         NetworkNodeInfo[] Register(NetworkNodeInfo source);
 
         [OperationContract]
+        void Deregister(NetworkNodeInfo brokenNodeInfo);
+
+        [OperationContract]
         void StartCalculation(PsoSettings settings);
+
+        [OperationContract]
+        void CheckStatus();
     }
 }
