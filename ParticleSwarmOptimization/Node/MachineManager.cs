@@ -6,51 +6,38 @@ namespace Node
 {
     public class MachineManager
     {
-        private VCpuManager[] _vCpuManagers;
+        private List<VCpuManager> _vCpuManagers;
         private GpuManager _gpuManager;
 
+        private UserNodeParameters _nodeParams;
+        private UserFunctionParameters _functionParams;
+        private UserPsoParameters _psoParams;
 
-
-        public MachineManager(string machineIp, int vcpus, int[] ports, bool isGpu = false)
+        public MachineManager(UserNodeParameters nodeParams, UserFunctionParameters functionParams, UserPsoParameters psoParams)
         {
-            //_functionParams = functionParams;
-            if (ports.Length != vcpus) {
-                throw new System.ArgumentException("ports.Length has to be equal to vcpus");
-            }
+            _nodeParams = nodeParams;
+            _functionParams = functionParams;
+            _psoParams = psoParams;
 
-            _vCpuManagers = new VCpuManager[vcpus] ;
-            for (int i = 0; i < vcpus; i++)
-            {
-                _vCpuManagers[i] = new VCpuManager(machineIp, ports[i], i.ToString());
-                _vCpuManagers[i].StartTcpNodeService();
-                if (i > 0)
-                {
-                    _vCpuManagers[i].NetworkNodeManager.Register(_vCpuManagers[i - 1].GetMyNetworkNodeInfo());
-                }
-            }
-            if (isGpu)
+            _vCpuManagers = new List<VCpuManager>();
+//            for (int i = 0; i < nodeParams.NrOfVCpu; i++)
+//            {
+//                _vCpuManagers.Add(new VCpuManager(nodeParams.Ports[i], nodeParams.Pipes[i]));
+//            }
+
+            if (nodeParams.IsGpu)
             {
                 _gpuManager = new GpuManager();
             }
-
-          
         }
-        public void Register(string remoteAddress)
+
+        public void StartPsoAlgorithm()
         {
-            foreach (var vcpu in _vCpuManagers)
+            PsoSettings psoSettings = new PsoSettings(_psoParams, _functionParams);
+            Parallel.ForEach(_vCpuManagers, (cpuMgr) =>
             {
-                vcpu.NetworkNodeManager.Register(new NetworkNodeInfo(remoteAddress, "asd"));
-            }
-        }
-        public void StartPsoAlgorithm(PsoSettings settings)
-        {
-            _vCpuManagers[0].StartCalculations(settings);
-        }
-
-        public ParticleState GetResult()
-        {
-             _vCpuManagers[0].PsoController.RunningAlgorithm.Wait();
-             return _vCpuManagers[0].PsoController.RunningAlgorithm.Result;
+                cpuMgr.Run( psoSettings);
+            });
         }
     }
 }

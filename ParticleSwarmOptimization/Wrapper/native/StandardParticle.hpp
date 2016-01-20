@@ -5,6 +5,7 @@
 #include "../Stdafx.h"
 #include "Particle.hpp"
 #include "Function.hpp"
+#include "CppUtils\CppUtils.h"
 using namespace ParticleSwarmOptimization;
 
 namespace ParticleSwarmOptimization {
@@ -24,15 +25,11 @@ namespace ParticleSwarmOptimization {
 		void init_location() override
 		{
 			std::vector<double> location(dimensions_);
-			// this probably should go to static field or we should create ParticlesFactory responsible 
-			// for generating particles with proper distribution of location and in specific limits
-			std::uniform_real_distribution<float> distribution(-4.0f, 4.0f); 
-			std::mt19937 engine; // Mersenne twister MT19937
-			auto generator = bind(distribution, engine);
-			generate(location.begin(), location.end(), generator); 
-			// to remove after improving generation logic
-			if (bounds_.size() == dimensions_) {
-				transform(location.begin(), location.end(), bounds_.begin(), location.begin(), &clamp);
+			CppUtils::Random r;
+			for (int i = 0; i < dimensions_; i++)
+			{
+				auto rand = r.random_in_range(std::get<0>(bounds_[i]), std::get<1>(bounds_[i]));
+				location.emplace_back(rand);
 			}
 			location_ = location;
 		}
@@ -40,12 +37,9 @@ namespace ParticleSwarmOptimization {
 		void init_velocity() override
 		{
 			//polowa drogi do losowego sasiada
-			std::vector<double> velocity(dimensions_);
-			std::uniform_real_distribution<float> distribution(0.0f, 2.0f); //Values between 0 and 2
-			std::mt19937 engine; // Mersenne twister MT19937
-			auto generator = std::bind(distribution, engine);
-			generate(velocity.begin(), velocity.end(), generator);
-			velocity_ = velocity;
+			CppUtils::Random r;
+			r.random_vector(dimensions_, -2, 2);
+			velocity_ = r.random_vector(dimensions_, -2, 2);;
 		}
 
 		std::tuple<std::vector<double>, double> update_personal_best(Function *function) override
