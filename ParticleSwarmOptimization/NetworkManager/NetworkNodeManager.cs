@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.Threading;
+using System.Threading.Tasks;
 using Common;
 
 namespace NetworkManager
@@ -17,8 +19,8 @@ namespace NetworkManager
         
         private readonly int _tcpPort = 8080;
         private ServiceHost _pipeHost;
-
         private ServiceHost _tcpHost;
+        private Timer _statusTimer;
 
         public NetworkNodeManager(string tcpAddress)
         {
@@ -51,17 +53,56 @@ namespace NetworkManager
             }
         }
 
+        public void CheckStatuses(object o)
+        {
+            foreach (var neighbor in NodeService.KnownNodes.Where(node => node.Id != NodeService.Info.Id))
+            {
+                try
+                {
+                    var client = new TcpNodeServiceClient(neighbor);
+                    client.CheckStatus();
+                }
+                catch
+                {
+                    NodeService.Deregister(neighbor);
+                }
+            }
+        }
+
         public void Register(NetworkNodeInfo info)
         {
             var client = new TcpNodeServiceClient(info);
-            client.Register(NodeService.Info);
+            var neighbors = client.Register(NodeService.Info);
+            NodeService.UpdateNodes(neighbors);
+
         }
 
         public void StartCalculations(PsoSettings settings)
         {
             foreach (var client in NodeServiceClients)
             {
+                try
+                {
+                    client.StartCalculation(settings);
+                }
+                catch
+                {
+                    Debug.WriteLine("cannot start calculations on {0}",settings);
+                }
+                
+            }
+        }
+
+        public void StartCalculations(PsoSettings settings, NetworkNodeInfo target)
+        {
+            var client = new TcpNodeServiceClient(target);
+            try
+            {
                 client.StartCalculation(settings);
+            }
+            catch
+            {
+                Debug.WriteLine("cannot start calculations on {0}", settings);
             }
         }
 
@@ -83,15 +124,19 @@ namespace NetworkManager
             try
             {
                 _tcpHost.Open();
+                _statusTimer = new Timer(CheckStatuses, null, 5000, 10000);
             }
             catch (CommunicationException ce)
             {
+                _statusTimer.Dispose();
                 _tcpHost.Abort();
+                
             }
         }
 
         public void StartPipeNodeService()
         {
+            throw new NotImplementedException();
             var serviceAddress = "net.pipe://localhost/NodeService/" + _pipeName;
             var serviceUri = new Uri(serviceAddress);
 
@@ -123,6 +168,7 @@ namespace NetworkManager
 
         public void ClosePipeNodeService()
         {
+            throw new NotImplementedException();
             Debug.WriteLine("Zamykam _pipeHost");
             _pipeHost.Close();
         }

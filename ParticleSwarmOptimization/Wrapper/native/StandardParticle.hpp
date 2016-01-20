@@ -34,6 +34,7 @@ namespace ParticleSwarmOptimization {
 
 		void init_velocity() override
 		{
+			//polowa drogi do losowego sasiada
 			std::vector<double> velocity(dimensions_);
 			std::uniform_real_distribution<float> distribution(0.0f, 2.0f); //Values between 0 and 2
 			std::mt19937 engine; // Mersenne twister MT19937

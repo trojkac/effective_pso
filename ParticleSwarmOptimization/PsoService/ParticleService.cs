@@ -5,7 +5,7 @@ using Common;
 namespace PsoService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    class ParticleService : IParticleService
+    internal class ParticleService : IParticleService
     {
         private ParticleState _bestKnownState;
         public ParticleState BestKnownState
