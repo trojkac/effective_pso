@@ -1,9 +1,11 @@
 #pragma once
+
 #include "Particle.hpp"
 #include "native\StandardParticle.hpp"
+
 namespace ParticleSwarmOptimizationWrapper
 {
-	public ref class StandardParticle : public Particle
+	public ref class StandardParticle : public ParticleWrapper
 	{
 		ParticleSwarmOptimization::StandardParticle* _nativeParticle;
 
@@ -13,12 +15,11 @@ namespace ParticleSwarmOptimizationWrapper
 		{
 			_nativeParticle->init_location();
 			_nativeParticle->init_velocity();
-		};
+        }; 
+
 		ParticleSwarmOptimization::Particle* nativeParticle() override
 		{
 			return _nativeParticle;
 		};
-
 	};
-
 }

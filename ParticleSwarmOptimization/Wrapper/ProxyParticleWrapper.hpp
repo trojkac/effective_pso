@@ -10,7 +10,7 @@ using namespace Common;
 
 namespace ParticleSwarmOptimizationWrapper
 {
-	public ref class ProxyParticle : public Particle
+	public ref class ProxyParticle : public ParticleWrapper
 	{
 		ParticleSwarmOptimization::ProxyParticle* _nativeParticle;
 

@@ -55,6 +55,7 @@
     <Compile Include="ProxyParticleTests.cs" />
     <Compile Include="PsoSettingsFactory.cs" />
     <Compile Include="ServiceTests.cs" />
+    <Compile Include="CudaWrapperTests.cs" />
     <Compile Include="WrapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -66,6 +67,10 @@
     <ProjectReference Include="..\Controller\Controller.csproj">
       <Project>{dfe2de9a-2440-4d1c-a7ff-c3f00eda51fb}</Project>
       <Name>Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CudaPsoWrapper\CudaPsoWrapper.vcxproj">
+      <Project>{e89654b3-d51f-4a18-9950-530e25a85ed1}</Project>
+      <Name>CudaPsoWrapper</Name>
     </ProjectReference>
     <ProjectReference Include="..\NetworkManager\NetworkManager.csproj">
       <Project>{F46E4D5D-06D4-45CD-A440-9DFAF32C6AAB}</Project>

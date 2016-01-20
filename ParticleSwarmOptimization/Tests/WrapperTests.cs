@@ -15,7 +15,7 @@ namespace Tests
             var function = new QuadraticFunction(new UserFunctionParameters(){Dimension = 5,Coefficients = new []{1.0,1.0,1.0,1.0,1.0}});
             FitnessFunction fitnessFunction = function.Calculate;
             var algorithm = PSOAlgorithm.GetAlgorithm(100, fitnessFunction);
-            var particles = new List<Particle>();
+            var particles = new List<ParticleWrapper>();
             for (int i = 0; i < 20; i++)
             {
                 particles.Add(new StandardParticle(2));
@@ -35,7 +35,7 @@ namespace Tests
                 return Math.Sin(x + y) / (x * y + 1);
             };
             PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(-1, 0.5, fitnessFunction);
-            List<Particle> particles = new List<Particle>();
+            List<ParticleWrapper> particles = new List<ParticleWrapper>();
             for (int i = 0; i < 20; i++)
             {
                 particles.Add(new StandardParticle(2));
@@ -55,7 +55,7 @@ namespace Tests
                 return Math.Sin(x + y) / (x * y + 1);
             };
             PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(100, -0.5, 0.1, fitnessFunction);
-            List<Particle> particles = new List<Particle>();
+            List<ParticleWrapper> particles = new List<ParticleWrapper>();
             for (int i = 0; i < 20; i++)
             {
                 particles.Add(new StandardParticle(2));
@@ -75,7 +75,7 @@ namespace Tests
                 return Math.Sin(x + y) / (x * y + 1);
             };
             PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(4000, fitnessFunction);
-            List<Particle> particles = new List<Particle>();
+            List<ParticleWrapper> particles = new List<ParticleWrapper>();
             for (int i = 0; i < 20; i++)
             {
                 particles.Add(new StandardParticle(2));

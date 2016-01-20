@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +50,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CudaPsoWrapper\CudaPsoWrapper.vcxproj">
+      <Project>{e89654b3-d51f-4a18-9950-530e25a85ed1}</Project>
+      <Name>CudaPsoWrapper</Name>
     </ProjectReference>
     <ProjectReference Include="..\PsoService\PsoService.csproj">
       <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>

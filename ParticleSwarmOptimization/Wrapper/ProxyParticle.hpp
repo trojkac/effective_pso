@@ -52,14 +52,17 @@ namespace ParticleSwarmOptimization
 		{
 			return personal_best_;
 		}
+
 		std::tuple<std::vector<double>, double> update_personal_best(Function *function) override
 		{
 			auto remote_best = particle_state_to_tuple(proxy_particle_->proxyService->GetRemoteBest());
+
 			if (std::get<1>(personal_best_) < std::get<1>(remote_best))
 			{
 				personal_best_ = remote_best;
 				proxy_particle_->proxyService->UpdateBestState(tuple_to_particle_state(personal_best_));
 			}
+
 			if (coupled_particle_ != NULL)
 			{
 				auto coupled_best = coupled_particle_->get_personal_best();
@@ -69,25 +72,23 @@ namespace ParticleSwarmOptimization
 					proxy_particle_->proxyService->UpdateBestState(tuple_to_particle_state(personal_best_));
 				}
 			}
+
 			return personal_best_;
 		}
 
-		void update_velocity()
-		{
-		}
-		void translate()
-		{
-		}
-		void init_location()
-		{
-		}
-		void init_velocity()
-		{
-		}
+        void update_velocity() {}
+
+        void translate() {}
+
+        void init_location() {}
+
+        void init_velocity() {}
+
 		~ProxyParticle()
 		{
 			proxy_particle_->proxyService->Close();
 		}
+
 	private:
 		ProxyParticleBox* proxy_particle_;
 		int dimensions_;

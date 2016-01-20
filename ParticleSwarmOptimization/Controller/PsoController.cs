@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Common;
 using ParticleSwarmOptimizationWrapper;
+using CudaPsoWrapper;
 
 namespace Controller
 {
@@ -19,14 +20,14 @@ namespace Controller
         public bool CalculationsRunning { get; private set; }
         public Task<ParticleState> RunningAlgorithm { get; private set; }
 
-        private static List<Particle> CreateParticles(IEnumerable<Tuple<PsoParticleType, int>> particlesParameters, int dimensions)
+        private static List<ParticleWrapper> CreateParticles(IEnumerable<Tuple<PsoParticleType, int>> particlesParameters, int dimensions)
         {
-            var particles = new List<Particle>();
+            var particles = new List<ParticleWrapper>();
             foreach (var particleTuple in particlesParameters)
             {
                 for (int i = 0; i < particleTuple.Item2; i++)
                 {
-                    Particle p;
+                    ParticleWrapper p;
                     switch (particleTuple.Item1)
                     {
                         case PsoParticleType.FullyInformed:
@@ -42,12 +43,21 @@ namespace Controller
             return particles;
         }
 
-
         public void Run(PsoSettings psoSettings)
         {
             var function = AbstractFitnessFunction.GetFitnessFunction(psoSettings.FunctionParameters);
             var algorithm = PSOAlgorithm.GetAlgorithm(psoSettings.Iterations, function.Calculate);
             var particles = CreateParticles(psoSettings.Particles, psoSettings.Dimensions);
+            
+            var cudaAlgorithm = CudaPSOAlgorithm.createAlgorithm(psoSettings.Iterations);
+
+            unsafe
+            {
+                var cudaParticle =
+                    CudaPraticleWrapperFactory.Create(cudaAlgorithm.getRemoteEndpoint(), cudaAlgorithm.getLocalEndpoint());
+                particles.Add(cudaParticle);
+            }
+
             if (psoSettings.FunctionParameters.SearchSpace != null)
             {
                 foreach (var particle in particles)
@@ -55,9 +65,11 @@ namespace Controller
                     particle.bounds(psoSettings.FunctionParameters.SearchSpace.ToList());
                 }   
             }
+
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 CalculationsRunning = true;
+                new Task(cudaAlgorithm.run).Start();
                 var r = algorithm.Run(particles);
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
                 return r;
@@ -66,11 +78,21 @@ namespace Controller
 
         public void Run(PsoSettings psoSettings, PsoService.ProxyParticle[] proxyParticleServices)
         {
-
             var function = AbstractFitnessFunction.GetFitnessFunction(psoSettings.FunctionParameters);
             var algorithm = PSOAlgorithm.GetAlgorithm(psoSettings.Iterations, function.Calculate);
             var particles = CreateParticles(psoSettings.Particles, psoSettings.Dimensions);
+
+            var cudaAlgorithm = CudaPSOAlgorithm.createAlgorithm(psoSettings.Iterations);
+
+            unsafe
+            {
+                var cudaParticle =
+                    CudaPraticleWrapperFactory.Create(cudaAlgorithm.getRemoteEndpoint(), cudaAlgorithm.getLocalEndpoint());
+                particles.Add(cudaParticle);
+            }
+
             particles.AddRange(proxyParticleServices.Select(p => new ParticleSwarmOptimizationWrapper.ProxyParticle(psoSettings.Dimensions, p)));
+            
             if (psoSettings.FunctionParameters.SearchSpace != null)
             {
                 foreach (var particle in particles)
@@ -78,15 +100,16 @@ namespace Controller
                     particle.bounds(psoSettings.FunctionParameters.SearchSpace.ToList());
                 }
             }
+
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 CalculationsRunning = true;
+                new Task(cudaAlgorithm.run).Start();
                 var r = algorithm.Run(particles);
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
                 return r;
             });
         }
-
 
         public PsoImplementationType[] GetAvailableImplementationTypes()
         {

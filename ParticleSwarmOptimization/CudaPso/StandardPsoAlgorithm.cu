@@ -4,14 +4,6 @@
 
 #include <stdio.h>
 
-cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
-
-__global__ void addKernel(int *c, const int *a, const int *b)
-{
-	int i = threadIdx.x;
-	c[i] = a[i] + b[i];
-}
-
 __global__ void initialize_particles(double** d_particles, double** d_velocities, double** d_personal_bests_locations, double* d_personal_bests_values, int dim, int nr_of_particles, double** d_neighbor_bests_locations, double* d_neighbor_bests_values)
 {
 	int particle_nr = blockIdx.x * blockDim.x + threadIdx.x;

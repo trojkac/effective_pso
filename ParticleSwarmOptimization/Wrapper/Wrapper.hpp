@@ -65,7 +65,7 @@ namespace ParticleSwarmOptimizationWrapper {
 			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(genericFunction, targetValue, epsilon);
 			return algorithm;
 		}
-		ParticleState^ Run(List<Particle^>^ particles)
+		ParticleState^ Run(List<ParticleWrapper^>^ particles)
 		{
 			std::vector<ParticleSwarmOptimization::Particle*> stdParticles;
 			for each (auto particle in particles)
