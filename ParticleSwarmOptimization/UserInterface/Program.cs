@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Common;
 using Node;
 
@@ -12,23 +14,50 @@ namespace UserInterface
         static void Main(string[] args)
         {
             UserNodeParameters nodeParams = ReadNodeParameters();
-            UserFunctionParameters functionParams = ReadFunctionParameters();
-            UserPsoParameters psoParams = ReadPsoParameters();
+            UserFunctionParameters functionParams;
+            UserPsoParameters psoParams;
 
-            MachineManager machineManager = new MachineManager(nodeParams, functionParams, psoParams);
-            
-            Debug.WriteLine("starting cluster formation");
-            Console.ReadKey();
+            MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.NrOfVCpu, nodeParams.Ports.ToArray());
+            if (nodeParams.PeerAddress != null)
+            {
+                machineManager.Register(nodeParams.PeerAddress);
+            }
+            char c = 'c';
+            bool cont = true;
+            while (cont)
+            {
+                Console.WriteLine("1 - Start Calculations");
+                Console.WriteLine("0 - Exit");
+                Console.WriteLine("");
+                Console.Write("choice:");
+                c = Console.ReadKey().KeyChar;
+                Console.WriteLine("\n\n");
 
-            machineManager.StartPsoAlgorithm();
-            
-            Console.ReadKey();
+                switch (c)
+                {
+                    case '1':
+                        functionParams = ReadFunctionParameters();
+                        psoParams = ReadPsoParameters();
+                        machineManager.StartPsoAlgorithm(new PsoSettings(psoParams, functionParams));
+                        var r = machineManager.GetResult();
+                        Console.WriteLine("Value: {0}",r.FitnessValue);
+                        break;
+                    case '0':
+                        cont = false;
+                        break;
+                    default:
+                        break;
+
+
+                }
+            }
         }
+
+
 
         public static UserNodeParameters ReadNodeParameters()
         {
-            Console.WriteLine("Podaj ścieżkę do pliku z parametrami węzła");
-            string nodePath = Console.ReadLine();
+            string nodePath = "n.txt";
 
             UserNodeParameters nodeParams = new UserNodeParameters();
             if (!ParametersReader.ReadNodeParametersFile(nodeParams, nodePath))
@@ -84,6 +113,9 @@ namespace UserInterface
                 string vcpus = lines[0];
                 string isgpu = lines[1];
                 string ports = lines[2];
+                string ip = lines[3];
+                string address = lines.Length > 4 ? lines[4] : null;
+
 
 
                 int nrOfVCpu;
@@ -98,12 +130,14 @@ namespace UserInterface
                     return false;
                 }
 
+
                 bool isGpu;
                 if (!bool.TryParse(isgpu, out isGpu))
                 {
                     Console.WriteLine("Błąd w IsGpu");
                     return false;
                 }
+
 
                 List<int> portList = new List<int>();
                 string[] nrs = lines[2].Split(',');
@@ -128,56 +162,17 @@ namespace UserInterface
                     return false;
                 }
 
-                List<string> pipes = new List<string>();
-                if (lines.Length > 3)
-                {
-                    string[] pps = lines[3].Split(',');
-                    try
-                    {
-                        for (int i = 0; i < pps.Length; i++)
-                        {
-                            pipes.Add(pps[i]);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Błąd przy wczytywaniu pipes");
-                        return false;
-                    }
-                }
 
-                List<string> addresses = new List<string>();
-                if (lines.Length > 4)
-                {
-                    string[] peers = lines[4].Split(',');
-                    try
-                    {
-                        for (int i = 0; i < peers.Length; i++)
-                        {
-                            if (CheckIfValidNodeAddress(peers[i]))
-                            {
-                                addresses.Add(peers[i]);
-                            }
-                            else
-                            {
-                                Console.WriteLine("Napotkano niepoprawny adres IP");
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Błąd przy wczytywaniu adresów");
-                        return false;
-                    }
-                }
+
+
+
 
 
                 parameters.NrOfVCpu = nrOfVCpu;
                 parameters.IsGpu = isGpu;
                 parameters.Ports = portList;
-                parameters.Pipes = pipes;
-                parameters.PeerAddresses = addresses;
-
+                parameters.PeerAddress = address;
+                parameters.Ip = ip;
                 return true;
             }
 

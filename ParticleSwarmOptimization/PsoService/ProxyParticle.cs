@@ -50,7 +50,8 @@ namespace PsoService
 
         public void Open()
         {
-            _host.Open();
+            if(_host.State != CommunicationState.Opened)
+                _host.Open();
         }
 
         public void Close()

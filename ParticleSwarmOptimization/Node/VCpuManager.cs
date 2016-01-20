@@ -79,7 +79,7 @@ namespace Node
 
         public void StartCalculations(PsoSettings settings)
         {
-            if (PsoController.CalculationsRunning) throw new NotSupportedException("Calculations are already running.");
+            if (PsoController.CalculationsRunning) return;
             NetworkNodeManager.StartCalculations(settings);
             Run(settings);
         }

@@ -13,12 +13,11 @@ namespace Controller
         private ulong _nodeId;
         public PsoController(ulong nodeId)
         {
-            CalculationsRunning = false;
             _nodeId = nodeId;
         }
 
         public event CalculationCompletedHandler CalculationsCompleted;
-        public bool CalculationsRunning { get; private set; }
+        public bool CalculationsRunning { get { return RunningAlgorithm == null ? false : !RunningAlgorithm.IsCompleted; } }
         public Task<ParticleState> RunningAlgorithm { get; private set; }
         public PsoSettings RunningSettings { get; private set; }
         private static List<Particle> CreateParticles(IEnumerable<Tuple<PsoParticleType, int>> particlesParameters, int dimensions)
@@ -65,10 +64,10 @@ namespace Controller
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 RunningSettings = psoSettings;
-                CalculationsRunning = true;
                 //var r = algorithm.Run(particles,_nodeId.ToString());
                 var r = algorithm.Run(particles);
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
+
                 return r;
             });
         }
