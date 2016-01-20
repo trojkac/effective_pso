@@ -60,7 +60,8 @@ namespace Controller
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 CalculationsRunning = true;
-                var r = algorithm.Run(particles, _nodeId.ToString());
+                //var r = algorithm.Run(particles, _nodeId.ToString());
+                var r = algorithm.Run(particles);
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
                 return r;
             });
@@ -83,7 +84,8 @@ namespace Controller
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 CalculationsRunning = true;
-                var r = algorithm.Run(particles,_nodeId.ToString());
+                //var r = algorithm.Run(particles,_nodeId.ToString());
+                var r = algorithm.Run(particles);
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
                 return r;
             });

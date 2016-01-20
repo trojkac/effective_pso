@@ -26,7 +26,7 @@ namespace ParticleSwarmOptimization {
 			std::vector<double> location(dimensions_);
 			// this probably should go to static field or we should create ParticlesFactory responsible 
 			// for generating particles with proper distribution of location and in specific limits
-			std::uniform_real_distribution<float> distribution(0.0f, 10.0f); 
+			std::uniform_real_distribution<float> distribution(-4.0f, 4.0f); 
 			std::mt19937 engine; // Mersenne twister MT19937
 			auto generator = bind(distribution, engine);
 			generate(location.begin(), location.end(), generator); 

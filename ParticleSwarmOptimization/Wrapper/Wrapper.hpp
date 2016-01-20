@@ -76,6 +76,11 @@ namespace ParticleSwarmOptimizationWrapper {
 			auto result = _algorithm->run(stdParticles, id);
 			return tuple_to_particle_state(result);
 		}
+
+		ParticleState^ Run(List<Particle^>^ particles)
+		{
+			return Run(particles, "nodeId");
+		}
 	private:
 		static Function* generate_function_object(ManagedFitnessFunction^ managedFitness, FitnessFunction^ function)
 		{

@@ -66,7 +66,7 @@ namespace ParticleSwarmOptimization {
 			struct tm * now = std::localtime(&t);
 
 			char buffer[80];
-			strftime(buffer, 80, "%Y-%m-%d.", now);
+			strftime(buffer, 80, "%Y-%m-%d_", now);
 
 			file.open(buffer + id);
 
@@ -97,16 +97,21 @@ namespace ParticleSwarmOptimization {
 				//LOGUJ
 				if (log_iterations % log_interval == 0)
 				{
+					file << "iterations: " << log_iterations;
 					for (int i = 0; i < particles.size(); i++)
 					{
-						file << "particle: ";
-						file << i;
-						file << " best value: ";
+						file << "prtcl: " << i << " best: ";
 						file << std::get<1>(particles[i]->get_personal_best());
+						file << " in location: [ ";
+						auto location = std::get<0>(particles[i]->get_personal_best());
+						for (std::vector<double>::const_iterator i = location.begin(); i != location.end(); ++i)
+							file << *i << ' ';
+						file << "]" << std::endl;
 						file << std::endl;
 					}
 				}
 			}
+			file.close();
 			return fitness_function_->best_evaluation();
 		}
 

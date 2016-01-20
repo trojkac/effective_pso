@@ -39,21 +39,21 @@ namespace Tests
         [TestMethod]
         public void ClusterCalculations()
         {
-            VCpuManager vcpu1 = new VCpuManager("192.168.142.32", 8888, "pipe1");
-            VCpuManager vcpu2 = new VCpuManager("192.168.142.32", 8889, "pipe2");
-            VCpuManager vcpu3 = new VCpuManager("192.168.142.32", 8890, "pipe3 ");
+            VCpuManager vcpu1 = new VCpuManager("192.168.218.1", 8888, "pipe1");
+            VCpuManager vcpu2 = new VCpuManager("192.168.218.1", 8889, "pipe2");
+            VCpuManager vcpu3 = new VCpuManager("192.168.218.1", 8890, "pipe3 ");
 
             vcpu1.StartTcpNodeService();
             vcpu2.StartTcpNodeService();
             vcpu3.StartTcpNodeService();
 
-            vcpu3.NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.142.32:8889/NodeService", ""));
+            vcpu3.NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.218.1:8889/NodeService", ""));
 
-            vcpu1.NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.142.32:8889/NodeService",""));
+            vcpu1.NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.218.1:8889/NodeService", ""));
             var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
             settings.Dimensions = 20;
             settings.FunctionParameters.Dimension = settings.Dimensions;
-            settings.Iterations = 100;
+            settings.Iterations = 1000;
             settings.IterationsLimitCondition = true;
             settings.FunctionParameters.SearchSpace = new Tuple<double, double>[settings.Dimensions];
             settings.FunctionParameters.Coefficients = new double[settings.Dimensions];
