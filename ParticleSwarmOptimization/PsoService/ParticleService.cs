@@ -1,10 +1,11 @@
-﻿using System.ServiceModel;
+﻿using System.Diagnostics;
+using System.ServiceModel;
 using Common;
 
 namespace PsoService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    class ParticleService : IParticleService
+    internal class ParticleService : IParticleService
     {
         private ParticleState _bestKnownState;
         public ParticleState BestKnownState
@@ -15,7 +16,7 @@ namespace PsoService
             }
             set
             {
-                if (value.FitnessValue > _bestKnownState.FitnessValue)
+                if (value.FitnessValue < _bestKnownState.FitnessValue)
                 {
                     _bestKnownState = value;
                 }
@@ -24,7 +25,7 @@ namespace PsoService
 
         public ParticleService()
         {
-            _bestKnownState = ParticleState.WorstState;
+            _bestKnownState = ParticleState.WorstState(1);
         }
 
         public ParticleState GetBestState()

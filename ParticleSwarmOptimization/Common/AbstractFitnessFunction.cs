@@ -1,39 +1,62 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Common
 {
+    [DataContract]
     public abstract class AbstractFitnessFunction
     {
+        public AbstractFitnessFunction(UserFunctionParameters functionParams)
+        {
+            Dimension = functionParams.Dimension;
+            Coefficients = new double[Dimension];
+            functionParams.Coefficients.CopyTo(Coefficients, 0);
+        }
+        public static AbstractFitnessFunction GetFitnessFunction(UserFunctionParameters parameters)
+        {
+            switch (parameters.FitnessFunctionType)
+            {
+                case FitnessFunctionType.Quadratic:
+                    return new QuadraticFunction(parameters);
+                case FitnessFunctionType.Rastrigin:
+                    return new RastriginFunction(parameters);
+                case FitnessFunctionType.Rosenbrock:
+                    return new RosenbrockFunction(parameters);
+                default:
+                    throw new ArgumentException("Unknown function type.");
+            }
+        }
+
         public abstract double Calculate(double[] vector);
+        [DataMember]
+        public int Dimension;
+        [DataMember]
+        public double[] Coefficients;
     }
 
     public class QuadraticFunction : AbstractFitnessFunction
     {
-        public int Dimension;
-        public double[] Coefficients;
+
 
         public override double Calculate(double[] vector)
         {
             double value = 0;
             for (int i = 0; i < vector.Length; i++)
             {
-                value += -Coefficients[i] * vector[i] * vector[i];
+                value += Coefficients[i] * vector[i] * vector[i];
             }
             return value;
         }
 
         public QuadraticFunction(UserFunctionParameters functionParams)
+            : base(functionParams)
         {
-            Dimension = functionParams.Dimension;
-            Coefficients = new double[Dimension];
-            functionParams.Coefficients.CopyTo(Coefficients, 0);
+
         }
     }
 
     public class RastriginFunction : AbstractFitnessFunction
     {
-        public int Dimension;
-        public double[] Coefficients;
 
         public override double Calculate(double[] vector)
         {
@@ -41,17 +64,13 @@ namespace Common
         }
 
         public RastriginFunction(UserFunctionParameters functionParams)
+            : base(functionParams)
         {
-            Dimension = functionParams.Dimension;
-            Coefficients = new double[Dimension];
-            functionParams.Coefficients.CopyTo(Coefficients, 0);
         }
     }
 
     public class RosenbrockFunction : AbstractFitnessFunction
     {
-        public int Dimension;
-        public double[] Coefficients;
 
         public override double Calculate(double[] vector)
         {
@@ -59,10 +78,8 @@ namespace Common
         }
 
         public RosenbrockFunction(UserFunctionParameters functionParams)
+            : base(functionParams)
         {
-            Dimension = functionParams.Dimension;
-            Coefficients = new double[Dimension];
-            functionParams.Coefficients.CopyTo(Coefficients, 0);
         }
     }
 }

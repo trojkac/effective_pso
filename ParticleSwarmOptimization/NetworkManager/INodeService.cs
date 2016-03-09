@@ -7,22 +7,19 @@ namespace NetworkManager
     [ServiceContract]
     public interface INodeService
     {
-        [OperationContract]
-        void CloserPeerSearch(NetworkNodeInfo source);
+        [OperationContract] 
+        void UpdateNodes(NetworkNodeInfo[] nodes);
 
         [OperationContract]
-        void SuccessorCandidate(NetworkNodeInfo candidate);
+        NetworkNodeInfo[] Register(NetworkNodeInfo source);
 
         [OperationContract]
-        void GetNeighbor(NetworkNodeInfo from, int which);
+        void Deregister(NetworkNodeInfo brokenNodeInfo);
 
         [OperationContract]
-        void UpdateNeighbor(NetworkNodeInfo potentialNeighbor, int which);
+        void StartCalculation(PsoSettings settings);
 
         [OperationContract]
-        Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst);
-
-        [OperationContract]
-        Tuple<NetworkNodeInfo, Uri[]>[] GetProxyParticlesAddresses(NetworkNodeInfo src);
+        void CheckStatus();
     }
 }

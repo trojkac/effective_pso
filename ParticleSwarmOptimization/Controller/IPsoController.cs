@@ -1,12 +1,15 @@
-﻿using Common;
+﻿using System.Threading.Tasks;
+using Common;
 using PsoService;
 
 namespace Controller
 {
     public interface IPsoController
     {
-        ParticleState  Run(FitnessFunction fitnessFunction, PsoSettings psoSettings);
-        ParticleState Run(FitnessFunction fitnessFunction, PsoSettings psoSettings, ProxyParticle[] proxyParticleServices);
+        bool CalculationsRunning { get; }
+        Task<ParticleState> RunningAlgorithm { get; }
+        PsoSettings RunningSettings { get; }
+        void Run(PsoSettings psoSettings, ProxyParticle[] proxyParticleServices = null);
         PsoImplementationType[] GetAvailableImplementationTypes();
     }
 }

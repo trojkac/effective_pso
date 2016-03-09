@@ -65,7 +65,7 @@ namespace ParticleSwarmOptimizationWrapper {
 			algorithm->_algorithm = new ParticleSwarmOptimization::PSOAlgorithm(genericFunction, targetValue, epsilon);
 			return algorithm;
 		}
-		ParticleState^ Run(List<Particle^>^ particles)
+		ParticleState^ Run(List<Particle^>^ particles, std::string id)
 		{
 			std::vector<ParticleSwarmOptimization::Particle*> stdParticles;
 			for each (auto particle in particles)
@@ -73,8 +73,13 @@ namespace ParticleSwarmOptimizationWrapper {
 				ParticleSwarmOptimization::Particle* native = particle->nativeParticle();
 				stdParticles.emplace_back(native);
 			}
-			auto result = _algorithm->run(stdParticles);
+			auto result = _algorithm->run(stdParticles, id);
 			return tuple_to_particle_state(result);
+		}
+
+		ParticleState^ Run(List<Particle^>^ particles)
+		{
+			return Run(particles, "nodeId");
 		}
 	private:
 		static Function* generate_function_object(ManagedFitnessFunction^ managedFitness, FitnessFunction^ function)

@@ -5,41 +5,70 @@ using Common;
 
 namespace NetworkManager
 {
-    public abstract class NodeServiceClient
+    public abstract class NodeServiceClient : INodeService
     {
         public EndpointAddress Address;
         public Binding Binding;
         public IChannelFactory<INodeService> ChannelFactory;
         public INodeService Proxy;
 
-        public void CloserPeerSearch(NetworkNodeInfo source)
+
+        public void UpdateNodes(NetworkNodeInfo[] nodes)
         {
-            Proxy.CloserPeerSearch(source);
+            try
+            {
+                Proxy.UpdateNodes(nodes);
+            }
+            catch
+            {
+
+            }
         }
 
-        public void SuccessorCandidate(NetworkNodeInfo candidate)
+        public NetworkNodeInfo[] Register(NetworkNodeInfo source)
         {
-            Proxy.SuccessorCandidate(candidate);
+            try
+            {
+                return Proxy.Register(source);
+
+            }
+            catch
+            {
+
+            }
+            return null;
         }
 
-        public void GetNeighbor(NetworkNodeInfo from, int which)
+        public void Deregister(NetworkNodeInfo brokenNodeInfo)
         {
-            Proxy.GetNeighbor(from, which);
+            try
+            {
+                Proxy.Deregister(brokenNodeInfo);
+
+            }
+            catch
+            {
+
+            }
         }
 
-        public void UpdateNeighbor(NetworkNodeInfo newNeighbor, int which)
+
+        public void StartCalculation(PsoSettings settings)
         {
-            Proxy.UpdateNeighbor(newNeighbor, which);
+            try
+            {
+                Proxy.StartCalculation(settings);
+
+            }
+            catch
+            {
+
+            }
         }
 
-        public Object ReceiveMessage(Object msg, NetworkNodeInfo src, NetworkNodeInfo dst)
+        public void CheckStatus()
         {
-            return Proxy.ReceiveMessage(msg, src, dst);
-        }
-
-        public Tuple<NetworkNodeInfo, Uri[]>[] GetProxyParticlesAddresses(NetworkNodeInfo src)
-        {
-            return Proxy.GetProxyParticlesAddresses(src);
+            Proxy.CheckStatus();
         }
     }
 

@@ -33,7 +33,7 @@ namespace ParticleSwarmOptimization
 			dimensions_(dimensions),
 			proxy_particle_(box)
 		{
-			personal_best_ = std::make_tuple(std::vector<double>(2), -std::numeric_limits<double>::infinity());
+			personal_best_ = std::make_tuple(std::vector<double>(2), std::numeric_limits<double>::infinity());
 			coupled_particle_ = NULL;
 			box->proxyService->Open();
 		}
@@ -55,7 +55,7 @@ namespace ParticleSwarmOptimization
 		std::tuple<std::vector<double>, double> update_personal_best(Function *function) override
 		{
 			auto remote_best = particle_state_to_tuple(proxy_particle_->proxyService->GetRemoteBest());
-			if (std::get<1>(personal_best_) < std::get<1>(remote_best))
+			if (std::get<1>(personal_best_) > std::get<1>(remote_best))
 			{
 				personal_best_ = remote_best;
 				proxy_particle_->proxyService->UpdateBestState(tuple_to_particle_state(personal_best_));
@@ -63,7 +63,7 @@ namespace ParticleSwarmOptimization
 			if (coupled_particle_ != NULL)
 			{
 				auto coupled_best = coupled_particle_->get_personal_best();
-				if (std::get<1>(personal_best_) < std::get<1>(coupled_best))
+				if (std::get<1>(personal_best_) > std::get<1>(coupled_best))
 				{
 					personal_best_ = coupled_best;
 					proxy_particle_->proxyService->UpdateBestState(tuple_to_particle_state(personal_best_));
