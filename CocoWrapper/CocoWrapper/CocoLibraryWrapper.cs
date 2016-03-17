@@ -20,7 +20,7 @@ namespace CocoWrapper
         //Import funkcji z CocoLibrary.dll:
 
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        unsafe static extern String coco_set_log_level(String level);
+        unsafe static extern char* coco_set_log_level(String level);
 
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe static extern struct_pointer_t coco_observer(String observer_name, String options);
@@ -74,10 +74,10 @@ namespace CocoWrapper
         unsafe static extern double* coco_problem_get_largest_values_of_interest(struct_pointer_t problem);
 
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        unsafe static extern String coco_problem_get_id(struct_pointer_t problem);
+        unsafe static extern char* coco_problem_get_id(struct_pointer_t problem);
 
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
-        unsafe static extern String coco_problem_get_name(struct_pointer_t problem);
+        unsafe static extern char* coco_problem_get_name(struct_pointer_t problem);
 
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe static extern size_t coco_problem_get_evaluations(struct_pointer_t problem);
@@ -208,12 +208,16 @@ namespace CocoWrapper
 
         public static unsafe String cocoProblemGetId(long problemPointer)
         {
-            return coco_problem_get_id(problemPointer);
+            char* str = coco_problem_get_id(problemPointer);
+
+            return new string(str);
         }
 
         public static unsafe String cocoProblemGetName(long problemPointer)
         {
-            return coco_problem_get_name(problemPointer);
+            char* str = coco_problem_get_name(problemPointer);
+
+            return new string(str);
         }
 
         public static unsafe long cocoProblemGetEvaluations(long problemPointer)
