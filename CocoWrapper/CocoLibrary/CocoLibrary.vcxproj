@@ -83,9 +83,6 @@
   <ItemGroup>
     <ClCompile Include="CocoLibrary.c" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CocoLibrary.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
