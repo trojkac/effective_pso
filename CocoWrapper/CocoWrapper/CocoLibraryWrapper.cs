@@ -12,7 +12,7 @@ namespace CocoWrapper
     using struct_pointer_t = System.Int64;
     using double_pointer_t = System.Int64;
     using void_pointer_t = System.Int64;
-    using size_t = System.Int64;
+    using size_t = System.Int32;
     using cint = System.Int32;
 
     public class CocoLibraryWrapper
@@ -138,7 +138,7 @@ namespace CocoWrapper
             return coco_suite_get_next_problem(suitePointer, observerPointer);
         }
 
-        public unsafe long cocoSuiteGetProblem(long suitePointer, long problemIndex)
+        public unsafe long cocoSuiteGetProblem(long suitePointer, size_t problemIndex)
         {
             return coco_suite_get_problem(suitePointer, problemIndex);
         }

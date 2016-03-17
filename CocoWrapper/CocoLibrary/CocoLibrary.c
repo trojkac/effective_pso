@@ -11923,6 +11923,22 @@ coco_suite_t *coco_suite(const char *suite_name, const char *suite_instance, con
 */
 coco_problem_t *coco_suite_get_next_problem(coco_suite_t *suite, coco_observer_t *observer) {
 
+	observer->observer_name = (char*)malloc(sizeof("bbob"));
+	strcpy(observer->observer_name, "bbob");
+
+	observer->result_folder = (char*)malloc(sizeof("exdata\\RS_on_bbob"));
+	strcpy(observer->result_folder, "exdata\\RS_on_bbob");
+
+	observer->algorithm_name = (char*)malloc(sizeof("RS"));
+	strcpy(observer->algorithm_name, "RS");
+
+	observer->algorithm_info = (char*)malloc(sizeof("A simple random search algorithm"));
+	strcpy(observer->algorithm_info, "A simple random search algorithm");
+
+	observer->base_evaluation_triggers = (char*)malloc(sizeof("1,2,5"));
+	strcpy(observer->base_evaluation_triggers, "1,2,5");
+
+
 	size_t function_idx;
 	size_t dimension_idx;
 	size_t instance_idx;
@@ -15340,19 +15356,71 @@ avlnode = parent;
 		* @returns The observed problem in the form of a new COCO problem instance or the same problem if the
 		* observer is NULL.
 		*/
-		coco_problem_t *coco_problem_add_observer(coco_problem_t *problem, coco_observer_t *observer) {
+		coco_problem_t *coco_problem_add_observer(coco_problem_t *inner_problem, coco_observer_t *observer) {
 
-			if (problem == NULL)
+			if (inner_problem == NULL)
 				return NULL;
 
 			if ((observer == NULL) || (observer->is_active == 0)) {
 				coco_warning("The problem will not be observed. %s",
 					observer == NULL ? "(observer == NULL)" : "(observer not active)");
-				return problem;
+				return inner_problem;
 			}
 
-			assert(observer->logger_allocate_function);
-			return observer->logger_allocate_function(observer, problem);
+			//assert(observer->logger_allocate_function);
+			//return observer->logger_allocate_function(observer, problem);
+
+			logger_bbob_data_t *logger_bbob;
+			coco_problem_t *problem;
+
+			logger_bbob = (logger_bbob_data_t *)coco_allocate_memory(sizeof(*logger_bbob));
+			logger_bbob->observer = observer;
+
+			if (inner_problem->number_of_objectives != 1) {
+				coco_warning("logger_bbob(): The bbob logger shouldn't be used to log a problem with %d objectives",
+					inner_problem->number_of_objectives);
+			}
+
+			if (bbob_logger_is_open)
+				coco_error("The current bbob_logger (observer) must be closed before a new one is opened");
+			/* This is the name of the folder which happens to be the algName */
+			/*logger->path = coco_strdup(observer->output_folder);*/
+			logger_bbob->index_file = NULL;
+			logger_bbob->fdata_file = NULL;
+			logger_bbob->tdata_file = NULL;
+			logger_bbob->rdata_file = NULL;
+			logger_bbob->number_of_variables = inner_problem->number_of_variables;
+			if (inner_problem->best_value == NULL) {
+				/* coco_error("Optimal f value must be defined for each problem in order for the logger to work properly"); */
+				/* Setting the value to 0 results in the assertion y>=optimal_fvalue being susceptible to failure */
+				coco_warning("undefined optimal f value. Set to 0");
+				logger_bbob->optimal_fvalue = 0;
+			}
+			else {
+				logger_bbob->optimal_fvalue = *(inner_problem->best_value);
+			}
+
+			logger_bbob->number_of_evaluations = 0;
+			logger_bbob->best_solution = coco_allocate_vector(inner_problem->number_of_variables);
+			/* TODO: the following inits are just to be in the safe side and
+			* should eventually be removed. Some fields of the bbob_logger struct
+			* might be useless
+			*/
+			logger_bbob->function_id = coco_problem_get_suite_dep_function(inner_problem);
+			logger_bbob->instance_id = coco_problem_get_suite_dep_instance(inner_problem);
+			logger_bbob->written_last_eval = 1;
+			logger_bbob->last_fvalue = DBL_MAX;
+			logger_bbob->is_initialized = 0;
+
+			/* Initialize triggers based on target values and number of evaluations */
+			logger_bbob->targets = coco_observer_targets(observer->number_target_triggers, observer->target_precision);
+			logger_bbob->evaluations = coco_observer_evaluations(observer->base_evaluation_triggers, inner_problem->number_of_variables);
+
+			problem = coco_problem_transformed_allocate(inner_problem, logger_bbob, logger_bbob_free, observer->observer_name);
+
+			problem->evaluate_function = logger_bbob_evaluate;
+			bbob_logger_is_open = 1;
+			return problem;
 		}
 
 		/**
