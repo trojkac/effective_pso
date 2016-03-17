@@ -52,6 +52,8 @@ namespace CocoWrapper
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe static extern double* coco_allocate_vector(size_t size);
 
+        //[DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        //unsafe static extern void coco_evaluate_function(struct_pointer_t problem, double* x, double* y);
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe static extern void coco_evaluate_function(struct_pointer_t problem, double[] x, double[] y);
 
@@ -153,7 +155,19 @@ namespace CocoWrapper
             {
                 ytab[i] = y[i];
             }
-            coco_evaluate_function(problemPointer, x, ytab);
+
+            ////////
+            int dim = cocoProblemGetDimension(problemPointer);
+            double* xa = coco_allocate_vector(dim);
+            double[] xtab = new double[dim];
+            for (int i = 0; i < dim; i++)
+            {
+                xtab[i] = x[i];
+                xa[i] = x[i];
+            }
+            ////////
+
+            coco_evaluate_function(problemPointer, xtab, ytab);
             coco_free_memory(y);
 
             return ytab;
@@ -196,7 +210,7 @@ namespace CocoWrapper
         public static unsafe double[] cocoProblemGetLargestValuesOfInterest(long problemPointer)
         {
             int dimension = (int)coco_problem_get_dimension(problemPointer);
-            double* result = coco_problem_get_smallest_values_of_interest(problemPointer);
+            double* result = coco_problem_get_largest_values_of_interest(problemPointer);
             double[] tab = new double[dimension];
             for (int i = 0; i < dimension; i++)
             {
