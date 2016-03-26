@@ -19,6 +19,15 @@ namespace CocoWrapper
     {
         //Import funkcji z CocoLibrary.dll:
 
+
+        [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        unsafe static extern void hubert_coco_evaluate_function(struct_pointer_t problem, double[] x_dummy, double[] y, double[] x);
+
+        [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        unsafe static extern void hubert2_coco_evaluate_function(struct_pointer_t problem, double* x_dummy, double* y, double* x);
+
+
+
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe static extern char* coco_set_log_level(String level);
 
@@ -166,8 +175,12 @@ namespace CocoWrapper
                 xa[i] = x[i];
             }
             ////////
+            double ww = 88.9;
+            double* z = coco_allocate_vector(number_of_objectives);
+            //coco_evaluate_function(problemPointer, xtab, ytab);
+            hubert2_coco_evaluate_function(problemPointer, y, xa, &ww);
+            //hubert_coco_evaluate_function(problemPointer, y, ytab, xtab);
 
-            coco_evaluate_function(problemPointer, xtab, ytab);
             coco_free_memory(y);
 
             return ytab;

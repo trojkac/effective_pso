@@ -86,7 +86,8 @@ namespace ExampleExperiment
                     int dimension = PROBLEM.getDimension();
 
                     /* Run the algorithm at least once */
-                    for (int run = 1; run <= 1 + INDEPENDENT_RESTARTS; run++)
+                    for (int run = 1; run <= 1; run++)
+                    //for (int run = 1; run <= 1 + INDEPENDENT_RESTARTS; run++)
                     {
 
                         long evaluationsDone = PROBLEM.getEvaluations();

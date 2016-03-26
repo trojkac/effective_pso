@@ -274,7 +274,11 @@ extern "C" {
 	/**
 	* @brief Evaluates the problem function in point x and save the result in y.
 	*/
-	__declspec(dllexport) void coco_evaluate_function(coco_problem_t *problem, const double *x, double *y);
+	__declspec(dllexport) void hubert_coco_evaluate_function(coco_problem_t *problem, double *y_dummy, double *y, double *x);
+
+	__declspec(dllexport) void hubert2_coco_evaluate_function(coco_problem_t *problem, double *y_dummy, double *y, double *x);
+
+	__declspec(dllexport) void coco_evaluate_function(coco_problem_t *problem, double *x, double *y);
 
 	/**
 	* @brief Evaluates the problem constraints in point x and save the result in y.
@@ -623,7 +627,7 @@ extern "C" {
 	* This is a template for functions that perform an evaluation of the problem (to evaluate the problem
 	* function, the problems constraints etc.).
 	*/
-	typedef void(*coco_evaluate_function_t)(coco_problem_t *problem, const double *x, double *y);
+	typedef void(*coco_evaluate_function_t)(coco_problem_t *problem, double *x, double *y);
 
 	/**
 	* @brief The recommend solutions function type.
@@ -1462,7 +1466,9 @@ static int coco_directory_exists(const char *path) {
 	int res;
 #if defined(HAVE_GFA)
 	DWORD dwAttrib = GetFileAttributes(path);
-	res = (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+	res = (dwAttrib != INVALID_FILE_ATTRIBUTES);
+	res = (dwAttrib == FILE_ATTRIBUTE_DIRECTORY);
+	//res = (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #elif defined(HAVE_STAT)
 	struct stat buf;
 	res = (!stat(path, &buf) && S_ISDIR(buf.st_mode));
@@ -2275,7 +2281,15 @@ static size_t coco_count_numbers(const size_t *numbers, const size_t max_count, 
 #line 11 "code-experiments/src/coco_problem.c"
 
 /***********************************************************************************************************/
+void hubert_coco_evaluate_function(coco_problem_t *problem, double *y_dummy, double *y, double *x)
+{
+	coco_evaluate_function(problem, x, y);
+}
 
+void hubert2_coco_evaluate_function(coco_problem_t *problem, double *y_dummy, double *y, double *x)
+{
+	coco_evaluate_function(problem, x, y);
+}
 /**
 * @name Methods regarding the basic COCO problem
 */
@@ -2291,7 +2305,7 @@ static size_t coco_count_numbers(const size_t *numbers, const size_t max_count, 
 * @param y The objective vector that is the result of the evaluation (in single-objective problems only the
 * first vector item is being set).
 */
-void coco_evaluate_function(coco_problem_t *problem, const double *x, double *y) {
+void coco_evaluate_function(coco_problem_t *problem, double *x, double *y) {
 	/* implements a safer version of problem->evaluate(problem, x, y) */
 	assert(problem != NULL);
 	assert(problem->evaluate_function != NULL);
@@ -12798,8 +12812,8 @@ static void logger_bbob_initialize(logger_bbob_data_t *logger, coco_problem_t *i
 	logger_bbob_open_dataFile(&(logger->rdata_file), logger->observer->result_folder, dataFile_path, ".rdat");
 	fprintf(logger->rdata_file, bbob_file_header_str, logger->optimal_fvalue);
 	logger->is_initialized = 1;
-	coco_free_memory(tmpc_dim);
-	coco_free_memory(tmpc_funId);
+	//coco_free_memory(tmpc_dim);
+	//coco_free_memory(tmpc_funId);
 }
 
 /**
