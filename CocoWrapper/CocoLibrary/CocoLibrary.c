@@ -130,6 +130,8 @@ extern "C" {
 	/**
 	* @brief Returns the next (observed) problem of the suite or NULL if there is no next problem left.
 	*/
+	__declspec(dllexport) coco_problem_t *hubert_coco_suite_get_next_problem(coco_suite_t *suite,  coco_observer_t *dummy, coco_observer_t *observer);
+
 	__declspec(dllexport) coco_problem_t *coco_suite_get_next_problem(coco_suite_t *suite, coco_observer_t *observer);
 
 	/**
@@ -1360,7 +1362,16 @@ static size_t *coco_string_parse_ranges(const char *string,
 #line 18 "code-experiments/src/coco_utilities.c"
 
 /***********************************************************************************************************/
+WCHAR* convertToLpctstr(char* str)
+{
+	size_t newsize = strlen(str) + 1;
+	WCHAR * wcstring = (WCHAR*)malloc(sizeof(WCHAR)*newsize);
 
+	size_t convertedChars = 0;
+	mbstowcs_s(&convertedChars, wcstring, newsize, str, _TRUNCATE);
+
+	return wcstring;
+}
 /**
 * @brief Initializes the logging level to COCO_INFO.
 */
@@ -1463,11 +1474,12 @@ static void coco_join_path(char *path, const size_t path_max_length, ...) {
 * @return 1 if the path exists and corresponds to a directory and 0 otherwise.
 */
 static int coco_directory_exists(const char *path) {
-	int res;
+	int res1, res2, res;
 #if defined(HAVE_GFA)
-	DWORD dwAttrib = GetFileAttributes(path);
-	res = (dwAttrib != INVALID_FILE_ATTRIBUTES);
-	res = (dwAttrib == FILE_ATTRIBUTE_DIRECTORY);
+	DWORD dwAttrib = GetFileAttributes(convertToLpctstr(path));
+	res1 = (dwAttrib != INVALID_FILE_ATTRIBUTES);
+	res2 = (dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
+	res = res1 && res2;
 	//res = (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #elif defined(HAVE_STAT)
 	struct stat buf;
@@ -1490,7 +1502,7 @@ static int coco_directory_exists(const char *path) {
 static int coco_file_exists(const char *path) {
 	int res;
 #if defined(HAVE_GFA)
-	DWORD dwAttrib = GetFileAttributes(path);
+	DWORD dwAttrib = GetFileAttributes(convertToLpctstr(path));
 	res = (dwAttrib != INVALID_FILE_ATTRIBUTES) && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
 #elif defined(HAVE_STAT)
 	struct stat buf;
@@ -1653,7 +1665,7 @@ int coco_remove_directory(const char *path) {
 
 	buf = coco_strdupf("%s\\*.*", path);
 	/* Nothing to do if the folder does not exist */
-	if ((find_handle = FindFirstFile(buf, &find_data_file)) == INVALID_HANDLE_VALUE) {
+	if ((find_handle = FindFirstFile(convertToLpctstr(buf), &find_data_file)) == INVALID_HANDLE_VALUE) {
 		coco_free_memory(buf);
 		return 0;
 	}
@@ -1674,7 +1686,7 @@ int coco_remove_directory(const char *path) {
 			else {
 				/* Buf is a file, delete it */
 				/* Careful, DeleteFile returns 0 if it fails and nonzero otherwise! */
-				r2 = -(DeleteFile(buf) == 0);
+				r2 = -(DeleteFile(convertToLpctstr(buf)) == 0);
 			}
 
 			coco_free_memory(buf);
@@ -1689,7 +1701,7 @@ int coco_remove_directory(const char *path) {
 	if (!r) {
 		/* Path is an empty directory, delete it */
 		/* Careful, RemoveDirectory returns 0 if it fails and nonzero otherwise! */
-		r = -(RemoveDirectory(path) == 0);
+		r = -(RemoveDirectory(convertToLpctstr(path)) == 0);
 	}
 
 	return r;
@@ -11935,22 +11947,27 @@ coco_suite_t *coco_suite(const char *suite_name, const char *suite_instance, con
 *
 * @returns The next problem of the suite or NULL if there is no next problem left.
 */
+coco_problem_t *hubert_coco_suite_get_next_problem(coco_suite_t *suite, coco_observer_t* dummy, coco_observer_t *observer)
+{
+	return coco_suite_get_next_problem(suite, dummy);
+}
+
 coco_problem_t *coco_suite_get_next_problem(coco_suite_t *suite, coco_observer_t *observer) {
 
-	observer->observer_name = (char*)malloc(sizeof("bbob"));
-	strcpy(observer->observer_name, "bbob");
+	//observer->observer_name = (char*)malloc(sizeof("bbob"));
+	//strcpy(observer->observer_name, "bbob");
 
-	observer->result_folder = (char*)malloc(sizeof("exdata\\RS_on_bbob"));
-	strcpy(observer->result_folder, "exdata\\RS_on_bbob");
+	//observer->result_folder = (char*)malloc(sizeof("exdata\\RS_on_bbob"));
+	//strcpy(observer->result_folder, "exdata\\RS_on_bbob");
 
-	observer->algorithm_name = (char*)malloc(sizeof("RS"));
-	strcpy(observer->algorithm_name, "RS");
+	//observer->algorithm_name = (char*)malloc(sizeof("RS"));
+	//strcpy(observer->algorithm_name, "RS");
 
-	observer->algorithm_info = (char*)malloc(sizeof("A simple random search algorithm"));
-	strcpy(observer->algorithm_info, "A simple random search algorithm");
+	//observer->algorithm_info = (char*)malloc(sizeof("A simple random search algorithm"));
+	//strcpy(observer->algorithm_info, "A simple random search algorithm");
 
-	observer->base_evaluation_triggers = (char*)malloc(sizeof("1,2,5"));
-	strcpy(observer->base_evaluation_triggers, "1,2,5");
+	//observer->base_evaluation_triggers = (char*)malloc(sizeof("1,2,5"));
+	//strcpy(observer->base_evaluation_triggers, "1,2,5");
 
 
 	size_t function_idx;

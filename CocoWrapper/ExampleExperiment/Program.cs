@@ -82,7 +82,7 @@ namespace ExampleExperiment
                 /* Iterate over all problems in the suite */
                 while ((PROBLEM = benchmark.getNextProblem()) != null)
                 {
-
+                    
                     int dimension = PROBLEM.getDimension();
 
                     /* Run the algorithm at least once */

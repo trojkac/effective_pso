@@ -53,6 +53,9 @@ namespace CocoWrapper
         unsafe static extern struct_pointer_t coco_suite_get_next_problem(struct_pointer_t suite, struct_pointer_t observer);
 
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        unsafe static extern struct_pointer_t hubert_coco_suite_get_next_problem(struct_pointer_t suite, struct_pointer_t dummy, struct_pointer_t observer);
+
+        [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
         unsafe static extern struct_pointer_t coco_suite_get_problem(struct_pointer_t suite, size_t problem_index);
 
         [DllImport("CocoLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -146,7 +149,12 @@ namespace CocoWrapper
         // Problem
         public static unsafe long cocoSuiteGetNextProblem(long suitePointer, long observerPointer)
         {
-            return coco_suite_get_next_problem(suitePointer, observerPointer);
+            //return coco_suite_get_next_problem(suitePointer, observerPointer);
+            long a = 9l;
+            long d = observerPointer;
+            long d1 = d << (4*8);
+            long d2 = d1 + suitePointer;
+            return hubert_coco_suite_get_next_problem(d2,a, observerPointer);
         }
 
         public unsafe long cocoSuiteGetProblem(long suitePointer, size_t problemIndex)
@@ -314,13 +322,15 @@ namespace CocoWrapper
     {
 
         private long pointer; // Pointer to the coco_suite_t object
+        //private uint pointer;
         private String name;
 
         public Suite(String suiteName, String suiteInstance, String suiteOptions)
         {
             try
             {
-                this.pointer = CocoLibraryWrapper.cocoGetSuite(suiteName, suiteInstance, suiteOptions);
+                long add = CocoLibraryWrapper.cocoGetSuite(suiteName, suiteInstance, suiteOptions);
+                this.pointer = (long)((uint)add);
                 this.name = suiteName;
             }
             catch (Exception e)
@@ -384,7 +394,7 @@ namespace CocoWrapper
             {
                 long problemPointer = CocoLibraryWrapper.cocoSuiteGetNextProblem(suite.getPointer(), observer.getPointer());
 
-                if (problemPointer == 0)
+                if ((uint)problemPointer == 0)
                     return null;
 
                 return new Problem(problemPointer);
