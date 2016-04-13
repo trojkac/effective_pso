@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CocoWrapper", "CocoWrapper\CocoWrapper.csproj", "{0A2370FE-CBB5-4240-BA08-BC8E09AB660A}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -32,6 +32,7 @@ Global
 		{0A2370FE-CBB5-4240-BA08-BC8E09AB660A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0A2370FE-CBB5-4240-BA08-BC8E09AB660A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0A2370FE-CBB5-4240-BA08-BC8E09AB660A}.Release|Win32.ActiveCfg = Release|Any CPU
+		{0A2370FE-CBB5-4240-BA08-BC8E09AB660A}.Release|Win32.Build.0 = Release|Any CPU
 		{ADD340B4-890A-4181-B6C2-4E5B60AB2D31}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{ADD340B4-890A-4181-B6C2-4E5B60AB2D31}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{ADD340B4-890A-4181-B6C2-4E5B60AB2D31}.Debug|Mixed Platforms.Build.0 = Debug|Win32

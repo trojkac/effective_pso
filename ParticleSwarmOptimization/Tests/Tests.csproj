@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CocoWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\CocoWrapper\CocoWrapper\bin\Release\CocoWrapper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
@@ -51,6 +55,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CocoIntegrationTests.cs" />
     <Compile Include="DistributorTests.cs" />
     <Compile Include="ProxyParticleTests.cs" />
     <Compile Include="PsoSettingsFactory.cs" />

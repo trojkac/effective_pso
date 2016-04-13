@@ -13,7 +13,7 @@ namespace Tests
         public void RunSimpleAlgorithm()
         {
             var function = new QuadraticFunction(new UserFunctionParameters(){Dimension = 5,Coefficients = new []{1.0,1.0,1.0,1.0,1.0}});
-            FitnessFunction fitnessFunction = function.Calculate;
+            FitnessFunction fitnessFunction = vector => function.Calculate(vector);
             var algorithm = PSOAlgorithm.GetAlgorithm(100, fitnessFunction);
             var particles = new List<Particle>();
             for (int i = 0; i < 20; i++)
