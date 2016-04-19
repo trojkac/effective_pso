@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Common
 {
     [DataContract]
-    public abstract class AbstractFitnessFunction
+    public abstract class AbstractFitnessFunction : IFitnessFunction<double[],double[]>
     {
-        public AbstractFitnessFunction(UserFunctionParameters functionParams)
+        protected AbstractFitnessFunction(UserFunctionParameters functionParams)
         {
             Dimension = functionParams.Dimension;
             Coefficients = new double[Dimension];
@@ -27,25 +28,45 @@ namespace Common
             }
         }
 
-        public abstract double Calculate(double[] vector);
+        public abstract double[] Calculate(double[] vector);
         [DataMember]
         public int Dimension;
         [DataMember]
         public double[] Coefficients;
+        public double[] Evaluate(double[] x)
+        {
+            var state = ParticleStateFactory.Create(Dimension,1);
+            state.Location = x;
+            state.FitnessValue = Calculate(x);
+
+            if (BestEvaluation == null || state.IsBetter((ParticleState) BestEvaluation))
+            {
+                BestEvaluation = state;
+            }
+            return state.FitnessValue;
+        }
+
+        public IState<double[], double[]> BestEvaluation { get; private set; }
+
+        public int LocationDim
+        {
+            get { return Dimension; }
+        }
+
+        public int FitnessDim
+        {
+            get { return 1; }
+        }
     }
 
     public class QuadraticFunction : AbstractFitnessFunction
     {
 
 
-        public override double Calculate(double[] vector)
+        public override double[] Calculate(double[] vector)
         {
-            double value = 0;
-            for (int i = 0; i < vector.Length; i++)
-            {
-                value += Coefficients[i] * vector[i] * vector[i];
-            }
-            return value;
+            var value = vector.Select((x,i) => x*x*Coefficients[i]).Sum();
+            return new []{value};
         }
 
         public QuadraticFunction(UserFunctionParameters functionParams)
@@ -58,7 +79,7 @@ namespace Common
     public class RastriginFunction : AbstractFitnessFunction
     {
 
-        public override double Calculate(double[] vector)
+        public override double[] Calculate(double[] vector)
         {
             throw new NotImplementedException();
         }
@@ -72,7 +93,7 @@ namespace Common
     public class RosenbrockFunction : AbstractFitnessFunction
     {
 
-        public override double Calculate(double[] vector)
+        public override double[] Calculate(double[] vector)
         {
             throw new NotImplementedException();
         }

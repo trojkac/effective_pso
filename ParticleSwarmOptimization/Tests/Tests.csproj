@@ -60,10 +60,13 @@
     <Compile Include="ProxyParticleTests.cs" />
     <Compile Include="PsoSettingsFactory.cs" />
     <Compile Include="ServiceTests.cs" />
-    <Compile Include="WrapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Algorithm\Algorithm.csproj">
+      <Project>{76db894c-93ae-41af-b0f7-7d853fef3939}</Project>
+      <Name>Algorithm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
       <Name>Common</Name>
@@ -84,9 +87,9 @@
       <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
       <Name>PsoService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Wrapper\Wrapper.vcxproj">
-      <Project>{5a383eb5-e20f-4645-9365-32e97f4fdfbd}</Project>
-      <Name>Wrapper</Name>
+    <ProjectReference Include="..\Tests_Common\Tests_Common.csproj">
+      <Project>{62092d57-280b-4cda-990f-ecc3e678695f}</Project>
+      <Name>Tests_Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

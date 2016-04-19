@@ -8,7 +8,7 @@ namespace Common
     /// </summary>
     /// <param name="values">fitness function argument which is N dimensional vector</param>
     /// <returns></returns>
-    public delegate double FitnessFunction(double[] values);
+    public delegate double[] FitnessFunctionEvaluation(double[] values);
     [DataContract]
     public struct PsoSettings
     {
@@ -49,6 +49,7 @@ namespace Common
 
         [DataMember]
         public UserFunctionParameters FunctionParameters;
+
         public PsoSettings(UserPsoParameters psoParams, UserFunctionParameters functionParams)
         {
             Epsilon = 0;

@@ -54,10 +54,6 @@
       <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
       <Name>PsoService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Wrapper\Wrapper.vcxproj">
-      <Project>{5a383eb5-e20f-4645-9365-32e97f4fdfbd}</Project>
-      <Name>Wrapper</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

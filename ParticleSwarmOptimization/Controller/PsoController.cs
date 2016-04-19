@@ -48,7 +48,7 @@ namespace Controller
         {
 
             var function = AbstractFitnessFunction.GetFitnessFunction(psoSettings.FunctionParameters);
-            var algorithm = PSOAlgorithm.GetAlgorithm(psoSettings.Iterations, function.Calculate);
+            var algorithm = PSOAlgorithm.GetAlgorithm(psoSettings.Iterations, vector => function.Calculate(vector));
             var particles = CreateParticles(psoSettings.Particles, psoSettings.Dimensions);
             if (proxyParticleServices != null)
             {

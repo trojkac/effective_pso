@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CocoWrapper;
+using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ParticleSwarmOptimizationWrapper;
 
 namespace Tests
 {
@@ -25,7 +27,7 @@ namespace Tests
         public const int INDEPENDENT_RESTARTS = 10000;
 
         /**
-         * The random seed. Change if needed.
+         * The Random seed. Change if needed.
          */
         public const int RANDOM_SEED = 12;
 
@@ -49,23 +51,13 @@ namespace Tests
         public delegate double[] OptimizationFunction(double[] x);  //można z tego zrobić obiekt OptFunc, jeżeli będą problemy
 
         //public OptimizationFunction of = evaluateFunction;
-
-        [TestMethod]
-        public void RunRandom()
-        {
-            Random randomGenerator = new Random(RANDOM_SEED);
-
-            CocoLibraryWrapper.cocoSetLogLevel("info");
-
-            Console.WriteLine("Running the example experiment... (might take time, be patient)");
-            exampleExperiment("bbob", "bbob", randomGenerator);
-
-            Console.WriteLine("Done");
-
-            return;
-        }
-
-        public void exampleExperiment(String suiteName, String observerName, Random randomGenerator)
+        public void exampleExperiment(String suiteName, String observerName, Random randomGenerator, Action<OptimizationFunction,
+                                          int,
+                                          int,
+                                          double[],
+                                          double[],
+                                          long,
+                                          Random> optimizer )
         {
             try
             {
@@ -74,7 +66,7 @@ namespace Tests
                 String observerOptions =
                           "result_folder: RS_on_" + suiteName + " "
                         + "algorithm_name: RS "
-                        + "algorithm_info: \"A simple random search algorithm\"";
+                        + "algorithm_info: \"A simple Random search algorithm\"";
 
                 /* Initialize the suite and observer */
                 Suite suite = new Suite(suiteName, "year: 2016", "dimensions: 2,3,5,10,20,40");
@@ -100,7 +92,7 @@ namespace Tests
                             break;
 
                         /* Call the optimization algorithm for the remaining number of evaluations */
-                        myRandomSearch(evaluateFunction,
+                        optimizer(evaluateFunction,
                                        dimension,
                                        PROBLEM.getNumberOfObjectives(),
                                        PROBLEM.getSmallestValuesOfInterest(),
@@ -131,7 +123,7 @@ namespace Tests
         }
 
         /** 
-         * A simple random search algorithm that can be used for single- as well as multi-objective 
+         * A simple Random search algorithm that can be used for single- as well as multi-objective 
          * optimization.
          */
         public void myRandomSearch(OptimizationFunction f,
@@ -150,7 +142,7 @@ namespace Tests
             for (int i = 0; i < maxBudget; i++)
             {
 
-                /* Construct x as a random point between the lower and upper bounds */
+                /* Construct x as a Random point between the lower and upper bounds */
                 for (int j = 0; j < dimension; j++)
                 {
                     range = upperBounds[j] - lowerBounds[j];
@@ -165,5 +157,108 @@ namespace Tests
         }
 
 
+        [TestMethod]
+        public void RunRandom()
+        {
+            Random randomGenerator = new Random(RANDOM_SEED);
+
+            CocoLibraryWrapper.cocoSetLogLevel("info");
+
+            Console.WriteLine("Running the example experiment... (might take time, be patient)");
+            exampleExperiment("bbob", "bbob", randomGenerator,myRandomSearch);
+
+            Console.WriteLine("Done");
+        }
+
+        [TestMethod]
+        public void RunEffectivePso()
+        {
+            Random randomGenerator = new Random(RANDOM_SEED);
+            
+            
+            CocoLibraryWrapper.cocoSetLogLevel("info");
+
+            Console.WriteLine("Running the example experiment... (might take time, be patient)");
+            try
+            {
+
+                /* Set some options for the observer. See documentation for other options. */
+                String observerOptions =
+                          "result_folder: PSO_on_bbob "
+                        + "algorithm_name: PSO "
+                        + "algorithm_info: \"A simple Random search algorithm\"";
+
+                /* Initialize the suite and observer */
+                Suite suite = new Suite("bbob", "year: 2016", "dimensions: 2,3,5,10,20,40");
+                Observer observer = new Observer("bbob", observerOptions);
+                Benchmark benchmark = new Benchmark(suite, observer);
+
+                /* Iterate over all problems in the suite */
+                while ((PROBLEM = benchmark.getNextProblem()) != null)
+                {
+
+                    int dimension = PROBLEM.getDimension();
+
+                    /* Run the algorithm at least once */
+                    for (int run = 1; run <= 1; run++)
+                    //for (int run = 1; run <= 1 + INDEPENDENT_RESTARTS; run++)
+                    {
+
+                        long evaluationsDone = PROBLEM.getEvaluations();
+                        long evaluationsRemaining = (long)(dimension * BUDGET_MULTIPLIER) - evaluationsDone;
+
+                        /* Break the loop if the target was hit or there are no more remaining evaluations */
+                        if (PROBLEM.isFinalTargetHit() || (evaluationsRemaining <= 0))
+                            break;
+                        PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(4000, evaluateFunction);
+                        List<Particle> particles = new List<Particle>();
+                        for (int i = 0; i < 20; i++)
+                        {
+                            particles.Add(new StandardParticle(2));
+                        }
+                        /* Call the optimization algorithm for the remaining number of evaluations */
+                        optimizer(evaluateFunction,
+                                       dimension,
+                                       PROBLEM.getNumberOfObjectives(),
+                                       PROBLEM.getSmallestValuesOfInterest(),
+                                       PROBLEM.getLargestValuesOfInterest(),
+                                       evaluationsRemaining,
+                                       randomGenerator);
+
+                        /* Break the loop if the algorithm performed no evaluations or an unexpected thing happened */
+                        if (PROBLEM.getEvaluations() == evaluationsDone)
+                        {
+                            Console.WriteLine("WARNING: Budget has not been exhausted (" + evaluationsDone + "/"
+                                    + dimension * BUDGET_MULTIPLIER + " evaluations done)!\n");
+                            break;
+                        }
+                        else if (PROBLEM.getEvaluations() < evaluationsDone)
+                            Console.WriteLine("ERROR: Something unexpected happened - function evaluations were decreased!");
+                    }
+
+                }
+
+                benchmark.finalizeBenchmark();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+//            exampleExperiment("bbob", "bbob", randomGenerator, effectivePso);
+
+            Console.WriteLine("Done");
+            
+        }
+
+        private void effectivePso(int dimension,
+                                  int numberOfObjectives,
+                                  double[] lowerBounds,
+                                  double[] upperBounds,
+                                  long maxBudget,
+                                  Random randomGenerator)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
