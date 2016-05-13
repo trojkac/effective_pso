@@ -29,7 +29,7 @@ namespace Algorithm
         public string ToLog()
         {
             var sb = new StringBuilder();
-            sb.Append("L: ");
+            sb.Append(Id).Append(": ");
             foreach (var d in CurrentState.Location)
             {
                 sb.Append(d);

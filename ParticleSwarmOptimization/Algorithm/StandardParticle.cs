@@ -8,6 +8,8 @@ namespace Algorithm
     {
         private const double Phi = 1.4;
         private const double Omega = 0.64;
+        private int sinceLastImprovement = 0;
+        private const int iterationsToRestart = 10;
 
         private void Clamp()
         {
@@ -53,10 +55,28 @@ namespace Algorithm
 
         public override void UpdatePersonalBest(IFitnessFunction<double[], double[]> function)
         {
+            if (sinceLastImprovement == iterationsToRestart)
+            {
+                Init(ParticleStateFactory.Create(
+                    CurrentState.Location.Length, CurrentState.FitnessValue.Length),
+                    RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, -5, 5),
+                    Bounds);
+                sinceLastImprovement = 0;
+            }
             CurrentState.FitnessValue = function.Evaluate(CurrentState.Location);
             // TODO: CurrentState przerobić na typ prosty
-            // TODO: Zliczanie iteracji od ostatniej poprawy
-            PersonalBest = PersonalBest == null || CurrentState.IsBetter(PersonalBest) ? (ParticleState)CurrentState.Clone() : PersonalBest;
+            var oldBest = PersonalBest;
+
+            if (PersonalBest == null || CurrentState.IsBetter(PersonalBest))
+            {
+                PersonalBest = (ParticleState) CurrentState.Clone();
+                sinceLastImprovement = 0;
+            }
+            if (oldBest != null && oldBest.IsCloseToValue(PersonalBest.FitnessValue, 1e-5))
+            {
+                sinceLastImprovement++;
+            }
+         
         }
 
         public override void UpdateNeighborhood(IParticle[] allParticles)

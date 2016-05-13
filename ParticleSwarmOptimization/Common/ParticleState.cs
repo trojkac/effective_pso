@@ -29,6 +29,7 @@ namespace Common
 
         public bool IsCloseToValue(double[] value, double epsilon)
         {
+            // TODO: Check for multiple dimensions
             return Math.Abs(FitnessValue[0] - value[0]) < epsilon;
         }
 
