@@ -33,20 +33,45 @@ namespace Tests
         [TestMethod]
         public void RunAlgorithmWithTargetValue()
         {
+            var settings = PsoSettingsFactory.QuadraticFunction20D();
+            settings.IterationsLimitCondition = false;
+            settings.TargetValueCondition = true;
+            settings.TargetValue = 0.0;
+            settings.Epsilon = 0.1;
+            var function = new QuadraticFunction(settings.FunctionParameters);
+            var particlesNum = 30;
+            var particles = new IParticle[particlesNum];
+            for (var i = 0; i < particlesNum; i++)
+            {
+                particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
+                    function.FitnessDim);
+            }
+            var algorithm = new PsoAlgorithm(settings, function, particles.ToArray());
 
+            var result = algorithm.Run();
+
+            Assert.AreEqual(0.0, result.FitnessValue[0], .1);
         }
 
         [TestMethod]
         public void RunAlgorithmWithTargetVAlueAndIterationsLimit()
         {
-        
-        }
+            var settings = PsoSettingsFactory.QuadraticFunction20D();
+            settings.Iterations = 10000;
+            var function = new QuadraticFunction(settings.FunctionParameters);
+            var particlesNum = 60;
+            var particles = new IParticle[particlesNum];
+            for (var i = 0; i < particlesNum; i++)
+            {
+                particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
+                    function.FitnessDim);
+            }
+            var algorithm = new PsoAlgorithm(settings, function, particles.ToArray(), new ConsoleLogger(""));
 
-        [TestMethod]
-        public void RunSimpleAlgorithmWith1000Iterations()
-        {
-   
-   
+            var result = algorithm.Run();
+
+            Assert.AreEqual(0.0, result.FitnessValue[0], .1);
+        
         }
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Common;
 
 namespace Algorithm
@@ -12,10 +9,18 @@ namespace Algorithm
         private const double Phi = 1.4;
         private const double Omega = 0.64;
 
-        public override void Init(ParticleState particleState, double[] velocity)
+        private void Clamp()
+        {
+            if (Bounds == null || CurrentState == null || CurrentState.Location == null) return;
+            CurrentState.Location = CurrentState.Location.Select((x, i) =>  Math.Min(Math.Max(x, Bounds[i].Item1), Bounds[i].Item2)).ToArray();
+        }
+
+        public override void Init(ParticleState particleState, double[] velocity, Tuple<double, double>[] bounds = null)
         {
             CurrentState = particleState;
             Velocity = velocity;
+            Bounds = bounds;
+
         }
 
         public override void UpdateVelocity()
@@ -27,7 +32,7 @@ namespace Algorithm
             {
                 if (particle.PersonalBest.IsBetter(PersonalBest))
                 {
-                    globalBest = particle.PersonalBest;
+                    globalBest = (ParticleState)particle.PersonalBest.Clone();
                 }
             }
 
@@ -49,7 +54,9 @@ namespace Algorithm
         public override void UpdatePersonalBest(IFitnessFunction<double[], double[]> function)
         {
             CurrentState.FitnessValue = function.Evaluate(CurrentState.Location);
-            PersonalBest = PersonalBest == null || CurrentState.IsBetter(PersonalBest) ? CurrentState : PersonalBest;
+            // TODO: CurrentState przerobić na typ prosty
+            // TODO: Zliczanie iteracji od ostatniej poprawy
+            PersonalBest = PersonalBest == null || CurrentState.IsBetter(PersonalBest) ? (ParticleState)CurrentState.Clone() : PersonalBest;
         }
 
         public override void UpdateNeighborhood(IParticle[] allParticles)
@@ -66,6 +73,7 @@ namespace Algorithm
         public override void Translate()
         {
             CurrentState.Location = CurrentState.Location.Select((x, i) => x + Velocity[i]).ToArray();
+            Clamp();
         }
     }
 }
