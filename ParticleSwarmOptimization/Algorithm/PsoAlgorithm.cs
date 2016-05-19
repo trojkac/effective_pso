@@ -14,21 +14,25 @@ namespace Algorithm
 	    private int _iteration;
 	    private readonly IFitnessFunction<double[],double[]> _fitnessFunction;
 	    private readonly IParticle[] _particles;
+	    private ILogger _logger;
 	    private PsoSettings _settings;
-        /// <summary>
-        /// Creates PsoAlgorithm with specific settings to solve given problem using precreated particles
-        /// </summary>
-        /// <param name="settings">takes PsoSettings to check what stop conditions are defined.
-        ///  PsoAlgorithm looks for TargetValue, Epsilon, TargetValueCondition, IterationsLimit, IterationsLimitCondition
-        /// </param>
-        /// <param name="fitnessFunction">function whose optimum is to be found</param>
-        /// <param name="particles"> particles traversing the search space </param>
-        public PsoAlgorithm(PsoSettings settings, IFitnessFunction<double[], double[]> fitnessFunction, IParticle[] particles)
+
+	    /// <summary>
+	    /// Creates PsoAlgorithm with specific settings to solve given problem using precreated particles
+	    /// </summary>
+	    /// <param name="settings">takes PsoSettings to check what stop conditions are defined.
+	    ///  PsoAlgorithm looks for TargetValue, Epsilon, TargetValueCondition, IterationsLimit, IterationsLimitCondition
+	    /// </param>
+	    /// <param name="fitnessFunction">function whose optimum is to be found</param>
+	    /// <param name="particles"> particles traversing the search space </param>
+	    /// <param name="logger"></param>
+	    public PsoAlgorithm(PsoSettings settings, IFitnessFunction<double[], double[]> fitnessFunction, IParticle[] particles, ILogger logger = null)
 	    {
 	        _settings = settings;
 	        _fitnessFunction = fitnessFunction;
 	        _particles = particles;
 	        _iteration = 0;
+            _logger = logger;
 	    }
 
 	    public IState<double[],double[]> Run()
@@ -49,6 +53,14 @@ namespace Algorithm
 			    {
 			        particle.UpdateNeighborhood(_particles);
                     particle.UpdateVelocity();
+			    }
+			    if (_logger != null)
+			    {
+			        _logger.Log(String.Format("ITERATION {0}:",_iteration));
+			        foreach (var particle in _particles)
+			        {
+			            _logger.Log((Particle)particle);
+			        }
 			    }
 			}
 			return _fitnessFunction.BestEvaluation;

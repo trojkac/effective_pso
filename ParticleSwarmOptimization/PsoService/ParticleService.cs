@@ -16,7 +16,7 @@ namespace PsoService
             }
             set
             {
-                if (value.FitnessValue < _bestKnownState.FitnessValue)
+                if (value.IsBetter(_bestKnownState))
                 {
                     _bestKnownState = value;
                 }
@@ -25,7 +25,7 @@ namespace PsoService
 
         public ParticleService()
         {
-            _bestKnownState = ParticleState.WorstState(1);
+
         }
 
         public ParticleState GetBestState()

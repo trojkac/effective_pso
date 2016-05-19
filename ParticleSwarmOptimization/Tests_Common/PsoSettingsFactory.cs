@@ -31,7 +31,7 @@ namespace Tests_Common
         }
         public static PsoSettings QuadraticFunction20D()
         {
-            var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
+            var settings = QuadraticFunction1DFrom3To5();
             settings.Dimensions = 20;
             settings.FunctionParameters.Dimension = settings.Dimensions;
             settings.Iterations = 1000;

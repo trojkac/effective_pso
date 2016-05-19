@@ -50,6 +50,7 @@
     <Compile Include="IMetric.cs" />
     <Compile Include="IOptimization.cs" />
     <Compile Include="IState.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="NetworkNodeInfo.cs" />
     <Compile Include="NormMinimalization.cs" />
     <Compile Include="ParticleState.cs" />

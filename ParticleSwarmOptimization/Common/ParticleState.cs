@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Common
 {
     [DataContract]
-    public class ParticleState : IState<double[],double[]>
+    public class ParticleState : IState<double[],double[]>,ICloneable
     {
         [DataMember]
         public double[] FitnessValue { get; set; }
@@ -40,6 +40,11 @@ namespace Common
         public double[] VectorTo(ParticleState otherState)
         {
             return _metric.VectorBetween(Location, otherState.Location);
+        }
+
+        public object Clone()
+        {
+            return new ParticleState(_optimization,_metric){Location = (double[])Location.Clone(),FitnessValue = (double[])FitnessValue.Clone()};
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System;
+using Common;
 
 namespace Algorithm
 {
@@ -7,7 +8,7 @@ namespace Algorithm
         public const double MinInitialVelocity = -2;
         public const double MaxInitialVelocity = 2;
 
-        public static IParticle Create(PsoParticleType type,int locationDim,int fitnessDim)
+        public static IParticle Create(PsoParticleType type, int locationDim, int fitnessDim, Tuple<double, double>[] bounds = null)
         {
             IParticle particle = null;
             switch (type)
@@ -18,7 +19,7 @@ namespace Algorithm
                     break;
             }
             particle.Init(ParticleStateFactory.Create(locationDim, fitnessDim),
-                RandomGenerator.GetInstance().RandomVector(locationDim, MinInitialVelocity, MaxInitialVelocity));
+                RandomGenerator.GetInstance().RandomVector(locationDim, MinInitialVelocity, MaxInitialVelocity), bounds);
             return particle;
         } 
     }

@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CudaAlgorithm.cs" />
+    <Compile Include="CudaParams.cs" />
     <Compile Include="CudaParticle.cs" />
     <Compile Include="GpuController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -23,7 +23,7 @@ namespace Common
         }
 
         public IState<double[], double[]> BestEvaluation { get; private set; }
-        public int LocationDim { get; private set; }
-        public int FitnessDim { get; private set; }
+        public int LocationDim { get; set; }
+        public int FitnessDim { get; set; }
     }
 }
