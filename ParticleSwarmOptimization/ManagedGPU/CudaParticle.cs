@@ -1,22 +1,49 @@
-﻿using Algorithm;
+﻿using System;
+using System.Linq;
+using Algorithm;
 using Common;
 
 namespace ManagedGPU
 {
     public class CudaParticle : Particle
     {
-        private CudaAlgorithm _algorithm;
+        private readonly StateProxy _proxy;
 
-        public CudaParticle(CudaAlgorithm alg)
+        internal CudaParticle(StateProxy proxy)
         {
-            _algorithm = alg;
+            _proxy = proxy;
+            CurrentState = proxy.CpuState;
         }
 
-        public override void UpdateNeighborhood(IParticle[] allParticles) { }
-
-        public override void Init(ParticleState state, double[] velocity)
+        public override void UpdateNeighborhood(IParticle[] allParticles)
         {
-            throw new System.NotImplementedException();
+            Neighborhood = allParticles.Where(particle => particle.Id != Id).ToArray();
+            PushCpuState();
+        }
+
+        private void PushCpuState()
+        {
+            _proxy.CpuState = (ParticleState)BestNeighborState().Clone();
+        }
+
+        private ParticleState BestNeighborState()
+        {
+            ParticleState best = null;
+
+            foreach (var particle in Neighborhood)
+            {
+                if (best == null)
+                    best = particle.CurrentState;
+                else if (particle.CurrentState.IsBetter(best))
+                    best = particle.CurrentState;
+            }
+
+            return best;
+        }
+
+        public override void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null)
+        {
+            CurrentState = state;
         }
 
         public override int Id
@@ -26,11 +53,21 @@ namespace ManagedGPU
 
         public override void UpdateVelocity() { }
 
-        public override void Translate() { }
+        public override void Translate()
+        {
+            PullGpuState();
+        }
+
+        private void PullGpuState()
+        {
+            var gpustate = (ParticleState) _proxy.GpuState.Clone();
+            CurrentState = gpustate;
+        }
 
         public override void UpdatePersonalBest(IFitnessFunction<double[], double[]> function)
         {
-            throw new System.NotImplementedException();
+            CurrentState.FitnessValue = function.Evaluate(CurrentState.Location);
+            PersonalBest = PersonalBest == null || CurrentState.IsBetter(PersonalBest) ? (ParticleState)CurrentState.Clone() : PersonalBest;
         }
     }
 }

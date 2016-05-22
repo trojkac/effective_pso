@@ -1,128 +1,45 @@
 ﻿using System;
+using System.Linq;
 using ManagedCuda;
 
 namespace ManagedGPU
 {
     public static class GpuController
     {
-        public static CudaParticle Setup()
+        public static Tuple<CudaParticle, CudaAlgorithm> Setup(CudaParams parameters)
         {
-
-            return null;
+            var proxy = CreateProxy(parameters);
+            return new Tuple<CudaParticle, CudaAlgorithm>(CreateParticle(proxy), CreateCudaAlgorithm(parameters, proxy));
         }
 
-        private static void CreateCudaAlgorithm()
+        private static StateProxy CreateProxy(CudaParams parameters)
         {
-            
+            return new StateProxy(parameters);
         }
 
-        public static void RunCudaPSO()
+        private static CudaParticle CreateParticle(StateProxy proxy)
         {
-            const int particlesCount = 512;
-            const int dimensionsCount = 3;
-            const int maxIterations = 30000;
-            const int size = particlesCount * dimensionsCount;
-
-            const int threadsNum = 32;
-            const int blocksNum = particlesCount / threadsNum;
-
-            var rng = new Random();
-            var ctx = new CudaContext(0);
-
-            var updateParticle = ctx.LoadKernel("psoKernel.ptx", "kernelUpdateParticle");
-            updateParticle.GridDimensions = blocksNum;
-            updateParticle.BlockDimensions = threadsNum;
-
-            var updatePersonalBest = ctx.LoadKernel("psoKernel.ptx", "kernelUpdatePBest");
-            updatePersonalBest.GridDimensions = blocksNum;
-            updatePersonalBest.BlockDimensions = threadsNum;
-
-            var temp = new float[dimensionsCount];
-
-            var hostPositions = new float[size];
-            var hostVelocities = new float[size];
-            var hostPersonalBests = new float[size];
-            var hostGlobalBests = new float[dimensionsCount];
-
-            for (var i = 0; i < size; i++)
-            {
-                hostPositions[i] = RandomIn(rng, 3.0f, 5.0f);
-                hostPersonalBests[i] = hostPositions[i];
-                hostVelocities[i] = 0.0f;
-            }
-
-            for (var i = 0; i < dimensionsCount; i++)
-                hostGlobalBests[i] = hostPersonalBests[i];
-
-            CudaDeviceVariable<float> devicePositions = hostPositions;
-            CudaDeviceVariable<float> deviceVelocities = hostVelocities;
-            CudaDeviceVariable<float> devicePersonalBests = hostPersonalBests;
-            CudaDeviceVariable<float> deviceGlobalBests = hostGlobalBests;
-
-            for (var iter = 0; iter < maxIterations; iter++)
-            {
-                updateParticle.Run(
-                    devicePositions.DevicePointer,
-                    deviceVelocities.DevicePointer,
-                    devicePersonalBests.DevicePointer,
-                    deviceGlobalBests.DevicePointer,
-                    particlesCount,
-                    dimensionsCount,
-                    Random(rng),
-                    Random(rng)
-                );
-
-                updatePersonalBest.Run(
-                    devicePositions.DevicePointer,
-                    devicePersonalBests.DevicePointer,
-                    deviceGlobalBests.DevicePointer,
-                    particlesCount,
-                    dimensionsCount
-                );
-
-                hostPersonalBests = devicePersonalBests;
-
-                for (var i = 0; i < size; i += dimensionsCount)
-                {
-                    for (var k = 0; k < dimensionsCount; k++)
-                        temp[k] = hostPersonalBests[i + k];
-
-                    if (HostFitnessFunction(temp, dimensionsCount) < HostFitnessFunction(hostGlobalBests, dimensionsCount))
-                    {
-                        for (var k = 0; k < dimensionsCount; k++)
-                            hostGlobalBests[k] = temp[k];
-                    }
-                }
-
-                deviceGlobalBests = hostGlobalBests;
-            }
-
-            hostGlobalBests = deviceGlobalBests;
-
-            for (var i = 0; i < dimensionsCount; i++)
-                Console.WriteLine("x{0} = {1}", i, hostGlobalBests[i]);
-
-            Console.WriteLine("Minimum: {0}", HostFitnessFunction(hostGlobalBests, dimensionsCount));
+            return new CudaParticle(proxy);
+        }
+        
+        private static CudaAlgorithm CreateCudaAlgorithm(CudaParams parameters, StateProxy proxy)
+        {
+            return new CudaAlgorithm(parameters, proxy);
         }
 
-        private static float Random(Random rng)
+        private static double Random(Random rng)
         {
-            return (float)rng.NextDouble();
+            return rng.NextDouble();
         }
 
-        private static float RandomIn(Random rng, float min, float max)
+        private static double RandomIn(Random rng, double min, double max)
         {
             return min + Random(rng) * (max - min);
         }
 
-        private static float HostFitnessFunction(float[] x, int dimensionCount)
+        private static double HostFitnessFunction(double[] particle)
         {
-            var res = 0.0f;
-
-            for (var i = 0; i < dimensionCount; i++)
-                res += x[i] * x[i];
-
-            return res;
+            return particle.Sum(t => t*t);
         }
     }
 }
