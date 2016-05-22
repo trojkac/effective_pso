@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Algorithm;
 using Common;
@@ -70,19 +71,25 @@ namespace Tests
         public void RunAlgorithmWithTargetVAlueAndIterationsLimit()
         {
             var settings = PsoSettingsFactory.QuadraticFunction20D();
-            settings.Iterations = 10000;
             var function = new QuadraticFunction(settings.FunctionParameters);
-            var particlesNum = 60;
+            RandomGenerator.GetInstance(10);
+            settings.Iterations = 10000;
+            var particlesNum = 20;
             var particles = new IParticle[particlesNum];
             for (var i = 0; i < particlesNum; i++)
             {
                 particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
                     function.FitnessDim);
             }
-            var algorithm = new PsoAlgorithm(settings, function, particles.ToArray(), new ConsoleLogger(""));
+            var algorithm = new PsoAlgorithm(settings, function, particles.ToArray(), new FileLogger("logFile"));
 
             var result = algorithm.Run();
-
+            Debug.WriteLine(result.FitnessValue[0]);
+            foreach (var n in result.Location)
+            {
+                Debug.Write(n);
+            }
+            Debug.WriteLine("");
             Assert.AreEqual(0.0, result.FitnessValue[0], .1);
 
         }

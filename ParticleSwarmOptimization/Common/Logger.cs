@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,46 @@ namespace Common
     {
         string ToLog();
     }
+    public class FileLogger : ILogger, IDisposable
+    {
+        private StreamWriter _file;
+        public string CurrentLog
+        {
+            get { return logBuilder.ToString(); }
+        }
 
+        public StringBuilder logBuilder;
+
+        public FileLogger(string fileName)
+        {
+            logBuilder = new StringBuilder();
+            _file =  new StreamWriter(new FileStream(fileName,FileMode.Create));
+        }
+
+        public void Log(ILogable obj)
+        {
+            var s = obj.ToLog();
+            logBuilder.AppendLine(s);
+            _file.WriteLine(s);
+        }
+
+        public void Log(string logLine)
+        {
+            logBuilder.AppendLine(logLine);
+            _file.WriteLine(logLine);
+        }
+
+        public void GenerateLog()
+        {
+            _file.Close();
+        }
+
+        public void Dispose()
+        {
+            _file.Close();
+            _file.Dispose();
+        }
+    }
     public class ConsoleLogger : ILogger
     {
         public string CurrentLog
