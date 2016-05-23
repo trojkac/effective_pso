@@ -10,9 +10,12 @@ namespace Algorithm
 
         private static int _idCounter;
         protected int _id;
-    
-        protected Particle() {
+        protected IOptimization<double[]> _optimization;
+        protected IMetric<double[]> _metric; 
+        protected Particle(IOptimization<double[]>  optimization, IMetric<double[]> metric) {
             _id = ++_idCounter;
+            _optimization = optimization;
+            _metric = metric;
         }
 
         protected IParticle[] Neighborhood;
@@ -23,6 +26,7 @@ namespace Algorithm
         public ParticleState PersonalBest { get; protected set; }
         public ParticleState CurrentState { get; protected set; }
         public Tuple<double, double>[] Bounds;
+
         public double[] Velocity { get; protected set; }
         public abstract int Id { get; }
         public abstract void Translate();

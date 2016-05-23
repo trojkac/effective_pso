@@ -8,5 +8,15 @@ namespace Common
         {
             return Math.Sign(a[0] - b[0]);
         }
+
+        public double[] WorstValue(int fitnessDim)
+        {
+            return new[] { Double.PositiveInfinity };
+        }
+
+        public bool AreClose(double[] a, double[] b, double epsilon)
+        {
+            return Math.Abs(a[0] - b[0]) < epsilon;
+        }
     }
 }

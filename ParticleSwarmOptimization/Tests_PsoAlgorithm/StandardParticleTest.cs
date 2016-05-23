@@ -11,11 +11,10 @@ namespace Tests_PsoAlgorithm
         [TestMethod]
         public void TransposeProperly()
         {
-            var particle = new StandardParticle();
-            var initState = ParticleStateFactory.Create(4, 1);
-            initState.Location = new[] {0,1,2,3.0};
-            particle.Init(initState, new[] {-1.0, 2, -3, 4});
-
+            var rand = RandomGenerator.GetInstance();
+            FitnessFunctionEvaluation ffe = values => values;
+            var particle = ParticleFactory.Create(PsoParticleType.Standard, 4,1, new FitnessFunction(ffe));
+            var initState = new ParticleState(rand.RandomVector(4),rand.RandomVector(1));
             particle.Translate();
             var result = new[] {-1, 3, -1, 7.0};
             for (int i = 0; i < 4; i++)

@@ -28,6 +28,17 @@ namespace Common
             }
             return v;
         }
+
+        public double[] RandomVector(int dim, Tuple<double, double>[] bounds)
+        {
+            if(bounds == null) throw new ArgumentNullException();
+            var v = new double[dim];
+            for (var i = 0; i < dim; i++)
+            {
+                v[i] = Random.NextDouble() * (bounds[i].Item2 - bounds[i].Item1) + bounds[i].Item1;
+            }
+            return v;
+        }
         public static  RandomGenerator GetInstance(int? seed = null)
         {
             if (_generator != null && seed != _seed && seed != null)

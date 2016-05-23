@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Dynamic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Common;
 
 namespace Algorithm
@@ -8,23 +10,30 @@ namespace Algorithm
     {
         private const double Phi = 1.4;
         private const double Omega = 0.64;
-        private int sinceLastImprovement = 0;
+        private int sinceLastImprovement;
         private const int iterationsToRestart = 10;
 
-        private void Clamp()
+        public StandardParticle(IOptimization<double[]> optimization, IMetric<double[]> metric) : base(optimization, metric)
         {
-            if (Bounds == null || CurrentState == null || CurrentState.Location == null) return;
-            CurrentState.Location = CurrentState.Location.Select((x, i) =>  Math.Min(Math.Max(x, Bounds[i].Item1), Bounds[i].Item2)).ToArray();
+            sinceLastImprovement = 0;
+        }
+
+        private double[] GetClampedLocation(double[] vector)
+        {
+            if (Bounds == null || vector == null) return vector;
+            return vector.Select((x, i) =>  Math.Min(Math.Max(x, Bounds[i].Item1), Bounds[i].Item2)).ToArray();
         }
 
         public override void Init(ParticleState particleState, double[] velocity, Tuple<double, double>[] bounds = null)
         {
             CurrentState = particleState;
+            PersonalBest = particleState;
             Velocity = velocity;
             Bounds = bounds;
 
         }
 
+      
         public override void UpdateVelocity()
         {
             var globalBest = PersonalBest;
@@ -32,15 +41,15 @@ namespace Algorithm
             // 1. Find global best
             foreach (var particle in Neighborhood)
             {
-                if (particle.PersonalBest.IsBetter(PersonalBest))
+                if (_optimization.IsBetter(particle.PersonalBest.FitnessValue,PersonalBest.FitnessValue)<0)
                 {
-                    globalBest = (ParticleState)particle.PersonalBest.Clone();
+                    globalBest = particle.PersonalBest;
                 }
             }
 
             // 2.  get vectors o personal and global best
-            var toPersonalBest = CurrentState.VectorTo(PersonalBest);
-            var toGlobalBest = CurrentState.VectorTo(globalBest);
+            var toPersonalBest = _metric.VectorBetween(CurrentState.Location,PersonalBest.Location);
+            var toGlobalBest = _metric.VectorBetween(CurrentState.Location, globalBest.Location);
 			
 			var phi1 = RandomGenerator.GetInstance().Random.NextDouble()*Phi;
 			var phi2 = RandomGenerator.GetInstance().Random.NextDouble()*Phi;
@@ -55,24 +64,26 @@ namespace Algorithm
 
         public override void UpdatePersonalBest(IFitnessFunction<double[], double[]> function)
         {
+            double[] newLocation; 
             if (sinceLastImprovement == iterationsToRestart)
             {
-                Init(ParticleStateFactory.Create(
-                    CurrentState.Location.Length, CurrentState.FitnessValue.Length),
-                    RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, -5, 5),
-                    Bounds);
+                newLocation = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, -5, 5);
                 sinceLastImprovement = 0;
             }
-            CurrentState.FitnessValue = function.Evaluate(CurrentState.Location);
-            // TODO: CurrentState przerobić na typ prosty
-            var oldBest = PersonalBest;
-
-            if (PersonalBest == null || CurrentState.IsBetter(PersonalBest))
+            else
             {
-                PersonalBest = (ParticleState) CurrentState.Clone();
+                newLocation = GetClampedLocation(CurrentState.Location.Select((x, i) => x + Velocity[i]).ToArray());
+            }
+            var newVal = function.Evaluate(newLocation);
+            var oldBest = PersonalBest;
+            CurrentState = new ParticleState(newLocation, newVal);
+
+            if (_optimization.IsBetter(newVal,PersonalBest.FitnessValue) < 0)
+            {
+                PersonalBest = CurrentState;
                 sinceLastImprovement = 0;
             }
-            if (oldBest != null && oldBest.IsCloseToValue(PersonalBest.FitnessValue, 1e-5))
+            if (_optimization.AreClose(oldBest.FitnessValue,PersonalBest.FitnessValue, 1e-5))
             {
                 sinceLastImprovement++;
             }
@@ -92,8 +103,6 @@ namespace Algorithm
         //TODO: IMPORTANT: Translate and UpdateBersonalBest should be private and invoked by one public method
         public override void Translate()
         {
-            CurrentState.Location = CurrentState.Location.Select((x, i) => x + Velocity[i]).ToArray();
-            Clamp();
         }
     }
 }
