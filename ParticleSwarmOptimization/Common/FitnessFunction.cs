@@ -7,7 +7,7 @@ namespace Common
         public FitnessFunction(FitnessFunctionEvaluation evaluator, IOptimization<double[]> optimization = null)
         {
             _evaluate = evaluator;
-            _optimization = optimization ?? new FirstValueOptimization();
+            _optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
             BestEvaluation = null;
         }
 

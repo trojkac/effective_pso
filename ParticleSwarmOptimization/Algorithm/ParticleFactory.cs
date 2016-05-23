@@ -7,9 +7,6 @@ namespace Algorithm
     {
         public const double MinInitialVelocity = -2;
         public const double MaxInitialVelocity = 2;
-        private static readonly IMetric<double[]> Metric = new Euclidean();
-        private static readonly IOptimization<double[]> Optimization = new FirstValueOptimization(); 
-
 
         public static IParticle Create(PsoParticleType type, int locationDim, int fitnessDim, IFitnessFunction<double[],double[]> function, Tuple<double, double>[] bounds = null)
         {
@@ -19,7 +16,7 @@ namespace Algorithm
             {
                 case PsoParticleType.Standard:
                 case PsoParticleType.FullyInformed:
-                    particle = new StandardParticle(Optimization,Metric);
+                    particle = new StandardParticle();
                     break;
             }
 

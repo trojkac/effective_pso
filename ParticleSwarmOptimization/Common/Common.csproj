@@ -58,6 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PsoImplementationType.cs" />
     <Compile Include="PsoParticleType.cs" />
+    <Compile Include="PsoServiceLocator.cs" />
     <Compile Include="PsoSettings.cs" />
     <Compile Include="RandomGenerator.cs" />
     <Compile Include="UserNodeParameters.cs" />

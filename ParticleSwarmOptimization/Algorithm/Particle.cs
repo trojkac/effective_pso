@@ -10,12 +10,8 @@ namespace Algorithm
 
         private static int _idCounter;
         protected int _id;
-        protected IOptimization<double[]> _optimization;
-        protected IMetric<double[]> _metric; 
-        protected Particle(IOptimization<double[]>  optimization, IMetric<double[]> metric) {
+        protected Particle() {
             _id = ++_idCounter;
-            _optimization = optimization;
-            _metric = metric;
         }
 
         protected IParticle[] Neighborhood;

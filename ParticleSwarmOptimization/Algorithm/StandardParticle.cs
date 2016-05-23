@@ -13,7 +13,7 @@ namespace Algorithm
         private int sinceLastImprovement;
         private const int iterationsToRestart = 10;
 
-        public StandardParticle(IOptimization<double[]> optimization, IMetric<double[]> metric) : base(optimization, metric)
+        public StandardParticle()
         {
             sinceLastImprovement = 0;
         }
@@ -41,15 +41,15 @@ namespace Algorithm
             // 1. Find global best
             foreach (var particle in Neighborhood)
             {
-                if (_optimization.IsBetter(particle.PersonalBest.FitnessValue,PersonalBest.FitnessValue)<0)
+                if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(particle.PersonalBest.FitnessValue,PersonalBest.FitnessValue)<0)
                 {
                     globalBest = particle.PersonalBest;
                 }
             }
 
             // 2.  get vectors o personal and global best
-            var toPersonalBest = _metric.VectorBetween(CurrentState.Location,PersonalBest.Location);
-            var toGlobalBest = _metric.VectorBetween(CurrentState.Location, globalBest.Location);
+            var toPersonalBest = PsoServiceLocator.Instance.GetService<IMetric<double[]>>().VectorBetween(CurrentState.Location,PersonalBest.Location);
+            var toGlobalBest = PsoServiceLocator.Instance.GetService<IMetric<double[]>>().VectorBetween(CurrentState.Location, globalBest.Location);
 			
 			var phi1 = RandomGenerator.GetInstance().Random.NextDouble()*Phi;
 			var phi2 = RandomGenerator.GetInstance().Random.NextDouble()*Phi;
@@ -78,12 +78,12 @@ namespace Algorithm
             var oldBest = PersonalBest;
             CurrentState = new ParticleState(newLocation, newVal);
 
-            if (_optimization.IsBetter(newVal,PersonalBest.FitnessValue) < 0)
+            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(newVal,PersonalBest.FitnessValue) < 0)
             {
                 PersonalBest = CurrentState;
                 sinceLastImprovement = 0;
             }
-            if (_optimization.AreClose(oldBest.FitnessValue,PersonalBest.FitnessValue, 1e-5))
+            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(oldBest.FitnessValue,PersonalBest.FitnessValue, 1e-5))
             {
                 sinceLastImprovement++;
             }

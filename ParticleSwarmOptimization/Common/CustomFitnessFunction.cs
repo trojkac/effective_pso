@@ -8,12 +8,12 @@ namespace Common
     public abstract class AbstractFitnessFunction : IFitnessFunction<double[],double[]>
     {
         private IOptimization<double[]> _optimization; 
-        protected AbstractFitnessFunction(UserFunctionParameters functionParams, IOptimization<double[]>  optimization = null)
+        protected AbstractFitnessFunction(UserFunctionParameters functionParams)
         {
             Dimension = functionParams.Dimension;
             Coefficients = new double[Dimension];
             functionParams.Coefficients.CopyTo(Coefficients, 0);
-            _optimization = optimization ?? new FirstValueOptimization();
+            _optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
         }
         public static AbstractFitnessFunction GetFitnessFunction(UserFunctionParameters parameters)
         {

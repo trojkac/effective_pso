@@ -16,7 +16,6 @@ namespace Algorithm
 	    private readonly IParticle[] _particles;
 	    private ILogger _logger;
 	    private PsoSettings _settings;
-	    private IOptimization<double[]> _optimization;
 	    /// <summary>
 	    /// Creates PsoAlgorithm with specific settings to solve given problem using precreated particles
 	    /// </summary>
@@ -26,14 +25,13 @@ namespace Algorithm
 	    /// <param name="fitnessFunction">function whose optimum is to be found</param>
 	    /// <param name="particles"> particles traversing the search space </param>
 	    /// <param name="logger"></param>
-        public PsoAlgorithm(PsoSettings settings, IFitnessFunction<double[], double[]> fitnessFunction, IParticle[] particles, ILogger logger = null, IOptimization<double[]> optimization = null)
+        public PsoAlgorithm(PsoSettings settings, IFitnessFunction<double[], double[]> fitnessFunction, IParticle[] particles, ILogger logger = null)
 	    {
 	        _settings = settings;
 	        _fitnessFunction = fitnessFunction;
 	        _particles = particles;
 	        _iteration = 0;
             _logger = logger;
-	        _optimization = optimization ?? new FirstValueOptimization();
 	    }
 
 	    public IState<double[],double[]> Run()
@@ -73,7 +71,7 @@ namespace Algorithm
                 (!_settings.IterationsLimitCondition || _iteration++ < _settings.Iterations)
                 && 
                 (!_settings.TargetValueCondition ||
-                !(_optimization.AreClose(new []{_settings.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_settings.Epsilon)));
+                !(PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(new []{_settings.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_settings.Epsilon)));
 		}
 
 	};
