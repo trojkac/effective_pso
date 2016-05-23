@@ -38,15 +38,13 @@ namespace Algorithm
 	    {
 	        foreach (var particle in _particles)
 	        {
-	            particle.UpdatePersonalBest(_fitnessFunction);
+	            particle.Transpose(_fitnessFunction);
 	        }
 			while (_conditionCheck())
 			{
 			    foreach (var particle in _particles)
 			    {
-                    //TODO: convert to one method call
-			        particle.Translate();
-                    particle.UpdatePersonalBest(_fitnessFunction);
+                    particle.Transpose(_fitnessFunction);
 			    }
 			    foreach (var particle in _particles)
 			    {

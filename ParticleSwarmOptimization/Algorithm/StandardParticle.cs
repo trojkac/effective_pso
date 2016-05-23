@@ -62,7 +62,7 @@ namespace Algorithm
             Velocity = Velocity.Select((v, i) => v*Omega + toGlobalBest[i] + toPersonalBest[i]).ToArray();
         }
 
-        public override void UpdatePersonalBest(IFitnessFunction<double[], double[]> function)
+        public override void Transpose(IFitnessFunction<double[], double[]> function)
         {
             double[] newLocation; 
             if (sinceLastImprovement == iterationsToRestart)
@@ -98,11 +98,6 @@ namespace Algorithm
         public override int Id
         {
             get { return _id; }
-        }
-
-        //TODO: IMPORTANT: Translate and UpdateBersonalBest should be private and invoked by one public method
-        public override void Translate()
-        {
         }
     }
 }

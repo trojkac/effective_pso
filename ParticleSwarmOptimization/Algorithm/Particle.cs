@@ -17,7 +17,7 @@ namespace Algorithm
         protected IParticle[] Neighborhood;
         public abstract void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null);
         public abstract void UpdateVelocity();
-        public abstract void UpdatePersonalBest(IFitnessFunction<double[], double[]> function);
+        public abstract void Transpose(IFitnessFunction<double[], double[]> function);
         public abstract void UpdateNeighborhood(IParticle[] allParticles); 
         public ParticleState PersonalBest { get; protected set; }
         public ParticleState CurrentState { get; protected set; }
@@ -25,7 +25,6 @@ namespace Algorithm
 
         public double[] Velocity { get; protected set; }
         public abstract int Id { get; }
-        public abstract void Translate();
         public string ToLog()
         {
             var sb = new StringBuilder();

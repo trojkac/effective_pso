@@ -8,7 +8,12 @@ namespace Algorithm
         public const double MinInitialVelocity = -2;
         public const double MaxInitialVelocity = 2;
 
-        public static IParticle Create(PsoParticleType type, int locationDim, int fitnessDim, IFitnessFunction<double[],double[]> function, Tuple<double, double>[] bounds = null)
+        public static IParticle Create(PsoParticleType type, 
+            int locationDim, 
+            int fitnessDim,
+            IFitnessFunction<double[],double[]> function, 
+            Tuple<double, double>[] bounds = null, 
+            double[] initVelocity = null)
         {
             IParticle particle = null;
             var rand = RandomGenerator.GetInstance();
@@ -22,7 +27,7 @@ namespace Algorithm
 
             var x = bounds != null ? rand.RandomVector(locationDim,bounds) : rand.RandomVector(locationDim);
             particle.Init(new ParticleState(x,function.Evaluate(x)), 
-                rand.RandomVector(locationDim, MinInitialVelocity, MaxInitialVelocity), bounds);
+                initVelocity ?? rand.RandomVector(locationDim, MinInitialVelocity, MaxInitialVelocity), bounds);
             return particle;
         } 
     }

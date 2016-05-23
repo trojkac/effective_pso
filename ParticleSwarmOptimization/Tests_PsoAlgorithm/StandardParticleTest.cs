@@ -13,13 +13,14 @@ namespace Tests_PsoAlgorithm
         {
             var rand = RandomGenerator.GetInstance();
             FitnessFunctionEvaluation ffe = values => values;
-            var particle = ParticleFactory.Create(PsoParticleType.Standard, 4,1, new FitnessFunction(ffe));
-            var initState = new ParticleState(rand.RandomVector(4),rand.RandomVector(1));
-            particle.Translate();
-            var result = new[] {-1, 3, -1, 7.0};
+            var function = new FitnessFunction(ffe);
+            var initVelocity = new[] {-1.0, 2, -3, 4};
+            var particle = ParticleFactory.Create(PsoParticleType.Standard, 4, 1, function, null, initVelocity);
+            var initState = particle.CurrentState;
+            particle.Transpose(function);
             for (int i = 0; i < 4; i++)
             {
-                Assert.AreEqual(particle.CurrentState.Location[i], result[i]);
+                Assert.AreEqual(particle.CurrentState.Location[i], initVelocity[i]+initState.Location[i]);
 
             }
 
