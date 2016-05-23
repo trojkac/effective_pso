@@ -62,10 +62,10 @@ namespace Tests
         [TestMethod]
         public void BasicCommunication()
         {
-            var particle1 = ProxyParticle.CreateProxyParticle(1);
-            var particle2 = ProxyParticle.CreateProxyParticle(2);
+            var particle1 = ProxyParticleCommunication.CreateProxyParticle(1);
+            var particle2 = ProxyParticleCommunication.CreateProxyParticle(2);
             particle1.UpdateRemoteAddress(particle2.Address);
-            var state = new ParticleState {FitnessValue = 0.0, Location = new[] {0.0, 0.4}};
+            var state = new ParticleState {FitnessValue = new []{ 0.0 }, Location = new[] {0.0, 0.4}};
             particle2.UpdateBestState(state);
 
             particle2.Open();
@@ -80,10 +80,10 @@ namespace Tests
         [TestMethod]
         public void CommunicationInAlgorithm()
         {
-            var particle1 = ProxyParticle.CreateProxyParticle(1);
-            var particle2 = ProxyParticle.CreateProxyParticle(2);
+            var particle1 = ProxyParticleCommunication.CreateProxyParticle(1);
+            var particle2 = ProxyParticleCommunication.CreateProxyParticle(2);
             particle1.UpdateRemoteAddress(particle2.Address);
-            var state = new ParticleState {FitnessValue = 9.0, Location = new[] {3.0}};
+            var state = new ParticleState {FitnessValue = new []{ 9.0 }, Location = new[] {3.0}};
             particle2.UpdateBestState(state);
 
             particle2.Open();

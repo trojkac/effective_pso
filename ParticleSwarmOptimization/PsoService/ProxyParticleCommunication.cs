@@ -3,16 +3,17 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
+using Algorithm;
 using Common;
 
 namespace PsoService
 {
+    
     public delegate void ParticleCommunicationBreakdown();
-    public class ProxyParticle
+    public class ProxyParticleCommunication : Particle
     {
         public event ParticleCommunicationBreakdown CommunicationBreakdown;
-        private static int _counter = 1;
-
+       
         private IParticleService _particleClient;
         private IParticleService _particleService;
         private ServiceHost _host;
@@ -21,8 +22,6 @@ namespace PsoService
                 return new NetworkNodeInfo(RemoteAddress.Authority,"");
             }
         }
-        public int Id { get; private set; }
-
         public Uri Address
         {
             get { return _host.BaseAddresses.First(); }
@@ -30,21 +29,19 @@ namespace PsoService
 
         public Uri RemoteAddress { get; private set; }
 
-        private ProxyParticle(string remoteNeighborAddress)
+        private ProxyParticleCommunication(string remoteNeighborAddress)
         {
             _particleClient = ParticleServiceClient.CreateClient(remoteNeighborAddress);
             RemoteAddress = new Uri(remoteNeighborAddress);
-            Id = _counter++;
         }
 
-        private ProxyParticle()
+        private ProxyParticleCommunication()
         {
-            Id = _counter++;
         }
 
-        public static ProxyParticle CreateProxyParticle(ulong nodeId)
+        public static ProxyParticleCommunication CreateProxyParticle(ulong nodeId)
         {
-            var particle = new ProxyParticle() { _particleService = new ParticleService() };
+            var particle = new ProxyParticleCommunication() { _particleService = new ParticleService() };
             particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://0.0.0.0:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
             return particle;
         }
@@ -75,7 +72,8 @@ namespace PsoService
         {
             if (_particleClient == null)
             {
-                return ParticleState.WorstState(1);
+                return new ParticleState(
+                    new double[1],PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().WorstValue(1) );
             }
             try
             {
@@ -85,7 +83,7 @@ namespace PsoService
             catch
             {
                 if (CommunicationBreakdown != null) CommunicationBreakdown();
-                Debug.WriteLine(String.Format("{0} cannot connect to: {1}",Address,RemoteAddress));
+                Debug.WriteLine("{0} cannot connect to: {1}", Address, RemoteAddress);
             }
 
             return _particleService.GetBestState();
@@ -106,6 +104,34 @@ namespace PsoService
         {
             RemoteAddress = address;
             _particleClient = ParticleServiceClient.CreateClient(address.ToString());
+        }
+
+        public override void UpdateNeighborhood(IParticle[] allParticles)
+        {
+            Neighborhood = allParticles.Where(p => p.Id != Id).ToArray();
+        }
+
+        public override void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null)
+        {
+
+        }
+
+        public override int Id
+        {
+            get { return _id; }
+        }
+
+        public override void UpdateVelocity()
+        {
+        }
+
+        public override void Transpose(IFitnessFunction<double[], double[]> function)
+        {
+        }
+
+        public ParticleState PersonalBest
+        {
+            get { return GetRemoteBest(); }
         }
     }
 }

@@ -57,6 +57,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Algorithm\Algorithm.csproj">
+      <Project>{76db894c-93ae-41af-b0f7-7d853fef3939}</Project>
+      <Name>Algorithm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
       <Name>Common</Name>

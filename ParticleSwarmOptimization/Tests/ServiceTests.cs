@@ -63,7 +63,7 @@ namespace Tests
 
             var result = vcpus[1].PsoController.RunningAlgorithm.Result;
 
-            Assert.AreEqual(0.0, result.FitnessValue, 0.1);
+            Assert.AreEqual(0.0, result.FitnessValue[0], 0.1);
         }
 
         [TestMethod]

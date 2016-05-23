@@ -13,12 +13,12 @@ namespace PsoService
         void UpdatePsoNeighborhood(NetworkNodeInfo[] allNetworkNodes, NetworkNodeInfo currentNetworkNode);
 
         /// <summary>
-        /// Returns ProxyParticle endpoints URIs to be used by other particles
+        /// Returns ProxyParticleCommunication endpoints URIs to be used by other particles
         /// </summary>
         /// <returns>array of base addresses of IProxyService used in this PsoManager</returns>
         Uri[] GetProxyParticlesAddresses();
 
-        ProxyParticle[] GetProxyParticles();
+        ProxyParticleCommunication[] GetProxyParticles();
         event CommunicationBreakdown CommunicationLost;
     }
 }

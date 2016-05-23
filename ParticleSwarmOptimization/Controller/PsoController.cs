@@ -7,7 +7,7 @@ using Common;
 
 namespace Controller
 {
-    public delegate void CalculationCompletedHandler(ParticleState result);
+    public delegate void CalculationCompletedHandler(IState<double[],double[]> result);
     public class PsoController : IPsoController
     {
         private ulong _nodeId;
@@ -17,25 +17,17 @@ namespace Controller
         }
 
         public event CalculationCompletedHandler CalculationsCompleted;
-        public bool CalculationsRunning { get { return RunningAlgorithm == null ? false : !RunningAlgorithm.IsCompleted; } }
+        public bool CalculationsRunning { get { return RunningAlgorithm != null && !RunningAlgorithm.IsCompleted; } }
         public Task<ParticleState> RunningAlgorithm { get; private set; }
         public PsoSettings RunningSettings { get; private set; }
-        private static List<Particle> CreateParticles(IEnumerable<Tuple<PsoParticleType, int>> particlesParameters, int dimensions)
+        private static List<IParticle> CreateParticles(IEnumerable<Tuple<PsoParticleType, int>> particlesParameters, IFitnessFunction<double[],double[]> function, int dimensions, Tuple<double,double>[] bounds)
         {
-            var particles = new List<Particle>();
+            var particles = new List<IParticle>();
             foreach (var particleTuple in particlesParameters)
             {
                 for (int i = 0; i < particleTuple.Item2; i++)
                 {
-                    Particle p;
-                    switch (particleTuple.Item1)
-                    {
-                        case PsoParticleType.FullyInformed:
-                        case PsoParticleType.Standard:
-                        default:
-                            p = new StandardParticle(dimensions);
-                            break;
-                    }
+                    var p = ParticleFactory.Create(particleTuple.Item1, dimensions, 1, function, bounds);
                     particles.Add(p);
                 }
 
@@ -44,31 +36,24 @@ namespace Controller
         }
 
 
-        public void Run(PsoSettings psoSettings, PsoService.ProxyParticle[] proxyParticleServices = null)
+        public void Run(PsoSettings psoSettings, PsoService.ProxyParticleCommunication[] proxyParticleCommunicationServices = null)
         {
 
             var function = AbstractFitnessFunction.GetFitnessFunction(psoSettings.FunctionParameters);
-            var algorithm = PSOAlgorithm.GetAlgorithm(psoSettings.Iterations, vector => function.Calculate(vector));
-            var particles = CreateParticles(psoSettings.Particles, psoSettings.Dimensions);
-            if (proxyParticleServices != null)
+            var particles = CreateParticles(psoSettings.Particles, function, psoSettings.Dimensions, psoSettings.FunctionParameters.SearchSpace);
+            if (proxyParticleCommunicationServices != null)
             {
-                particles.AddRange(proxyParticleServices.Select(p => new ParticleSwarmOptimizationWrapper.ProxyParticle(psoSettings.Dimensions, p)));
+                particles.AddRange(proxyParticleCommunicationServices);
             }
-            if (psoSettings.FunctionParameters.SearchSpace != null)
-            {
-                foreach (var particle in particles)
-                {
-                    particle.bounds(psoSettings.FunctionParameters.SearchSpace.ToList());
-                }
-            }
+            var algorithm = new PsoAlgorithm(psoSettings, function, particles.ToArray());
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 RunningSettings = psoSettings;
                 //var r = algorithm.Run(particles,_nodeId.ToString());
-                var r = algorithm.Run(particles);
+                var r = algorithm.Run();
                 if (CalculationsCompleted != null) CalculationsCompleted(r);
 
-                return r;
+                return (ParticleState)r;
             });
         }
 

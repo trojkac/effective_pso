@@ -233,7 +233,7 @@ namespace Tests
                         for (var i = 0; i < particlesNum; i++)
                         {
                             particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
-                                function.FitnessDim, bounds);
+                                function.FitnessDim, function, bounds);
                         }
 
                         PsoAlgorithm algorithm = new PsoAlgorithm(settings, function, particles);

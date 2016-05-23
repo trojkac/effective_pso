@@ -45,7 +45,6 @@
     <Compile Include="Euclidean.cs" />
     <Compile Include="FirstValueOptimization.cs" />
     <Compile Include="FitnessFunction.cs" />
-    <Compile Include="FitnessFunctionType.cs" />
     <Compile Include="IFitnessFunction.cs" />
     <Compile Include="IMetric.cs" />
     <Compile Include="IOptimization.cs" />

@@ -16,7 +16,7 @@ namespace PsoService
             }
             set
             {
-                if (value.IsBetter(_bestKnownState))
+                if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(_bestKnownState.FitnessValue,value.FitnessValue) > 1)
                 {
                     _bestKnownState = value;
                 }
