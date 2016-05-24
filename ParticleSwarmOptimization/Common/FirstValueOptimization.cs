@@ -11,7 +11,7 @@ namespace Common
 
         public double[] WorstValue(int fitnessDim)
         {
-            return new[] { Double.PositiveInfinity };
+            return new[] { double.PositiveInfinity };
         }
 
         public bool AreClose(double[] a, double[] b, double epsilon)

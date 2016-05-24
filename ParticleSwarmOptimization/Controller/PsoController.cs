@@ -36,14 +36,14 @@ namespace Controller
         }
 
 
-        public void Run(PsoSettings psoSettings, PsoService.ProxyParticleCommunication[] proxyParticleCommunicationServices = null)
+        public void Run(PsoSettings psoSettings, PsoService.ProxyParticle[] proxyParticleServices = null)
         {
 
             var function = AbstractFitnessFunction.GetFitnessFunction(psoSettings.FunctionParameters);
             var particles = CreateParticles(psoSettings.Particles, function, psoSettings.Dimensions, psoSettings.FunctionParameters.SearchSpace);
-            if (proxyParticleCommunicationServices != null)
+            if (proxyParticleServices != null)
             {
-                particles.AddRange(proxyParticleCommunicationServices);
+                particles.AddRange(proxyParticleServices);
             }
             var algorithm = new PsoAlgorithm(psoSettings, function, particles.ToArray());
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate

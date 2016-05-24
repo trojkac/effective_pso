@@ -49,7 +49,7 @@
     <Compile Include="IPsoManager.cs" />
     <Compile Include="ParticleService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProxyParticleCommunication.cs" />
+    <Compile Include="ProxyParticle.cs" />
     <Compile Include="PsoRingManager.cs" />
     <Compile Include="ParticleServiceClient.cs" />
   </ItemGroup>

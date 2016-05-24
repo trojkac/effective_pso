@@ -25,7 +25,9 @@ namespace PsoService
 
         public ParticleService()
         {
-
+            _bestKnownState =
+                new ParticleState(PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().WorstValue(1),
+                    new double[1]);
         }
 
         public ParticleState GetBestState()

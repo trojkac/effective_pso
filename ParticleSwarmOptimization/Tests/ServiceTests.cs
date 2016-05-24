@@ -14,9 +14,9 @@ namespace Tests
         [TestMethod]
         public void ClusterRegister()
         {
-            VCpuManager vcpu1 = new VCpuManager("192.168.142.32", 8888, "pipe1");
-            VCpuManager vcpu2 = new VCpuManager("192.168.142.32", 8889, "pipe2");
-            VCpuManager vcpu3 = new VCpuManager("192.168.142.32", 8890, "pipe3 ");
+            VCpuManager vcpu1 = new VCpuManager("127.0.0.1", 8888, "pipe1");
+            VCpuManager vcpu2 = new VCpuManager("127.0.0.1", 8889, "pipe2");
+            VCpuManager vcpu3 = new VCpuManager("127.0.0.1", 8890, "pipe3 ");
 
             vcpu1.StartTcpNodeService();
             vcpu2.StartTcpNodeService();
@@ -44,7 +44,7 @@ namespace Tests
             VCpuManager[] vcpus = new VCpuManager[cpuCores];
             for (int i = 0; i < cpuCores; i++)
             {
-                vcpus[i] = new VCpuManager("192.168.143.99", 8881 + i, i.ToString());
+                vcpus[i] = new VCpuManager("127.0.0.1", 8881 + i, i.ToString());
                 vcpus[i].StartTcpNodeService();
                 if (i > 0)
                 {
@@ -60,9 +60,8 @@ namespace Tests
 
 
 
-
-            var result = vcpus[1].PsoController.RunningAlgorithm.Result;
-
+            var task = vcpus[1].PsoController.RunningAlgorithm;
+            var result = task.Result;
             Assert.AreEqual(0.0, result.FitnessValue[0], 0.1);
         }
 
@@ -73,9 +72,9 @@ namespace Tests
             VCpuManager[] vcpus = new VCpuManager[cpuCores];
             for (int i = 0; i < cpuCores; i++)
             {
-                vcpus[i] = new VCpuManager("192.168.143.100", 8881 + i, i.ToString());
+                vcpus[i] = new VCpuManager("127.0.0.1", 8881 + i, i.ToString());
                 vcpus[i].StartTcpNodeService();
-                vcpus[i].NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://192.168.143.83:8881/NodeService", ""));
+                vcpus[i].NetworkNodeManager.Register(new NetworkNodeInfo("net.tcp://127.0.0.1:8881/NodeService", ""));
             }
             Console.ReadKey();
         }
@@ -98,8 +97,6 @@ namespace Tests
             var ipb = BitConverter.GetBytes(ip);
             var portb = BitConverter.GetBytes(port);
             var idb = BitConverter.GetBytes(id);
-
-            return;
         }
     }
 }
