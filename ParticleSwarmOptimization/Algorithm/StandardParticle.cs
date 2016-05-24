@@ -51,15 +51,12 @@ namespace Algorithm
             var toPersonalBest = PsoServiceLocator.Instance.GetService<IMetric<double[]>>().VectorBetween(CurrentState.Location,PersonalBest.Location);
             var toGlobalBest = PsoServiceLocator.Instance.GetService<IMetric<double[]>>().VectorBetween(CurrentState.Location, globalBest.Location);
 			
-			var phi1 = RandomGenerator.GetInstance().Random.NextDouble()*Phi;
-			var phi2 = RandomGenerator.GetInstance().Random.NextDouble()*Phi;
+			var phi1 = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length,0,Phi);
+            var phi2 = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, 0, Phi);
             
-            // 3. multiply them by phi1, phi2 both in [0,Phi]
-            toPersonalBest = toPersonalBest.Select(x => x*phi1).ToArray();
-            toGlobalBest = toGlobalBest.Select(x => x*phi2).ToArray();
-
+           
             // 4. multiply velocity by Omega and add toGlobalBest and toPersonalBest
-            Velocity = Velocity.Select((v, i) => v*Omega + toGlobalBest[i] + toPersonalBest[i]).ToArray();
+            Velocity = Velocity.Select((v, i) => v*Omega + phi1[i] * toGlobalBest[i] + phi2[i] * toPersonalBest[i]).ToArray();
         }
 
         public override void Transpose(IFitnessFunction<double[], double[]> function)

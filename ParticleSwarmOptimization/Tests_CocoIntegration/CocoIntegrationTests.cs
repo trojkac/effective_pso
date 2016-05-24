@@ -19,7 +19,7 @@ namespace Tests
          * dimension * BUDGET_MULTIPLIER.
          * Increase the budget multiplier value gradually to see how it affects the runtime.
          */
-        public const int BUDGET_MULTIPLIER = 2;
+        public const int BUDGET_MULTIPLIER = 1;
 
         /**
          * The maximal number of independent restarts allowed for an algorithm that restarts itself. 
@@ -183,10 +183,10 @@ namespace Tests
 
                 /* Set some options for the observer. See documentation for other options. */
                 String observerOptions =
-                          "result_folder: PSO_on_bbob "
-                        + "algorithm_name: PSO "
-                        + "algorithm_info: \"A simple Random search algorithm\"";
-
+                          "result_folder: PSO_on_bbob_"+
+                          DateTime.Now.Hour.ToString()+DateTime.Now.Minute.ToString()
+                        + " algorithm_name: PSO"
+                        + " algorithm_info: \"A simple Random search algorithm\"";
                 /* Initialize the suite and observer */
                 Suite suite = new Suite("bbob", "year: 2016", "dimensions: 2,3,5,10,20,40");
                 Observer observer = new Observer("bbob", observerOptions);
@@ -201,8 +201,8 @@ namespace Tests
 
 
                     /* Run the algorithm at least once */
-                    for (int run = 1; run <= 1; run++)
-                    //for (int run = 1; run <= 1 + INDEPENDENT_RESTARTS; run++)
+                    //for (int run = 1; run <= 1; run++)
+                    for (int run = 1; run <= 1 + INDEPENDENT_RESTARTS; run++)
                     {
 
                         long evaluationsDone = PROBLEM.getEvaluations();

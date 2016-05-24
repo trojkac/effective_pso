@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CocoWrapper">
-      <HintPath>..\..\CocoWrapper\CocoWrapper\bin\Release\CocoWrapper.dll</HintPath>
+      <HintPath>..\..\CocoWrapper\CocoWrapper\bin\Debug\CocoWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
