@@ -20,9 +20,7 @@ namespace PsoService
 
         public ParticleState GetBestState()
         {
-
-                return base.Channel.GetBestState();            
-
+            return base.Channel.GetBestState();            
         }
 
         public void UpdateBestState(ParticleState state)
@@ -32,7 +30,6 @@ namespace PsoService
 
         public static IParticleService CreateClient(string remoteNeighborAddress)
         {
-
             var binding = new NetTcpBinding();
             binding.SendTimeout = new TimeSpan(0, 0, 0, 5);
             binding.OpenTimeout = new TimeSpan(0, 0, 0, 5);

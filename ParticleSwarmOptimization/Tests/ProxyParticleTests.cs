@@ -64,7 +64,7 @@ namespace Tests
         {
             var particle1 = ProxyParticle.CreateProxyParticle(1);
             var particle2 = ProxyParticle.CreateProxyParticle(2);
-            particle1.UpdateRemoteAddress(particle2.Address);
+            particle1.UpdateRemoteAddress(new Uri(String.Format("net.tcp://127.0.0.1:{0}{1}", particle2.Address.Port, particle2.Address.LocalPath)));
             var state = new ParticleState {FitnessValue = new []{ 0.0 }, Location = new[] {0.0, 0.4}};
             particle2.UpdateBestState(state);
 
@@ -82,7 +82,7 @@ namespace Tests
         {
             var particle1 = ProxyParticle.CreateProxyParticle(1);
             var particle2 = ProxyParticle.CreateProxyParticle(2);
-            particle1.UpdateRemoteAddress(particle2.Address);
+            particle1.UpdateRemoteAddress(new Uri(String.Format("net.tcp://127.0.0.1:{0}{1}", particle2.Address.Port, particle2.Address.LocalPath)));
             var state = new ParticleState {FitnessValue = new []{ 9.0 }, Location = new[] {3.0}};
             particle2.UpdateBestState(state);
 
@@ -93,7 +93,7 @@ namespace Tests
             controller.Run(PsoSettingsFactory.QuadraticFunction1DFrom3To5(), new []{particle1});
             
             var result = controller.RunningAlgorithm.Result;
-            Assert.AreEqual(state.FitnessValue, result.FitnessValue);
+            Assert.AreEqual(state.FitnessValue[0], result.FitnessValue[0]);
             Assert.AreEqual(true, result.Location.SequenceEqual(state.Location));
 
         }

@@ -40,27 +40,26 @@ namespace Tests
         [TestMethod]
         public void ClusterCalculations()
         {
-            int cpuCores = 8;
+            int cpuCores = 2;
             VCpuManager[] vcpus = new VCpuManager[cpuCores];
             for (int i = 0; i < cpuCores; i++)
             {
-                vcpus[i] = new VCpuManager("127.0.0.1", 8881 + i, i.ToString());
+                vcpus[i] = new VCpuManager("192.168.143.192", 8881 + i, i.ToString());
                 vcpus[i].StartTcpNodeService();
                 if (i > 0)
                 {
                     vcpus[i].NetworkNodeManager.Register(vcpus[i-1].GetMyNetworkNodeInfo());
                 }
-                else
-                {
-                    var settings = PsoSettingsFactory.QuadraticFunction20D();
-                    vcpus[0].StartCalculations(settings);
-                }
             }
 
 
+            var t = System.Threading.Tasks.Task.Delay(1000);
+            t.Wait();
+            var settings = PsoSettingsFactory.QuadraticFunction20D();
+            vcpus[0].StartCalculations(settings);
 
 
-            var task = vcpus[1].PsoController.RunningAlgorithm;
+            var task = vcpus[0].PsoController.RunningAlgorithm;
             var result = task.Result;
             Assert.AreEqual(0.0, result.FitnessValue[0], 0.1);
         }

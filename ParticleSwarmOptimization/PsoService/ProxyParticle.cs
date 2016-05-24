@@ -17,6 +17,7 @@ namespace PsoService
         private IParticleService _particleClient;
         private IParticleService _particleService;
         private ServiceHost _host;
+        private IParticle _coupledParticle;
         public NetworkNodeInfo RemoteNode{
             get{
                 return new NetworkNodeInfo(RemoteAddress.Authority,"");
@@ -72,8 +73,7 @@ namespace PsoService
         {
             if (_particleClient == null)
             {
-                return new ParticleState(
-                    new double[1],PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().WorstValue(1) );
+                return _coupledParticle == null ? _particleService.GetBestState() : _coupledParticle.PersonalBest;
             }
             try
             {
@@ -108,7 +108,10 @@ namespace PsoService
 
         public override void UpdateNeighborhood(IParticle[] allParticles)
         {
-            Neighborhood = allParticles.Where(p => p.Id != Id).ToArray();
+            _coupledParticle = allParticles.Where(p => p.Id != Id).First();
+            if(_coupledParticle != null)
+                _particleService.UpdateBestState(_coupledParticle.PersonalBest);
+
         }
 
         public override void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null)
@@ -129,7 +132,7 @@ namespace PsoService
         {
         }
 
-        public ParticleState PersonalBest
+        public override ParticleState PersonalBest
         {
             get { return GetRemoteBest(); }
         }

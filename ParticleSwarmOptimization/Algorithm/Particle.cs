@@ -18,9 +18,9 @@ namespace Algorithm
         public abstract void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null);
         public abstract void UpdateVelocity();
         public abstract void Transpose(IFitnessFunction<double[], double[]> function);
-        public abstract void UpdateNeighborhood(IParticle[] allParticles); 
-        public ParticleState PersonalBest { get; protected set; }
-        public ParticleState CurrentState { get; protected set; }
+        public abstract void UpdateNeighborhood(IParticle[] allParticles);
+        public virtual ParticleState PersonalBest { get; protected set; }
+        public virtual ParticleState CurrentState { get; protected set; }
         public Tuple<double, double>[] Bounds;
 
         public double[] Velocity { get; protected set; }
