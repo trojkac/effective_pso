@@ -4,7 +4,9 @@
     {
         public int ParticlesCount { get; set; }
 
-        public int Dimensions { get; set; }
+        public int LocationDimensions { get; set; }
+
+        public int FitnessDimensions { get; set; }
 
         public int Iterations { get; set; }
 

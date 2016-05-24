@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Algorithm;
 using Common;
 using ManagedGPU;
@@ -17,20 +19,44 @@ namespace Tests
         public void RunSimpleAlgorithm()
         {
             var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
-            settings.Iterations = 1000;
             var function = new QuadraticFunction(settings.FunctionParameters);
             var particlesNum = 30;
             var particles = new IParticle[particlesNum];
 
+            for (var i = 0; i < particlesNum; i++)
+            {
+                particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
+                    function.FitnessDim);
+            }
+
+            var algorithm = new PsoAlgorithm(settings, function, particles.ToArray());
+            var result = algorithm.Run();
+
+            Assert.AreEqual(0.0, result.FitnessValue[0], .1);
+        }
+
+        [TestMethod]
+        public void RunWithGpu()
+        {
+            var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
+            settings.Iterations = 100;
+            var function = new QuadraticFunction(settings.FunctionParameters);
+            var particlesNum = 300;
+            var particles = new IParticle[particlesNum];
+
             var setup = GpuController.Setup(new CudaParams
             {
-                Iterations = 100,
-                Dimensions = 1,
-                ParticlesCount = 100,
+                Iterations = 1000,
+                LocationDimensions = 1,
+                FitnessDimensions = 1,
+                ParticlesCount = 300,
                 SyncWithCpu = true
             });
 
-            particles[0] = setup.Item1;
+            var cudaParticle = setup.Item1;
+            var cudaAlgorithm = setup.Item2;
+
+            particles[0] = cudaParticle;
             for (var i = 1; i < particlesNum; i++)
             {
                 particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
@@ -38,8 +64,10 @@ namespace Tests
             }
 
             var algorithm = new PsoAlgorithm(settings, function, particles.ToArray());
-            setup.Item2.Run();
+
+            cudaAlgorithm.RunAsync();
             var result = algorithm.Run();
+            cudaAlgorithm.Wait();
 
             Assert.AreEqual(0.0, result.FitnessValue[0], .1);
         }

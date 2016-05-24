@@ -6,10 +6,10 @@ namespace ManagedGPU
     {
         internal StateProxy(CudaParams parameters)
         {
-            CpuState = ParticleStateFactory.Create(parameters.Dimensions, 1);
-            CpuState.Location = RandomGenerator.GetInstance().RandomVector(parameters.Dimensions); 
-            GpuState = ParticleStateFactory.Create(parameters.Dimensions, 1);
-            GpuState.Location = RandomGenerator.GetInstance().RandomVector(parameters.Dimensions);
+            CpuState = ParticleStateFactory.Create(parameters.LocationDimensions, 1);
+            CpuState.Location = RandomGenerator.GetInstance().RandomVector(parameters.LocationDimensions); 
+            GpuState = ParticleStateFactory.Create(parameters.LocationDimensions, 1);
+            GpuState.Location = RandomGenerator.GetInstance().RandomVector(parameters.LocationDimensions);
         }
 
         public ParticleState CpuState { get; set; }

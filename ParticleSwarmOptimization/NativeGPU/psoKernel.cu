@@ -4,19 +4,16 @@
 
 const int NUM_OF_DIMENSIONS = 3;
 
-__constant__ float d_OMEGA= 0.5;
-__constant__ float d_c1 = 1.5;
-__constant__ float d_c2 = 1.5;
-__constant__ float d_phi = 3.1415;
+__constant__ double d_OMEGA= 0.64;
+__constant__ double d_phi = 1.4;
 
-__device__ float tempParticle1[NUM_OF_DIMENSIONS];
-__device__ float tempParticle2[NUM_OF_DIMENSIONS];
+__device__ double tempParticle1[NUM_OF_DIMENSIONS];
+__device__ double tempParticle2[NUM_OF_DIMENSIONS];
 
-// Fungsi yang dioptimasi
-// Levy 3-dimensional
-__device__ float fitness_function(float x[], int dimensionsCount)
+// Simple quadratic function
+__device__ double fitness_function(double x[], int dimensionsCount)
 {
-    float res = 0;
+    double res = 0;
 
     for (int i = 0; i < dimensionsCount - 1; i++)
     {
@@ -27,30 +24,24 @@ __device__ float fitness_function(float x[], int dimensionsCount)
 }
 
 extern "C" {
-	__global__ void kernelUpdateParticle(float *positions, float *velocities, 
-										 float *pBests, float *gBest,
+	__global__ void kernelUpdateParticle(double *positions, double *velocities, 
+										 double *pBests, double *gBest,
 										 int particlesCount, int dimensionsCount,
-										 float r1, float r2)
+										 double r1, double r2)
 	{
 		int i = blockIdx.x * blockDim.x + threadIdx.x;
     
 		if(i >= particlesCount * dimensionsCount)
 			return;
 
-		//float rp = getRandomClamped();
-		//float rg = getRandomClamped();
-    
-		float rp = r1;
-		float rg = r2;
-
-		velocities[i] = d_OMEGA * velocities[i] + d_c1 * rp * (pBests[i] - positions[i])
-				+ d_c2 * rg * (gBest[i % dimensionsCount] - positions[i]);
+		velocities[i] = d_OMEGA * velocities[i] + r1 * (pBests[i] - positions[i])
+				+ r2 * (gBest[i % dimensionsCount] - positions[i]);
 
 		// Update posisi particle
 		positions[i] += velocities[i];
 	}
 
-	__global__ void kernelUpdatePBest(float *positions, float *pBests, float* gBest,
+	__global__ void kernelUpdatePBest(double *positions, double *pBests, double* gBest,
 									  int particlesCount, int dimensionsCount)
 	{
 		int i = blockIdx.x * blockDim.x + threadIdx.x;

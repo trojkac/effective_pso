@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Common;
 using ManagedCuda;
 
@@ -7,6 +9,8 @@ namespace ManagedGPU
 {
     public class CudaAlgorithm
     {
+        private Thread _threadHandler = null;
+
         private readonly StateProxy _proxy;
 
         private readonly int _particlesCount;
@@ -62,7 +66,7 @@ namespace ManagedGPU
         {
             _proxy = proxy;
             _particlesCount = parameters.ParticlesCount;
-            _dimensionsCount = parameters.Dimensions;
+            _dimensionsCount = parameters.LocationDimensions;
             _iterations = parameters.Iterations;
 
             var size = _particlesCount * _dimensionsCount;
@@ -101,8 +105,35 @@ namespace ManagedGPU
             _deviceGlobalBests = _hostGlobalBests;
         }
 
+        public void RunAsync()
+        {
+            if (_threadHandler != null) return;
+
+            _threadHandler = new Thread(() =>
+            {
+                Run();
+            });
+
+            _threadHandler.Start();
+        }
+
+        public void Wait()
+        {
+            if (_threadHandler != null)
+                _threadHandler.Join();
+        }
+
+        public void Abort()
+        {
+            if (_threadHandler != null)
+                _threadHandler.Abort();
+        }
+
         public double Run()
         {
+            PushGpuState();
+            PullCpuState();
+
             for (var i = 0; i < _iterations; i++)
             {
                 Step();
