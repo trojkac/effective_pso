@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Algorithm;
 using CocoWrapper;
 using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ParticleSwarmOptimizationWrapper;
 
 namespace Tests
 {
@@ -19,7 +19,7 @@ namespace Tests
          * dimension * BUDGET_MULTIPLIER.
          * Increase the budget multiplier value gradually to see how it affects the runtime.
          */
-        public const int BUDGET_MULTIPLIER = 2;
+        public const int BUDGET_MULTIPLIER = 1000000;
 
         /**
          * The maximal number of independent restarts allowed for an algorithm that restarts itself. 
@@ -173,8 +173,7 @@ namespace Tests
         [TestMethod]
         public void RunEffectivePso()
         {
-            Random randomGenerator = new Random(RANDOM_SEED);
-            
+            RandomGenerator randomGenerator = RandomGenerator.GetInstance(RANDOM_SEED);
             
             CocoLibraryWrapper.cocoSetLogLevel("info");
 
@@ -184,10 +183,10 @@ namespace Tests
 
                 /* Set some options for the observer. See documentation for other options. */
                 String observerOptions =
-                          "result_folder: PSO_on_bbob "
-                        + "algorithm_name: PSO "
-                        + "algorithm_info: \"A simple Random search algorithm\"";
-
+                          "result_folder: PSO_on_bbob_"+
+                          DateTime.Now.Hour.ToString()+DateTime.Now.Minute.ToString()
+                        + " algorithm_name: PSO"
+                        + " algorithm_info: \"A simple Random search algorithm\"";
                 /* Initialize the suite and observer */
                 Suite suite = new Suite("bbob", "year: 2016", "dimensions: 2,3,5,10,20,40");
                 Observer observer = new Observer("bbob", observerOptions);
@@ -198,10 +197,12 @@ namespace Tests
                 {
 
                     int dimension = PROBLEM.getDimension();
+                    int particlesNum = dimension*3;
+
 
                     /* Run the algorithm at least once */
-                    for (int run = 1; run <= 1; run++)
-                    //for (int run = 1; run <= 1 + INDEPENDENT_RESTARTS; run++)
+                    //for (int run = 1; run <= 1; run++)
+                    for (int run = 1; run <= 1 + INDEPENDENT_RESTARTS; run++)
                     {
 
                         long evaluationsDone = PROBLEM.getEvaluations();
@@ -210,20 +211,36 @@ namespace Tests
                         /* Break the loop if the target was hit or there are no more remaining evaluations */
                         if (PROBLEM.isFinalTargetHit() || (evaluationsRemaining <= 0))
                             break;
-                        PSOAlgorithm algorithm = PSOAlgorithm.GetAlgorithm(4000, evaluateFunction);
-                        List<Particle> particles = new List<Particle>();
-                        for (int i = 0; i < 20; i++)
+
+                        var settings = new PsoSettings()
                         {
-                            particles.Add(new StandardParticle(2));
+                            TargetValueCondition = false,
+                            IterationsLimitCondition = true,
+                            Iterations = (int)evaluationsRemaining,
+                        };
+                        
+                        var function = new FitnessFunction(evaluateFunction);
+                       
+                        var upper = PROBLEM.getLargestValuesOfInterest();
+                        var bounds = PROBLEM.getSmallestValuesOfInterest().Select((x, i) => new Tuple<double, double>(x, upper[i])).ToArray();
+                       
+                        function.FitnessDim = PROBLEM.getNumberOfObjectives();
+                        function.LocationDim = PROBLEM.getDimension();
+
+                        settings.FunctionParameters = new UserFunctionParameters {Dimension = function.LocationDim,SearchSpace = bounds};
+                        settings.FunctionParameters.SearchSpace = bounds;
+                        var particles = new IParticle[particlesNum];
+                        for (var i = 0; i < particlesNum; i++)
+                        {
+                            particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
+                                function.FitnessDim, function, bounds);
                         }
+
+                        PsoAlgorithm algorithm = new PsoAlgorithm(settings, function, particles);
+
+                        algorithm.Run();
                         /* Call the optimization algorithm for the remaining number of evaluations */
-                        optimizer(evaluateFunction,
-                                       dimension,
-                                       PROBLEM.getNumberOfObjectives(),
-                                       PROBLEM.getSmallestValuesOfInterest(),
-                                       PROBLEM.getLargestValuesOfInterest(),
-                                       evaluationsRemaining,
-                                       randomGenerator);
+                       
 
                         /* Break the loop if the algorithm performed no evaluations or an unexpected thing happened */
                         if (PROBLEM.getEvaluations() == evaluationsDone)
@@ -251,14 +268,5 @@ namespace Tests
             
         }
 
-        private void effectivePso(int dimension,
-                                  int numberOfObjectives,
-                                  double[] lowerBounds,
-                                  double[] upperBounds,
-                                  long maxBudget,
-                                  Random randomGenerator)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

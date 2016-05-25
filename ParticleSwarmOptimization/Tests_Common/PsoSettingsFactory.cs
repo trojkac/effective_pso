@@ -23,7 +23,7 @@ namespace Tests_Common
                 {
                     Dimension = 1,
                     Coefficients = new[] { 1.0 },
-                    FitnessFunctionType = FitnessFunctionType.Quadratic,
+                    FitnessFunctionType = "quadratic",
                     SearchSpace = new[] { new Tuple<double, double>(3, 5), }
 
                 }

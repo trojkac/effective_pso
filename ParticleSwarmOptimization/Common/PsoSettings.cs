@@ -9,6 +9,7 @@ namespace Common
     /// <param name="values">fitness function argument which is N dimensional vector</param>
     /// <returns></returns>
     public delegate double[] FitnessFunctionEvaluation(double[] values);
+ 
     [DataContract]
     public struct PsoSettings
     {

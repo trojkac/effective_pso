@@ -10,7 +10,6 @@ namespace Algorithm
 
         private static int _idCounter;
         protected int _id;
-    
         protected Particle() {
             _id = ++_idCounter;
         }
@@ -18,14 +17,14 @@ namespace Algorithm
         protected IParticle[] Neighborhood;
         public abstract void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null);
         public abstract void UpdateVelocity();
-        public abstract void UpdatePersonalBest(IFitnessFunction<double[], double[]> function);
-        public abstract void UpdateNeighborhood(IParticle[] allParticles); 
-        public ParticleState PersonalBest { get; protected set; }
-        public ParticleState CurrentState { get; protected set; }
+        public abstract void Transpose(IFitnessFunction<double[], double[]> function);
+        public abstract void UpdateNeighborhood(IParticle[] allParticles);
+        public virtual ParticleState PersonalBest { get; protected set; }
+        public virtual ParticleState CurrentState { get; protected set; }
         public Tuple<double, double>[] Bounds;
+
         public double[] Velocity { get; protected set; }
         public abstract int Id { get; }
-        public abstract void Translate();
         public string ToLog()
         {
             var sb = new StringBuilder();

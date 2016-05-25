@@ -16,7 +16,6 @@ namespace Algorithm
 	    private readonly IParticle[] _particles;
 	    private ILogger _logger;
 	    private PsoSettings _settings;
-
 	    /// <summary>
 	    /// Creates PsoAlgorithm with specific settings to solve given problem using precreated particles
 	    /// </summary>
@@ -26,7 +25,7 @@ namespace Algorithm
 	    /// <param name="fitnessFunction">function whose optimum is to be found</param>
 	    /// <param name="particles"> particles traversing the search space </param>
 	    /// <param name="logger"></param>
-	    public PsoAlgorithm(PsoSettings settings, IFitnessFunction<double[], double[]> fitnessFunction, IParticle[] particles, ILogger logger = null)
+        public PsoAlgorithm(PsoSettings settings, IFitnessFunction<double[], double[]> fitnessFunction, IParticle[] particles, ILogger logger = null)
 	    {
 	        _settings = settings;
 	        _fitnessFunction = fitnessFunction;
@@ -39,15 +38,13 @@ namespace Algorithm
 	    {
 	        foreach (var particle in _particles)
 	        {
-	            particle.UpdatePersonalBest(_fitnessFunction);
+	            particle.Transpose(_fitnessFunction);
 	        }
 			while (_conditionCheck())
 			{
 			    foreach (var particle in _particles)
 			    {
-                    //TODO: convert to one method call
-			        particle.Translate();
-                    particle.UpdatePersonalBest(_fitnessFunction);
+                    particle.Transpose(_fitnessFunction);
 			    }
 			    foreach (var particle in _particles)
 			    {
@@ -72,7 +69,7 @@ namespace Algorithm
                 (!_settings.IterationsLimitCondition || _iteration++ < _settings.Iterations)
                 && 
                 (!_settings.TargetValueCondition ||
-                !_fitnessFunction.BestEvaluation.IsCloseToValue(new []{_settings.TargetValue},_settings.Epsilon));
+                !(PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(new []{_settings.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_settings.Epsilon)));
 		}
 
 	};

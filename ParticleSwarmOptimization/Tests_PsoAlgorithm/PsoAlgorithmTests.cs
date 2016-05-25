@@ -21,7 +21,7 @@ namespace Tests_PsoAlgorithm
             for (var i = 0; i < particlesNum; i++)
             {
                 particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
-                    function.FitnessDim);
+                    function.FitnessDim,function);
             }
 
             var algorithm = new PsoAlgorithm(settings, function, particles.ToArray());
@@ -44,7 +44,7 @@ namespace Tests_PsoAlgorithm
             for (var i = 0; i < particlesNum; i++)
             {
                 particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
-                    function.FitnessDim);
+                    function.FitnessDim,function);
             }
             var algorithm = new PsoAlgorithm(settings, function, particles.ToArray());
 
@@ -59,13 +59,13 @@ namespace Tests_PsoAlgorithm
             var settings = PsoSettingsFactory.QuadraticFunction20D();
             var function = new QuadraticFunction(settings.FunctionParameters);
             RandomGenerator.GetInstance(10);
-            settings.Iterations = 10000;
+            settings.Iterations = 1000;
             var particlesNum = 20;
             var particles = new IParticle[particlesNum];
             for (var i = 0; i < particlesNum; i++)
             {
                 particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
-                    function.FitnessDim);
+                    function.FitnessDim,function);
             }
             var algorithm = new PsoAlgorithm(settings, function, particles.ToArray(), new FileLogger("logFile"));
 

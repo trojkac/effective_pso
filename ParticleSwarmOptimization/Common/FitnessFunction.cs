@@ -3,19 +3,18 @@ namespace Common
     public class FitnessFunction: IFitnessFunction<double[],double[]>
     {
         private readonly FitnessFunctionEvaluation _evaluate;
-        public FitnessFunction(FitnessFunctionEvaluation evaluator)
+        private readonly IOptimization<double[]> _optimization;
+        public FitnessFunction(FitnessFunctionEvaluation evaluator, IOptimization<double[]> optimization = null)
         {
             _evaluate = evaluator;
+            _optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
             BestEvaluation = null;
         }
 
         public double[] Evaluate(double[] x)
         {
-            var newState = ParticleStateFactory.Create(LocationDim,FitnessDim);
-            newState.Location = x;
-            newState.FitnessValue = _evaluate(x);
-
-            if (BestEvaluation == null || ((ParticleState) BestEvaluation).IsBetter(newState))
+            var newState = new ParticleState(x, _evaluate(x));
+            if (BestEvaluation == null ||  _optimization.IsBetter(newState.FitnessValue,BestEvaluation.FitnessValue) < 0)
             {
                 BestEvaluation = newState;
             }

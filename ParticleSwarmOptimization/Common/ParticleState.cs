@@ -6,77 +6,29 @@ using System.Runtime.Serialization;
 namespace Common
 {
     [DataContract]
-    public class ParticleState : IState<double[],double[]>,ICloneable
+    public struct ParticleState : IState<double[],double[]>
     {
         [DataMember]
-        public double[] FitnessValue { get; set; }
+        public double[] FitnessValue
+        {
+            get { return _fitnessValue; }
+            set { _fitnessValue = value; }
+        }
         [DataMember]
-        public double[] Location { get; set; }
-
-        private IMetric<double[]> _metric;
-        private IOptimization<double[]> _optimization; 
- 
-        public ParticleState(IOptimization<double[]> optimization1, IMetric<double[]> metric)
+        public double[] Location
         {
-            _optimization = optimization1;
-            _metric = metric;
+            get { return _location; }
+            set { _location = value; }
         }
 
-        public bool IsBetter(ParticleState otherState)
-        {
-            return _optimization.IsBetter(FitnessValue, otherState.FitnessValue) < 0;
-        }
 
-        public bool IsCloseToValue(double[] value, double epsilon)
-        {
-            // TODO: Check for multiple dimensions
-            return Math.Abs(FitnessValue[0] - value[0]) < epsilon;
-        }
+        private double[] _location;
+        private double[] _fitnessValue;
 
-        public double Distance(ParticleState otherState)
+        public ParticleState(double[] location, double[] fitness ) : this()
         {
-            return _metric.Distance(Location, otherState.Location);
-        }
-
-        public double[] VectorTo(ParticleState otherState)
-        {
-            return _metric.VectorBetween(Location, otherState.Location);
-        }
-
-        public object Clone()
-        {
-            return new ParticleState(_optimization,_metric){Location = (double[])Location.Clone(),FitnessValue = (double[])FitnessValue.Clone()};
+            FitnessValue = fitness;
+            Location = location;
         }
     }
-
-//    public class GenericParticleState<TLocation, TFitness> : ParticleState, IState<TLocation, TFitness>
-//    {
-//        
-//        private IMetric<TLocation> _metric;
-//        private IOptimization<TFitness> _optimization;
-//
-//        public GenericParticleState(IMetric<TLocation> metric, IOptimization<TFitness> optimization)
-//        {
-//            _metric = metric;
-//            _optimization = optimization;
-//        }
-//
-//        public override bool IsBetter(ParticleState otherState)
-//        {
-//            throw new NotImplementedException();
-//        }
-//
-//        public override bool IsClose(ParticleState otherState, double epsilon)
-//        {
-//            throw new NotImplementedException();
-//        }
-//
-//        public override double Distance(ParticleState otherState)
-//        {
-//            
-//        }
-//
-//        public TLocation Location { get; set; }
-//        public TFitness FitnessValue { get; set; }
-//    }
 }

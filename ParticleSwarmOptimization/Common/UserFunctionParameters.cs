@@ -7,7 +7,7 @@ namespace Common
     public class UserFunctionParameters
     {
         [DataMember]
-        public FitnessFunctionType FitnessFunctionType { get; set; } //zmienic na string
+        public string FitnessFunctionType { get; set; } //zmienic na string
         [DataMember]
         public int Dimension { get; set; }
 

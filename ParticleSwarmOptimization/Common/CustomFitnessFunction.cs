@@ -7,21 +7,23 @@ namespace Common
     [DataContract]
     public abstract class AbstractFitnessFunction : IFitnessFunction<double[],double[]>
     {
+        private IOptimization<double[]> _optimization; 
         protected AbstractFitnessFunction(UserFunctionParameters functionParams)
         {
             Dimension = functionParams.Dimension;
             Coefficients = new double[Dimension];
             functionParams.Coefficients.CopyTo(Coefficients, 0);
+            _optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
         }
         public static AbstractFitnessFunction GetFitnessFunction(UserFunctionParameters parameters)
         {
             switch (parameters.FitnessFunctionType)
             {
-                case FitnessFunctionType.Quadratic:
+                case "quadratic":
                     return new QuadraticFunction(parameters);
-                case FitnessFunctionType.Rastrigin:
+                case "rastrigin":
                     return new RastriginFunction(parameters);
-                case FitnessFunctionType.Rosenbrock:
+                case "rosenbrock":
                     return new RosenbrockFunction(parameters);
                 default:
                     throw new ArgumentException("Unknown function type.");
@@ -35,11 +37,8 @@ namespace Common
         public double[] Coefficients;
         public double[] Evaluate(double[] x)
         {
-            var state = ParticleStateFactory.Create(Dimension,1);
-            state.Location = x;
-            state.FitnessValue = Calculate(x);
-
-            if (BestEvaluation == null || state.IsBetter((ParticleState) BestEvaluation))
+            var state = new ParticleState(x,Calculate(x));
+            if (BestEvaluation == null || _optimization.IsBetter(state.FitnessValue,BestEvaluation.FitnessValue) < 0)
             {
                 BestEvaluation = state;
             }

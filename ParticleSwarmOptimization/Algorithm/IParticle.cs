@@ -9,8 +9,7 @@ namespace Algorithm
         ParticleState CurrentState { get; }
         ParticleState PersonalBest { get; }
         void UpdateVelocity();
-        void Translate();
-        void UpdatePersonalBest(IFitnessFunction<double[], double[]> function);
+        void Transpose(IFitnessFunction<double[], double[]> function);
         void UpdateNeighborhood(IParticle[] allParticles);
         void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null);
 

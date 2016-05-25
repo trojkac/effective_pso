@@ -57,6 +57,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Algorithm\Algorithm.csproj">
+      <Project>{76DB894C-93AE-41AF-B0F7-7D853FEF3939}</Project>
+      <Name>Algorithm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{1ABBF21A-D8D4-4AE0-A3CA-F8BE3D11B84B}</Project>
       <Name>Common</Name>

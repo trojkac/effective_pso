@@ -16,7 +16,7 @@ namespace PsoService
             }
             set
             {
-                if (value.IsBetter(_bestKnownState))
+                if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(_bestKnownState.FitnessValue,value.FitnessValue) > 0)
                 {
                     _bestKnownState = value;
                 }
@@ -25,7 +25,8 @@ namespace PsoService
 
         public ParticleService()
         {
-
+            _bestKnownState =
+                new ParticleState(new double[1], PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().WorstValue(1));
         }
 
         public ParticleState GetBestState()

@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{35412F25-A1C7-4FE0-B7AF-F21A128D05FB}</ProjectGuid>
+    <ProjectGuid>{69F2865D-0A0C-4DD8-85EF-9B4504FE8A99}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests</RootNamespace>
-    <AssemblyName>Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>Tests_CocoIntegration</RootNamespace>
+    <AssemblyName>Tests_CocoIntegration</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -35,12 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CocoWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\CocoWrapper\CocoWrapper\bin\Release\CocoWrapper.dll</HintPath>
+    <Reference Include="CocoWrapper">
+      <HintPath>..\CocoWrapper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -55,10 +53,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="DistributorTests.cs" />
-    <Compile Include="ProxyParticleTests.cs" />
-    <Compile Include="PsoSettingsFactory.cs" />
-    <Compile Include="ServiceTests.cs" />
+    <Compile Include="CocoIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,22 +64,6 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
       <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Controller\Controller.csproj">
-      <Project>{dfe2de9a-2440-4d1c-a7ff-c3f00eda51fb}</Project>
-      <Name>Controller</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NetworkManager\NetworkManager.csproj">
-      <Project>{F46E4D5D-06D4-45CD-A440-9DFAF32C6AAB}</Project>
-      <Name>NetworkManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Node\Node.csproj">
-      <Project>{78963D19-F2E3-41D3-90B4-6F03AECF9C0B}</Project>
-      <Name>Node</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PsoService\PsoService.csproj">
-      <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
-      <Name>PsoService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tests_Common\Tests_Common.csproj">
       <Project>{62092d57-280b-4cda-990f-ecc3e678695f}</Project>

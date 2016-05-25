@@ -66,6 +66,12 @@ namespace NetworkManager
 
         public void Deregister(NetworkNodeInfo brokenNodeInfo)
         {
+            var nodes = KnownNodes.Where(n => n.Id == brokenNodeInfo.Id);
+            if (nodes.Count() < 1)
+            {
+                Debug.WriteLine("{0}:  Trying to deregister node {1}, already removed", Info.Id, brokenNodeInfo.Id);
+                return;
+            }
             Debug.WriteLine("{0}: deregistering node {1}",Info.Id,brokenNodeInfo.Id);
             var node = KnownNodes.First(n => n.Id == brokenNodeInfo.Id);
             KnownNodes.Remove(node);

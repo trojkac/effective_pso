@@ -9,6 +9,5 @@ namespace Common
     {
         TLocation Location { get; set; }
         TFitness FitnessValue { get; set; }
-        bool IsCloseToValue(TFitness value, double epsilon);
     }
 }

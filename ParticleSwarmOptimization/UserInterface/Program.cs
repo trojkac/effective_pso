@@ -184,14 +184,6 @@ namespace UserInterface
                 string[] coefficients = lines[2].Split(',');
                 string[] searchSpace = lines[3].Split(',');
 
-
-                FitnessFunctionType ftype;
-                if (!Enum.TryParse<FitnessFunctionType>(functionType, true, out ftype))
-                {
-                    Console.WriteLine("Nieznana funkcja");
-                    return false;
-                }
-
                 int dim;
                 if (!int.TryParse(dimension, out dim))
                 {
@@ -233,7 +225,7 @@ namespace UserInterface
                     return false;
                 }
 
-                parameters.FitnessFunctionType = ftype;
+                parameters.FitnessFunctionType = functionType;
                 parameters.Dimension = dim;
                 parameters.Coefficients = coeff;
                 parameters.SearchSpace = sspace;
