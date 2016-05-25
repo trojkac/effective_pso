@@ -103,13 +103,11 @@ namespace ManagedGPU
 
         private void PushGpuState()
         {
-            var state = ParticleStateFactory.Create(_dimensionsCount, 1);
             _hostPositions = _devicePositions;
             var temp = _hostPositions.Take(_dimensionsCount).ToArray();
-            state.Location = _hostPositions.Take(_dimensionsCount).ToArray();
-            state.FitnessValue = new[] {_fitnessFunction.HostFitnessFunction(state.Location)};
-
-            _proxy.GpuState = state;
+            var location = _hostPositions.Take(_dimensionsCount).ToArray();
+            var fitnessValue = new[] {_fitnessFunction.HostFitnessFunction(location)};
+            _proxy.GpuState = new ParticleState(location, fitnessValue); ;
         }
 
         public void RunAsync()

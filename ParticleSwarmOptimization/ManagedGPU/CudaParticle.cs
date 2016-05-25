@@ -23,18 +23,16 @@ namespace ManagedGPU
 
         private void PushCpuState()
         {
-            _proxy.CpuState = (ParticleState)BestNeighborState().Clone();
+            _proxy.CpuState = BestNeighborState();
         }
 
         private ParticleState BestNeighborState()
         {
-            ParticleState best = null;
+            ParticleState best = Neighborhood[0].CurrentState;
 
             foreach (var particle in Neighborhood)
             {
-                if (best == null)
-                    best = particle.CurrentState;
-                else if (particle.CurrentState.IsBetter(best))
+                if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(particle.CurrentState.FitnessValue, best.FitnessValue) < 0)
                     best = particle.CurrentState;
             }
 
@@ -53,21 +51,23 @@ namespace ManagedGPU
 
         public override void UpdateVelocity() { }
 
-        public override void Translate()
-        {
-            PullGpuState();
-        }
-
         private void PullGpuState()
         {
-            var gpustate = (ParticleState) _proxy.GpuState.Clone();
-            CurrentState = gpustate;
+            CurrentState = _proxy.GpuState;
         }
 
-        public override void UpdatePersonalBest(IFitnessFunction<double[], double[]> function)
+        public override void Transpose(IFitnessFunction<double[], double[]> function)
         {
-            CurrentState.FitnessValue = function.Evaluate(CurrentState.Location);
-            PersonalBest = PersonalBest == null || CurrentState.IsBetter(PersonalBest) ? (ParticleState)CurrentState.Clone() : PersonalBest;
+            PullGpuState();
+            CurrentState = new ParticleState(CurrentState.Location, function.Evaluate(CurrentState.Location));
+
+            if (PersonalBest.FitnessValue == null || CurrentIsBetterThanBest())
+                PersonalBest = CurrentState;
+        }
+
+        private bool CurrentIsBetterThanBest()
+        {
+            return PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(CurrentState.FitnessValue, PersonalBest.FitnessValue) < 0;
         }
     }
 }

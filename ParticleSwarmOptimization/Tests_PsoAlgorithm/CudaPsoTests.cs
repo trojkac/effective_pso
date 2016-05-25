@@ -97,18 +97,14 @@ namespace Tests_PsoAlgorithm
             for (var i = 1; i < particlesNum; i++)
             {
                 particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
-                    function.FitnessDim);
+                    function.FitnessDim, function);
             }
 
             var algorithm = new PsoAlgorithm(settings, function, particles.ToArray());
 
-            Console.WriteLine(DateTime.Now + ": Run gpu");
             cudaAlgorithm.RunAsync();
-            Console.WriteLine(DateTime.Now + ": Run cpu");
             var result = algorithm.Run();
-            Console.WriteLine(DateTime.Now + ": Wait for gpu");
             cudaAlgorithm.Wait();
-            Console.WriteLine(DateTime.Now + ": finished");
 
             Assert.AreEqual(0.0, result.FitnessValue[0], .1);
         }
