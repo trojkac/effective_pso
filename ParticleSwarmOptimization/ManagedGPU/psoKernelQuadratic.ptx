@@ -384,10 +384,10 @@ tmp31:
 func_end2:
 }
 
-	.file	1 "E:/effective_pso/ParticleSwarmOptimization/NativeGPU/psoKernel.cu", 1464035354, 1713
+	.file	1 "E:/effective_pso/ParticleSwarmOptimization/NativeGPU/psoKernelQuadratic.cu", 1464035354, 1713
 
 .section .debug_info {
- .b32 1287
+ .b32 1296
  .b8 2
  .b8 0
  .b32 .debug_abbrev
@@ -474,6 +474,15 @@ func_end2:
  .b8 110
  .b8 101
  .b8 108
+ .b8 81
+ .b8 117
+ .b8 97
+ .b8 100
+ .b8 114
+ .b8 97
+ .b8 116
+ .b8 105
+ .b8 99
  .b8 46
  .b8 99
  .b8 117
@@ -552,7 +561,7 @@ func_end2:
  .b8 49
 
  .b8 0
- .b32 204
+ .b32 213
  .b32 1
  .b32 10
  .b8 5
@@ -576,10 +585,10 @@ func_end2:
  .b8 5
  .b8 3
 
- .b32 219
+ .b32 228
  .b8 4
 
- .b32 232
+ .b32 241
  .b32 2
  .b8 0
  .b8 5
@@ -620,7 +629,7 @@ func_end2:
  .b8 50
 
  .b8 0
- .b32 204
+ .b32 213
  .b32 1
  .b32 11
  .b8 5
@@ -653,7 +662,7 @@ func_end2:
  .b8 65
 
  .b8 0
- .b32 219
+ .b32 228
  .b32 1
  .b32 7
  .b8 5
@@ -678,7 +687,7 @@ func_end2:
  .b8 105
 
  .b8 0
- .b32 219
+ .b32 228
  .b32 1
  .b32 8
  .b8 5
@@ -746,7 +755,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 14
- .b32 219
+ .b32 228
  .b8 1
  .b32 func_begin0
  .b32 func_end0
@@ -759,7 +768,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 14
- .b32 1274
+ .b32 1283
  .b8 5
  .b8 144
  .b8 180
@@ -788,7 +797,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 14
- .b32 1280
+ .b32 1289
  .b8 5
  .b8 144
  .b8 181
@@ -817,7 +826,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 16
- .b32 219
+ .b32 228
  .b32 .debug_loc
  .b8 9
 
@@ -830,7 +839,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 18
- .b32 1280
+ .b32 1289
  .b32 .debug_loc+56
  .b8 0
  .b8 0
@@ -885,7 +894,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 27
- .b32 921
+ .b32 930
  .b8 1
  .b32 func_begin1
  .b32 func_end1
@@ -906,7 +915,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 27
- .b32 1274
+ .b32 1283
  .b8 5
  .b8 3
  .b32 kernelUpdateParticle_param_0
@@ -927,7 +936,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 27
- .b32 1274
+ .b32 1283
  .b8 5
  .b8 3
  .b32 kernelUpdateParticle_param_1
@@ -944,7 +953,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 28
- .b32 1274
+ .b32 1283
  .b8 5
  .b8 3
  .b32 kernelUpdateParticle_param_2
@@ -960,7 +969,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 28
- .b32 1274
+ .b32 1283
  .b8 5
  .b8 3
  .b32 kernelUpdateParticle_param_3
@@ -985,7 +994,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 29
- .b32 1280
+ .b32 1289
  .b8 5
  .b8 3
  .b32 kernelUpdateParticle_param_4
@@ -1011,7 +1020,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 29
- .b32 1280
+ .b32 1289
  .b8 5
  .b8 3
  .b32 kernelUpdateParticle_param_5
@@ -1024,7 +1033,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 30
- .b32 219
+ .b32 228
  .b8 6
  .b8 144
  .b8 177
@@ -1041,7 +1050,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 30
- .b32 219
+ .b32 228
  .b8 6
  .b8 144
  .b8 178
@@ -1069,7 +1078,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 32
- .b32 1280
+ .b32 1289
  .b8 5
  .b8 144
  .b8 177
@@ -1131,7 +1140,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 44
- .b32 921
+ .b32 930
  .b8 1
  .b32 func_begin2
  .b32 func_end2
@@ -1148,7 +1157,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 44
- .b32 1274
+ .b32 1283
  .b8 7
  .b8 3
  .b32 __local_depot2
@@ -1171,7 +1180,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 44
- .b32 1274
+ .b32 1283
  .b8 5
  .b8 3
  .b32 kernelUpdatePBest_param_0
@@ -1188,7 +1197,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 44
- .b32 1274
+ .b32 1283
  .b8 5
  .b8 3
  .b32 kernelUpdatePBest_param_1
@@ -1213,7 +1222,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 45
- .b32 1280
+ .b32 1289
  .b8 5
  .b8 3
  .b32 kernelUpdatePBest_param_3
@@ -1239,7 +1248,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 45
- .b32 1280
+ .b32 1289
  .b8 5
  .b8 3
  .b32 kernelUpdatePBest_param_4
@@ -1263,7 +1272,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 47
- .b32 1280
+ .b32 1289
  .b8 5
  .b8 144
  .b8 177
@@ -1282,7 +1291,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 52
- .b32 1280
+ .b32 1289
  .b32 .debug_loc+112
  .b8 0
  .b8 9
@@ -1304,7 +1313,7 @@ func_end2:
  .b8 0
  .b32 1
  .b32 60
- .b32 1280
+ .b32 1289
  .b32 .debug_loc+168
  .b8 0
  .b8 0
@@ -1315,7 +1324,7 @@ func_end2:
  .b8 0
  .b8 13
 
- .b32 219
+ .b32 228
  .b8 12
  .b8 5
 
@@ -1813,8 +1822,8 @@ func_end2:
  .b8 2
  .b8 0
  .b32 .debug_info
- .b32 1287
- .b32 927
+ .b32 1296
+ .b32 936
  .b8 107
  .b8 101
  .b8 114
@@ -1834,7 +1843,7 @@ func_end2:
  .b8 116
  .b8 0
 
- .b32 569
+ .b32 578
  .b8 107
  .b8 101
  .b8 114
@@ -1857,7 +1866,7 @@ func_end2:
  .b8 101
  .b8 0
 
- .b32 358
+ .b32 367
  .b8 95
  .b8 90
  .b8 49

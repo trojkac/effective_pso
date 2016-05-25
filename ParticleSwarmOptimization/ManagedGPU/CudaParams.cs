@@ -12,7 +12,7 @@
 
         public bool SyncWithCpu { get; set; }
 
-        //Fitness function
+        public ICudaFitnessFunction FitnessFunction { get; set; }
 
         //Bounds
     }

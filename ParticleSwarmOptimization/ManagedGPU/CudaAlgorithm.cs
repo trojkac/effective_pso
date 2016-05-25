@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Common;
 using ManagedCuda;
 
@@ -9,7 +8,11 @@ namespace ManagedGPU
 {
     public class CudaAlgorithm
     {
-        private Thread _threadHandler = null;
+        private readonly bool _syncWithCpu;
+
+        private readonly ICudaFitnessFunction _fitnessFunction;
+
+        private Thread _threadHandler;
 
         private readonly StateProxy _proxy;
 
@@ -19,9 +22,9 @@ namespace ManagedGPU
 
         private readonly int _iterations;
 
-        private readonly CudaKernel _updateParticle;
+        private CudaKernel _updateParticle;
 
-        private readonly CudaKernel _updatePersonalBest;
+        private CudaKernel _updatePersonalBest;
 
         private double[] _hostPositions;
 
@@ -41,46 +44,29 @@ namespace ManagedGPU
 
         private readonly Random _rng = new Random();
 
-        private void PullCpuState()
-        {
-            _hostPositions = _devicePositions;
-
-            for (var i = 0; i < _dimensionsCount; i++)
-                _hostPositions[i] = _proxy.CpuState.Location[i];
-
-            _devicePositions = _hostPositions;
-        }
-
-        private void PushGpuState()
-        {
-            var state = ParticleStateFactory.Create(_dimensionsCount, 1);
-            _hostPositions = _devicePositions;
-            var temp = _hostPositions.Take(_dimensionsCount).ToArray();
-            state.Location = _hostPositions.Take(_dimensionsCount).ToArray();
-            state.FitnessValue = new[] {HostFitnessFunction(state.Location)};
-
-            _proxy.GpuState = state;
-        }
-
         internal CudaAlgorithm(CudaParams parameters, StateProxy proxy)
         {
             _proxy = proxy;
             _particlesCount = parameters.ParticlesCount;
             _dimensionsCount = parameters.LocationDimensions;
             _iterations = parameters.Iterations;
+            _fitnessFunction = parameters.FitnessFunction;
+            _syncWithCpu = parameters.SyncWithCpu;
+        }
 
+        private void InitContext()
+        {
             var size = _particlesCount * _dimensionsCount;
 
             var threadsNum = 32;
             var blocksNum = _particlesCount / threadsNum;
-
             var ctx = new CudaContext(0);
 
-            _updateParticle = ctx.LoadKernel("psoKernel.ptx", "kernelUpdateParticle");
+            _updateParticle = ctx.LoadKernel(_fitnessFunction.KernelFile, "kernelUpdateParticle");
             _updateParticle.GridDimensions = blocksNum;
             _updateParticle.BlockDimensions = threadsNum;
 
-            _updatePersonalBest = ctx.LoadKernel("psoKernel.ptx", "kernelUpdatePBest");
+            _updatePersonalBest = ctx.LoadKernel(_fitnessFunction.KernelFile, "kernelUpdatePBest");
             _updatePersonalBest.GridDimensions = blocksNum;
             _updatePersonalBest.BlockDimensions = threadsNum;
 
@@ -105,12 +91,34 @@ namespace ManagedGPU
             _deviceGlobalBests = _hostGlobalBests;
         }
 
+        private void PullCpuState()
+        {
+            _hostPositions = _devicePositions;
+
+            for (var i = 0; i < _dimensionsCount; i++)
+                _hostPositions[i] = _proxy.CpuState.Location[i];
+
+            _devicePositions = _hostPositions;
+        }
+
+        private void PushGpuState()
+        {
+            var state = ParticleStateFactory.Create(_dimensionsCount, 1);
+            _hostPositions = _devicePositions;
+            var temp = _hostPositions.Take(_dimensionsCount).ToArray();
+            state.Location = _hostPositions.Take(_dimensionsCount).ToArray();
+            state.FitnessValue = new[] {_fitnessFunction.HostFitnessFunction(state.Location)};
+
+            _proxy.GpuState = state;
+        }
+
         public void RunAsync()
         {
             if (_threadHandler != null) return;
 
             _threadHandler = new Thread(() =>
             {
+                InitContext();
                 Run();
             });
 
@@ -123,6 +131,12 @@ namespace ManagedGPU
                 _threadHandler.Join();
         }
 
+        public void RunAsyncAndWait()
+        {
+            RunAsync();
+            Wait();
+        }
+
         public void Abort()
         {
             if (_threadHandler != null)
@@ -131,19 +145,27 @@ namespace ManagedGPU
 
         public double Run()
         {
-            PushGpuState();
-            PullCpuState();
+            InitContext();
+
+            if (_syncWithCpu)
+            {
+                PushGpuState();
+                PullCpuState();
+            }
 
             for (var i = 0; i < _iterations; i++)
             {
                 Step();
+
+                if (!_syncWithCpu) continue;
+
                 PushGpuState();
                 PullCpuState();
             }
 
             _hostGlobalBests = _deviceGlobalBests;
 
-            return HostFitnessFunction(_hostGlobalBests);
+            return _fitnessFunction.HostFitnessFunction(_hostGlobalBests);
         }
 
         private void Step()
@@ -177,7 +199,7 @@ namespace ManagedGPU
                 for (var k = 0; k < _dimensionsCount; k++)
                     temp[k] = _hostPersonalBests[i + k];
 
-                if (HostFitnessFunction(temp) < HostFitnessFunction(_hostGlobalBests))
+                if (_fitnessFunction.HostFitnessFunction(temp) < _fitnessFunction.HostFitnessFunction(_hostGlobalBests))
                 {
                     for (var k = 0; k < _dimensionsCount; k++)
                         _hostGlobalBests[k] = temp[k];
@@ -195,11 +217,6 @@ namespace ManagedGPU
         private static double Random(Random rng)
         {
             return rng.NextDouble();
-        }
-
-        private static double HostFitnessFunction(double[] x)
-        {
-            return x.Sum(t => t*t);
         }
     }
 }

@@ -43,16 +43,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CudaAlgorithm.cs" />
+    <Compile Include="CudaFitnessFunctions.cs" />
+    <Compile Include="ICudaFitnessFunction.cs" />
     <Compile Include="CudaParams.cs" />
     <Compile Include="CudaParticle.cs" />
     <Compile Include="GpuController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuadraticFitnessFunction.cs" />
+    <Compile Include="RastriginFitnessFunction.cs" />
+    <Compile Include="RosenbrockFitnessFunction.cs" />
     <Compile Include="StateProxy.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="psoKernel.ptx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Algorithm\Algorithm.csproj">
@@ -63,6 +63,17 @@
       <Project>{1ABBF21A-D8D4-4AE0-A3CA-F8BE3D11B84B}</Project>
       <Name>Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="psoKernelQuadratic.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="psoKernelRastrigin.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="psoKernelRosenbrock.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

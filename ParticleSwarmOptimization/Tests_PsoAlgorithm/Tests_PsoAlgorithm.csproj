@@ -53,6 +53,7 @@
     <Compile Include="PsoAlgorithmTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StandardParticleTest.cs" />
+    <Compile Include="CudaPsoTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Algorithm\Algorithm.csproj">
