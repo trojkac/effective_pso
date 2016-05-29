@@ -37,7 +37,7 @@ namespace PsoService
             NetworkNodeInfo currentNetworkNode)
         {
             //do nothing if there is only current network in collection
-            if (allNetworkNodes == null || allNetworkNodes.Length < 1)
+            if (allNetworkNodes == null || allNetworkNodes.Length <= 1)
                 return;
             var nodes = allNetworkNodes.OrderBy(t => t.Id).ToArray();
             NetworkNodeInfo previous = null, next = null;

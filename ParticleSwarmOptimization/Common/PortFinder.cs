@@ -5,13 +5,11 @@ namespace Common
 {
     public static class PortFinder
     {
+        private static int _basePort = 3000;
+        private static int _cnt = 0;
         public static int FreeTcpPort()
         {
-            var l = new TcpListener(IPAddress.Loopback, 0);
-            l.Start();
-            var port = ((IPEndPoint)l.LocalEndpoint).Port;
-            l.Stop();
-            return port;
+            return _basePort + _cnt++;
         }
     }
 }

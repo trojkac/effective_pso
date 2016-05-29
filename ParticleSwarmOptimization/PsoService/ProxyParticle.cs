@@ -134,7 +134,10 @@ namespace PsoService
 
         public override ParticleState PersonalBest
         {
-            get { return GetRemoteBest(); }
+            get
+            {
+                return GetRemoteBest();
+            }
         }
     }
 }
