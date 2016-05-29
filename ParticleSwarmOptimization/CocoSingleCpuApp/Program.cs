@@ -14,16 +14,23 @@ namespace CocoSingleCpuApp
     class Program
     {
 
-        public const int BUDGET_MULTIPLIER = 1000;
+        public const int BUDGET_MULTIPLIER = 100000;
         public const int INDEPENDENT_RESTARTS = 10000;
         public const int RANDOM_SEED = 12;
         public static Problem PROBLEM;
         static void Main(string[] args)
         {
+            Console.WriteLine("Podaj liczbe wymiarow do przeprowadzenia obliczen (jesli wiecej niz jeden oddziel przecinkiem): ");
+            string dims = Console.ReadLine().Trim();
+            Console.WriteLine("Podaj zakres funkcji do obliczen: ");
+            Console.Write("Od: ");
+            var functionsFrom = int.Parse(Console.ReadLine());
+            Console.Write("Do: ");
+            var functionsTo = int.Parse(Console.ReadLine());
             RandomGenerator randomGenerator = RandomGenerator.GetInstance(RANDOM_SEED);
             CocoLibraryWrapper.cocoSetLogLevel("info");
             var functionsToOptimize = new List<string>();
-            for(var i = 1; i <= 24; i++){
+            for(var i = functionsFrom; i <= functionsTo; i++){
                 functionsToOptimize.Add(String.Format("f{0:D3}",i));
             }
             Console.WriteLine("Running the example experiment... (might take time, be patient)");
@@ -37,7 +44,7 @@ namespace CocoSingleCpuApp
                         + " algorithm_name: PSO"
                         + " algorithm_info: \"A simple Random search algorithm\"";
                 /* Initialize the suite and observer */
-                Suite suite = new Suite("bbob", "year: 2016", "dimensions: 2,3");
+                Suite suite = new Suite("bbob", "year: 2016", "dimensions: "+dims);
                 Observer observer = new Observer("bbob", observerOptions);
                 Benchmark benchmark = new Benchmark(suite, observer);
                 /* Iterate over all problems in the suite */
