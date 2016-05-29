@@ -18,12 +18,14 @@ namespace CocoSingleCpuApp
         public const int INDEPENDENT_RESTARTS = 10000;
         public const int RANDOM_SEED = 12;
         public static Problem PROBLEM;
-
         static void Main(string[] args)
         {
             RandomGenerator randomGenerator = RandomGenerator.GetInstance(RANDOM_SEED);
             CocoLibraryWrapper.cocoSetLogLevel("info");
-
+            var functionsToOptimize = new List<string>();
+            for(var i = 1; i <= 24; i++){
+                functionsToOptimize.Add(String.Format("f{0:D3}",i));
+            }
             Console.WriteLine("Running the example experiment... (might take time, be patient)");
             try
             {
@@ -41,10 +43,9 @@ namespace CocoSingleCpuApp
                 /* Iterate over all problems in the suite */
                 while ((PROBLEM = benchmark.getNextProblem()) != null)
                 {
-
+                    if (!functionsToOptimize.Contains(PROBLEM.FunctionNumber)) continue;
                     int dimension = PROBLEM.getDimension();
                     int particlesNum = dimension * 3;
-
 
                     /* Run the algorithm at least once */
                     //for (int run = 1; run <= 1; run++)

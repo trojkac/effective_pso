@@ -247,14 +247,13 @@ namespace CocoWrapper
         {
             char* str = coco_problem_get_id(problemPointer);
 
-            return new string(str);
+            return Marshal.PtrToStringAnsi((IntPtr)str);
         }
 
         public static unsafe String cocoProblemGetName(long problemPointer)
         {
             char* str = coco_problem_get_name(problemPointer);
-
-            return new string(str);
+            return Marshal.PtrToStringAnsi((IntPtr)str);
         }
 
         public static unsafe long cocoProblemGetEvaluations(long problemPointer)
@@ -440,12 +439,19 @@ namespace CocoWrapper
 
         private String id;
         private String name;
+        private string functionName;
 
         private long index;
 
+        public string FunctionNumber
+        {
+            get
+            {
+                return id.Split('_')[1];
+            }
+        }
         public Problem(long pointer)
         {
-
             try
             {
                 this.dimension = CocoLibraryWrapper.cocoProblemGetDimension(pointer);
