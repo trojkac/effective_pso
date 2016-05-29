@@ -19,6 +19,9 @@ namespace PsoService
             _left.Item2.CommunicationBreakdown += OnLeftCommunicationFailure;
             _right.Item2.CommunicationBreakdown += OnRightCommunicationFailure;
 
+            _left.Item2.Open();
+            _right.Item2.Open();
+
 
         }
 
