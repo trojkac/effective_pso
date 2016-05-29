@@ -190,6 +190,8 @@ namespace CocoWrapper
             //hubert_coco_evaluate_function(problemPointer, y, ytab, xtab);
 
             coco_free_memory(y);
+            coco_free_memory(xa);
+            coco_free_memory(z);
 
             return ytab;
         }
