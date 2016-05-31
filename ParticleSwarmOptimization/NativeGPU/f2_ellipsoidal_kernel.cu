@@ -13,14 +13,17 @@ __device__ double tempParticle2[NUM_OF_DIMENSIONS];
 // Simple quadratic function
 __device__ double fitness_function(double x[], int dimensionsCount)
 {
-    double res = 0;
+	const double condition = 1.0e6;
+	size_t i = 0;
+	double result;
 
-    for (int i = 0; i < dimensionsCount; i++)
-    {
-        res += x[i] * x[i];
-    }
+	result = x[i] * x[i];
+	for (i = 1; i < dimensionsCount; ++i) {
+		const double exponent = 1.0 * (double) (long) i / ((double) (long) dimensionsCount - 1.0);
+		result += pow((double)condition, (double)exponent) * x[i] * x[i];
+	}
 
-    return res;
+	return result;
 }
 
 extern "C" {

@@ -7,20 +7,30 @@ const int NUM_OF_DIMENSIONS = 3;
 __constant__ double d_OMEGA= 0.64;
 __constant__ double d_phi = 1.4;
 
+__constant__ double PI = 3.1415;
+
 __device__ double tempParticle1[NUM_OF_DIMENSIONS];
 __device__ double tempParticle2[NUM_OF_DIMENSIONS];
 
 // Simple quadratic function
 __device__ double fitness_function(double x[], int dimensionsCount)
 {
-    double res = 0;
+	const double alpha = 100.0;
+	size_t i;
+	double result = 0.0;
 
-    for (int i = 0; i < dimensionsCount; i++)
-    {
-        res += x[i] * x[i];
-    }
+	for (i = 0; i < dimensionsCount; ++i) {
+	double base, exponent, si;
 
-    return res;
+	base = sqrt(alpha);
+	exponent = (double) (long) i / ((double) (long) dimensionsCount - 1);
+	
+	si = -pow(base, exponent);
+
+	result += 5.0 * fabs(si) - si * x[i];
+	}
+
+	return result;
 }
 
 extern "C" {
