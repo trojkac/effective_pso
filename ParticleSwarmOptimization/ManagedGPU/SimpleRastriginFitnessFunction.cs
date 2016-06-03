@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace ManagedGPU
 {
-    internal class RastriginFitnessFunction : ICudaFitnessFunction
+    internal class SimpleRastriginFitnessFunction : ICudaFitnessFunction
     {
-        public RastriginFitnessFunction()
+        public SimpleRastriginFitnessFunction()
         {
-            HostFitnessFunction = RastriginFunction;
+            HostFitnessFunction = SimpleRastriginFunction;
             KernelFile = "psoKernelRastrigin.ptx";
         }
 
@@ -16,7 +16,7 @@ namespace ManagedGPU
 
         private static int A = 10;
 
-        private static double RastriginFunction(double[] x)
+        private static double SimpleRastriginFunction(double[] x)
         {
             return A*x.Length + x.Sum(t => t*t - A*Math.Cos(2*Math.PI*t));
         }
