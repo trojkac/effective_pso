@@ -39,6 +39,8 @@ namespace Algorithm
 	        foreach (var particle in _particles)
 	        {
 	            particle.Transpose(_fitnessFunction);
+                particle.UpdateNeighborhood(_particles);
+
 	        }
 			while (_conditionCheck())
 			{
@@ -48,7 +50,6 @@ namespace Algorithm
 			    }
 			    foreach (var particle in _particles)
 			    {
-			        particle.UpdateNeighborhood(_particles);
                     particle.UpdateVelocity();
 			    }
 			    if (_logger != null)

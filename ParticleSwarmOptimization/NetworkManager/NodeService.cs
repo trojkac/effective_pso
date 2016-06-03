@@ -72,7 +72,7 @@ namespace NetworkManager
                 Debug.WriteLine("{0}:  Trying to deregister node {1}, already removed", Info.Id, brokenNodeInfo.Id);
                 return;
             }
-            Debug.WriteLine("{0}: deregistering node {1}",Info.Id,brokenNodeInfo.Id);
+            Debug.WriteLine("{0}: deregistering node {1}", Info.Id, brokenNodeInfo.Id);
             var node = KnownNodes.First(n => n.Id == brokenNodeInfo.Id);
             KnownNodes.Remove(node);
             BroadcastNeighborhoodList();

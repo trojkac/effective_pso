@@ -20,13 +20,15 @@ namespace CocoSingleCpuApp
         public static Problem PROBLEM;
         static void Main(string[] args)
         {
-            Console.WriteLine("Podaj liczbe wymiarow do przeprowadzenia obliczen (jesli wiecej niz jeden oddziel przecinkiem): ");
-            string dims = Console.ReadLine().Trim();
-            Console.WriteLine("Podaj zakres funkcji do obliczen: ");
-            Console.Write("Od: ");
-            var functionsFrom = int.Parse(Console.ReadLine());
-            Console.Write("Do: ");
-            var functionsTo = int.Parse(Console.ReadLine());
+            if (args.Length < 3)
+            {
+                Console.WriteLine("CocoSingleCpuApp <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo>");
+                return;
+            }
+            string dims = args[0];
+
+            var functionsFrom = int.Parse(args[1]);
+            var functionsTo = int.Parse(args[2]);
             RandomGenerator randomGenerator = RandomGenerator.GetInstance(RANDOM_SEED);
             CocoLibraryWrapper.cocoSetLogLevel("info");
             var functionsToOptimize = new List<string>();
