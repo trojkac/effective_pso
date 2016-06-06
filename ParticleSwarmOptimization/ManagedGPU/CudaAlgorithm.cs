@@ -58,9 +58,12 @@ namespace ManagedGPU
         {
             var size = _particlesCount * _dimensionsCount;
 
-            var threadsNum = 32;
-            var blocksNum = _particlesCount / threadsNum;
             var ctx = new CudaContext(0);
+
+            var deviceInfo = ctx.GetDeviceInfo();
+
+            int threadsNum = (int)deviceInfo.MaxBlockDim.x;
+            var blocksNum = (int)Math.Ceiling((double)_particlesCount / threadsNum);
 
             _updateParticle = ctx.LoadKernel(_fitnessFunction.KernelFile, "kernelUpdateParticle");
             _updateParticle.GridDimensions = blocksNum;
