@@ -21,7 +21,7 @@ namespace Common
             return newState.FitnessValue;
         }
 
-        public IState<double[], double[]> BestEvaluation { get; private set; }
+        public IState<double[], double[]> BestEvaluation { get; set; }
         public int LocationDim { get; set; }
         public int FitnessDim { get; set; }
     }

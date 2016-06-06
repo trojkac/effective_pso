@@ -20,6 +20,9 @@ namespace NetworkManager
         void StartCalculation(PsoParameters parameters);
 
         [OperationContract]
+        void CalculationsFinished(NetworkNodeInfo source, object result);
+
+        [OperationContract]
         void CheckStatus();
     }
 }

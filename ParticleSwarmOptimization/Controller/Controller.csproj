@@ -54,6 +54,10 @@
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NetworkManager\NetworkManager.csproj">
+      <Project>{F46E4D5D-06D4-45CD-A440-9DFAF32C6AAB}</Project>
+      <Name>NetworkManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PsoService\PsoService.csproj">
       <Project>{0e5c5770-930f-4247-98e1-7c5eb90287dd}</Project>
       <Name>PsoService</Name>

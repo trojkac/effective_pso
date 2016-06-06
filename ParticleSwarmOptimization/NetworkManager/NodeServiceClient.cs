@@ -66,6 +66,19 @@ namespace NetworkManager
             }
         }
 
+        public void CalculationsFinished(NetworkNodeInfo source, object result)
+        {
+            try
+            {
+                Proxy.CalculationsFinished(source, result);
+
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
         public void CheckStatus()
         {
             Proxy.CheckStatus();

@@ -33,8 +33,9 @@ namespace Node
             NetworkNodeManager.NodeService.RegisterNode += RunOnNode;
             NetworkNodeManager.NodeService.StartCalculations += Run;
             PsoRingManager.CommunicationLost += NetworkNodeManager.NodeService.Deregister;
+            PsoController.CalculationsCompleted += NetworkNodeManager.FinishCalculations;
+            NetworkNodeManager.NodeService.RemoteCalculationsFinished += PsoController.RemoteControllerFinished;
 
-            
         }
 
         // NETWORK PART

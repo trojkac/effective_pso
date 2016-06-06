@@ -92,6 +92,14 @@ namespace NetworkManager
             }
         }
 
+        public void FinishCalculations(object result)
+        {
+            foreach (var client in NodeServiceClients)
+            {
+                client.CalculationsFinished(NodeService.Info,result);
+            }
+        }
+
         public void StartTcpNodeService()
         {
             var serviceAddress = "net.tcp://0.0.0.0:" + _tcpPort + "/NodeService";
