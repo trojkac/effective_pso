@@ -4,10 +4,10 @@ using System.Runtime.Serialization;
 namespace Common
 {
     [DataContract]
-    public class UserFunctionParameters
+    public class FunctionParameters
     {
         [DataMember]
-        public string FitnessFunctionType { get; set; } //zmienic na string
+        public string FitnessFunctionType { get; set; } 
         [DataMember]
         public int Dimension { get; set; }
 

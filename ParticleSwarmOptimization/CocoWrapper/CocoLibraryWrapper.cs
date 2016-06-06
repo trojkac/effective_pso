@@ -152,9 +152,9 @@ namespace CocoWrapper
             //return coco_suite_get_next_problem(suitePointer, observerPointer);
             long a = 9l;
             long d = observerPointer;
-            long d1 = d << (4*8);
+            long d1 = d << (4 * 8);
             long d2 = d1 + suitePointer;
-            return hubert_coco_suite_get_next_problem(d2,a, observerPointer);
+            return hubert_coco_suite_get_next_problem(d2, a, observerPointer);
         }
 
         public unsafe long cocoSuiteGetProblem(long suitePointer, size_t problemIndex)

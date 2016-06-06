@@ -63,32 +63,40 @@ namespace NetworkManager
 
         }
 
-        public void StartCalculations(PsoSettings settings)
+        public void StartCalculations(PsoParameters parameters)
         {
             foreach (var client in NodeServiceClients)
             {
                 try
                 {
-                    client.StartCalculation(settings);
+                    client.StartCalculation(parameters);
                 }
                 catch
                 {
-                    Debug.WriteLine("cannot start calculations on {0}",settings);
+                    Debug.WriteLine("cannot start calculations on {0}",parameters);
                 }
                 
             }
         }
 
-        public void StartCalculations(PsoSettings settings, NetworkNodeInfo target)
+        public void StartCalculations(PsoParameters parameters, NetworkNodeInfo target)
         {
             var client = new TcpNodeServiceClient(target);
             try
             {
-                client.StartCalculation(settings);
+                client.StartCalculation(parameters);
             }
             catch
             {
-                Debug.WriteLine("cannot start calculations on {0}", settings);
+                Debug.WriteLine("cannot start calculations on {0}", parameters);
+            }
+        }
+
+        public void FinishCalculations(object result)
+        {
+            foreach (var client in NodeServiceClients)
+            {
+                client.CalculationsFinished(NodeService.Info,result);
             }
         }
 

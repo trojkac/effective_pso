@@ -30,8 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ManagedCuda">
-      <HintPath>..\..\ManagedCuda.dll</HintPath>
+    <Reference Include="ManagedCuda, Version=7.5.7.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ManagedCuda-75-Standalone.7.5.7\lib\net45\ManagedCuda.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,6 +76,7 @@
     <None Include="f3_rastrigin_kernel.ptx" />
     <None Include="f4_buche_rastrigin_kernel.ptx" />
     <None Include="f5_linear_slope_kernel.ptx" />
+    <None Include="packages.config" />
     <None Include="psoKernelQuadratic.ptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -13,11 +13,10 @@ namespace UserInterface
     {
         static void Main(string[] args)
         {
-            UserNodeParameters nodeParams = ReadNodeParameters();
-            UserFunctionParameters functionParams;
-            UserPsoParameters psoParams;
+            NodeParameters nodeParams = ReadNodeParameters();
+            FunctionParameters functionParams;
 
-            MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.NrOfVCpu, nodeParams.Ports.ToArray());
+            MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.Ports.ToArray(), nodeParams.NrOfVCpu);
             if (nodeParams.PeerAddress != null)
             {
                 machineManager.Register(nodeParams.PeerAddress);
@@ -37,8 +36,10 @@ namespace UserInterface
                 {
                     case '1':
                         functionParams = ReadFunctionParameters();
-                        psoParams = ReadPsoParameters();
-                        machineManager.StartPsoAlgorithm(new PsoSettings(psoParams, functionParams));
+                        machineManager.StartPsoAlgorithm(new PsoParameters(new Tuple<PsoParticleType, int>[]
+                        {
+                            new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 15)
+                        }, functionParams));
                         var r = machineManager.GetResult();
                         Console.WriteLine("Value: {0}",r.FitnessValue);
                         break;
@@ -55,11 +56,11 @@ namespace UserInterface
 
 
 
-        public static UserNodeParameters ReadNodeParameters()
+        public static NodeParameters ReadNodeParameters()
         {
             string nodePath = "n.txt";
 
-            UserNodeParameters nodeParams = new UserNodeParameters();
+            NodeParameters nodeParams = new NodeParameters();
             if (!ParametersReader.ReadNodeParametersFile(nodeParams, nodePath))
             {
                 Console.WriteLine("Nie udało się wczytać pliku z danymi węzła");
@@ -67,30 +68,17 @@ namespace UserInterface
             return nodeParams;
         }
 
-        public static UserFunctionParameters ReadFunctionParameters()
+        public static FunctionParameters ReadFunctionParameters()
         {
             Console.WriteLine("Podaj ścieżkę do pliku z parametrami funkcji");
             string functionPath = Console.ReadLine();
 
-            UserFunctionParameters functionParams = new UserFunctionParameters();
+            FunctionParameters functionParams = new FunctionParameters();
             if (!ParametersReader.ReadFunctionParametersFile(functionParams, functionPath))
             {
                 Console.WriteLine("Nie udało się wczytać pliku z danymi funkcji");
             }
             return functionParams;
-        }
-
-        public static UserPsoParameters ReadPsoParameters()
-        {
-            Console.WriteLine("Podaj ścieżkę do pliku z parametrami PSO");
-            string psoPath = Console.ReadLine();
-
-            UserPsoParameters psoParams = new UserPsoParameters();
-            if (!ParametersReader.ReadPsoParametersFile(psoParams, psoPath))
-            {
-                Console.WriteLine("Nie udało się wczytać pliku z danymi PSO");
-            }
-            return psoParams;
         }
 
         public class ParametersReader
@@ -107,7 +95,7 @@ namespace UserInterface
                 return true;
             }
 
-            public static bool ReadNodeParametersFile(UserNodeParameters parameters, string path, bool relativePath = true)
+            public static bool ReadNodeParametersFile(NodeParameters parameters, string path, bool relativePath = true)
             {
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string vcpus = lines[0];
@@ -176,7 +164,7 @@ namespace UserInterface
                 return true;
             }
 
-            public static bool ReadFunctionParametersFile(UserFunctionParameters parameters, string path, bool relativePath = true)
+            public static bool ReadFunctionParametersFile(FunctionParameters parameters, string path, bool relativePath = true)
             {
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string functionType = lines[0];
@@ -233,7 +221,7 @@ namespace UserInterface
                 return true;
             }
 
-            public static bool ReadPsoParametersFile(UserPsoParameters parameters, string path, bool relativePath = true)
+            public static bool ReadPsoParametersFile(string path, bool relativePath = true)
             {
                 string[] lines = File.ReadAllLines(relativePath ? GetAbsolutePath(path) : path);
                 string iterationsLimitCondition = lines[0];
@@ -292,15 +280,6 @@ namespace UserInterface
                     Console.WriteLine("Fully Informed Particles");
                     return false;
                 }
-
-                parameters.FullyInformedParticles = fi;
-                parameters.StandardParticles = std;
-                parameters.IterationsLimitCondition = isIterations;
-                parameters.Iterations = iters;
-                parameters.Epsilon = eps;
-                parameters.TargetValueCondition = isTargetValue;
-                parameters.TargetValue = target;
-
                 return true;
             }
         }

@@ -11,14 +11,16 @@ namespace Node
 
 
 
-        public MachineManager(string machineIp, int vcpus, int[] ports, bool isGpu = false)
+        public MachineManager(string machineIp, int[] ports, int vcpus = -1, bool isGpu = false)
         {
             //_functionParams = functionParams;
-            if (ports.Length != vcpus) {
-                throw new System.ArgumentException("ports.Length has to be equal to vcpus");
+            vcpus = vcpus == -1 ? System.Environment.ProcessorCount : vcpus;
+            if (ports.Length < vcpus)
+            {
+                throw new System.ArgumentException("ports.Length has to be greater than or equal to vcpus");
             }
 
-            _vCpuManagers = new VCpuManager[vcpus] ;
+            _vCpuManagers = new VCpuManager[vcpus];
             for (int i = 0; i < vcpus; i++)
             {
                 _vCpuManagers[i] = new VCpuManager(machineIp, ports[i], i.ToString());
@@ -33,7 +35,7 @@ namespace Node
                 _gpuManager = new GpuManager();
             }
 
-          
+
         }
         public void Register(string remoteAddress)
         {
@@ -42,15 +44,15 @@ namespace Node
                 vcpu.NetworkNodeManager.Register(new NetworkNodeInfo(remoteAddress, "asd"));
             }
         }
-        public void StartPsoAlgorithm(PsoSettings settings)
+        public void StartPsoAlgorithm(PsoParameters parameters)
         {
-            _vCpuManagers[0].StartCalculations(settings);
+            _vCpuManagers[0].StartCalculations(parameters);
         }
 
         public ParticleState GetResult()
         {
-             _vCpuManagers[0].PsoController.RunningAlgorithm.Wait();
-             return _vCpuManagers[0].PsoController.RunningAlgorithm.Result;
+            _vCpuManagers[0].PsoController.RunningAlgorithm.Wait();
+            return _vCpuManagers[0].PsoController.RunningAlgorithm.Result;
         }
     }
 }

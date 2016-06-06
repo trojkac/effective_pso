@@ -61,7 +61,7 @@ namespace ManagedGPU
             var ctx = new CudaContext(0);
 
             var deviceInfo = ctx.GetDeviceInfo();
-
+            
             int threadsNum = (int)deviceInfo.MaxBlockDim.x;
             var blocksNum = (int)Math.Ceiling((double)_particlesCount / threadsNum);
 

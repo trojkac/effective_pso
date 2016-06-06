@@ -2,7 +2,7 @@
 
 namespace Common
 {
-    public class UserNodeParameters
+    public class NodeParameters
     {
         public int NrOfVCpu { get; set; }
         public bool IsGpu { get; set; }
