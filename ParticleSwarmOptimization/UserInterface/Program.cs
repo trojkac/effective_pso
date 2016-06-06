@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using Common;
 using Node;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace UserInterface
 {
@@ -13,45 +15,34 @@ namespace UserInterface
     {
         static void Main(string[] args)
         {
-            NodeParameters nodeParams = ReadNodeParameters();
-            FunctionParameters functionParams;
-
-            MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.NrOfVCpu, nodeParams.Ports.ToArray());
-            if (nodeParams.PeerAddress != null)
+            NodeParameters nodeParams = new NodeParameters() { Ip = "127.0.0.1", IsGpu = true, NrOfVCpu = 8, PeerAddress = "127.0.0.1"};
+            var xmlSerializer = new XmlSerializer(typeof(NodeParameters));
+            TextWriter writer = new StreamWriter("nodeParams.xml");
+            xmlSerializer.Serialize(writer, nodeParams);
+            writer.Close();
+            var particles =  new [] {new ParticlesCount(PsoParticleType.Standard, 40)};
+            var function = new PsoParameters()
             {
-                machineManager.Register(nodeParams.PeerAddress);
-            }
-            char c = 'c';
-            bool cont = true;
-            while (cont)
-            {
-                Console.WriteLine("1 - Start Calculations");
-                Console.WriteLine("0 - Exit");
-                Console.WriteLine("");
-                Console.Write("choice:");
-                c = Console.ReadKey().KeyChar;
-                Console.WriteLine("\n\n");
-
-                switch (c)
+                Epsilon = 0,
+                Iterations = 1,
+                IterationsLimitCondition = true,
+                TargetValueCondition = false,
+                Particles = particles,
+                FunctionParameters = new FunctionParameters()
                 {
-                    case '1':
-                        functionParams = ReadFunctionParameters();
-                        machineManager.StartPsoAlgorithm(new PsoParameters(new Tuple<PsoParticleType, int>[]
-                        {
-                            new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 15)
-                        }, functionParams));
-                        var r = machineManager.GetResult();
-                        Console.WriteLine("Value: {0}",r.FitnessValue);
-                        break;
-                    case '0':
-                        cont = false;
-                        break;
-                    default:
-                        break;
-
+                    Dimension = 1,
+                    Coefficients = new[] { 1.0 },
+                    FitnessFunctionType = "quadratic",
+                    SearchSpace = new[] { new Tuple<double, double>(3, 5), }
 
                 }
-            }
+            };
+
+            var psoXmlSerializer = new XmlSerializer(typeof(PsoParameters));
+            var psoWriter = new StreamWriter("psoParams.xml");
+            psoXmlSerializer.Serialize(psoWriter, function);
+            
+           
         }
 
 

@@ -11,21 +11,19 @@ namespace Tests_Common
     {
         public static PsoParameters QuadraticFunction1DFrom3To5()
         {
-            return new PsoParameters()
-            {
-                Epsilon = 0,
-                Iterations = 1,
-                IterationsLimitCondition = true,
-                TargetValueCondition = false,
-                Particles = new[] { new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 40) },
-                FunctionParameters = new FunctionParameters()
+            return new PsoParameters(new[] { new ParticlesCount(PsoParticleType.Standard, 40) }, new FunctionParameters()
                 {
                     Dimension = 1,
                     Coefficients = new[] { 1.0 },
                     FitnessFunctionType = "quadratic",
                     SearchSpace = new[] { new Tuple<double, double>(3, 5), }
 
-                }
+                })
+            {
+                Epsilon = 0,
+                Iterations = 1,
+                IterationsLimitCondition = true,
+                TargetValueCondition = false,
             };
         }
         public static PsoParameters QuadraticFunction20D()

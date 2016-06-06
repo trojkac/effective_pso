@@ -11,13 +11,14 @@ namespace Tests
     {
         public static PsoParameters QuadraticFunction1DFrom3To5()
         {
+            var particles = new[] { new ParticlesCount(PsoParticleType.Standard, 40)};
             return new PsoParameters()
                 {
                     Epsilon = 0,
                     Iterations = 1,
                     IterationsLimitCondition = true,
                     TargetValueCondition = false,
-                    Particles = new[] {new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 40)},
+                    Particles = particles,
                     FunctionParameters = new FunctionParameters()
                     {
                         Dimension = 1,
