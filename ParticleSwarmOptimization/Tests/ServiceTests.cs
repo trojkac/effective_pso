@@ -48,7 +48,7 @@ namespace Tests
                 vcpus[i].StartTcpNodeService();
                 if (i > 0)
                 {
-                    vcpus[i].NetworkNodeManager.Register(vcpus[i-1].GetMyNetworkNodeInfo());
+                    vcpus[i].NetworkNodeManager.Register(vcpus[i - 1].GetMyNetworkNodeInfo());
                 }
             }
 

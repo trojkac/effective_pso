@@ -14,9 +14,9 @@ namespace Node
 
         // GENERAL PART
 
-        public VCpuManager(string tcpAddress,int tcpPort, string pipeName, IPsoController psoController  = null, IPsoManager psoRingManager = null)
+        public VCpuManager(string tcpAddress, int tcpPort, string pipeName, IPsoController psoController = null, IPsoManager psoRingManager = null)
         {
-            NetworkNodeManager = new NetworkNodeManager(tcpAddress,tcpPort, pipeName);
+            NetworkNodeManager = new NetworkNodeManager(tcpAddress, tcpPort, pipeName);
             PsoController = psoController ?? new PsoController(NetworkNodeManager.NodeService.Info.Id);
             PsoRingManager = psoRingManager ?? new PsoRingManager(NetworkNodeManager.NodeService.Info.Id);
             NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses = PsoRingManager.GetProxyParticlesAddresses();
@@ -62,7 +62,7 @@ namespace Node
             NetworkNodeManager.ClosePipeNodeService();
         }
 
-        
+
         public NetworkNodeInfo GetMyNetworkNodeInfo()
         {
             return NetworkNodeManager.NodeService.Info;
@@ -70,7 +70,7 @@ namespace Node
         public IPsoManager PsoRingManager { get; set; }
         public IPsoController PsoController { get; set; }
 
-        public void Run( PsoParameters psoParameters)
+        public void Run(PsoParameters psoParameters)
         {
             if (!PsoController.CalculationsRunning)
             {
@@ -89,7 +89,7 @@ namespace Node
         {
             if (PsoController.CalculationsRunning)
             {
-                NetworkNodeManager.StartCalculations(PsoController.RunningParameters,newNode);
+                NetworkNodeManager.StartCalculations(PsoController.RunningParameters, newNode);
             }
         }
     }

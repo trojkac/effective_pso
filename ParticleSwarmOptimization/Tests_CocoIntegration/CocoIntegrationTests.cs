@@ -40,7 +40,7 @@ namespace Tests
         /**
         * Evaluate the static PROBLEM.
         */
-        public  double[] evaluateFunction(double[] x)
+        public double[] evaluateFunction(double[] x)
         {
             return PROBLEM.evaluateFunction(x);
         }
@@ -57,7 +57,7 @@ namespace Tests
                                           double[],
                                           double[],
                                           long,
-                                          Random> optimizer )
+                                          Random> optimizer)
         {
             try
             {
@@ -165,7 +165,7 @@ namespace Tests
             CocoLibraryWrapper.cocoSetLogLevel("info");
 
             Console.WriteLine("Running the example experiment... (might take time, be patient)");
-            exampleExperiment("bbob", "bbob", randomGenerator,myRandomSearch);
+            exampleExperiment("bbob", "bbob", randomGenerator, myRandomSearch);
 
             Console.WriteLine("Done");
         }
@@ -174,7 +174,7 @@ namespace Tests
         public void RunEffectivePso()
         {
             RandomGenerator randomGenerator = RandomGenerator.GetInstance(RANDOM_SEED);
-            
+
             CocoLibraryWrapper.cocoSetLogLevel("info");
 
             Console.WriteLine("Running the example experiment... (might take time, be patient)");
@@ -183,8 +183,8 @@ namespace Tests
 
                 /* Set some options for the observer. See documentation for other options. */
                 String observerOptions =
-                          "result_folder: PSO_on_bbob_"+
-                          DateTime.Now.Hour.ToString()+DateTime.Now.Minute.ToString()
+                          "result_folder: PSO_on_bbob_" +
+                          DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()
                         + " algorithm_name: PSO"
                         + " algorithm_info: \"A simple Random search algorithm\"";
                 /* Initialize the suite and observer */
@@ -197,7 +197,7 @@ namespace Tests
                 {
 
                     int dimension = PROBLEM.getDimension();
-                    int particlesNum = dimension*3;
+                    int particlesNum = dimension * 3;
 
 
                     /* Run the algorithm at least once */
@@ -218,16 +218,16 @@ namespace Tests
                             IterationsLimitCondition = true,
                             Iterations = (int)evaluationsRemaining,
                         };
-                        
+
                         var function = new FitnessFunction(evaluateFunction);
-                       
+
                         var upper = PROBLEM.getLargestValuesOfInterest();
                         var bounds = PROBLEM.getSmallestValuesOfInterest().Select((x, i) => new Tuple<double, double>(x, upper[i])).ToArray();
-                       
+
                         function.FitnessDim = PROBLEM.getNumberOfObjectives();
                         function.LocationDim = PROBLEM.getDimension();
 
-                        settings.FunctionParameters = new FunctionParameters {Dimension = function.LocationDim,SearchSpace = bounds};
+                        settings.FunctionParameters = new FunctionParameters { Dimension = function.LocationDim, SearchSpace = bounds };
                         settings.FunctionParameters.SearchSpace = bounds;
                         var particles = new IParticle[particlesNum];
                         for (var i = 0; i < particlesNum; i++)
@@ -240,7 +240,7 @@ namespace Tests
 
                         algorithm.Run();
                         /* Call the optimization algorithm for the remaining number of evaluations */
-                       
+
 
                         /* Break the loop if the algorithm performed no evaluations or an unexpected thing happened */
                         if (PROBLEM.getEvaluations() == evaluationsDone)
@@ -262,11 +262,9 @@ namespace Tests
             {
                 Console.WriteLine(e.Message);
             }
-//            exampleExperiment("bbob", "bbob", randomGenerator, effectivePso);
+            //            exampleExperiment("bbob", "bbob", randomGenerator, effectivePso);
 
             Console.WriteLine("Done");
-            
         }
-
     }
 }
