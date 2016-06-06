@@ -16,7 +16,7 @@ namespace UserInterface
             NodeParameters nodeParams = ReadNodeParameters();
             FunctionParameters functionParams;
 
-            MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.NrOfVCpu, nodeParams.Ports.ToArray());
+            MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.Ports.ToArray(), nodeParams.NrOfVCpu);
             if (nodeParams.PeerAddress != null)
             {
                 machineManager.Register(nodeParams.PeerAddress);
