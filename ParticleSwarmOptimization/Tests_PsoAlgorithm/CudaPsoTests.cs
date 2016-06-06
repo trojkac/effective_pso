@@ -60,7 +60,7 @@ namespace Tests_PsoAlgorithm
                 LocationDimensions = 2,
                 FitnessDimensions = 1,
                 ParticlesCount = 1000,
-                FitnessFunction = CudaFitnessFunctions.Rastrigin,
+                FitnessFunction = CudaFitnessFunctions.SimpleRastrigin,
                 SyncWithCpu = false
             });
 
