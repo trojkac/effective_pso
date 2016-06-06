@@ -82,10 +82,10 @@ namespace NetworkManager
             });
         }
 
-        public void StartCalculation(PsoSettings settings)
+        public void StartCalculation(PsoParameters parameters)
         {
             Debug.WriteLine("{0}: starting calculations.", Info.Id);
-            if (StartCalculations != null) StartCalculations(settings);
+            if (StartCalculations != null) StartCalculations(parameters);
         }
 
         public void CheckStatus()

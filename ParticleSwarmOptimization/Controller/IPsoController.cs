@@ -8,8 +8,8 @@ namespace Controller
     {
         bool CalculationsRunning { get; }
         Task<ParticleState> RunningAlgorithm { get; }
-        PsoSettings RunningSettings { get; }
-        void Run(PsoSettings psoSettings, ProxyParticle[] proxyParticleServices = null);
+        PsoParameters RunningParameters { get; }
+        void Run(PsoParameters psoParameters, ProxyParticle[] proxyParticleServices = null);
         PsoImplementationType[] GetAvailableImplementationTypes();
     }
 }

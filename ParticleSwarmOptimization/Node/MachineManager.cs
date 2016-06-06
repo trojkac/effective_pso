@@ -42,9 +42,9 @@ namespace Node
                 vcpu.NetworkNodeManager.Register(new NetworkNodeInfo(remoteAddress, "asd"));
             }
         }
-        public void StartPsoAlgorithm(PsoSettings settings)
+        public void StartPsoAlgorithm(PsoParameters parameters)
         {
-            _vCpuManagers[0].StartCalculations(settings);
+            _vCpuManagers[0].StartCalculations(parameters);
         }
 
         public ParticleState GetResult()

@@ -2,5 +2,5 @@
 
 namespace NetworkManager
 {
-    public delegate void StartCalculationsHandler(PsoSettings settings);
+    public delegate void StartCalculationsHandler(PsoParameters parameters);
 }

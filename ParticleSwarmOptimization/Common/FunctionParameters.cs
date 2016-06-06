@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Common
 {
     [DataContract]
-    public class UserFunctionParameters
+    public class FunctionParameters
     {
         [DataMember]
         public string FitnessFunctionType { get; set; } //zmienic na string

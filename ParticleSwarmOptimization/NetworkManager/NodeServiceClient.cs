@@ -53,11 +53,11 @@ namespace NetworkManager
         }
 
 
-        public void StartCalculation(PsoSettings settings)
+        public void StartCalculation(PsoParameters parameters)
         {
             try
             {
-                Proxy.StartCalculation(settings);
+                Proxy.StartCalculation(parameters);
 
             }
             catch

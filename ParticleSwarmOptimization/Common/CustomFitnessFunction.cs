@@ -1,22 +1,36 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Serialization;
+using CocoWrapper;
 
 namespace Common
 {
-    [DataContract]
-    public abstract class AbstractFitnessFunction : IFitnessFunction<double[],double[]>
+
+    public static class FunctionFactory
     {
-        private IOptimization<double[]> _optimization; 
-        protected AbstractFitnessFunction(UserFunctionParameters functionParams)
+        public static IFitnessFunction<double[],double[]> GetFitnessFunction(FunctionParameters parameters)
         {
-            Dimension = functionParams.Dimension;
-            Coefficients = new double[Dimension];
-            functionParams.Coefficients.CopyTo(Coefficients, 0);
-            _optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
-        }
-        public static AbstractFitnessFunction GetFitnessFunction(UserFunctionParameters parameters)
-        {
+            if (parameters.FitnessFunctionType.Contains("bbob"))
+            {
+                var functionId = parameters.FitnessFunctionType.Split('_')[1];
+                var observerOptions =
+                             "result_folder: PSO_on_bbob_" +
+                             DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()
+                           + " algorithm_name: PSO"
+                           + " algorithm_info: \"Cluster node for optimizing BBOB functions\"";
+                
+                var suite = new Suite("bbob", "year: 2016", "dimensions: " + parameters.Dimension);
+                var observer = new Observer("bbob", observerOptions);
+                var benchmark = new Benchmark(suite, observer);
+                Problem problem;
+                /* Iterate over all problems in the suite */
+                while ((problem = benchmark.getNextProblem()) != null)
+                {
+                    if (problem.FunctionNumber != functionId) continue;
+                    return new FitnessFunction(problem.evaluateFunction);
+                }
+
+            }
             switch (parameters.FitnessFunctionType)
             {
                 case "quadratic":
@@ -28,6 +42,18 @@ namespace Common
                 default:
                     throw new ArgumentException("Unknown function type.");
             }
+        }
+    }
+    [DataContract]
+    public abstract class AbstractFitnessFunction : IFitnessFunction<double[],double[]>
+    {
+        private IOptimization<double[]> _optimization; 
+        protected AbstractFitnessFunction(FunctionParameters functionParams)
+        {
+            Dimension = functionParams.Dimension;
+            Coefficients = new double[Dimension];
+            functionParams.Coefficients.CopyTo(Coefficients, 0);
+            _optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
         }
 
         public abstract double[] Calculate(double[] vector);
@@ -68,7 +94,7 @@ namespace Common
             return new []{value};
         }
 
-        public QuadraticFunction(UserFunctionParameters functionParams)
+        public QuadraticFunction(FunctionParameters functionParams)
             : base(functionParams)
         {
 
@@ -83,7 +109,7 @@ namespace Common
             throw new NotImplementedException();
         }
 
-        public RastriginFunction(UserFunctionParameters functionParams)
+        public RastriginFunction(FunctionParameters functionParams)
             : base(functionParams)
         {
         }
@@ -97,7 +123,7 @@ namespace Common
             throw new NotImplementedException();
         }
 
-        public RosenbrockFunction(UserFunctionParameters functionParams)
+        public RosenbrockFunction(FunctionParameters functionParams)
             : base(functionParams)
         {
         }

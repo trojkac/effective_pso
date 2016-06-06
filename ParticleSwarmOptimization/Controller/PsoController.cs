@@ -19,7 +19,7 @@ namespace Controller
         public event CalculationCompletedHandler CalculationsCompleted;
         public bool CalculationsRunning { get { return RunningAlgorithm != null && !RunningAlgorithm.IsCompleted; } }
         public Task<ParticleState> RunningAlgorithm { get; private set; }
-        public PsoSettings RunningSettings { get; private set; }
+        public PsoParameters RunningParameters { get; private set; }
         private static List<IParticle> CreateParticles(IEnumerable<Tuple<PsoParticleType, int>> particlesParameters, IFitnessFunction<double[],double[]> function, int dimensions, Tuple<double,double>[] bounds)
         {
             var particles = new List<IParticle>();
@@ -36,19 +36,19 @@ namespace Controller
         }
 
 
-        public void Run(PsoSettings psoSettings, PsoService.ProxyParticle[] proxyParticleServices = null)
+        public void Run(PsoParameters psoParameters, PsoService.ProxyParticle[] proxyParticleServices = null)
         {
 
-            var function = AbstractFitnessFunction.GetFitnessFunction(psoSettings.FunctionParameters);
-            var particles = CreateParticles(psoSettings.Particles, function, psoSettings.Dimensions, psoSettings.FunctionParameters.SearchSpace);
+            var function = FunctionFactory.GetFitnessFunction(psoParameters.FunctionParameters);
+            var particles = CreateParticles(psoParameters.Particles, function, psoParameters.FunctionParameters.Dimension, psoParameters.FunctionParameters.SearchSpace);
             if (proxyParticleServices != null)
             {
                 particles.AddRange(proxyParticleServices);
             }
-            var algorithm = new PsoAlgorithm(psoSettings, function, particles.ToArray());
+            var algorithm = new PsoAlgorithm(psoParameters, function, particles.ToArray());
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
-                RunningSettings = psoSettings;
+                RunningParameters = psoParameters;
                 //var r = algorithm.Run(particles,_nodeId.ToString());
                 var r = algorithm.Run();
                 if (CalculationsCompleted != null) CalculationsCompleted(r);

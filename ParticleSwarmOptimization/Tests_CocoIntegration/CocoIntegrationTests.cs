@@ -212,7 +212,7 @@ namespace Tests
                         if (PROBLEM.isFinalTargetHit() || (evaluationsRemaining <= 0))
                             break;
 
-                        var settings = new PsoSettings()
+                        var settings = new PsoParameters()
                         {
                             TargetValueCondition = false,
                             IterationsLimitCondition = true,
@@ -227,7 +227,7 @@ namespace Tests
                         function.FitnessDim = PROBLEM.getNumberOfObjectives();
                         function.LocationDim = PROBLEM.getDimension();
 
-                        settings.FunctionParameters = new UserFunctionParameters {Dimension = function.LocationDim,SearchSpace = bounds};
+                        settings.FunctionParameters = new FunctionParameters {Dimension = function.LocationDim,SearchSpace = bounds};
                         settings.FunctionParameters.SearchSpace = bounds;
                         var particles = new IParticle[particlesNum];
                         for (var i = 0; i < particlesNum; i++)

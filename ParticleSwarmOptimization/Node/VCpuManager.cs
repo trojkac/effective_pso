@@ -10,7 +10,7 @@ namespace Node
     public class VCpuManager
     {
 
-        private UserNodeParameters _nodeParams;
+        private NodeParameters _nodeParams;
 
         // GENERAL PART
 
@@ -69,26 +69,26 @@ namespace Node
         public IPsoManager PsoRingManager { get; set; }
         public IPsoController PsoController { get; set; }
 
-        public void Run( PsoSettings psoSettings)
+        public void Run( PsoParameters psoParameters)
         {
             if (!PsoController.CalculationsRunning)
             {
-                PsoController.Run(psoSettings, PsoRingManager.GetProxyParticles());
+                PsoController.Run(psoParameters, PsoRingManager.GetProxyParticles());
             }
         }
 
-        public void StartCalculations(PsoSettings settings)
+        public void StartCalculations(PsoParameters parameters)
         {
             if (PsoController.CalculationsRunning) return;
-            NetworkNodeManager.StartCalculations(settings);
-            Run(settings);
+            NetworkNodeManager.StartCalculations(parameters);
+            Run(parameters);
         }
 
         private void RunOnNode(NetworkNodeInfo newNode)
         {
             if (PsoController.CalculationsRunning)
             {
-                NetworkNodeManager.StartCalculations(PsoController.RunningSettings,newNode);
+                NetworkNodeManager.StartCalculations(PsoController.RunningParameters,newNode);
             }
         }
     }
