@@ -19,7 +19,7 @@ namespace Tests
          * dimension * BUDGET_MULTIPLIER.
          * Increase the budget multiplier value gradually to see how it affects the runtime.
          */
-        public const int BUDGET_MULTIPLIER = 1000000;
+        public const int BUDGET_MULTIPLIER = 100000;
 
         /**
          * The maximal number of independent restarts allowed for an algorithm that restarts itself. 

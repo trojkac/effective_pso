@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using Algorithm;
 using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Tests_Common;
 
-namespace Tests
+namespace Tests_PsoAlgorithm
 {
     [TestClass]
     public class PsoAlgorithmTests
@@ -19,13 +17,14 @@ namespace Tests
             var function = new QuadraticFunction(settings.FunctionParameters);
             var particlesNum = 30;
             var particles = new IParticle[particlesNum];
+
             for (var i = 0; i < particlesNum; i++)
             {
                 particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
                     function.FitnessDim,function);
             }
-            var algorithm = new PsoAlgorithm(settings,function,particles.ToArray());
 
+            var algorithm = new PsoAlgorithm(settings, function, particles.ToArray());
             var result = algorithm.Run();
 
             Assert.AreEqual(0.0, result.FitnessValue[0], .1);
@@ -78,7 +77,7 @@ namespace Tests
             }
             Debug.WriteLine("");
             Assert.AreEqual(0.0, result.FitnessValue[0], .1);
-        
+
         }
     }
 }
