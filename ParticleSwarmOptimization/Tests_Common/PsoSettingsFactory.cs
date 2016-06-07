@@ -16,7 +16,7 @@ namespace Tests_Common
                     Dimension = 1,
                     Coefficients = new[] { 1.0 },
                     FitnessFunctionType = "quadratic",
-                    SearchSpace = new[] { new Tuple<double, double>(3, 5), }
+                    SearchSpace = new[] { new DimensionBound(3, 5), }
 
                 })
             {
@@ -33,11 +33,11 @@ namespace Tests_Common
             settings.FunctionParameters.Dimension = dim;
             settings.Iterations = 1000;
             settings.IterationsLimitCondition = true;
-            settings.FunctionParameters.SearchSpace = new Tuple<double, double>[dim];
+            settings.FunctionParameters.SearchSpace = new DimensionBound[dim];
             settings.FunctionParameters.Coefficients = new double[dim];
             for (int i = 0; i < dim; i++)
             {
-                settings.FunctionParameters.SearchSpace[i] = new Tuple<double, double>(-4.0, 4.0);
+                settings.FunctionParameters.SearchSpace[i] = new DimensionBound(-4.0, 4.0);
                 settings.FunctionParameters.Coefficients[i] = 1;
             }
             return settings;

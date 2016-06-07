@@ -12,7 +12,7 @@ namespace Algorithm
             int locationDim, 
             int fitnessDim,
             IFitnessFunction<double[],double[]> function, 
-            Tuple<double, double>[] bounds = null, 
+            DimensionBound[] bounds = null, 
             double[] initVelocity = null)
         {
             IParticle particle = null;

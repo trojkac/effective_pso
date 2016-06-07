@@ -3,5 +3,4 @@
   <NrOfVCpu>8</NrOfVCpu>
   <IsGpu>true</IsGpu>
   <Ip>127.0.0.1</Ip>
-  <PeerAddress>127.0.0.1</PeerAddress>
 </NodeParameters>

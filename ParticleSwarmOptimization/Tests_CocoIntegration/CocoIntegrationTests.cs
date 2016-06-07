@@ -222,7 +222,7 @@ namespace Tests
                         var function = new FitnessFunction(evaluateFunction);
                        
                         var upper = PROBLEM.getLargestValuesOfInterest();
-                        var bounds = PROBLEM.getSmallestValuesOfInterest().Select((x, i) => new Tuple<double, double>(x, upper[i])).ToArray();
+                        var bounds = PROBLEM.getSmallestValuesOfInterest().Select((x, i) => new DimensionBound(x, upper[i])).ToArray();
                        
                         function.FitnessDim = PROBLEM.getNumberOfObjectives();
                         function.LocationDim = PROBLEM.getDimension();

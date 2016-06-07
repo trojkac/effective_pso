@@ -30,7 +30,7 @@ namespace Controller
         public bool CalculationsRunning { get { return RunningAlgorithm != null && !RunningAlgorithm.IsCompleted; } }
         public Task<ParticleState> RunningAlgorithm { get; private set; }
         public PsoParameters RunningParameters { get; private set; }
-        private static List<IParticle> CreateParticles(ParticlesCount[] particlesParameters, IFitnessFunction<double[],double[]> function, int dimensions, Tuple<double,double>[] bounds)
+        private static List<IParticle> CreateParticles(ParticlesCount[] particlesParameters, IFitnessFunction<double[],double[]> function, int dimensions, DimensionBound[] bounds)
         {
             var particles = new List<IParticle>();
             foreach (var particle in particlesParameters)
