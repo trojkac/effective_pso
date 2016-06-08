@@ -27,6 +27,12 @@ namespace Common
                 while ((problem = benchmark.getNextProblem()) != null)
                 {
                     if (problem.FunctionNumber != functionId) continue;
+                    var upper = problem.getLargestValuesOfInterest();
+                    var bounds =
+                        problem.getSmallestValuesOfInterest()
+                            .Select((x, i) => new DimensionBound(x, upper[i]))
+                            .ToArray();
+                    parameters.SearchSpace = bounds;
                     return new FitnessFunction(problem.evaluateFunction);
                 }
 

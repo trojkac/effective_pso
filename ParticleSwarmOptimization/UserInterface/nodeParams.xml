@@ -3,4 +3,7 @@
   <NrOfVCpu>4</NrOfVCpu>
   <IsGpu>true</IsGpu>
   <Ip>127.0.0.1</Ip>
+  <Ports>
+    <int>8000</int>
+  </Ports>
 </NodeParameters>

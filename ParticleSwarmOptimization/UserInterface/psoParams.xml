@@ -12,30 +12,8 @@
   <TargetValue>0</TargetValue>
   <Epsilon>0</Epsilon>
   <FunctionParameters>
-    <FitnessFunctionType>quadratic</FitnessFunctionType>
+    <FitnessFunctionType>bbob_f001</FitnessFunctionType>
     <Dimension>20</Dimension>
-    <Coefficients>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-      <double>1</double>
-    </Coefficients>
     <SearchSpace>
       <DimensionBound>
         <Min>-5</Min>
