@@ -59,6 +59,8 @@ namespace CocoClusterApp
             {
                 functionsToOptimize.Add(String.Format("f{0:D3}", i));
             }
+            Console.WriteLine("Press any key on the keyboard when ready...");
+            Console.ReadKey();
             Console.WriteLine("Running the example experiment... (might take time, be patient)");
             try
             {
