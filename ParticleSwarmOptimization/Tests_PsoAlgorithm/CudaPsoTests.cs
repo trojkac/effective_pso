@@ -17,7 +17,7 @@ namespace Tests_PsoAlgorithm
             var setup = GpuController.Setup(new CudaParams
             {
                 Iterations = 6000,
-                LocationDimensions = 1,
+                LocationDimensions = 20,
                 FitnessDimensions = 1,
                 ParticlesCount = 1000,
                 FitnessFunction = CudaFitnessFunctions.Quadratic,

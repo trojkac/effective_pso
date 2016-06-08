@@ -15,6 +15,18 @@ namespace Common
         public double[] Coefficients { get; set; }
 
         [DataMember]
-        public Tuple<double, double>[] SearchSpace { get; set; }
+        public DimensionBound[] SearchSpace { get; set; }
+    }
+
+    public struct DimensionBound
+    {
+        public double Min;
+        public double Max;
+
+        public DimensionBound(double min, double max)
+        {
+            Min = min;
+            Max = max;
+        }
     }
 }

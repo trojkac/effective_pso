@@ -174,7 +174,7 @@ namespace Tests
         public void RunEffectivePso()
         {
             RandomGenerator randomGenerator = RandomGenerator.GetInstance(RANDOM_SEED);
-
+            
             CocoLibraryWrapper.cocoSetLogLevel("info");
 
             Console.WriteLine("Running the example experiment... (might take time, be patient)");
@@ -218,12 +218,12 @@ namespace Tests
                             IterationsLimitCondition = true,
                             Iterations = (int)evaluationsRemaining,
                         };
-
+                        
                         var function = new FitnessFunction(evaluateFunction);
-
+                       
                         var upper = PROBLEM.getLargestValuesOfInterest();
-                        var bounds = PROBLEM.getSmallestValuesOfInterest().Select((x, i) => new Tuple<double, double>(x, upper[i])).ToArray();
-
+                        var bounds = PROBLEM.getSmallestValuesOfInterest().Select((x, i) => new DimensionBound(x, upper[i])).ToArray();
+                       
                         function.FitnessDim = PROBLEM.getNumberOfObjectives();
                         function.LocationDim = PROBLEM.getDimension();
 
@@ -240,7 +240,7 @@ namespace Tests
 
                         algorithm.Run();
                         /* Call the optimization algorithm for the remaining number of evaluations */
-
+                       
 
                         /* Break the loop if the algorithm performed no evaluations or an unexpected thing happened */
                         if (PROBLEM.getEvaluations() == evaluationsDone)
@@ -262,7 +262,7 @@ namespace Tests
             {
                 Console.WriteLine(e.Message);
             }
-            //            exampleExperiment("bbob", "bbob", randomGenerator, effectivePso);
+//            exampleExperiment("bbob", "bbob", randomGenerator, effectivePso);
 
             Console.WriteLine("Done");
         }

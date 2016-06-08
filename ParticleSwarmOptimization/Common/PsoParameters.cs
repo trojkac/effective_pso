@@ -1,8 +1,29 @@
 using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Common
 {
+
+    public class ParticlesCount
+    {
+        public PsoParticleType ParticleType;
+        public int Count;
+
+        public ParticlesCount(PsoParticleType psoParticleType, int p)
+        {
+            // TODO: Complete member initialization
+            ParticleType = psoParticleType;
+            Count = p;
+        }
+
+        public ParticlesCount()
+        {
+            Count = 0;
+            ParticleType = PsoParticleType.Standard;
+        }
+    }
+
     [DataContract]
     public struct PsoParameters
     {
@@ -11,7 +32,7 @@ namespace Common
         /// Collection specifying types of particles and number of particles of each type
         /// </summary>
         [DataMember]
-        public Tuple<PsoParticleType, int>[] Particles;
+        public ParticlesCount[] Particles;
 
         [DataMember(IsRequired = true)]
         public bool IterationsLimitCondition;
@@ -40,16 +61,16 @@ namespace Common
         [DataMember]
         public FunctionParameters FunctionParameters;
 
-        public PsoParameters(Tuple<PsoParticleType, int>[] particlesSet, FunctionParameters functionParams)
+        public PsoParameters(ParticlesCount[] particlesSet, FunctionParameters functionParams)
         {
             Epsilon = 0;
             TargetValue = 0;
             Iterations = 0;
             IterationsLimitCondition = true;
             TargetValueCondition = false;
-            Particles = new Tuple<PsoParticleType, int>[2];
-            FunctionParameters = functionParams;
             Particles = particlesSet;
+            FunctionParameters = functionParams;
+
         }
     }
 }

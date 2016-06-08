@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Common;
 
@@ -17,7 +18,7 @@ namespace Node
             vcpus = vcpus == -1 ? System.Environment.ProcessorCount : vcpus;
             if (ports.Length < vcpus)
             {
-                throw new System.ArgumentException("ports.Length has to be greater than or equal to vcpus");
+                ports = ports.Concat(Enumerable.Range(PortFinder.FreeTcpPort(), vcpus - ports.Length)).ToArray();
             }
 
             _vCpuManagers = new VCpuManager[vcpus];

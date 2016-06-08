@@ -82,7 +82,7 @@ namespace CocoSingleCpuApp
                         var upper = Problem.getLargestValuesOfInterest();
                         var bounds =
                             Problem.getSmallestValuesOfInterest()
-                                .Select((x, i) => new Tuple<double, double>(x, upper[i]))
+                                .Select((x, i) => new DimensionBound(x, upper[i]))
                                 .ToArray();
 
                         function.FitnessDim = Problem.getNumberOfObjectives();
