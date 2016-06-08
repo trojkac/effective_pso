@@ -66,7 +66,7 @@ namespace NetworkManager
             }
         }
 
-        public void CalculationsFinished(NetworkNodeInfo source, object result)
+        public void CalculationsFinished(NetworkNodeInfo source, ParticleState result)
         {
             try
             {

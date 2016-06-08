@@ -13,9 +13,28 @@
   <Epsilon>0</Epsilon>
   <FunctionParameters>
     <FitnessFunctionType>quadratic</FitnessFunctionType>
-    <Dimension>1</Dimension>
+    <Dimension>20</Dimension>
     <Coefficients>
-      <double>20</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
+      <double>1</double>
     </Coefficients>
     <SearchSpace>
       <DimensionBound>

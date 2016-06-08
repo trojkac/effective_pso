@@ -92,7 +92,7 @@ namespace NetworkManager
             }
         }
 
-        public void FinishCalculations(object result)
+        public void FinishCalculations(ParticleState result)
         {
             foreach (var client in NodeServiceClients)
             {

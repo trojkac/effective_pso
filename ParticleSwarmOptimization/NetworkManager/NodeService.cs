@@ -89,7 +89,7 @@ namespace NetworkManager
             if (StartCalculations != null) StartCalculations(parameters);
         }
 
-        public void CalculationsFinished(NetworkNodeInfo source, object result)
+        public void CalculationsFinished(NetworkNodeInfo source, ParticleState result)
         {
             Debug.WriteLine("{0}: received calculations finish from {1}",Info.Id, source.Id);
             if (RemoteCalculationsFinished != null)

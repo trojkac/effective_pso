@@ -20,7 +20,7 @@ namespace NetworkManager
         void StartCalculation(PsoParameters parameters);
 
         [OperationContract]
-        void CalculationsFinished(NetworkNodeInfo source, object result);
+        void CalculationsFinished(NetworkNodeInfo source, ParticleState result);
 
         [OperationContract]
         void CheckStatus();

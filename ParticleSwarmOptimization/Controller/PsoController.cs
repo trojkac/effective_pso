@@ -7,7 +7,7 @@ using NetworkManager;
 
 namespace Controller
 {
-    public delegate void CalculationCompletedHandler(IState<double[],double[]> result);
+    public delegate void CalculationCompletedHandler(ParticleState result);
     public class PsoController : IPsoController
     {
         private ulong _nodeId;
@@ -61,7 +61,7 @@ namespace Controller
                 RunningParameters = psoParameters;
                 //var r = algorithm.Run(particles,_nodeId.ToString());
                 var r = algorithm.Run();
-                if (CalculationsCompleted != null) CalculationsCompleted(r);
+                if (CalculationsCompleted != null) CalculationsCompleted((ParticleState)r);
 
                 return (ParticleState)r;
             });

@@ -48,7 +48,7 @@ namespace UserInterface
                     case '1':
                         machineManager.StartPsoAlgorithm(psoParams);
                         var r = machineManager.GetResult();
-                        Console.WriteLine("Value: {0}",r.FitnessValue);
+                        Console.WriteLine("Value: {0}",r.FitnessValue[0]);
                         break;
                     case '0':
                         cont = false;
