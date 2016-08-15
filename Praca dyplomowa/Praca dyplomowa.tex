@@ -125,13 +125,13 @@ W niniejszej pracy inżynierskiej prezentujemy stworzoną przez nas implementacj
 
 \section{Definicje i oznaczenia}
 
-\begin{definition}[definicja 1]
-Tekst definicji 1.
-\end{definition}
+%\begin{definition}[definicja 1]
+%Tekst definicji 1.
+%\end{definition}
 
-\begin{definition}[definicja 2]
-Tekst definicji 1.
-\end{definition}
+%\begin{definition}[definicja 2]
+%Tekst definicji 1.
+%\end{definition}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -146,15 +146,22 @@ PSO (Particle Swarm Optimization) jest metodą rozwiązywania problemów optymal
 
 %zrobić tu albo wcześniej słownik PSO – co to jest (formalnie) rój, sąsiedztwo itp.
  
-Klasyczna wersja algorytmu (wg. \cite{Pso}), zakładająca pełne sąsiedztwo cząstek [pełny graf sąsiedztwa] wygląda następująco:\\
+Klasyczna wersja algorytmu (wg. \cite{Pso}), zakładająca pełne sąsiedztwo cząstek [pełny graf sąsiedztwa] wygląda następująco:
 
-1. Inicjalizacja cząstek:\\
-(a) Utwórz cząstki rozmieszczone losowo (według rozkładu jednostajnego) w całej przestrzeni rozwiązań;\\ 
-(b) Jako najlepszą znaną pozycję ustaw dla każdej z cząstek jej pozycję startową; \\
-(c) Zaktualizuj optimum globalne znajdując pozycję cząstki o najmniejszej wartości funkcji celu; 
-(d) Nadaj cząstkom losowe prędkości z pewnego zakresu (według rozkładu jednostajnego; \\
-2. Główna pętla algorytmu - dopóki nie został spełniony warunek stopu (określona liczba iteracji lub znalezienie wartości odpowiednio bliskiej znanemu optimum globalnemu), wykonuj: \\
-(a) Dla każdej z cząstek oblicz jej nową prędkość w następujący sposób:
+\begin{enumerate}
+\item Inicjalizacja cząstek:
+
+\begin{enumerate}
+\item Utwórz cząstki rozmieszczone losowo (według rozkładu jednostajnego) w całej przestrzeni rozwiązań;
+\item Jako najlepszą znaną pozycję ustaw dla każdej z cząstek jej pozycję startową; 
+\item Zaktualizuj optimum globalne znajdując pozycję cząstki o najmniejszej wartości funkcji celu; 
+\item Nadaj cząstkom losowe prędkości z pewnego zakresu (według rozkładu jednostajnego; 
+\end{enumerate}
+
+\item Główna pętla algorytmu - dopóki nie został spełniony warunek stopu (określona liczba iteracji lub znalezienie wartości odpowiednio bliskiej znanemu optimum globalnemu), wykonuj:
+\begin{enumerate}
+
+\item Dla każdej z cząstek oblicz jej nową prędkość w następujący sposób:
 
 \begin{center}
 
@@ -162,7 +169,7 @@ $v_{t+1} \leftarrow v_t + \phi_1 \cdot r_1 \cdot p + \phi_2 \cdot r_2 \cdot g$
 
 \end{center}
 
-gdzie:\\
+gdzie:
 $v_{t+1}$ - wektor prędkości w iteracji $t+1$,\\
 $v_t$ - wektor prędkości w iteracji $t$,\\
 $p$ - wektor łączący obecne położenie cząstki z jej najlepszą znaną pozycją,\\
@@ -170,15 +177,16 @@ $g$ - wektor łączący obecne położenie cząstki z najlepszą globalnie pozyc
 $\phi_1, \phi_2$ - ustalone przez użytkownika parametry (wagi),\\
 $r_1, r_2$ - liczby z przedziału $[0,1]$ losowane w każdej iteracji\\
 
-
-(b) Przesuń każdą cząstkę o jej nowy wektor prędkości;\\ 
-(c) Dla każdej z cząstek oblicz funkcję celu w nowym położeniu i, jeżeli to możliwe, zaktualizuj najlepszą dotychczasową pozycję cząstki;\\ 
-(d) Zaktualizuj optimum globalne; 
+\item Przesuń każdą cząstkę o jej nowy wektor prędkości;
+\item Dla każdej z cząstek oblicz funkcję celu w nowym położeniu i, jeżeli to możliwe, zaktualizuj najlepszą dotychczasową pozycję cząstki; 
+\item Zaktualizuj optimum globalne; 
+\end{enumerate}
+\end{enumerate}
 
 \section{Dotychczasowy stan badań nad PSO}
 
 Od momentu powstania w 1995 r. algorytm ten zyskał popularność i szerokie zastosowanie. Był też tematem licznych prac naukowych i opracowań, mających na celu próbę jego lepszego zrozumienia i poprawy skuteczności oraz zbadanie zachowania dla wielu różnych klas problemów optymalizacyjnych.
-% [do słownika problem optymalizacyjny]. 
+%[do słownika problem optymalizacyjny]. 
 
 Elastyczność definicji algorytmu sprawia, że wiele jego parametrów 
 %[i procedur] 
@@ -188,7 +196,7 @@ w zależności od parametrów takich, jak: wielkość roju cząstek, sposób ini
 %[może to rozbić na parametry, a dalej o procedurach?]
 
 %[Za \cite{ComprLearnPso}]
-Szybko zauważono, że niektóre słabości standardowej, opisanej powyżej wersji algorytmu, można usprawnić, wprowadzając do niego pewne dodatkowe elementy, często inspirowane lub wprost pochodzące od innych algorytmów optymalizacyjnych. Powstały w ten sposób różne warianty i hybrydy algorytmu PSO.
+Dobre podsumowanie stanu badań nad PSO znajduje się w pracy \cite{ComprLearnPso}, której autorzy wspominają, iż szybko zauważono, że niektóre słabości standardowej, opisanej powyżej wersji algorytmu, można usprawnić, wprowadzając do niego pewne dodatkowe elementy, często inspirowane lub wprost pochodzące od innych algorytmów optymalizacyjnych. Powstały w ten sposób różne warianty i hybrydy algorytmu PSO.
 
 Jedna z prostszych modyfikacji 
 %[źródło?] 
@@ -196,7 +204,9 @@ wprowadza parametr ,,bezwładności $\omega$'' do wzoru wyliczającego zaktualiz
 
 Kontrolowanie bezwładności ma umożliwiać zrównoważenie zdolności eksploatacyjnych i eksploracyjnych algorytmu 
 %[do słownika]
- – duża wartości sprzyja eksplorowaniu większego obszaru, zaś mniejsza – skupienie się na bardziej lokalnym przeszukiwaniu. Bezwładność może też być dynamicznie zmieniana w trakcie wykonywania algorytmu – jej liniowe zmniejszanie się względem liczby iteracji przedyskutowano w \cite{ModPsoInertia}, zaś właściwy dobór parametrów algorytmu omówiono w \cite{ParamSelPso}. Inne, nieliniowe metody zmiany bezwładności opisano w \cite{PsoFuzzyInertia}. W pracy \cite{SelfOrgHPso} dla odmiany, parametr w ustawiany jest na 0 za wyjątkiem sytuacji reinicjalizacji [co to?]. W trakcie działania algorytmu można dynamicznie modyfikować także inne jego parametry, jak np. prędkość maksymalną – wariant algorytmu implementujący jej liniowy spadek opisany został w \cite{VmaxPso}.
+ – duża wartości sprzyja eksplorowaniu większego obszaru, zaś mniejsza – skupienie się na bardziej lokalnym przeszukiwaniu. Bezwładność może też być dynamicznie zmieniana w trakcie wykonywania algorytmu – jej liniowe zmniejszanie się względem liczby iteracji przedyskutowano w \cite{ModPsoInertia}, zaś właściwy dobór parametrów algorytmu omówiono w \cite{ParamSelPso}. Inne, nieliniowe metody zmiany bezwładności opisano w \cite{PsoFuzzyInertia}. W pracy \cite{SelfOrgHPso} dla odmiany, parametr w ustawiany jest na 0 za wyjątkiem sytuacji reinicjalizacji.
+%[co to?]
+W trakcie działania algorytmu można dynamicznie modyfikować także inne jego parametry, jak np. prędkość maksymalną – wariant algorytmu implementujący jej liniowy spadek opisany został w \cite{VmaxPso}.
 
 Duży wpływ na wydajność algorytmu ma też w oczywisty sposób topologia 
 %[do słownika topologia roju] 
@@ -204,11 +214,13 @@ roju cząstek. J. Kennedy (jeden z twórców pierwotnej wersji algorytmu) stwier
 %[co to znaczy?]
 , podczas gdy liczne sąsiedztwo działa lepiej dla prostych problemów \cite{TopologyPso}, \cite{PopStructPso}. Ciekawym rozwiązaniem jest zaproponowane w \cite{PsoNeighOp} dynamicznie dostosowywane sąsiedztwo, które stopniowo powiększa się, aż do momentu objęcia całego roju. W artykule \cite{MultiobjDynNeighPso} Hu i Eberhart zaproponowali inny sposób dynamicznego modyfikowania sąsiedztwa – w każdej iteracji algorytmu cząsteczka na nowo wybiera sobie za sąsiadów te cząstki, które są jej bliskie według pewnej metryki 
 %[jakiej?]
-. Wariant UPSO (Unified Particle Swarm Optimizer) \cite{UPso} stara się połączyć globalną eksplorację z lokalną eksploatacją 
+. Wariant UPSO (Unified Particle Swarm Optimizer) \cite{UPso} stara się połączyć globalną eksplorację z lokalną eksploatacją.
 %[jak? Co to znaczy?]
-. Wprowadzone przez Mendesa i Kennedy’ego \cite{FullyInformedPso} Fully Informed PSO różni się od klasycznej wersji tym, że w momencie aktualizacji prędkości cząstki pod uwagę bierze się nie tylko informację pochodzącą od najlepszego sąsiada, ale, z odpowiednimi wagami, również  informacje zebrane od pozostałych sąsiadów cząstki. Wagę, jaką przypisuje się informacji od każdej z cząstek sąsiedztwa zależy m.in. od jej aktualnej wartości funkcji celu oraz rozmiaru samego sąsiedztwa. 
+Wprowadzone przez Mendesa i Kennedy’ego \cite{FullyInformedPso} Fully Informed PSO różni się od klasycznej wersji tym, że w momencie aktualizacji prędkości cząstki pod uwagę bierze się nie tylko informację pochodzącą od najlepszego sąsiada, ale, z odpowiednimi wagami, również  informacje zebrane od pozostałych sąsiadów cząstki. Wagę, jaką przypisuje się informacji od każdej z cząstek sąsiedztwa zależy m.in. od jej aktualnej wartości funkcji celu oraz rozmiaru samego sąsiedztwa. 
 %[co dzięki temu zyskujemy?] [Inny wariant, „Comprehensive learning PSO.]
- Z kolei fitness-distance-ratio-based PSO (FDR-PSO) \cite{FitnessDistRatio}, wprowadza pewne dodatkowe interakcje [jakie?] między pobliskimi cząstkami podczas aktualizacji prędkości.
+ Z kolei fitness-distance-ratio-based PSO (FDR-PSO) \cite{FitnessDistRatio}, wprowadza pewne dodatkowe interakcje 
+%[jakie?] 
+między pobliskimi cząstkami podczas aktualizacji prędkości.
 
 Innym sposobem usprawnienia działania algorytmu, który doczekał się licznych opracowań, jest hybrydyzacji PSO, czyli próba połączenia z innymi algorytmami i technikami optymalizacji. Jednym z popularnych pomysłów jest wprowadzenie do PSO operacji znanych z innych algorytmów ewolucyjnych, takich jak selekcja, krzyżowanie i mutacja, w celu zachowania cech najlepszych cząstek roju, bądź też wprowadzenie większej różnorodności do populacji, mające zapobiec zbieżności do lokalnych minimów \cite{SelectionPso},\cite{HybridPsoBreedingSubpop}. Z tego samego powodu wprowadza się różne mechanizmy unikania kolizji między \cite{CollisionAvoiding}, takie jak relokacja cząstek, które znalazły się zbyt blisko siebie \cite{PsoCriticality}. Operatory mutacji są też stosowane do mutowania 
 %[?]
@@ -229,15 +241,14 @@ Jedną z odpowiedzi na opisane wyżej problemy jest napisana w języku C++ open 
 %[do słownika genetycznego]
 . 
 
-Kolejną zaletą EOlib jest odejście od często stosowanego, ale ograniczającego założenia, iż funkcja celu musi być funkcją skalarną – w bibliotece tej może ona być dowolnego typu 
+Kolejną zaletą EOlib jest odejście od często stosowanego, ale ograniczającego założenia, iż funkcja celu musi być funkcją skalarną – w bibliotece tej może ona być dowolnego typu.
 %[jest obiektem?]
-.
 
-Biblioteka Eolib jest podstawową popularnego frameworka Paradiseo (typu white-box, czyli dającego programiście wgląd w szczegóły implementacji 
-%[?]
-), służącego do tworzenia metaheurystyk 
+Biblioteka Eolib jest podstawową popularnego frameworka Paradiseo (typu white-box, czyli dającego programiście wgląd w szczegóły implementacji), służącego do tworzenia metaheurystyk.
 %[co to znaczy? słownik?]
-. Składa się on z modułów: Paradiseo-EO -  obsługującego algorytmy populacyjne, Paradiseo-MOEO – służącego do optymalizacji [wielokryteriowej], Paradiseo-MO – dla problemów z jednym rozwiązaniem, Paradiseo-PEO – narzędzia do tworzenia rozwiązań równoległych i rozproszonych.
+Składa się on z modułów: Paradiseo-EO -  obsługującego algorytmy populacyjne, Paradiseo-MOEO – służącego do optymalizacji [wielokryteriowej], Paradiseo-MO – dla problemów z jednym rozwiązaniem, Paradiseo-PEO – narzędzia do tworzenia rozwiązań równoległych i rozproszonych.
+
+%[może jakieś inne zastosowania lub implementacje?]
 
 \section{Równoległe i rozproszone PSO}
 %[tak ogólnie o zrównoleglaniu/rozpraszaniu obliczeń [ewolucyjnych?] - może „Obliczenia równoległe i rozproszone”]
@@ -251,10 +262,6 @@ Obliczenia rozproszone polegają na uruchomieniu jednoczesnych obliczeń na wię
 
 %[resztę rozdziału można usunąć – wystarczy pierwszy akapit z kolejnego %działu, aby opisać równoległą naturę PSO]
 
-%[Przykładowy schemat sąsiedztwa cząstek znajduje się na poniższym obrazku.]
-
-%[obrazek] 
-
 Standardowa wersja algorytmu PSO wprost ze swojej natury nadaje się do zrównoleglenia obliczeń - niezależnie czy mówimy o zrównolegleniu na poziomie roju czy części roju cząstek.
 Obliczanie nowej prędkości dla każdej z cząstek zależy tylko od jej własności i własności sąsiadów z poprzedniej iteracji, zatem w oczywisty sposób potrzeby synchronizacji sprowadzają się do zaktualizowania zbioru cząstek 
 %[?]
@@ -266,26 +273,26 @@ Obliczanie nowej prędkości dla każdej z cząstek zależy tylko od jej własno
 
 Algorytm PSO, podobnie jak inne algorytmy populacyjne, jest algorytmem w oczywisty sposób nadającym się do zrównoleglenia obliczeń, ze względu na fakt, że poszczególne osobniki populacji (w przypadku PSO – cząstki) 
 %[?]
- są od siebie w mniejszym bądź większym stopniu niezależne i przeprowadzają samodzielne obliczenia. Dodatkowo, dla trudnych problemów optymalizacyjnych o wielu wymiarach, potrzebna liczba cząstek może być bardzo znacząca, co skłania do poszukiwania poprawy wydajności i przyspieszenia obliczeń właśnie na drodze zrównoleglenia/rozproszenia. 
+ są od siebie w mniejszym bądź większym stopniu niezależne i przeprowadzają samodzielne obliczenia. Dodatkowo, dla trudnych problemów optymalizacyjnych o wielu wymiarach, potrzebna liczba cząstek może być bardzo znacząca, co skłania do poszukiwania poprawy wydajności i przyspieszenia obliczeń właśnie na drodze zrównoleglenia czy rozproszenia. 
 Oczywiście wraz z zaletami programowania równoległego pojawiają się charakterystyczne dla niego problemy, które należy rozwiązać, takie jak: skalowalność, synchroniczna i asynchroniczna implementacja, spójność i komunikacja sieciowa. 
 %[może wyjaśnić te problemy? Chyba, że będą opisane w poprzednim rozdziale]
 
-Większość proponowanych do tej pory równoległych wersji algorytmu PSO oparta jest na klastrach komputerów wymieniających się między sobą wiadomościami 
+W pracach \cite{AccelParallelPso} oraz \cite{ComparisonParallelGpuPso} przedstawiono po krótce niektóre z zaproponowanych do tej pory rozwiązań problemu paralelizacji algorytmu PSO. Większość z nich oparta jest na klastrach komputerów wymieniających się między sobą wiadomościami.
 %[?]
-. Niektóre z implementacji używają popularnego standardu OpenMP. Warto wspomnieć, że analiza przeprowadzona w \cite{Pso8} wskazuje, że pewien rodzaj równoległego PSO, w którym cząstki aktualizuje się grupami, nie zawsze wymagać większej liczby operacji niż implementacja sekwencyjna, w której cząstki aktualizowane są jedna po drugiej, zajmując przy tym mniej czasu.
+Niektóre z implementacji używają popularnego standardu OpenMP. Warto wspomnieć, że analiza przeprowadzona w \cite{Pso8} wskazuje, że pewien rodzaj równoległego PSO, w którym cząstki aktualizuje się grupami, nie zawsze wymagać większej liczby operacji niż implementacja sekwencyjna, w której cząstki aktualizowane są jedna po drugiej, zajmując przy tym mniej czasu.
 
 PSO jest w naturalny sposób równoległe na poziomie algorytmicznym 
 %[co to jest równoległość na poziomie algorytmicznym?] [embarassingly parallel]
 , jednakże zaimplementowanie tej równoległości nie jest już takie oczywiste – wśród głównych problemów, z którymi należy się zmierzyć, są komunikacja %[między węzłami obliczeniowymi? Cząstkami?]
- i równoważenie obciążenia, przy czym zagadnienia te są ze sobą powiązane. W algorytmie PSO największym kosztem obliczeniowym jest zazwyczaj ewaluacja funkcji celu dla każdej cząstki. Jeżeli ewaluacja ta jest relatywnie kosztowna, koszt komunikacji można zaniedbać i pierwszoplanowym problemem staje się równoważenie obciążenia między węzłami obliczeniowymi 
- %[?]
- . W przeciwnym przypadku względnie niskiego kosztu ewaluacji funkcji celu, koszt komunikacji może dominować obliczenia.
+ i równoważenie obciążenia, przy czym zagadnienia te są ze sobą powiązane. W algorytmie PSO największym kosztem obliczeniowym jest zazwyczaj ewaluacja funkcji celu dla każdej cząstki. Jeżeli ewaluacja ta jest relatywnie kosztowna, koszt komunikacji można zaniedbać i pierwszoplanowym problemem staje się równoważenie obciążenia między węzłami obliczeniowymi.
+ %[?] 
+W przeciwnym przypadku względnie niskiego kosztu ewaluacji funkcji celu, koszt komunikacji może dominować obliczenia.
 
-Wśród stosowanych podejść do problemu zrównoleglenia algorytmu PSO można wyróżnić dwa główne: podejście synchroniczne i asynchroniczne. W pierwszym z nich wszystkie procesory czekają na zakończenie ewaluacji funkcji celu dla wszystkich cząsteczek przed przejściem do kolejnej iteracji. Przeprowadzono wiele eksperymentów, które sugerują, że efektywność zrównoleglenie (parallel efficiency
-%[do słownika? Do poprzedniego rozdziału?]
-) spada wraz z liczbą procesorów i jest daleka od idealnej 100 procent 
+Wśród stosowanych podejść do problemu zrównoleglenia algorytmu PSO można wyróżnić dwa główne: podejście synchroniczne i asynchroniczne. W pierwszym z nich wszystkie procesory czekają na zakończenie ewaluacji funkcji celu dla wszystkich cząsteczek przed przejściem do kolejnej iteracji. Przeprowadzono wiele eksperymentów, które sugerują, że efektywność zrównoleglenie (parallel efficiency%[do słownika? Do poprzedniego rozdziału?]
+) spada wraz z liczbą procesorów i jest daleka od idealnej 100 procent.
 %[źródło]
-. W celu zrównoważenia nieefektywności wynikającej z nierównego rozłożenia obliczeń, zaproponowano podejście asynchroniczne - pozwala ono każdemu procesorowi (procesowi, wątkowi) przejść niezależnie do kolejnej iteracji po ukończeniu obliczania funkcji celu. Wyniki eksperymentów pokazują znaczący wzrost efektywności w porównaniu z wersją synchroniczna [źródło].
+W celu zrównoważenia nieefektywności wynikającej z nierównego rozłożenia obliczeń, zaproponowano podejście asynchroniczne - pozwala ono każdemu procesorowi (procesowi, wątkowi) przejść niezależnie do kolejnej iteracji po ukończeniu obliczania funkcji celu. Wyniki eksperymentów pokazały znaczący wzrost efektywności w porównaniu z wersją synchroniczna. 
+%[źródło]
 
 Jednym ze sposobów zrównoleglenia obliczeń jest wykorzystanie w tym celu procesorów graficznych (GPU). Skupimy się tutaj głównie na procesorach graficznych wspierających architekturę CUDA (Compute Unified Device Architecture) \cite{CudaProgGuide} stworzoną przez firmę NVIDIA. Platforma ta zyskała bardzo dużą popularność jako prostsza i bardziej intuicyjna alternatywa dla np. standardu OpenCL.
 
@@ -293,10 +300,16 @@ Jednym ze sposobów zrównoleglenia obliczeń jest wykorzystanie w tym celu proc
 
 W artykule \cite{GpuBasedPso} opisana została paralelizacja 
 %[?]
- standardowego PSO (SPSO) na GPU z 11-krotnym przyspieszeniem względem CPU. Implementacja ta wykorzystuje topologię pierścienia, a więc umożliwia każdej cząstce komunikację z jedynie dwoma sąsiadami. Dzięki temu nie ma potrzeby równoległego poszukiwania najlepszego sąsiada podczas aktualizacji prędkości, co ogranicza konieczność komunikacja między wątkami. Z kolei rozwiązanie opisane w \cite{PsoCuda} bazuje na pomyśle utworzenia wątków GPU w liczbie równej liczbie cząstek roju pomnożonej przez liczbę wymiarów (co jednak niesie ze sobą konieczność ograniczenia maksymalnej liczby wymiarów rozważanego problemu optymalizacyjnego), który to w pewnych szczególnych przypadkach daje nawet 50-krotne przyspieszenie względem implementacji sekwencyjnej. Innym ciekawym rozwiązaniem jest zaproponowana w \cite{PsoGraphHardLocPat} hybrydyzacja algorytmu PSO z algorytmem [pattern search], która na GPU może osiągnąć lepsze wyniki niż każdy z tych algorytmów z osobna. [Autorzy \cite{ComparGpuPso} porównujący warianty PSO na GPU jednak zrównoleglają jedynie ewaluację funkcji kosztu – daje to nawet 27-krotne przyspieszenie, jednakże autorzy \cite{ComparisonParallelGpuPso} uważają, że rozwiązanie to nie wydaje się być skalowalne dla większych rojów, jako, że inicjalizacja, poszukiwanie najlepszej cząstki oraz aktualizacja prędkości i położenia są wykonywane sekwencyjne.] Artykuł \cite{BlockOccupancyGpu} bada zależność między wydajnością algorytmu PSO, a wielkością bloku wątków, uzyskując przy tym 43-krotny zysk.
+ standardowego PSO (SPSO) na GPU z 11-krotnym przyspieszeniem względem CPU. Implementacja ta wykorzystuje topologię pierścienia, a więc umożliwia każdej cząstce komunikację z jedynie dwoma sąsiadami. Dzięki temu nie ma potrzeby równoległego poszukiwania najlepszego sąsiada podczas aktualizacji prędkości, co ogranicza konieczność komunikacja między wątkami. Z kolei rozwiązanie opisane w \cite{PsoCuda} bazuje na pomyśle utworzenia wątków GPU w liczbie równej liczbie cząstek roju pomnożonej przez liczbę wymiarów (co jednak niesie ze sobą konieczność ograniczenia maksymalnej liczby wymiarów rozważanego problemu optymalizacyjnego), który to w pewnych szczególnych przypadkach daje nawet 50-krotne przyspieszenie względem implementacji sekwencyjnej. Innym ciekawym rozwiązaniem jest zaproponowana w \cite{PsoGraphHardLocPat} hybrydyzacja algorytmu PSO z algorytmem ,,pattern search'', która na GPU może osiągnąć lepsze wyniki niż każdy z tych algorytmów z osobna. 
+ %[Autorzy \cite{ComparGpuPso} porównujący warianty PSO na GPU jednak zrównoleglają jedynie ewaluację funkcji kosztu – daje to nawet 27-krotne przyspieszenie, jednakże autorzy \cite{ComparisonParallelGpuPso} uważają, że rozwiązanie to nie wydaje się być skalowalne dla większych rojów, jako, że inicjalizacja, poszukiwanie najlepszej cząstki oraz aktualizacja prędkości i położenia są wykonywane sekwencyjne.]
+Artykuł \cite{BlockOccupancyGpu} bada zależność między wydajnością algorytmu PSO, a wielkością bloku wątków, uzyskując przy tym 43-krotny zysk.
 
 
 \chapter{Nasz program}
+
+\section{Architektura węzła obliczeniowego}
+
+\section{Klaster i komunikacja między węzłami}
 
 \section{Krótkie wprowadzenie do architektury CUDA}
 %[Prosty opis bloków, wątków]
@@ -317,7 +330,7 @@ Dalej, rój na GPU składa się z mniejszych rojów działających w obrębie bl
 
 Podstawową jednostką w ramach roju na GPU są cząstki w rojach zorganizowanych w blokach. Każdy wątek w bloku odpowiada jednej cząstce w roju. Tak jak w poprzednim przypadku, tu również cząstki zorganizowane są w pierścień.
 
-Taka organizacja cząstek na pozwala na zmaksymalizowanie zużycia mocy obliczeniowej GPU - liczba cząstek w ogólnym roju odpowiada liczbie dostępnych wątków. Topologia pierścienia pozwala na ograniczenie potrzeby komunikacji międzywątkowej dzięki stałemu zestawowi dwóch sąsiadów. Organizacja mniejszych rojów w blokach wątków umożliwia korzystanie ze znacznie szybszej pamięci dzielonej.
+Taka organizacja cząstek pozwala na zmaksymalizowanie zużycia mocy obliczeniowej GPU - liczba cząstek w ogólnym roju odpowiada liczbie dostępnych wątków. Topologia pierścienia pozwala na ograniczenie potrzeby komunikacji międzywątkowej dzięki stałemu zestawowi dwóch sąsiadów. Organizacja mniejszych rojów w blokach wątków umożliwia korzystanie ze znacznie szybszej pamięci dzielonej.
 
 \section{Szczegóły implementacyjne}
 Zestaw narzędzi CUDA udostępnia rozszerzenia jedynie dla języków C i C++. W celu integracji z pozostałą częścią systemu użyta została biblioteka ManagedCUDA, umożliwiająca łatwą kooperację środowisk .NET i CUDA.
@@ -334,26 +347,23 @@ Benchmarkowanie
 %[może lepsze słowo?]
  algorytmów optymalizacyjnych polega w skrócie na uruchomieniu algorytmu na przygotowanym wcześniej zbiorze problemów i zebraniu oraz przedstawieniu wyników. Nie jest to jednak tak trywialne zadanie, na jakie mogłoby wyglądać na pierwszy rzut oka m.in. ze względu na częstą trudność w dokładnej interpretacji otrzymanych wyników czy też porównaniu ich z innymi.
 
-Odpowiedzią na te trudności jest ,,COCO framework'' umożliwiający zautomatyzowanie procedury benchmarkowania algorytmów optymalizacyjnych. Ideą przyświecającą twórcom COCO było stworzenie środowiska zapewniającego wszystkie niezbędne do przeprowadzenie testów funkcjonalności oraz możliwość porównania danych i wyników zebranych przez różne zespoły uczonych na przestrzeni lat używających tego framewokra 
+Odpowiedzią na te trudności jest ,,COCO framework'' umożliwiający zautomatyzowanie procedury benchmarkowania algorytmów optymalizacyjnych. Ideą przyświecającą twórcom COCO było stworzenie środowiska zapewniającego wszystkie niezbędne do przeprowadzenie testów funkcjonalności oraz możliwość porównania danych i wyników zebranych przez różne zespoły uczonych na przestrzeni lat używających tego framewokra.
 %[czym jest framework?]
-.
 
 %[why coco]
 
-Wśród cech COCO można wyróżnić: 
-%[nie wiem, czy tu potrzebna jest lista]
+Funkcje do benchmarkowania, których używa COCO są jawne dla użytkownika, jednakże sam algorytm, który poddajemy testom, nie ma o nich żadnej wiedzy (działają na zasadzie black-box).
+%[link do listy funkcji]
+Funkcje te są wybrane w ten sposób, aby dało się w jasny sposób zinterpretować na nich działanie algorytmu optymalizacyjnego. Dodatkowo nie posiadają one żadnych sztucznych regularności, które mogłyby zostać wykorzystane przez algorytm oraz są skalowalne ze względu na wymiar.
 
-1. Funkcje [do benchmarkowania], które używane są na zasadzie black-box, niemniej jednak są one jawne dla użytkownika [link do listy funkcji]. Funkcje te są wybrane w ten sposób, aby dało się w jasny sposób zinterpretować na nich działanie algorytmu optymalizacyjnego. Dodatkowo nie posiadają one żadnych sztucznych regularności, które mogłyby zostać wykorzystane przez algorytm oraz są skalowalne ze względu na wymiar.
 
-2. Brak predefiniowanego budżetu, określonego liczbą ewaluacji funkcji celu – wszystkie testy są [budget free].
+Co bardzo istotne, cały framework używa tylko jednej miary jakości algorytmu – tzw. runtime, czyli liczby ewaluacji funkcji celu potrzebnej do osiągnięcia zadanego wyniku, czyli znalezienia wartości funkcji celu odpowiednio bliskiej wartości optymalnej. Zalety takiego podejścia są opisane w \cite{CocoPlatform}. Dodatkowo nie zakłada się ustalonego z góry maksymalnego budżetu, określonego liczbą ewaluacji funkcji celu - testy są ,,budget free''.
 
-3. Cały framework używa tylko jednej miary jakości algorytmu – tzw. runtime, czyli liczby ewaluacji funkcji celu potrzebnej do osiągnięcia zadanego wyniku [czym jest wynik]. Zalety takiego podejścia są opisane w [tutaj].
-
-COCO framework składa się z zestawu [benchmark suites/testbeds] napisanych w języku C wraz z modułami odpowiedzialnymi za zbieranie (logowanie) wyników, ich obróbkę (skrypty Python przygotowujące odpowiednie wykresy) oraz prezentację danych (przeglądnie za pomocą html oraz plików pdf generowanych na podstawie [latex template]). Dodatkowo twórcy framewokra przygotowali interfejsy w językach C/C++, Java, Matlab/Octave, Python (lipiec 2016) zapewniające obsługiwanie napisanych przez użytkownika [optymalizatorów] w wymienionych językach. Niestety w chwili pisania niniejszej pracy, nie był dostępny oficjalny interfejs do języka C-sharp, dlatego też zmuszeni byliśmy stworzyć własny.
+COCO framework składa się z zestawu benchmarków napisanych w języku C wraz z modułami odpowiedzialnymi za zbieranie (logowanie) wyników, ich obróbkę (skrypty Python przygotowujące odpowiednie wykresy) oraz prezentację danych (przeglądnie za pomocą html oraz plików pdf generowanych na podstawie przygotowanych szablonów LaTeX). Dodatkowo twórcy framewokra przygotowali interfejsy w językach C/C++, Java, Matlab/Octave, Python (stan w lipcu 2016) zapewniające obsługiwanie napisanych przez użytkownika algorytmów optymalizacyjnych w wymienionych językach. Niestety w chwili pisania niniejszej pracy, nie był dostępny oficjalny interfejs do języka C\#, dlatego też zmuszeni byliśmy stworzyć własny.
 
 \section{Wyniki testów}
 
-Poniżej znajdują się wyniki testów naszej biblioteki przy użyciu platformy COCO oraz prosty testów czasowych.
+Poniżej znajdują się wyniki testów naszej biblioteki przy użyciu platformy COCO oraz niezależnych od niej testów czasowych.
 
 \section{Interpretacja wyników}
 
