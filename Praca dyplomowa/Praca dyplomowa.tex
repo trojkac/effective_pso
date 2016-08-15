@@ -287,9 +287,7 @@ Wśród stosowanych podejść do problemu zrównoleglenia algorytmu PSO można w
 %[źródło]
 . W celu zrównoważenia nieefektywności wynikającej z nierównego rozłożenia obliczeń, zaproponowano podejście asynchroniczne - pozwala ono każdemu procesorowi (procesowi, wątkowi) przejść niezależnie do kolejnej iteracji po ukończeniu obliczania funkcji celu. Wyniki eksperymentów pokazują znaczący wzrost efektywności w porównaniu z wersją synchroniczna [źródło].
 
-Jednym ze sposobów zrównoleglenia obliczeń jest wykorzystanie w tym celu procesorów graficznych (GPU). Skupimy się tutaj głównie na procesorach graficznych wspierających model programowania 
-%[wspierać? Model programowania?]
- o nazwie compute unified device architercture (CUDA) \cite{CudaProgGuide} stworzony przez firmę NVIDIA, gdyż zyskał sobie bardzo dużą popularność jako prostsza i bardziej intuicyjna alternatywa dla np. standardu OpenGL.
+Jednym ze sposobów zrównoleglenia obliczeń jest wykorzystanie w tym celu procesorów graficznych (GPU). Skupimy się tutaj głównie na procesorach graficznych wspierających architekturę CUDA (Compute Unified Device Architecture) \cite{CudaProgGuide} stworzoną przez firmę NVIDIA. Platforma ta zyskała bardzo dużą popularność jako prostsza i bardziej intuicyjna alternatywa dla np. standardu OpenCL.
 
 %[może tutaj opisać architekturę CUDA, albo w ogóle gdzieś wcześniej, żeby było wiadomo, o czym mówimy w kolejnym akapicie]
 
@@ -300,6 +298,29 @@ W artykule \cite{GpuBasedPso} opisana została paralelizacja
 
 \chapter{Nasz program}
 
+\section{Krótkie wprowadzenie do architektury CUDA}
+%[Prosty opis bloków, wątków]
+Opis części programu na GPU wymaga krótkiego wprowadzenia do organizacji wątków i pamięci w architekturze CUDA.
+
+Podstawową jednostką obliczeniową 
+%[to chyba niezbyt dobre określenie] 
+w architekturze CUDA jest pojedynczy wątek GPU. Dzięki dostępowi do tysięcy wątków na procesorze graficznym możliwe jest stosowanie modelu SIMT (Single Instruction Multiple Threads). Każdy wątek ma dostęp do swojej lokalnej pamięci wątku. \\
+Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątki. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy.
+
+\section{PSO na GPU}
+%[Tytuł roboczy]
+Architektura części naszego programu odpowiadającej za obliczenia na GPU jest inspirowana pracami wspomnianymi powyżej. Całość opiera się na topologii pierścienia.
+
+Rój cząstek na GPU działa w synchronizacji z rojem na CPU poprzez wyszczególnienie po obu stronach cząstek odpowiedzialnych za przekazywanie swojej pozycji w roju na danej jednostce obliczeniowej rojowi na drugim procesorze (czyli pośrednio przekazuje pozycję własnego roju). Odnosząc się do topologii pierścienia, można wyobrazić to sobie jako most łączący 2 pierścienie.
+
+Dalej, rój na GPU składa się z mniejszych rojów działających w obrębie bloków. Każdy z mniejszych rojów komunikuje się z dwoma sąsiednimi rojami, tworząc pierścień. Komunikacja odbywa się analogicznie jak w przypadku komunikacji z CPU - dla każdego sąsiedztwa w bloku wybierana jest cząstka służąca do przekazywania swojej pozycji (czyli pośrednio pozycji roju).
+
+Podstawową jednostką w ramach roju na GPU są cząstki w rojach zorganizowanych w blokach. Każdy wątek w bloku odpowiada jednej cząstce w roju. Tak jak w poprzednim przypadku, tu również cząstki zorganizowane są w pierścień.
+
+Taka organizacja cząstek na pozwala na zmaksymalizowanie zużycia mocy obliczeniowej GPU - liczba cząstek w ogólnym roju odpowiada liczbie dostępnych wątków. Topologia pierścienia pozwala na ograniczenie potrzeby komunikacji międzywątkowej dzięki stałemu zestawowi dwóch sąsiadów. Organizacja mniejszych rojów w blokach wątków umożliwia korzystanie ze znacznie szybszej pamięci dzielonej.
+
+\section{Szczegóły implementacyjne}
+Zestaw narzędzi CUDA udostępnia rozszerzenia jedynie dla języków C i C++. W celu integracji z pozostałą częścią systemu użyta została biblioteka ManagedCUDA, umożliwiająca łatwą kooperację środowisk .NET i CUDA.
 
 \chapter{Testy}
 
