@@ -29,13 +29,13 @@ namespace Common
             return v;
         }
 
-        public double[] RandomVector(int dim, Tuple<double, double>[] bounds)
+        public double[] RandomVector(int dim, DimensionBound[] bounds)
         {
             if(bounds == null) throw new ArgumentNullException();
             var v = new double[dim];
             for (var i = 0; i < dim; i++)
             {
-                v[i] = Random.NextDouble() * (bounds[i].Item2 - bounds[i].Item1) + bounds[i].Item1;
+                v[i] = Random.NextDouble() * (bounds[i].Max - bounds[i].Min) + bounds[i].Min;
             }
             return v;
         }

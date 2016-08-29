@@ -32,7 +32,7 @@ namespace Common
             {
                 _servicesDictionary.Add(typeof (T), service);
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 throw new ArgumentException("Service already registered.");
             }

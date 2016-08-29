@@ -89,8 +89,9 @@ namespace Tests
             particle2.Open();
 
             var controller = new Controller.PsoController(123);
-            
-            controller.Run(PsoSettingsFactory.QuadraticFunction1DFrom3To5(), new []{particle1});
+            var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
+            settings.Iterations = 1;
+            controller.Run(settings, new []{particle1});
             
             var result = controller.RunningAlgorithm.Result;
             Assert.AreEqual(state.FitnessValue[0], result.FitnessValue[0]);

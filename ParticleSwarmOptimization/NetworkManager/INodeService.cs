@@ -17,7 +17,10 @@ namespace NetworkManager
         void Deregister(NetworkNodeInfo brokenNodeInfo);
 
         [OperationContract]
-        void StartCalculation(PsoSettings settings);
+        void StartCalculation(PsoParameters parameters);
+
+        [OperationContract]
+        void CalculationsFinished(NetworkNodeInfo source, ParticleState result);
 
         [OperationContract]
         void CheckStatus();

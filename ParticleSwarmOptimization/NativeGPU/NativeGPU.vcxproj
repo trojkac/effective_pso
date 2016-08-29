@@ -166,6 +166,8 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <CudaCompile Include="f3_rastrigin_kernel.cu" />
     <CudaCompile Include="f4_buche_rastrigin_kernel.cu" />
     <CudaCompile Include="f5_linear_slope_kernel.cu" />
+    <CudaCompile Include="f6_attractive_sector.cu" />
+    <CudaCompile Include="f7_step_ellipsoid.cu" />
     <CudaCompile Include="psoKernelQuadratic.cu" />
     <CudaCompile Include="psoKernelRastrigin.cu" />
     <CudaCompile Include="psoKernelRosenbrock.cu" />

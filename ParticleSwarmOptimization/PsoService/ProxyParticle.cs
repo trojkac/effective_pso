@@ -18,6 +18,9 @@ namespace PsoService
         private IParticleService _particleService;
         private ServiceHost _host;
         private IParticle _coupledParticle;
+        private int _communicationErrorCount;
+        private int _communicationErrorLimit = 10;
+
         public NetworkNodeInfo RemoteNode{
             get{
                 return new NetworkNodeInfo(RemoteAddress.Authority,"");
@@ -79,10 +82,12 @@ namespace PsoService
             {
                 var s = _particleClient.GetBestState();
                 _particleService.UpdateBestState(s);
+                _communicationErrorCount = 0;
             }
             catch
             {
-                if (CommunicationBreakdown != null) CommunicationBreakdown();
+                _communicationErrorCount++;
+                if (CommunicationBreakdown != null && _communicationErrorCount == _communicationErrorLimit) CommunicationBreakdown();
                 Debug.WriteLine("{0} cannot connect to: {1}", Address, RemoteAddress);
             }
 
@@ -114,7 +119,7 @@ namespace PsoService
 
         }
 
-        public override void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null)
+        public override void Init(ParticleState state, double[] velocity, DimensionBound[] bounds = null)
         {
 
         }
@@ -134,7 +139,10 @@ namespace PsoService
 
         public override ParticleState PersonalBest
         {
-            get { return GetRemoteBest(); }
+            get
+            {
+                return GetRemoteBest();
+            }
         }
     }
 }

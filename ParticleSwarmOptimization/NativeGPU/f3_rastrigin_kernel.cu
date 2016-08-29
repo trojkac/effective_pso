@@ -2,7 +2,7 @@
 #include <cuda.h>
 #include <math_functions.h>
 
-const int NUM_OF_DIMENSIONS = 3;
+const int NUM_OF_DIMENSIONS = 128;
 
 __constant__ double d_OMEGA= 0.64;
 __constant__ double d_phi = 1.4;

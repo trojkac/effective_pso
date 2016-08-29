@@ -21,10 +21,10 @@ namespace Algorithm
         private double[] GetClampedLocation(double[] vector)
         {
             if (Bounds == null || vector == null) return vector;
-            return vector.Select((x, i) =>  Math.Min(Math.Max(x, Bounds[i].Item1), Bounds[i].Item2)).ToArray();
+            return vector.Select((x, i) =>  Math.Min(Math.Max(x, Bounds[i].Min), Bounds[i].Max)).ToArray();
         }
 
-        public override void Init(ParticleState particleState, double[] velocity, Tuple<double, double>[] bounds = null)
+        public override void Init(ParticleState particleState, double[] velocity, DimensionBound[] bounds = null)
         {
             CurrentState = particleState;
             PersonalBest = particleState;
@@ -89,7 +89,7 @@ namespace Algorithm
 
         public override void UpdateNeighborhood(IParticle[] allParticles)
         {
-            Neighborhood = allParticles.Where(particle => particle.Id != Id).ToArray();
+            Neighborhood = allParticles.Where(particle => particle.Id == (Id+1)%allParticles.Length || (Id + allParticles.Length - 1)%allParticles.Length == particle.Id).ToArray();
         }
 
         public override int Id

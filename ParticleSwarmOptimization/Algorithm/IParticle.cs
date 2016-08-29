@@ -11,7 +11,7 @@ namespace Algorithm
         void UpdateVelocity();
         void Transpose(IFitnessFunction<double[], double[]> function);
         void UpdateNeighborhood(IParticle[] allParticles);
-        void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null);
+        void Init(ParticleState state, double[] velocity, DimensionBound[] bounds = null);
 
     }
 }

@@ -2,7 +2,7 @@
 #include <cuda.h>
 #include <math_functions.h>
 
-const int NUM_OF_DIMENSIONS = 3;
+const int NUM_OF_DIMENSIONS = 128;
 
 __constant__ double d_OMEGA= 0.64;
 __constant__ double d_phi = 1.4;
@@ -20,14 +20,14 @@ __device__ double fitness_function(double x[], int dimensionsCount)
 	double result = 0.0;
 
 	for (i = 0; i < dimensionsCount; ++i) {
-	double base, exponent, si;
+		double base, exponent, si;
 
-	base = sqrt(alpha);
-	exponent = (double) (long) i / ((double) (long) dimensionsCount - 1);
+		base = sqrt(alpha);
+		exponent = (double) (long) i / ((double) (long) dimensionsCount - 1);
 	
-	si = -pow(base, exponent);
+		si = -pow(base, exponent);
 
-	result += 5.0 * fabs(si) - si * x[i];
+		result += 5.0 * fabs(si) - si * x[i];
 	}
 
 	return result;

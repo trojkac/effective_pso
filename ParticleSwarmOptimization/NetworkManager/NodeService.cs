@@ -17,7 +17,8 @@ namespace NetworkManager
         
         public event UpdateNeighborhoodHandler NeighborhoodChanged;
         public event StartCalculationsHandler StartCalculations;
-        public event RegisterNodeHandler RegisterNode; 
+        public event RegisterNodeHandler RegisterNode;
+        public event RemoteCalculationsFinishedHandler RemoteCalculationsFinished;
         public NetworkNodeInfo Info { get; set; }
         public IPsoManager PsoManager { get; private set; }
         /// <summary>
@@ -67,12 +68,12 @@ namespace NetworkManager
         public void Deregister(NetworkNodeInfo brokenNodeInfo)
         {
             var nodes = KnownNodes.Where(n => n.Id == brokenNodeInfo.Id);
-            if (nodes.Count() < 1)
+            if (!nodes.Any())
             {
                 Debug.WriteLine("{0}:  Trying to deregister node {1}, already removed", Info.Id, brokenNodeInfo.Id);
                 return;
             }
-            Debug.WriteLine("{0}: deregistering node {1}",Info.Id,brokenNodeInfo.Id);
+            Debug.WriteLine("{0}: deregistering node {1}", Info.Id, brokenNodeInfo.Id);
             var node = KnownNodes.First(n => n.Id == brokenNodeInfo.Id);
             KnownNodes.Remove(node);
             BroadcastNeighborhoodList();
@@ -82,10 +83,19 @@ namespace NetworkManager
             });
         }
 
-        public void StartCalculation(PsoSettings settings)
+        public void StartCalculation(PsoParameters parameters)
         {
             Debug.WriteLine("{0}: starting calculations.", Info.Id);
-            if (StartCalculations != null) StartCalculations(settings);
+            if (StartCalculations != null) StartCalculations(parameters);
+        }
+
+        public void CalculationsFinished(NetworkNodeInfo source, ParticleState result)
+        {
+            Debug.WriteLine("{0}: received calculations finish from {1}",Info.Id, source.Id);
+            if (RemoteCalculationsFinished != null)
+            {
+                RemoteCalculationsFinished(new RemoteCalculationsFinishedHandlerArgs(source, result));
+            }
         }
 
         public void CheckStatus()
@@ -105,5 +115,19 @@ namespace NetworkManager
             }
         }
 
+    }
+
+    public delegate void RemoteCalculationsFinishedHandler(RemoteCalculationsFinishedHandlerArgs args);
+
+    public class RemoteCalculationsFinishedHandlerArgs
+    {
+        public NetworkNodeInfo Source;
+        public object Result;
+
+        public RemoteCalculationsFinishedHandlerArgs(NetworkNodeInfo source, object result)
+        {
+            Source = source;
+            Result = result;
+        }
     }
 }

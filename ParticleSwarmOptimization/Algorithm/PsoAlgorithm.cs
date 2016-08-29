@@ -15,19 +15,19 @@ namespace Algorithm
 	    private readonly IFitnessFunction<double[],double[]> _fitnessFunction;
 	    private readonly IParticle[] _particles;
 	    private ILogger _logger;
-	    private PsoSettings _settings;
+	    private PsoParameters _parameters;
 	    /// <summary>
-	    /// Creates PsoAlgorithm with specific settings to solve given problem using precreated particles
+	    /// Creates PsoAlgorithm with specific parameters to solve given problem using precreated particles
 	    /// </summary>
-	    /// <param name="settings">takes PsoSettings to check what stop conditions are defined.
+	    /// <param name="parameters">takes PsoParameters to check what stop conditions are defined.
 	    ///  PsoAlgorithm looks for TargetValue, Epsilon, TargetValueCondition, IterationsLimit, IterationsLimitCondition
 	    /// </param>
 	    /// <param name="fitnessFunction">function whose optimum is to be found</param>
 	    /// <param name="particles"> particles traversing the search space </param>
 	    /// <param name="logger"></param>
-        public PsoAlgorithm(PsoSettings settings, IFitnessFunction<double[], double[]> fitnessFunction, IParticle[] particles, ILogger logger = null)
+        public PsoAlgorithm(PsoParameters parameters, IFitnessFunction<double[], double[]> fitnessFunction, IParticle[] particles, ILogger logger = null)
 	    {
-	        _settings = settings;
+	        _parameters = parameters;
 	        _fitnessFunction = fitnessFunction;
 	        _particles = particles;
 	        _iteration = 0;
@@ -39,6 +39,8 @@ namespace Algorithm
 	        foreach (var particle in _particles)
 	        {
 	            particle.Transpose(_fitnessFunction);
+                particle.UpdateNeighborhood(_particles);
+
 	        }
 			while (_conditionCheck())
 			{
@@ -48,7 +50,6 @@ namespace Algorithm
 			    }
 			    foreach (var particle in _particles)
 			    {
-			        particle.UpdateNeighborhood(_particles);
                     particle.UpdateVelocity();
 			    }
 			    if (_logger != null)
@@ -66,10 +67,10 @@ namespace Algorithm
 	    private bool _conditionCheck()
 		{
 			return 
-                (!_settings.IterationsLimitCondition || _iteration++ < _settings.Iterations)
+                (!_parameters.IterationsLimitCondition || _iteration++ < _parameters.Iterations)
                 && 
-                (!_settings.TargetValueCondition ||
-                !(PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(new []{_settings.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_settings.Epsilon)));
+                (!_parameters.TargetValueCondition ||
+                !(PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(new []{_parameters.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_parameters.Epsilon)));
 		}
 
 	};

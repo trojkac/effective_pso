@@ -9,38 +9,38 @@ namespace Tests
 {
     public class PsoSettingsFactory
     {
-        public static PsoSettings QuadraticFunction1DFrom3To5()
+        public static PsoParameters QuadraticFunction1DFrom3To5()
         {
-            return new PsoSettings()
+            var particles = new[] { new ParticlesCount(PsoParticleType.Standard, 40)};
+            return new PsoParameters()
                 {
-                    Dimensions = 1,
                     Epsilon = 0,
                     Iterations = 1,
                     IterationsLimitCondition = true,
                     TargetValueCondition = false,
-                    Particles = new[] {new Tuple<PsoParticleType, int>(PsoParticleType.Standard, 40)},
-                    FunctionParameters = new UserFunctionParameters()
+                    Particles = particles,
+                    FunctionParameters = new FunctionParameters()
                     {
                         Dimension = 1,
                         Coefficients = new []{ 1.0 },
                         FitnessFunctionType = "quadratic",
-                        SearchSpace = new []{new Tuple<double, double>(3,5), }
+                        SearchSpace = new []{new DimensionBound(3,5), }
 
                     }
                 };
         }
-        public static PsoSettings QuadraticFunction20D()
+        public static PsoParameters QuadraticFunction20D()
         {
+            var dim = 20;
             var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
-            settings.Dimensions = 20;
-            settings.FunctionParameters.Dimension = settings.Dimensions;
+            settings.FunctionParameters.Dimension = dim;
             settings.Iterations = 1000;
             settings.IterationsLimitCondition = true;
-            settings.FunctionParameters.SearchSpace = new Tuple<double, double>[settings.Dimensions];
-            settings.FunctionParameters.Coefficients = new double[settings.Dimensions];
-            for (int i = 0; i < settings.Dimensions; i++)
+            settings.FunctionParameters.SearchSpace = new DimensionBound[dim];
+            settings.FunctionParameters.Coefficients = new double[dim];
+            for (int i = 0; i < dim; i++)
             {
-                settings.FunctionParameters.SearchSpace[i] = new Tuple<double, double>(-4.0, 4.0);
+                settings.FunctionParameters.SearchSpace[i] = new DimensionBound(-4.0, 4.0);
                 settings.FunctionParameters.Coefficients[i] = 1;
             }
             return settings;

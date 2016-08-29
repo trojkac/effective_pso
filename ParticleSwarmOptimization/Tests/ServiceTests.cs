@@ -14,9 +14,9 @@ namespace Tests
         [TestMethod]
         public void ClusterRegister()
         {
-            VCpuManager vcpu1 = new VCpuManager("127.0.0.1", 8888, "pipe1");
-            VCpuManager vcpu2 = new VCpuManager("127.0.0.1", 8889, "pipe2");
-            VCpuManager vcpu3 = new VCpuManager("127.0.0.1", 8890, "pipe3 ");
+            VCpuManager vcpu1 = new VCpuManager("192.168.110.194", 8888, "pipe1");
+            VCpuManager vcpu2 = new VCpuManager("192.168.110.194", 8889, "pipe2");
+            VCpuManager vcpu3 = new VCpuManager("192.168.110.194", 8890, "pipe3 ");
 
             vcpu1.StartTcpNodeService();
             vcpu2.StartTcpNodeService();
@@ -40,15 +40,15 @@ namespace Tests
         [TestMethod]
         public void ClusterCalculations()
         {
-            int cpuCores = 2;
+            int cpuCores = 3;
             VCpuManager[] vcpus = new VCpuManager[cpuCores];
             for (int i = 0; i < cpuCores; i++)
             {
-                vcpus[i] = new VCpuManager("192.168.143.192", 8881 + i, i.ToString());
+                vcpus[i] = new VCpuManager("192.168.110.194", 8881 + i, i.ToString());
                 vcpus[i].StartTcpNodeService();
                 if (i > 0)
                 {
-                    vcpus[i].NetworkNodeManager.Register(vcpus[i-1].GetMyNetworkNodeInfo());
+                    vcpus[i].NetworkNodeManager.Register(vcpus[i - 1].GetMyNetworkNodeInfo());
                 }
             }
 

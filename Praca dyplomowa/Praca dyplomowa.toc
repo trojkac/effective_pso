@@ -1,0 +1,24 @@
+\select@language {polish}
+\select@language {polish}
+\contentsline {chapter}{\numberline {1}S\IeC {\l }owniczek}{4}
+\contentsline {section}{\numberline {1.1}Definicje i oznaczenia}{4}
+\contentsline {chapter}{\numberline {2}Wst\IeC {\k e}p teoretyczny}{5}
+\contentsline {section}{\numberline {2.1}Czym jest PSO?}{5}
+\contentsline {section}{\numberline {2.2}Definicja algorytmu}{6}
+\contentsline {section}{\numberline {2.3}Dotychczasowy stan bada\IeC {\'n} nad PSO}{7}
+\contentsline {section}{\numberline {2.4}Istniej\IeC {\k a}ce implementacje i zastosowania PSO}{9}
+\contentsline {section}{\numberline {2.5}R\IeC {\'o}wnoleg\IeC {\l }e i rozproszone PSO}{10}
+\contentsline {section}{\numberline {2.6}Dotychczasowy stan bada\IeC {\'n} nad r\IeC {\'o}wnoleg\IeC {\l }ym i rozproszonym PSO}{11}
+\contentsline {chapter}{\numberline {3}Nasz program}{14}
+\contentsline {section}{\numberline {3.1}Architektura w\IeC {\k e}z\IeC {\l }a obliczeniowego}{14}
+\contentsline {section}{\numberline {3.2}Klaster i komunikacja mi\IeC {\k e}dzy w\IeC {\k e}z\IeC {\l }ami}{14}
+\contentsline {section}{\numberline {3.3}Kr\IeC {\'o}tkie wprowadzenie do architektury CUDA}{14}
+\contentsline {section}{\numberline {3.4}PSO na GPU}{15}
+\contentsline {section}{\numberline {3.5}Szczeg\IeC {\'o}\IeC {\l }y implementacyjne}{15}
+\contentsline {chapter}{\numberline {4}Testy}{16}
+\contentsline {section}{\numberline {4.1}Platforma COCO}{16}
+\contentsline {section}{\numberline {4.2}Wyniki test\IeC {\'o}w}{17}
+\contentsline {section}{\numberline {4.3}Interpretacja wynik\IeC {\'o}w}{17}
+\contentsline {chapter}{\numberline {5}Wymagania techniczne i instrukcja}{18}
+\contentsline {section}{\numberline {5.1}Wymagania sprz\IeC {\k e}towe i programowe}{18}
+\contentsline {section}{\numberline {5.2}Instrukcja u\IeC {\.z}ytkownika i programisty}{18}

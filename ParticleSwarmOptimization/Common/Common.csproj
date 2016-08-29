@@ -45,6 +45,7 @@
     <Compile Include="Euclidean.cs" />
     <Compile Include="FirstValueOptimization.cs" />
     <Compile Include="FitnessFunction.cs" />
+    <Compile Include="FitnessFunctionEvaluation.cs" />
     <Compile Include="IFitnessFunction.cs" />
     <Compile Include="IMetric.cs" />
     <Compile Include="IOptimization.cs" />
@@ -58,13 +59,21 @@
     <Compile Include="PsoImplementationType.cs" />
     <Compile Include="PsoParticleType.cs" />
     <Compile Include="PsoServiceLocator.cs" />
-    <Compile Include="PsoSettings.cs" />
+    <Compile Include="PsoParameters.cs" />
     <Compile Include="RandomGenerator.cs" />
-    <Compile Include="UserNodeParameters.cs" />
-    <Compile Include="UserFunctionParameters.cs" />
-    <Compile Include="UserPsoParameters.cs" />
+    <Compile Include="NodeParameters.cs" />
+    <Compile Include="FunctionParameters.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CocoWrapper\CocoWrapper.csproj">
+      <Project>{0A2370FE-CBB5-4240-BA08-BC8E09AB660A}</Project>
+      <Name>CocoWrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /d /y "$(SolutionDir)CocoWrapper\CocoLibrary.dll" "$(TargetDir)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

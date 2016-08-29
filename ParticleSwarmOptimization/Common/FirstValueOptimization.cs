@@ -6,6 +6,14 @@ namespace Common
     {
         public int IsBetter(double[] a, double[] b)
         {
+            if (double.IsInfinity(a[0]))
+            {
+                return double.IsInfinity(b[0]) ? 0 : 1;
+            }
+            if (double.IsInfinity(b[0]))
+            {
+                return double.IsInfinity(a[0]) ? 0 : -1;
+            }
             return Math.Sign(a[0] - b[0]);
         }
 

@@ -39,7 +39,7 @@ namespace ManagedGPU
             return best;
         }
 
-        public override void Init(ParticleState state, double[] velocity, Tuple<double, double>[] bounds = null)
+        public override void Init(ParticleState state, double[] velocity, DimensionBound[] bounds = null)
         {
             CurrentState = state;
         }

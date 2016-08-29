@@ -19,6 +19,9 @@ namespace PsoService
             _left.Item2.CommunicationBreakdown += OnLeftCommunicationFailure;
             _right.Item2.CommunicationBreakdown += OnRightCommunicationFailure;
 
+            _left.Item2.Open();
+            _right.Item2.Open();
+
 
         }
 
@@ -37,7 +40,7 @@ namespace PsoService
             NetworkNodeInfo currentNetworkNode)
         {
             //do nothing if there is only current network in collection
-            if (allNetworkNodes == null || allNetworkNodes.Length < 1)
+            if (allNetworkNodes == null || allNetworkNodes.Length <= 1)
                 return;
             var nodes = allNetworkNodes.OrderBy(t => t.Id).ToArray();
             NetworkNodeInfo previous = null, next = null;

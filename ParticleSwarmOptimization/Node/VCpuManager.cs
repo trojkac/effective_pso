@@ -10,13 +10,13 @@ namespace Node
     public class VCpuManager
     {
 
-        private UserNodeParameters _nodeParams;
+        private NodeParameters _nodeParams;
 
         // GENERAL PART
 
-        public VCpuManager(string tcpAddress,int tcpPort, string pipeName, IPsoController psoController  = null, IPsoManager psoRingManager = null)
+        public VCpuManager(string tcpAddress, int tcpPort, string pipeName, IPsoController psoController = null, IPsoManager psoRingManager = null)
         {
-            NetworkNodeManager = new NetworkNodeManager(tcpAddress,tcpPort, pipeName);
+            NetworkNodeManager = new NetworkNodeManager(tcpAddress, tcpPort, pipeName);
             PsoController = psoController ?? new PsoController(NetworkNodeManager.NodeService.Info.Id);
             PsoRingManager = psoRingManager ?? new PsoRingManager(NetworkNodeManager.NodeService.Info.Id);
             NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses = PsoRingManager.GetProxyParticlesAddresses();
@@ -33,8 +33,9 @@ namespace Node
             NetworkNodeManager.NodeService.RegisterNode += RunOnNode;
             NetworkNodeManager.NodeService.StartCalculations += Run;
             PsoRingManager.CommunicationLost += NetworkNodeManager.NodeService.Deregister;
+            PsoController.CalculationsCompleted += NetworkNodeManager.FinishCalculations;
+            NetworkNodeManager.NodeService.RemoteCalculationsFinished += PsoController.RemoteControllerFinished;
 
-            
         }
 
         // NETWORK PART
@@ -61,7 +62,7 @@ namespace Node
             NetworkNodeManager.ClosePipeNodeService();
         }
 
-        
+
         public NetworkNodeInfo GetMyNetworkNodeInfo()
         {
             return NetworkNodeManager.NodeService.Info;
@@ -69,26 +70,26 @@ namespace Node
         public IPsoManager PsoRingManager { get; set; }
         public IPsoController PsoController { get; set; }
 
-        public void Run( PsoSettings psoSettings)
+        public void Run(PsoParameters psoParameters)
         {
             if (!PsoController.CalculationsRunning)
             {
-                PsoController.Run(psoSettings, PsoRingManager.GetProxyParticles());
+                PsoController.Run(psoParameters, PsoRingManager.GetProxyParticles());
             }
         }
 
-        public void StartCalculations(PsoSettings settings)
+        public void StartCalculations(PsoParameters parameters)
         {
             if (PsoController.CalculationsRunning) return;
-            NetworkNodeManager.StartCalculations(settings);
-            Run(settings);
+            NetworkNodeManager.StartCalculations(parameters);
+            Run(parameters);
         }
 
         private void RunOnNode(NetworkNodeInfo newNode)
         {
             if (PsoController.CalculationsRunning)
             {
-                NetworkNodeManager.StartCalculations(PsoController.RunningSettings,newNode);
+                NetworkNodeManager.StartCalculations(PsoController.RunningParameters, newNode);
             }
         }
     }
