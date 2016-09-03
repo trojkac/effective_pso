@@ -10,7 +10,7 @@ namespace Common
     {
         private static RandomGenerator _generator;
         private static int? _seed;
-        public Random Random;
+        private Random Random;
 
 
         private RandomGenerator(int? seed = null)
