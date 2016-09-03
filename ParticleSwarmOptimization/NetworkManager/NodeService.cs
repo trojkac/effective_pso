@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using Common;
 using System.Threading.Tasks;
+using Common.Parameters;
 using PsoService;
 
 namespace NetworkManager

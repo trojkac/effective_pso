@@ -2,6 +2,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Common;
+using Common.Parameters;
 
 namespace NetworkManager
 {

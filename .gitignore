@@ -231,3 +231,7 @@ _Pvt_Extensions
 /ParticleSwarmOptimization/old_projects
 *.dll
 /ParticleSwarmOptimization/CocoLibrary/code-experiments/src
+
+visual studio 2013/*
+ParticleSwarmOptimization/Visual Studio 2013/
+

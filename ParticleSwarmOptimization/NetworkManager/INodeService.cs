@@ -1,6 +1,7 @@
 using System;
 using System.ServiceModel;
 using Common;
+using Common.Parameters;
 
 namespace NetworkManager
 {

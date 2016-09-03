@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using CocoWrapper;
+using Common.Parameters;
 
 namespace Common
 {

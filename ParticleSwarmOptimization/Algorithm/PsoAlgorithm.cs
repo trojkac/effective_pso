@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using Common;
+using Common.Parameters;
 
 namespace Algorithm
 {

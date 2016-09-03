@@ -8,6 +8,7 @@ using System.ServiceModel.Description;
 using System.Threading;
 using System.Threading.Tasks;
 using Common;
+using Common.Parameters;
 
 namespace NetworkManager
 {

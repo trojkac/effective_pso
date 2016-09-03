@@ -8,6 +8,7 @@ using Common;
 using Algorithm;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Common.Parameters;
 
 namespace CocoSingleCpuApp
 {
