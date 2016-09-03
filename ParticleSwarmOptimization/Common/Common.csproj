@@ -41,7 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomFitnessFunction.cs" />
+    <Compile Include="AbstractFitnessFunction.cs" />
+    <Compile Include="FunctionFactory.cs" />
     <Compile Include="Euclidean.cs" />
     <Compile Include="FirstValueOptimization.cs" />
     <Compile Include="FitnessFunction.cs" />
@@ -65,9 +66,12 @@
     <Compile Include="PsoParticleType.cs" />
     <Compile Include="PsoServiceLocator.cs" />
     <Compile Include="parameters\PsoParameters.cs" />
+    <Compile Include="QuadraticFunction.cs" />
     <Compile Include="RandomGenerator.cs" />
     <Compile Include="parameters\NodeParameters.cs" />
     <Compile Include="parameters\FunctionParameters.cs" />
+    <Compile Include="RastriginFunction.cs" />
+    <Compile Include="RosenbrockFunction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CocoWrapper\CocoWrapper.csproj">

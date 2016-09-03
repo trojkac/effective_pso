@@ -9,7 +9,10 @@ namespace Common
             _evaluate = evaluator;
             _optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
             BestEvaluation = null;
+            EvaluationsCount = 0;
         }
+
+        public int EvaluationsCount { get; private set; }
 
         public double[] Evaluate(double[] x)
         {
@@ -18,6 +21,7 @@ namespace Common
             {
                 BestEvaluation = newState;
             }
+            EvaluationsCount++;
             return newState.FitnessValue;
         }
 
