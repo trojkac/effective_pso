@@ -12,7 +12,7 @@ namespace Common
         {
             if (parameters.FitnessFunctionType.Contains("bbob"))
             {
-                var functionId = parameters.FitnessFunctionType.Split('_')[1];
+                var functionId = parameters.FitnessFunctionType;
                 var observerOptions =
                              "result_folder: PSO_on_bbob_" +
                              DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()
@@ -26,7 +26,7 @@ namespace Common
                 /* Iterate over all problems in the suite */
                 while ((problem = benchmark.getNextProblem()) != null)
                 {
-                    if (problem.FunctionNumber != functionId) continue;
+                    if (problem.Id != functionId) continue;
                     var upper = problem.getLargestValuesOfInterest();
                     var bounds =
                         problem.getSmallestValuesOfInterest()

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CocoWrapper;
 using Common;
+using Common.Parameters;
 using Algorithm;
 using System.Xml;
 using System.Xml.Serialization;
@@ -28,19 +29,12 @@ namespace CocoClusterApp
                 Console.WriteLine("CocoSingleCpuApp <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo>");
                 return;
             }
+
+            var nodeParamsDeserialize = new ParametersSerializer<NodeParameters>();
+            var psoParamsDeserialize = new ParametersSerializer<PsoParameters>();
+            var nodeParams = nodeParamsDeserialize.Deserialize("nodeParams.xml");
+            var psoParams = psoParamsDeserialize.Deserialize("psoParams.xml");
             
-            var nodeParamsSerializer = new XmlSerializer(typeof(NodeParameters));
-            var psoParamsSerializer = new XmlSerializer(typeof(PsoParameters));
-            NodeParameters nodeParams;
-            PsoParameters psoParams;
-            using (var nodeFileReader = new StreamReader("nodeParams.xml"))
-            {
-                nodeParams = (NodeParameters)nodeParamsSerializer.Deserialize(nodeFileReader);
-            }
-            using (var psoFileReader = new StreamReader("psoParams.xml"))
-            {
-                psoParams = (PsoParameters)psoParamsSerializer.Deserialize(psoFileReader);
-            }
             MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.Ports.ToArray(), nodeParams.NrOfVCpu);
             if (nodeParams.PeerAddress != null)
             {
@@ -107,7 +101,7 @@ namespace CocoClusterApp
                     {
                         Dimension = function.LocationDim,
                         SearchSpace = bounds,
-                        FitnessFunctionType = String.Format("bbob_{0}", Problem.FunctionNumber)
+                        FitnessFunctionType = Problem.Id
                     };
                     settings.FunctionParameters.SearchSpace = bounds;
                     settings.Particles = new ParticlesCount[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) };

@@ -450,6 +450,11 @@ namespace CocoWrapper
                 return id.Split('_')[1];
             }
         }
+
+        public string Id
+        {
+            get { return id; }
+        }
         public Problem(long pointer)
         {
             try
