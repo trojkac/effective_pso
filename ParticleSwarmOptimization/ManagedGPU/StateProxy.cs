@@ -2,14 +2,15 @@
 
 namespace ManagedGPU
 {
-    internal class StateProxy
+    public class StateProxy
     {
         internal StateProxy(CudaParams parameters)
         {
-            CpuState = new ParticleState(RandomGenerator.GetInstance().RandomVector(parameters.LocationDimensions), 
-                RandomGenerator.GetInstance().RandomVector(parameters.FitnessDimensions));
-            GpuState = new ParticleState(RandomGenerator.GetInstance().RandomVector(parameters.LocationDimensions), 
-                RandomGenerator.GetInstance().RandomVector(parameters.FitnessDimensions));
+            var rand = RandomGenerator.GetInstance();
+            var x = parameters.Bounds != null ? rand.RandomVector(parameters.LocationDimensions, parameters.Bounds) : rand.RandomVector(parameters.LocationDimensions);
+        
+            CpuState = new ParticleState(x, parameters.FitnessFunction.Evaluate(x));
+            GpuState = new ParticleState(x, parameters.FitnessFunction.Evaluate(x));
         }
 
         public ParticleState CpuState { get; set; }

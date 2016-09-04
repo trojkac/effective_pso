@@ -6,67 +6,67 @@ using ManagedCuda;
 
 namespace ManagedGPU
 {
-    public class CudaAlgorithm
+    public abstract class GenericCudaAlgorithm : IDisposable
     {
-        private readonly bool _syncWithCpu;
+        protected bool _syncWithCpu;
 
-        private readonly ICudaFitnessFunction _fitnessFunction;
+        protected IFitnessFunction<double[], double[]> _fitnessFunction;
 
-        private Thread _threadHandler;
+        protected Thread _threadHandler;
 
-        private readonly StateProxy _proxy;
+        protected StateProxy _proxy;
 
-        private readonly int _particlesCount;
+        protected int _functionNumber;
 
-        private readonly int _dimensionsCount;
+        protected int _instanceNumber;
 
-        private readonly int _iterations;
+        protected int _particlesCount;
 
-        private CudaKernel _updateParticle;
+        protected int _dimensionsCount;
 
-        private CudaKernel _updatePersonalBest;
+        protected int _iterations;
 
-        private double[] _hostPositions;
+        protected CudaKernel _updateParticle;
 
-        private double[] _hostVelocities;
+        protected CudaKernel _updatePersonalBest;
 
-        private double[] _hostPersonalBests;
+        protected double[] _hostPositions;
 
-        private double[] _hostGlobalBests;
+        protected double[] _hostVelocities;
 
-        private CudaDeviceVariable<double> _devicePositions;
+        protected double[] _hostPersonalBests;
 
-        private CudaDeviceVariable<double> _deviceVelocities;
+        protected double[] _hostGlobalBests;
 
-        private CudaDeviceVariable<double> _devicePersonalBests;
+        protected CudaDeviceVariable<double> _devicePositions;
 
-        private CudaDeviceVariable<double> _deviceGlobalBests;
+        protected CudaDeviceVariable<double> _deviceVelocities;
 
-        private readonly Random _rng = new Random();
+        protected CudaDeviceVariable<double> _devicePersonalBests;
 
-        internal CudaAlgorithm(CudaParams parameters, StateProxy proxy)
-        {
-            _proxy = proxy;
-            _particlesCount = parameters.ParticlesCount;
-            _dimensionsCount = parameters.LocationDimensions;
-            _iterations = parameters.Iterations;
-            _fitnessFunction = parameters.FitnessFunction;
-            _syncWithCpu = parameters.SyncWithCpu;
-        }
+        protected CudaDeviceVariable<double> _deviceGlobalBests;
 
-        private void InitContext()
+        protected readonly Random _rng = new Random();
+
+        protected CudaContext ctx;
+
+        protected abstract void Init();
+
+        protected abstract string KernelFile { get; }
+
+        protected void InitContext()
         {
             var size = _particlesCount * _dimensionsCount;
 
             var threadsNum = 32;
             var blocksNum = _particlesCount / threadsNum;
-            var ctx = new CudaContext(0);
+            ctx = new CudaContext(0);
 
-            _updateParticle = ctx.LoadKernel(_fitnessFunction.KernelFile, "kernelUpdateParticle");
+            _updateParticle = ctx.LoadKernel(KernelFile, "kernelUpdateParticle");
             _updateParticle.GridDimensions = blocksNum;
             _updateParticle.BlockDimensions = threadsNum;
 
-            _updatePersonalBest = ctx.LoadKernel(_fitnessFunction.KernelFile, "kernelUpdatePBest");
+            _updatePersonalBest = ctx.LoadKernel(KernelFile, "kernelUpdatePBest");
             _updatePersonalBest.GridDimensions = blocksNum;
             _updatePersonalBest.BlockDimensions = threadsNum;
 
@@ -79,7 +79,7 @@ namespace ManagedGPU
             {
                 _hostPositions[i] = RandomIn(_rng, -5.0f, 5.0f);
                 _hostPersonalBests[i] = _hostPositions[i];
-                _hostVelocities[i] = 0.0f;
+                _hostVelocities[i] = RandomIn(_rng, -2.0f, 2.0f);
             }
 
             for (var i = 0; i < _dimensionsCount; i++)
@@ -89,9 +89,11 @@ namespace ManagedGPU
             _deviceVelocities = _hostVelocities;
             _devicePersonalBests = _hostPersonalBests;
             _deviceGlobalBests = _hostGlobalBests;
+
+            Init();
         }
 
-        private void PullCpuState()
+        protected void PullCpuState()
         {
             _hostPositions = _devicePositions;
 
@@ -101,13 +103,12 @@ namespace ManagedGPU
             _devicePositions = _hostPositions;
         }
 
-        private void PushGpuState()
+        protected void PushGpuState()
         {
-            _hostPositions = _devicePositions;
-            var temp = _hostPositions.Take(_dimensionsCount).ToArray();
-            var location = _hostPositions.Take(_dimensionsCount).ToArray();
-            var fitnessValue = new[] {_fitnessFunction.HostFitnessFunction(location)};
-            _proxy.GpuState = new ParticleState(location, fitnessValue); ;
+            _hostPersonalBests = _devicePersonalBests;
+            var location = _hostPersonalBests.Take(_dimensionsCount).ToArray();
+            var fitnessValue = _fitnessFunction.Evaluate(location);
+            _proxy.GpuState = new ParticleState(location, fitnessValue); 
         }
 
         public void RunAsync()
@@ -163,32 +164,17 @@ namespace ManagedGPU
 
             _hostGlobalBests = _deviceGlobalBests;
 
-            return _fitnessFunction.HostFitnessFunction(_hostGlobalBests);
+            return _fitnessFunction.Evaluate(_hostGlobalBests)[0];
         }
 
-        private void Step()
+        protected void Step()
         {
             var size = _particlesCount*_dimensionsCount;
             var temp = new double[_dimensionsCount];
 
-            _updateParticle.Run(
-                    _devicePositions.DevicePointer,
-                    _deviceVelocities.DevicePointer,
-                    _devicePersonalBests.DevicePointer,
-                    _deviceGlobalBests.DevicePointer,
-                    _particlesCount,
-                    _dimensionsCount,
-                    Random(_rng),
-                    Random(_rng)
-                );
+            RunUpdateParticleKernel();
 
-            _updatePersonalBest.Run(
-                _devicePositions.DevicePointer,
-                _devicePersonalBests.DevicePointer,
-                _deviceGlobalBests.DevicePointer,
-                _particlesCount,
-                _dimensionsCount
-            );
+            RunUpdatePersonalBestKernel();
 
             _hostPersonalBests = _devicePersonalBests;
 
@@ -197,24 +183,43 @@ namespace ManagedGPU
                 for (var k = 0; k < _dimensionsCount; k++)
                     temp[k] = _hostPersonalBests[i + k];
 
-                if (_fitnessFunction.HostFitnessFunction(temp) < _fitnessFunction.HostFitnessFunction(_hostGlobalBests))
+                if (_fitnessFunction.Evaluate(GetClampedLocation(temp))[0] < _fitnessFunction.Evaluate(_hostGlobalBests)[0])
                 {
                     for (var k = 0; k < _dimensionsCount; k++)
-                        _hostGlobalBests[k] = temp[k];
+                        _hostGlobalBests[k] = GetClampedLocation(temp)[k];
                 }
             }
 
             _deviceGlobalBests = _hostGlobalBests;
         }
 
-        private static double RandomIn(Random rng, double min, double max)
+        private double[] GetClampedLocation(double[] vector)
+        {
+            if (vector == null) return vector;
+            return vector.Select((x, i) => Math.Min(Math.Max(x, -5.0), 5.0)).ToArray();
+        }
+
+        protected abstract void RunUpdateParticleKernel();
+
+        protected abstract void RunUpdatePersonalBestKernel();
+
+        protected static double RandomIn(Random rng, double min, double max)
         {
             return min + Random(rng) * (max - min);
         }
 
-        private static double Random(Random rng)
+        protected static double Random(Random rng)
         {
             return rng.NextDouble();
+        }
+
+        public virtual void Dispose()
+        {
+            _devicePositions.Dispose();
+            _deviceGlobalBests.Dispose();
+            _deviceVelocities.Dispose();
+            _devicePersonalBests.Dispose();
+            ctx.Dispose();
         }
     }
 }

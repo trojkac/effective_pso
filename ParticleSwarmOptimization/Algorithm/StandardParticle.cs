@@ -32,7 +32,6 @@ namespace Algorithm
             Bounds = bounds;
 
         }
-
       
         public override void UpdateVelocity()
         {

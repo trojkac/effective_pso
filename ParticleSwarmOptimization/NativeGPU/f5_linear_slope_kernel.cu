@@ -2,73 +2,117 @@
 #include <cuda.h>
 #include <math_functions.h>
 
-const int NUM_OF_DIMENSIONS = 128;
+#include "bbob_generators.cuh"
 
-__constant__ double d_OMEGA= 0.64;
+__constant__ double d_OMEGA = 0.64;
 __constant__ double d_phi = 1.4;
 
 __constant__ double PI = 3.1415;
 
-__device__ double tempParticle1[NUM_OF_DIMENSIONS];
-__device__ double tempParticle2[NUM_OF_DIMENSIONS];
-
-// Simple quadratic function
-__device__ double fitness_function(double x[], int dimensionsCount)
+__device__ double fitness_function(double x[], int number_of_variables, double* xopt)
 {
-	const double alpha = 100.0;
-	size_t i;
-	double result = 0.0;
+    const double alpha = 100.0;
+    size_t i;
+    double result = 0.0;
 
-	for (i = 0; i < dimensionsCount; ++i) {
-		double base, exponent, si;
+    for(i = 0; i < number_of_variables; ++i)
+    {
+        double base, exponent, si;
 
-		base = sqrt(alpha);
-		exponent = (double) (long) i / ((double) (long) dimensionsCount - 1);
-	
-		si = -pow(base, exponent);
+        base = sqrt(alpha);
+        exponent = (double)(long)i / ((double)(long)number_of_variables - 1);
+        if(xopt[i] > 0.0)
+        {
+            si = pow(base, exponent);
+        }
+        else
+        {
+            si = -pow(base, exponent);
+        }
+        result += 5.0 * fabs(si) - si * x[i];
+    }
 
-		result += 5.0 * fabs(si) - si * x[i];
-	}
-
-	return result;
+    return result;
 }
 
+__device__ double wrapped_fitness_function(double x[], int number_of_variables,
+                                           double* xopt, double fopt)
+{
+    transform_vars_shift(x, number_of_variables, xopt);
+    double temp[1];
+    temp[0] = fitness_function(x, number_of_variables, xopt);
+    transform_obj_shift(temp, 1, fopt);
+    transform_obj_power(temp, 1);
+    transform_obj_oscillate(temp, 1);
+
+    return temp[0];
+}
+
+
 extern "C" {
-	__global__ void kernelUpdateParticle(double *positions, double *velocities, 
-										 double *pBests, double *gBest,
-										 int particlesCount, int dimensionsCount,
-										 double r1, double r2)
-	{
-		int i = blockIdx.x * blockDim.x + threadIdx.x;
-    
-		if(i >= particlesCount * dimensionsCount)
-			return;
+    __global__ void generateData(int dimension,
+                                 int rseed,
+                                 int function,
+                                 int instance,
+                                 double* vars_shift_xopt,
+                                 double* obj_shift_fopt)
+    {
+        bbob2009_compute_xopt(vars_shift_xopt, rseed, dimension);
 
-		velocities[i] = d_OMEGA * velocities[i] + r1 * (pBests[i] - positions[i])
-				+ r2 * (gBest[i % dimensionsCount] - positions[i]);
+        for(int i = 0; i < dimension; ++i)
+        {
+            if(vars_shift_xopt[i] < 0.0)
+            {
+                vars_shift_xopt[i] = -5.0;
+            }
+            else
+            {
+                vars_shift_xopt[i] = 5.0;
+            }
+        }
 
-		// Update posisi particle
-		positions[i] += velocities[i];
-	}
+        obj_shift_fopt[0] = bbob2009_compute_fopt(function, instance);
+    }
 
-	__global__ void kernelUpdatePBest(double *positions, double *pBests, double* gBest,
-									  int particlesCount, int dimensionsCount)
-	{
-		int i = blockIdx.x * blockDim.x + threadIdx.x;
-    
-		if(i >= particlesCount * dimensionsCount || i % dimensionsCount != 0)
-			return;
+    __global__ void kernelUpdateParticle(double *positions, double *velocities,
+                                         double *pBests, double *gBest,
+                                         int particlesCount, int dimensionsCount,
+                                         double r1, double r2)
+    {
+        int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-		for (int j = 0; j < dimensionsCount; j++)
-		{
-			tempParticle1[j] = positions[i + j];
-			tempParticle2[j] = pBests[i + j];
-		}
+        if(i >= particlesCount * dimensionsCount)
+            return;
 
-		if (fitness_function(tempParticle1, dimensionsCount) < fitness_function(tempParticle2, dimensionsCount))
-		{
-			for (int k = 0; k < dimensionsCount; k++)
-				pBests[i + k] = positions[i + k];
-		}
-	}
+        velocities[i] = d_OMEGA * velocities[i] + r1 * (pBests[i] - positions[i])
+            + r2 * (gBest[i % dimensionsCount] - positions[i]);
+
+        // Update posisi particle
+        positions[i] += velocities[i];
+    }
+
+    __global__ void kernelUpdatePBest(double *positions, double *pBests, double* gBest,
+                                      int particlesCount, int dimensionsCount,
+                                      double* xopt, double fopt)
+    {
+        int i = blockIdx.x * blockDim.x + threadIdx.x;
+        double tempParticle1[MAX_DIMENSIONS];
+        double tempParticle2[MAX_DIMENSIONS];
+
+        if(i >= particlesCount * dimensionsCount || i % dimensionsCount != 0)
+            return;
+
+        for(int j = 0; j < dimensionsCount; j++)
+        {
+            tempParticle1[j] = positions[i + j];
+            tempParticle2[j] = pBests[i + j];
+        }
+
+        if(wrapped_fitness_function(tempParticle1, dimensionsCount, xopt, fopt) <
+           wrapped_fitness_function(tempParticle2, dimensionsCount, xopt, fopt))
+        {
+            for(int k = 0; k < dimensionsCount; k++)
+                pBests[i + k] = positions[i + k];
+        }
+    }
 }

@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ManagedCuda">
@@ -42,22 +44,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BucheRastriginFitnessFunction.cs" />
-    <Compile Include="CudaAlgorithm.cs" />
-    <Compile Include="CudaFitnessFunctions.cs" />
-    <Compile Include="EllipsoidalFitnessFunction.cs" />
-    <Compile Include="ICudaFitnessFunction.cs" />
+    <Compile Include="AttractiveSectorAlgorithm.cs" />
+    <Compile Include="BentCigarAlgorithm.cs" />
+    <Compile Include="BuecheRastriginAlgorithm.cs" />
+    <Compile Include="CudaAlgorithmFactory.cs" />
+    <Compile Include="DifferentPowersAlgorithm.cs" />
+    <Compile Include="DiscusAlgorithm.cs" />
+    <Compile Include="EllipsoidalRotatedAlgorithm.cs" />
+    <Compile Include="EllipsoidalAlgorithm.cs" />
+    <Compile Include="GallagherAlgorithm.cs" />
+    <Compile Include="GenericCudaAlgorithm.cs" />
     <Compile Include="CudaParams.cs" />
     <Compile Include="CudaParticle.cs" />
     <Compile Include="GpuController.cs" />
-    <Compile Include="LinearSlopeFitnessFunction.cs" />
+    <Compile Include="GriewankRosenbrockAlgorithm.cs" />
+    <Compile Include="KatsuuraAlgorithm.cs" />
+    <Compile Include="LinearSlopeAlgorithm.cs" />
+    <Compile Include="LunacekBiRastriginAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuadraticFitnessFunction.cs" />
-    <Compile Include="RastriginFitnessFunction.cs" />
-    <Compile Include="RosenbrockFitnessFunction.cs" />
-    <Compile Include="SimpleRastriginFitnessFunction.cs" />
-    <Compile Include="SphereFitnessFunction.cs" />
+    <Compile Include="RastriginAlgorithm.cs" />
+    <Compile Include="RastriginRotatedAlgorithm.cs" />
+    <Compile Include="RosenbrockAlgorithm.cs" />
+    <Compile Include="RosenbrockRotatedAlgorithm.cs" />
+    <Compile Include="SchaffersAlgorithm.cs" />
+    <Compile Include="SchwefelAlgorithm.cs" />
+    <Compile Include="SphereAlgorithm.cs" />
     <Compile Include="StateProxy.cs" />
+    <Compile Include="StepEllipsoidAlgorithm.cs" />
+    <Compile Include="WeierstrassAlgorithm.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Algorithm\Algorithm.csproj">
@@ -70,21 +84,68 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="f1_sphere_kernel.ptx" />
-    <None Include="f2_ellipsoidal_kernel.ptx" />
-    <None Include="f3_rastrigin_kernel.ptx" />
-    <None Include="f4_buche_rastrigin_kernel.ptx" />
-    <None Include="f5_linear_slope_kernel.ptx" />
-    <None Include="psoKernelQuadratic.ptx">
+    <None Include="f11_discus_kernel.ptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="psoKernelRastrigin.ptx">
+    <None Include="f12_bent_cigar_kernel.ptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="psoKernelRosenbrock.ptx">
+    <None Include="f14_different_powers_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f15_rastrigin_rotated_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f16_weierstrass_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f17_schaffers_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f19_griewank_rosenbrock_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f1_sphere_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f20_schwefel_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f21_gallagher_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f23_katsuura_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f24_lunacek_bi_rastrigin_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f2_ellipsoidal_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f3_rastrigin_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f4_buche_rastrigin_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f5_linear_slope_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f6_attractive_sector.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f7_step_ellipsoid.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f8_rosenbrock_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f9_rosenbrock_rotated_kernel.ptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
