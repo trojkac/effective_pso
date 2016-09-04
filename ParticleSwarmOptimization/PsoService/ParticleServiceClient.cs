@@ -30,7 +30,7 @@ namespace PsoService
 
         public static IParticleService CreateClient(string remoteNeighborAddress)
         {
-            var binding = new NetTcpBinding();
+            var binding = new NetTcpBinding(SecurityMode.None);
             binding.SendTimeout = new TimeSpan(0, 0, 0, 5);
             binding.OpenTimeout = new TimeSpan(0, 0, 0, 5);
             var endpoint = new EndpointAddress(remoteNeighborAddress);

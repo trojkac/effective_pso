@@ -91,7 +91,7 @@ namespace NetworkManager
         public TcpNodeServiceClient(string tcpAddress)
         {
             Address = new EndpointAddress(tcpAddress);
-            Binding = new NetTcpBinding();
+            Binding = new NetTcpBinding(SecurityMode.None);
             ChannelFactory = new ChannelFactory<INodeService>(Binding);
             Proxy = ChannelFactory.CreateChannel(Address);
         }

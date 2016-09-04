@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using Algorithm;
 using Common;
 
@@ -46,7 +47,11 @@ namespace PsoService
         public static ProxyParticle CreateProxyParticle(ulong nodeId)
         {
             var particle = new ProxyParticle() { _particleService = new ParticleService() };
-            particle._host = new ServiceHost(particle._particleService, new Uri(string.Format("net.tcp://0.0.0.0:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id)));
+            particle._host = new ServiceHost( particle._particleService, 
+                new Uri(string.Format("net.tcp://0.0.0.0:{0}/{1}/particle/{2}", PortFinder.FreeTcpPort(), nodeId, particle.Id))
+                );
+            particle._host.AddServiceEndpoint(typeof(IParticleService), new NetTcpBinding(SecurityMode.None),"");
+
             return particle;
         }
 

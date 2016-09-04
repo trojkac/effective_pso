@@ -108,7 +108,7 @@ namespace NetworkManager
 
             _tcpHost = new ServiceHost(NodeService, serviceUri);
 
-            _tcpHost.AddServiceEndpoint(typeof (INodeService), new NetTcpBinding(), "");
+            _tcpHost.AddServiceEndpoint(typeof (INodeService), new NetTcpBinding(SecurityMode.None), "");
 
             var smb = new ServiceMetadataBehavior();
             _tcpHost.Description.Behaviors.Add(smb);
