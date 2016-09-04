@@ -87,6 +87,7 @@ namespace Node
 
         public void Run(PsoParameters psoParameters, NetworkNodeInfo mainNodeInfo)
         {
+            _mainNodeInfo = mainNodeInfo;
             if (!PsoController.CalculationsRunning)
             {
                 PsoController.Run(psoParameters, PsoRingManager.GetProxyParticles());

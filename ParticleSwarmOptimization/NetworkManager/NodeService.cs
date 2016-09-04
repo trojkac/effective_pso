@@ -93,7 +93,7 @@ namespace NetworkManager
         public ParticleState StopCalculation()
         {
             var pState = new ParticleState();
-            Debug.WriteLine("{0}: stopping calculations", Info.Id);
+            Debug.WriteLine("{0}: received stop calculations", Info.Id);
             if (StopCalculations != null) pState = StopCalculations();
             return pState;
         }
