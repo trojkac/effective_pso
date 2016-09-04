@@ -54,17 +54,31 @@ namespace NetworkManager
         }
 
 
-        public void StartCalculation(PsoParameters parameters)
+        public void StartCalculation(PsoParameters parameters, NetworkNodeInfo mainNodeInfo)
         {
             try
             {
-                Proxy.StartCalculation(parameters);
+                Proxy.StartCalculation(parameters, mainNodeInfo);
 
             }
             catch
             {
 
             }
+        }
+
+        public ParticleState StopCalculation()
+        {
+            try
+            {
+                return Proxy.StopCalculation();
+
+            }
+            catch
+            {
+
+            }
+            return new ParticleState();
         }
 
         public void CalculationsFinished(NetworkNodeInfo source, ParticleState result)

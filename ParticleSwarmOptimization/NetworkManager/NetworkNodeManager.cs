@@ -70,7 +70,7 @@ namespace NetworkManager
             {
                 try
                 {
-                    client.StartCalculation(parameters);
+                    client.StartCalculation(parameters, NodeService.Info);
                 }
                 catch
                 {
@@ -80,12 +80,27 @@ namespace NetworkManager
             }
         }
 
+        public void StopCalculations()
+        {
+            foreach (var client in NodeServiceClients)
+            {
+                try
+                {
+                    client.StopCalculation();
+                }
+                catch
+                {
+                    Debug.WriteLine("failed stoping calculations on {0}",client.Address);
+                }
+            }
+        }
+
         public void StartCalculations(PsoParameters parameters, NetworkNodeInfo target)
         {
             var client = new TcpNodeServiceClient(target);
             try
             {
-                client.StartCalculation(parameters);
+                client.StartCalculation(parameters, NodeService.Info);
             }
             catch
             {
@@ -93,7 +108,7 @@ namespace NetworkManager
             }
         }
 
-        public void FinishCalculations(ParticleState result)
+        public void BroadcastCalculationsFinished(ParticleState result)
         {
             foreach (var client in NodeServiceClients)
             {

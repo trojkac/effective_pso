@@ -3,5 +3,5 @@ using Common.Parameters;
 
 namespace NetworkManager
 {
-    public delegate void StartCalculationsHandler(PsoParameters parameters);
+    public delegate void StartCalculationsHandler(PsoParameters parameters, NetworkNodeInfo mainNodeInfo);
 }

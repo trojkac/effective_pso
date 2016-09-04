@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Algorithm;
 using Common;
@@ -13,9 +14,12 @@ namespace Controller
     {
         private ulong _nodeId;
         IFitnessFunction<double[], double[]> _function;
+        private CancellationTokenSource _tokenSource;
+
         public PsoController(ulong nodeId)
         {
             _nodeId = nodeId;
+            _tokenSource = new CancellationTokenSource();
         }
 
         public event CalculationCompletedHandler CalculationsCompleted;
@@ -26,6 +30,12 @@ namespace Controller
                 // evaluating function for best state of remote node - in case it's the best evaluation.
                 _function.Evaluate(((ParticleState)args.Result).Location);
             }
+        }
+
+        public ParticleState Stop()
+        {
+            _tokenSource.Cancel();
+            return (ParticleState) _function.BestEvaluation;
         }
 
         public bool CalculationsRunning { get { return RunningAlgorithm != null && !RunningAlgorithm.IsCompleted; } }
@@ -56,6 +66,7 @@ namespace Controller
             {
                 particles.AddRange(proxyParticleServices);
             }
+            var token = _tokenSource.Token;
             var algorithm = new PsoAlgorithm(psoParameters, _function, particles.ToArray());
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
@@ -65,7 +76,7 @@ namespace Controller
                 if (CalculationsCompleted != null) CalculationsCompleted((ParticleState)r);
 
                 return (ParticleState)r;
-            });
+            }, token);
         }
 
 

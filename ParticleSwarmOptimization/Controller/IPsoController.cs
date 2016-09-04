@@ -15,5 +15,6 @@ namespace Controller
         PsoImplementationType[] GetAvailableImplementationTypes();
         event CalculationCompletedHandler CalculationsCompleted;
         void RemoteControllerFinished(RemoteCalculationsFinishedHandlerArgs args);
+        ParticleState Stop();
     }
 }
