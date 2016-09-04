@@ -125,9 +125,9 @@ namespace CocoSingleCpuApp
                         cudaAlgorithm.RunAsync();
                         algorithm.Run();
                         cudaAlgorithm.Wait();
-                        /* Call the optimization algorithm for the remaining number of evaluations */
-                        //cudaAlgorithm.Wait();
                         cudaAlgorithm.Dispose();
+                        /* Call the optimization algorithm for the remaining number of evaluations */
+                        
                         /* Break the loop if the algorithm performed no evaluations or an unexpected thing happened */
                         if (Problem.getEvaluations() == evaluationsDone)
                         {

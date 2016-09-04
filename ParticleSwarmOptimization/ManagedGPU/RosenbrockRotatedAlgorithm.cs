@@ -17,34 +17,24 @@ namespace ManagedGPU
             base.Dispose();
         }
 
-        public RosenbrockRotatedAlgorithm(CudaParams parameters, StateProxy proxy)
-        {
-            _proxy = proxy;
-            _particlesCount = parameters.ParticlesCount;
-            _dimensionsCount = parameters.LocationDimensions;
-            _iterations = parameters.Iterations;
-            _fitnessFunction = parameters.FitnessFunction;
-            _syncWithCpu = parameters.SyncWithCpu;
-            _functionNumber = parameters.FunctionNumber;
-            _instanceNumber = parameters.InstanceNumber;
-        }
+        public RosenbrockRotatedAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
 
         protected override void Init()
         {
             var kernelFileName = KernelFile;
-            var initKernel = ctx.LoadKernel(kernelFileName, "generateData");
-            B = new CudaDeviceVariable<double>(_dimensionsCount);
-            M = new CudaDeviceVariable<double>(_dimensionsCount * _dimensionsCount);
+            var initKernel = Ctx.LoadKernel(kernelFileName, "generateData");
+            B = new CudaDeviceVariable<double>(DimensionsCount);
+            M = new CudaDeviceVariable<double>(DimensionsCount * DimensionsCount);
 
             var d_fopt = new CudaDeviceVariable<double>(1);
 
-            long rseed = _functionNumber + 10000 * _instanceNumber;
+            long rseed = FunctionNumber + 10000 * InstanceNumber;
 
             initKernel.Run(
-                _dimensionsCount, 
+                DimensionsCount, 
                 rseed, 
-                _functionNumber, 
-                _instanceNumber, 
+                FunctionNumber, 
+                InstanceNumber, 
                 M.DevicePointer, 
                 B.DevicePointer,
                 d_fopt.DevicePointer);
@@ -59,31 +49,33 @@ namespace ManagedGPU
             get { return "f9_rosenbrock_rotated_kernel.ptx"; }
         }
 
-        protected override void RunUpdateParticleKernel()
+        protected override void RunUpdateVelocityKernel()
         {
-            _updateParticle.Run(
-                    _devicePositions.DevicePointer,
-                    _deviceVelocities.DevicePointer,
-                    _devicePersonalBests.DevicePointer,
-                    _deviceGlobalBests.DevicePointer,
-                    _particlesCount,
-                    _dimensionsCount,
-                    Random(_rng),
-                    Random(_rng)
+            UpdateVelocity.Run(
+                    DevicePositions.DevicePointer,
+                    DeviceVelocities.DevicePointer,
+                    DevicePersonalBests.DevicePointer,
+                    DevicePersonalBestValues.DevicePointer,
+                    DeviceNeighbors.DevicePointer,
+                    ParticlesCount,
+                    DimensionsCount,
+                    Random(Rng),
+                    Random(Rng)
                 );
         }
 
-        protected override void RunUpdatePersonalBestKernel()
+        protected override void RunTransposeKernel()
         {
-            _updatePersonalBest.Run(
-                 _devicePositions.DevicePointer,
-                 _devicePersonalBests.DevicePointer,
-                 _deviceGlobalBests.DevicePointer,
-                 _particlesCount,
-                 _dimensionsCount,
-                 M.DevicePointer,
-                 B.DevicePointer,
-                 Fopt
+            Transpose.Run(
+                    DevicePositions.DevicePointer,
+                    DeviceVelocities.DevicePointer,
+                    DevicePersonalBests.DevicePointer,
+                    DevicePersonalBestValues.DevicePointer,
+                    ParticlesCount,
+                    DimensionsCount,
+                    M.DevicePointer,
+                    B.DevicePointer,
+                    Fopt
              );  
         }
     }

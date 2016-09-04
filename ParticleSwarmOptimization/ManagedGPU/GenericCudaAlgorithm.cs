@@ -8,126 +8,164 @@ namespace ManagedGPU
 {
     public abstract class GenericCudaAlgorithm : IDisposable
     {
-        protected bool _syncWithCpu;
+        protected bool SyncWithCpu;
 
-        protected IFitnessFunction<double[], double[]> _fitnessFunction;
+        protected IFitnessFunction<double[], double[]> FitnessFunction;
 
-        protected Thread _threadHandler;
+        protected Thread ThreadHandler;
 
-        protected StateProxy _proxy;
+        protected StateProxy Proxy;
 
-        protected int _functionNumber;
+        protected int FunctionNumber;
 
-        protected int _instanceNumber;
+        protected int InstanceNumber;
 
-        protected int _particlesCount;
+        protected int ParticlesCount;
 
-        protected int _dimensionsCount;
+        protected int DimensionsCount;
 
-        protected int _iterations;
+        protected int Iterations;
 
-        protected CudaKernel _updateParticle;
+        protected CudaKernel UpdateVelocity;
 
-        protected CudaKernel _updatePersonalBest;
+        protected CudaKernel Transpose;
 
-        protected double[] _hostPositions;
+        protected double[] HostPositions;
 
-        protected double[] _hostVelocities;
+        protected double[] HostVelocities;
 
-        protected double[] _hostPersonalBests;
+        protected double[] HostPersonalBests;
 
-        protected double[] _hostGlobalBests;
+        protected double[] HostPersonalBestValues;
 
-        protected CudaDeviceVariable<double> _devicePositions;
+        protected int[] HostNeighbors;
 
-        protected CudaDeviceVariable<double> _deviceVelocities;
+        protected CudaDeviceVariable<double> DevicePositions;
 
-        protected CudaDeviceVariable<double> _devicePersonalBests;
+        protected CudaDeviceVariable<double> DeviceVelocities;
 
-        protected CudaDeviceVariable<double> _deviceGlobalBests;
+        protected CudaDeviceVariable<double> DevicePersonalBests;
 
-        protected readonly Random _rng = new Random();
+        protected CudaDeviceVariable<double> DevicePersonalBestValues;
 
-        protected CudaContext ctx;
+        protected CudaDeviceVariable<int> DeviceNeighbors; 
+
+        protected readonly Random Rng = new Random();
+
+        protected CudaContext Ctx;
 
         protected abstract void Init();
 
         protected abstract string KernelFile { get; }
 
+        protected GenericCudaAlgorithm(CudaParams parameters, StateProxy proxy)
+        {
+            Proxy = proxy;
+            ParticlesCount = parameters.ParticlesCount;
+            DimensionsCount = parameters.LocationDimensions;
+            Iterations = parameters.Iterations;
+            FitnessFunction = parameters.FitnessFunction;
+            SyncWithCpu = parameters.SyncWithCpu;
+            FunctionNumber = parameters.FunctionNumber;
+            InstanceNumber = parameters.InstanceNumber;
+        }
+
         protected void InitContext()
         {
-            var size = _particlesCount * _dimensionsCount;
+            var size = ParticlesCount * DimensionsCount;
 
             var threadsNum = 32;
-            var blocksNum = _particlesCount / threadsNum;
-            ctx = new CudaContext(0);
+            var blocksNum = ParticlesCount / threadsNum;
+            Ctx = new CudaContext(0);
 
-            _updateParticle = ctx.LoadKernel(KernelFile, "kernelUpdateParticle");
-            _updateParticle.GridDimensions = blocksNum;
-            _updateParticle.BlockDimensions = threadsNum;
+            UpdateVelocity = Ctx.LoadKernel(KernelFile, "updateVelocityKernel");
+            UpdateVelocity.GridDimensions = blocksNum;
+            UpdateVelocity.BlockDimensions = threadsNum;
 
-            _updatePersonalBest = ctx.LoadKernel(KernelFile, "kernelUpdatePBest");
-            _updatePersonalBest.GridDimensions = blocksNum;
-            _updatePersonalBest.BlockDimensions = threadsNum;
+            Transpose = Ctx.LoadKernel(KernelFile, "transposeKernel");
+            Transpose.GridDimensions = blocksNum;
+            Transpose.BlockDimensions = threadsNum;
 
-            _hostPositions = new double[size];
-            _hostVelocities = new double[size];
-            _hostPersonalBests = new double[size];
-            _hostGlobalBests = new double[_dimensionsCount];
+            HostPositions = new double[size];
+            HostVelocities = new double[size];
+            HostPersonalBests = new double[size];
+            HostPersonalBestValues = new double[ParticlesCount];
+            HostNeighbors = new int[ParticlesCount * 2];
+
+            for (var i = 0; i < ParticlesCount*2; i += 2)
+            {
+                int left, right;
+
+                if (i == 0)
+                    left = ParticlesCount - 1;
+                else
+                    left = i - 1;
+
+                if (i == ParticlesCount - 1)
+                    right = 0;
+                else
+                    right = i + 1;
+
+                HostNeighbors[i] = left;
+                HostNeighbors[i + 1] = right;
+            }
 
             for (var i = 0; i < size; i++)
             {
-                _hostPositions[i] = RandomIn(_rng, -5.0f, 5.0f);
-                _hostPersonalBests[i] = _hostPositions[i];
-                _hostVelocities[i] = RandomIn(_rng, -2.0f, 2.0f);
+                HostPositions[i] = RandomIn(Rng, -5.0f, 5.0f);
+                HostPersonalBests[i] = HostPositions[i];
+                HostVelocities[i] = RandomIn(Rng, -2.0f, 2.0f);
             }
 
-            for (var i = 0; i < _dimensionsCount; i++)
-                _hostGlobalBests[i] = _hostPersonalBests[i];
+            for (var i = 0; i < ParticlesCount; i++)
+            {
+                HostPersonalBestValues[i] = double.MaxValue;
+            }
 
-            _devicePositions = _hostPositions;
-            _deviceVelocities = _hostVelocities;
-            _devicePersonalBests = _hostPersonalBests;
-            _deviceGlobalBests = _hostGlobalBests;
+            DevicePositions = HostPositions;
+            DeviceVelocities = HostVelocities;
+            DevicePersonalBests = HostPersonalBests;
+            DevicePersonalBestValues = HostPersonalBestValues;
+            DeviceNeighbors = HostNeighbors;
 
             Init();
         }
 
         protected void PullCpuState()
         {
-            _hostPositions = _devicePositions;
-
-            for (var i = 0; i < _dimensionsCount; i++)
-                _hostPositions[i] = _proxy.CpuState.Location[i];
-
-            _devicePositions = _hostPositions;
+            for (var i = 0; i < DimensionsCount; i++)
+                DevicePositions[i] = Proxy.CpuState.Location[i];
         }
 
         protected void PushGpuState()
         {
-            _hostPersonalBests = _devicePersonalBests;
-            var location = _hostPersonalBests.Take(_dimensionsCount).ToArray();
-            var fitnessValue = _fitnessFunction.Evaluate(location);
-            _proxy.GpuState = new ParticleState(location, fitnessValue); 
+            var bestVal = DevicePersonalBestValues[0];
+            var bestLoc = new double[DimensionsCount];
+
+            for (int i = 0; i < DimensionsCount; i++)
+            {
+                bestLoc[i] = DevicePersonalBests[i];
+            }
+
+            Proxy.GpuState = new ParticleState(bestLoc, new []{ bestVal }); 
         }
 
         public void RunAsync()
         {
-            if (_threadHandler != null) return;
+            if (ThreadHandler != null) return;
 
-            _threadHandler = new Thread(() =>
+            ThreadHandler = new Thread(() =>
             {
-                InitContext();
                 Run();
             });
 
-            _threadHandler.Start();
+            ThreadHandler.Start();
         }
 
         public void Wait()
         {
-            if (_threadHandler != null)
-                _threadHandler.Join();
+            if (ThreadHandler != null)
+                ThreadHandler.Join();
         }
 
         public void RunAsyncAndWait()
@@ -138,70 +176,42 @@ namespace ManagedGPU
 
         public void Abort()
         {
-            if (_threadHandler != null)
-                _threadHandler.Abort();
+            if (ThreadHandler != null)
+                ThreadHandler.Abort();
         }
 
         public double Run()
         {
             InitContext();
 
-            if (_syncWithCpu)
+            if (SyncWithCpu)
             {
                 PushGpuState();
                 PullCpuState();
             }
 
-            for (var i = 0; i < _iterations; i++)
+            for (var i = 0; i < Iterations; i++)
             {
-                Step();
+                RunUpdateVelocityKernel();
+                RunTransposeKernel();
 
-                if (!_syncWithCpu) continue;
+                if (!SyncWithCpu) continue;
 
                 PushGpuState();
                 PullCpuState();
             }
 
-            _hostGlobalBests = _deviceGlobalBests;
+            HostPersonalBestValues = DevicePersonalBestValues;
+            HostPersonalBests = DevicePersonalBests;
 
-            return _fitnessFunction.Evaluate(_hostGlobalBests)[0];
+            var bestValue = HostPersonalBestValues.Min();
+
+            return bestValue;
         }
 
-        protected void Step()
-        {
-            var size = _particlesCount*_dimensionsCount;
-            var temp = new double[_dimensionsCount];
+        protected abstract void RunUpdateVelocityKernel();
 
-            RunUpdateParticleKernel();
-
-            RunUpdatePersonalBestKernel();
-
-            _hostPersonalBests = _devicePersonalBests;
-
-            for (var i = 0; i < size; i += _dimensionsCount)
-            {
-                for (var k = 0; k < _dimensionsCount; k++)
-                    temp[k] = _hostPersonalBests[i + k];
-
-                if (_fitnessFunction.Evaluate(GetClampedLocation(temp))[0] < _fitnessFunction.Evaluate(_hostGlobalBests)[0])
-                {
-                    for (var k = 0; k < _dimensionsCount; k++)
-                        _hostGlobalBests[k] = GetClampedLocation(temp)[k];
-                }
-            }
-
-            _deviceGlobalBests = _hostGlobalBests;
-        }
-
-        private double[] GetClampedLocation(double[] vector)
-        {
-            if (vector == null) return vector;
-            return vector.Select((x, i) => Math.Min(Math.Max(x, -5.0), 5.0)).ToArray();
-        }
-
-        protected abstract void RunUpdateParticleKernel();
-
-        protected abstract void RunUpdatePersonalBestKernel();
+        protected abstract void RunTransposeKernel();
 
         protected static double RandomIn(Random rng, double min, double max)
         {
@@ -215,11 +225,11 @@ namespace ManagedGPU
 
         public virtual void Dispose()
         {
-            _devicePositions.Dispose();
-            _deviceGlobalBests.Dispose();
-            _deviceVelocities.Dispose();
-            _devicePersonalBests.Dispose();
-            ctx.Dispose();
+            DevicePositions.Dispose();
+            DevicePersonalBestValues.Dispose();
+            DeviceVelocities.Dispose();
+            DevicePersonalBests.Dispose();
+            Ctx.Dispose();
         }
     }
 }

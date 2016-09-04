@@ -4,7 +4,7 @@ namespace ManagedGPU
 {
     class BentCigarAlgorithm : GenericCudaAlgorithm
     {
-        
+
         protected CudaDeviceVariable<double> M;
         protected CudaDeviceVariable<double> B;
         protected CudaDeviceVariable<double> Xopt;
@@ -20,38 +20,28 @@ namespace ManagedGPU
             base.Dispose();
         }
 
-        public BentCigarAlgorithm(CudaParams parameters, StateProxy proxy)
-        {
-            _proxy = proxy;
-            _particlesCount = parameters.ParticlesCount;
-            _dimensionsCount = parameters.LocationDimensions;
-            _iterations = parameters.Iterations;
-            _fitnessFunction = parameters.FitnessFunction;
-            _syncWithCpu = parameters.SyncWithCpu;
-            _functionNumber = parameters.FunctionNumber;
-            _instanceNumber = parameters.InstanceNumber;
-        }
+        public BentCigarAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
 
         protected override void Init()
         {
             var kernelFileName = KernelFile;
-            var initKernel = ctx.LoadKernel(kernelFileName, "generateData");
-            B = new CudaDeviceVariable<double>(_dimensionsCount);
-            M = new CudaDeviceVariable<double>(_dimensionsCount * _dimensionsCount);
-            Xopt = new CudaDeviceVariable<double>(_dimensionsCount);
+            var initKernel = Ctx.LoadKernel(kernelFileName, "generateData");
+            B = new CudaDeviceVariable<double>(DimensionsCount);
+            M = new CudaDeviceVariable<double>(DimensionsCount * DimensionsCount);
+            Xopt = new CudaDeviceVariable<double>(DimensionsCount);
 
             var d_fopt = new CudaDeviceVariable<double>(1);
 
-            long rseed = _functionNumber + 10000 * _instanceNumber;
+            long rseed = FunctionNumber + 10000 * InstanceNumber;
 
             initKernel.Run(
-                _dimensionsCount, 
-                rseed, 
-                _functionNumber, 
-                _instanceNumber, 
-                M.DevicePointer, 
+                DimensionsCount,
+                rseed,
+                FunctionNumber,
+                InstanceNumber,
+                M.DevicePointer,
                 B.DevicePointer,
-                Xopt.DevicePointer, 
+                Xopt.DevicePointer,
                 d_fopt.DevicePointer);
 
             double[] fopt_arr = d_fopt;
@@ -65,33 +55,35 @@ namespace ManagedGPU
         }
 
 
-        protected override void RunUpdateParticleKernel()
+        protected override void RunUpdateVelocityKernel()
         {
-            _updateParticle.Run(
-                    _devicePositions.DevicePointer,
-                    _deviceVelocities.DevicePointer,
-                    _devicePersonalBests.DevicePointer,
-                    _deviceGlobalBests.DevicePointer,
-                    _particlesCount,
-                    _dimensionsCount,
-                    Random(_rng),
-                    Random(_rng)
+            UpdateVelocity.Run(
+                    DevicePositions.DevicePointer,
+                    DeviceVelocities.DevicePointer,
+                    DevicePersonalBests.DevicePointer,
+                    DevicePersonalBestValues.DevicePointer,
+                    DeviceNeighbors.DevicePointer,
+                    ParticlesCount,
+                    DimensionsCount,
+                    Random(Rng),
+                    Random(Rng)
                 );
         }
 
-        protected override void RunUpdatePersonalBestKernel()
+        protected override void RunTransposeKernel()
         {
-            _updatePersonalBest.Run(
-                 _devicePositions.DevicePointer,
-                 _devicePersonalBests.DevicePointer,
-                 _deviceGlobalBests.DevicePointer,
-                 _particlesCount,
-                 _dimensionsCount,
-                 Xopt.DevicePointer,
-                 M.DevicePointer,
-                 B.DevicePointer,
-                 Fopt,
-                 AsymmetricBeta
+            Transpose.Run(
+                    DevicePositions.DevicePointer,
+                    DeviceVelocities.DevicePointer,
+                    DevicePersonalBests.DevicePointer,
+                    DevicePersonalBestValues.DevicePointer,
+                    ParticlesCount,
+                    DimensionsCount,
+                    Xopt.DevicePointer,
+                    M.DevicePointer,
+                    B.DevicePointer,
+                    Fopt,
+                    AsymmetricBeta
              );
         }
     }

@@ -27,27 +27,17 @@ namespace ManagedGPU
             base.Dispose();
         }
 
-        public WeierstrassAlgorithm(CudaParams parameters, StateProxy proxy)
-        {
-            _proxy = proxy;
-            _particlesCount = parameters.ParticlesCount;
-            _dimensionsCount = parameters.LocationDimensions;
-            _iterations = parameters.Iterations;
-            _fitnessFunction = parameters.FitnessFunction;
-            _syncWithCpu = parameters.SyncWithCpu;
-            _functionNumber = parameters.FunctionNumber;
-            _instanceNumber = parameters.InstanceNumber;
-        }
+        public WeierstrassAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
 
         protected override void Init()
         {
             var kernelFileName = KernelFile;
-            var initKernel = ctx.LoadKernel(kernelFileName, "generateData");
-            Xopt = new CudaDeviceVariable<double>(_dimensionsCount);
+            var initKernel = Ctx.LoadKernel(kernelFileName, "generateData");
+            Xopt = new CudaDeviceVariable<double>(DimensionsCount);
 
             var d_fopt = new CudaDeviceVariable<double>(1);
 
-            long rseed = _functionNumber + 10000 * _instanceNumber;
+            long rseed = FunctionNumber + 10000 * InstanceNumber;
 
             double[] h_ak = new double[12];
             double[] h_bk = new double[12];
@@ -63,10 +53,10 @@ namespace ManagedGPU
             Bk = h_bk;
 
             initKernel.Run(
-                _dimensionsCount, 
+                DimensionsCount, 
                 rseed, 
-                _functionNumber, 
-                _instanceNumber,
+                FunctionNumber, 
+                InstanceNumber,
                 M.DevicePointer,
                 B.DevicePointer,
                 Xopt.DevicePointer,
@@ -82,36 +72,38 @@ namespace ManagedGPU
             get { return "f16_weierstrass_kernel.ptx"; }
         }
 
-        protected override void RunUpdateParticleKernel()
+        protected override void RunUpdateVelocityKernel()
         {
-            _updateParticle.Run(
-                    _devicePositions.DevicePointer,
-                    _deviceVelocities.DevicePointer,
-                    _devicePersonalBests.DevicePointer,
-                    _deviceGlobalBests.DevicePointer,
-                    _particlesCount,
-                    _dimensionsCount,
-                    Random(_rng),
-                    Random(_rng)
+            UpdateVelocity.Run(
+                    DevicePositions.DevicePointer,
+                    DeviceVelocities.DevicePointer,
+                    DevicePersonalBests.DevicePointer,
+                    DevicePersonalBestValues.DevicePointer,
+                    DeviceNeighbors.DevicePointer,
+                    ParticlesCount,
+                    DimensionsCount,
+                    Random(Rng),
+                    Random(Rng)
                 );
         }
 
-        protected override void RunUpdatePersonalBestKernel()
+        protected override void RunTransposeKernel()
         {
-            _updatePersonalBest.Run(
-                 _devicePositions.DevicePointer,
-                 _devicePersonalBests.DevicePointer,
-                 _deviceGlobalBests.DevicePointer,
-                 _particlesCount,
-                 _dimensionsCount,
-                 Xopt,
-                 Fopt,
-                 Penalty,
-                 M,
-                 B,
-                 Ak,
-                 Bk,
-                 F0
+            Transpose.Run(
+                    DevicePositions.DevicePointer,
+                    DeviceVelocities.DevicePointer,
+                    DevicePersonalBests.DevicePointer,
+                    DevicePersonalBestValues.DevicePointer,
+                    ParticlesCount,
+                    DimensionsCount,
+                    Xopt,
+                    Fopt,
+                    Penalty,
+                    M,
+                    B,
+                    Ak,
+                    Bk,
+                    F0
              );  
         }
     }
