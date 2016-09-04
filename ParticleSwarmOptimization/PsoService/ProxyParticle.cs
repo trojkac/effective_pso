@@ -92,8 +92,11 @@ namespace PsoService
             catch
             {
                 _communicationErrorCount++;
-                if (CommunicationBreakdown != null && _communicationErrorCount == _communicationErrorLimit) CommunicationBreakdown();
-                Debug.WriteLine("{0} cannot connect to: {1}", Address, RemoteAddress);
+                if (CommunicationBreakdown != null && _communicationErrorCount == _communicationErrorLimit)
+                {
+                    CommunicationBreakdown();
+                    Debug.WriteLine("{0} cannot connect to: {1}", Address, RemoteAddress);
+                }
             }
 
             return _particleService.GetBestState();
@@ -142,10 +145,15 @@ namespace PsoService
         {
         }
 
+
+        private int _getBestCounter = 0;
+        private const int RemoteCheckInterval = 25;
         public override ParticleState PersonalBest
         {
             get
             {
+                if (_getBestCounter != 0) return _particleService.GetBestState();
+                _getBestCounter = RemoteCheckInterval;
                 return GetRemoteBest();
             }
         }

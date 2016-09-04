@@ -2,9 +2,9 @@
 <NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <NrOfVCpu>1</NrOfVCpu>
   <IsGpu>false</IsGpu>
-  <Ip>192.168.111.42</Ip>
+  <Ip>25.123.241.71</Ip>
   <Ports>
     <int>8000</int>
   </Ports>
-  <PeerAddress>net.tcp://192.168.111.151:8000/NodeService</PeerAddress>
+  <PeerAddress>net.tcp://25.123.244.149:8000/NodeService</PeerAddress>
 </NodeParameters>
