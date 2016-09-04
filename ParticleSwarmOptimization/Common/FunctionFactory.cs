@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CocoWrapper;
 using Common.Parameters;
@@ -8,8 +9,28 @@ namespace Common
 
     public static class FunctionFactory
     {
+        private static int cacheLimit = 5;
+        private static Dictionary<string, IFitnessFunction<double[], double[]>>  functionCache = new Dictionary<string, IFitnessFunction<double[], double[]>>();
+
+        public static void SaveToCache(string id, IFitnessFunction<double[], double[]> function)
+        {
+            if (functionCache.Count == cacheLimit)
+            {
+                functionCache.Clear();
+            }
+            functionCache.Add(id,function);
+            if (functionCache.Count > cacheLimit)
+            {
+                functionCache.Clear();
+            }
+        }
+
         public static IFitnessFunction<double[],double[]> GetFitnessFunction(FunctionParameters parameters)
         {
+            if (functionCache.ContainsKey(parameters.FitnessFunctionType))
+            {
+                return functionCache[parameters.FitnessFunctionType];
+            }
             if (parameters.FitnessFunctionType.Contains("bbob"))
             {
                 var functionId = parameters.FitnessFunctionType;
