@@ -39,6 +39,8 @@ namespace ManagedGPU
             var kernelFileName = KernelFile;
             var initKernel = Ctx.LoadKernel(kernelFileName, "generateData");
             Xopt = new CudaDeviceVariable<double>(DimensionsCount);
+            M = new CudaDeviceVariable<double>(DimensionsCount * DimensionsCount);
+            B = new CudaDeviceVariable<double>(DimensionsCount);
 
             var d_fopt = new CudaDeviceVariable<double>(1);
 
