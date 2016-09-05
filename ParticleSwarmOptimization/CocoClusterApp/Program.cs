@@ -18,20 +18,14 @@ namespace CocoClusterApp
     class Program
     {
 
-        public const int BudgetMultiplier = 100;
         public const int IndependentRestarts = 1;
         public const int RandomSeed = 12;
         public static Problem Problem;
 
         static void Main(string[] args)
         {
-            if (args.Length < 3)
-            {
-                Console.WriteLine("CocoSingleCpuApp <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo>");
-                return;
-            }
+            
             var timeStr = DateTime.Now.Hour.ToString("D2") + DateTime.Now.Minute.ToString("D2");
-            var logger = new FileLogger("time_log_" + timeStr);
 
             var nodeParamsDeserialize = new ParametersSerializer<NodeParameters>();
             var psoParamsDeserialize = new ParametersSerializer<PsoParameters>();
@@ -43,14 +37,25 @@ namespace CocoClusterApp
             {
                 machineManager.Register(nodeParams.PeerAddress);
                 Console.WriteLine("Working...");
-                Console.ReadKey();
+                Console.WriteLine("Press ENTER to finish");
+                ConsoleKeyInfo pressed;
+                while(pressed.Key != ConsoleKey.Enter){
+                    pressed = Console.ReadKey();
+                };
             }
             else
             {
+                if (args.Length < 3)
+                {
+                    Console.WriteLine("CocoSingleCpuApp <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>");
+                    return;
+                }
+                var logger = new FileLogger("time_log_" + timeStr);
                 var chronometer = new Chronometer();
                 string dims = args[0];
                 var functionsFrom = int.Parse(args[1]);
                 var functionsTo = int.Parse(args[2]);
+                var budgetMultiplier = int.Parse(args[3]);
                 RandomGenerator randomGenerator = RandomGenerator.GetInstance(RandomSeed);
                 CocoLibraryWrapper.cocoSetLogLevel("info");
 
@@ -82,7 +87,7 @@ namespace CocoClusterApp
 
                         var dimension = Problem.getDimension();
                         var particlesNum = dimension * 3;
-                        var evaluations = (long)(dimension * BudgetMultiplier);
+                        var evaluations = (long)(dimension * budgetMultiplier);
 
                         /* Break the loop if the target was hit or there are no more remaining evaluations */
                         if (Problem.isFinalTargetHit() || (evaluations <= 0))
