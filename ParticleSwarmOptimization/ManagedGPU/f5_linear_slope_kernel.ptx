@@ -7349,6 +7349,167 @@ tmp482:
 func_end25:
 }
 
+	// .globl	_Z5clampPdidd
+.visible .func _Z5clampPdidd(
+	.param .b32 _Z5clampPdidd_param_0,
+	.param .b32 _Z5clampPdidd_param_1,
+	.param .b64 _Z5clampPdidd_param_2,
+	.param .b64 _Z5clampPdidd_param_3
+)
+{
+	.reg .pred 	%p<7>;
+	.reg .s32 	%r<16>;
+	.reg .f64 	%fd<11>;
+
+
+	.loc 4 361 1
+func_begin26:
+	.loc	4 0 0
+
+	.loc 4 361 1
+
+	ld.param.u32 	%r4, [_Z5clampPdidd_param_0];
+	ld.param.u32 	%r5, [_Z5clampPdidd_param_1];
+	ld.param.f64 	%fd4, [_Z5clampPdidd_param_2];
+	ld.param.f64 	%fd5, [_Z5clampPdidd_param_3];
+	mov.u32 	%r6, 0;
+func_exec_begin26:
+	.loc	4 363 1
+tmp483:
+	mov.b32 	%r15, %r6;
+tmp484:
+
+BB26_1:
+	.loc	4 363 1
+	setp.lt.s32	%p1, %r15, %r5;
+	not.pred 	%p2, %p1;
+	@%p2 bra 	BB26_10;
+	bra.uni 	BB26_2;
+
+BB26_2:
+	.loc	4 365 1
+tmp485:
+	shl.b32 	%r7, %r15, 3;
+	add.s32 	%r8, %r4, %r7;
+	ld.f64 	%fd6, [%r8];
+	setp.lt.f64	%p3, %fd6, %fd4;
+	not.pred 	%p4, %p3;
+	@%p4 bra 	BB26_4;
+	bra.uni 	BB26_3;
+
+BB26_3:
+	mov.f64 	%fd9, %fd4;
+	bra.uni 	BB26_8;
+
+BB26_4:
+	shl.b32 	%r9, %r15, 3;
+	add.s32 	%r10, %r4, %r9;
+	ld.f64 	%fd7, [%r10];
+	setp.gt.f64	%p5, %fd7, %fd5;
+	not.pred 	%p6, %p5;
+	@%p6 bra 	BB26_6;
+	bra.uni 	BB26_5;
+
+BB26_5:
+	mov.f64 	%fd10, %fd5;
+	bra.uni 	BB26_7;
+
+BB26_6:
+	shl.b32 	%r11, %r15, 3;
+	add.s32 	%r12, %r4, %r11;
+	ld.f64 	%fd1, [%r12];
+	mov.f64 	%fd10, %fd1;
+
+BB26_7:
+	mov.f64 	%fd8, %fd10;
+	mov.f64 	%fd2, %fd8;
+	mov.f64 	%fd9, %fd2;
+
+BB26_8:
+	mov.f64 	%fd3, %fd9;
+	shl.b32 	%r13, %r15, 3;
+	add.s32 	%r14, %r4, %r13;
+	st.f64 	[%r14], %fd3;
+tmp486:
+
+	.loc	4 363 22
+	add.s32 	%r15, %r15, 1;
+tmp487:
+	bra.uni 	BB26_1;
+tmp488:
+
+BB26_10:
+	.loc	4 367 2
+	ret;
+tmp489:
+func_end26:
+}
+
+	// .globl	_Z14vector_betweenPdS_iS_
+.visible .func _Z14vector_betweenPdS_iS_(
+	.param .b32 _Z14vector_betweenPdS_iS__param_0,
+	.param .b32 _Z14vector_betweenPdS_iS__param_1,
+	.param .b32 _Z14vector_betweenPdS_iS__param_2,
+	.param .b32 _Z14vector_betweenPdS_iS__param_3
+)
+{
+	.reg .pred 	%p<3>;
+	.reg .s32 	%r<16>;
+	.reg .f64 	%fd<4>;
+
+
+	.loc 4 369 1
+func_begin27:
+	.loc	4 0 0
+
+	.loc 4 369 1
+
+	ld.param.u32 	%r4, [_Z14vector_betweenPdS_iS__param_0];
+	ld.param.u32 	%r5, [_Z14vector_betweenPdS_iS__param_1];
+	ld.param.u32 	%r6, [_Z14vector_betweenPdS_iS__param_2];
+	ld.param.u32 	%r7, [_Z14vector_betweenPdS_iS__param_3];
+	mov.u32 	%r8, 0;
+func_exec_begin27:
+	.loc	4 371 1
+tmp490:
+	mov.b32 	%r15, %r8;
+tmp491:
+
+BB27_1:
+	.loc	4 371 1
+	setp.lt.s32	%p1, %r15, %r6;
+	not.pred 	%p2, %p1;
+	@%p2 bra 	BB27_4;
+	bra.uni 	BB27_2;
+
+BB27_2:
+	.loc	4 373 1
+tmp492:
+	shl.b32 	%r9, %r15, 3;
+	add.s32 	%r10, %r5, %r9;
+	ld.f64 	%fd1, [%r10];
+	shl.b32 	%r11, %r15, 3;
+	add.s32 	%r12, %r4, %r11;
+	ld.f64 	%fd2, [%r12];
+	sub.f64 	%fd3, %fd1, %fd2;
+	shl.b32 	%r13, %r15, 3;
+	add.s32 	%r14, %r7, %r13;
+	st.f64 	[%r14], %fd3;
+tmp493:
+
+	.loc	4 371 26
+	add.s32 	%r15, %r15, 1;
+tmp494:
+	bra.uni 	BB27_1;
+tmp495:
+
+BB27_4:
+	.loc	4 375 2
+	ret;
+tmp496:
+func_end27:
+}
+
 	// .globl	_Z16fitness_functionPdiS_
 .visible .func  (.param .b64 func_retval0) _Z16fitness_functionPdiS_(
 	.param .b32 _Z16fitness_functionPdiS__param_0,
@@ -7362,7 +7523,7 @@ func_end25:
 
 
 	.loc 1 12 1
-func_begin26:
+func_begin28:
 	.loc	1 0 0
 
 	.loc 1 12 1
@@ -7371,72 +7532,72 @@ func_begin26:
 	ld.param.u32 	%r29, [_Z16fitness_functionPdiS__param_1];
 	ld.param.u32 	%r30, [_Z16fitness_functionPdiS__param_2];
 	mov.f64 	%fd42, 0d4059000000000000;
-func_exec_begin26:
+func_exec_begin28:
 	.loc	1 14 1
-tmp483:
+tmp497:
 	mov.f64 	%fd1, %fd42;
-tmp484:
+tmp498:
 	mov.f64 	%fd43, 0d0000000000000000;
 	.loc	1 16 1
 	mov.f64 	%fd84, %fd43;
-tmp485:
+tmp499:
 	mov.u32 	%r31, 0;
 	.loc	1 18 6
-tmp486:
+tmp500:
 	mov.b32 	%r60, %r31;
-tmp487:
+tmp501:
 
-BB26_1:
+BB28_1:
 	.loc	1 18 1
 	setp.lt.u32	%p19, %r60, %r29;
 	not.pred 	%p20, %p19;
-	@%p20 bra 	BB26_95;
-	bra.uni 	BB26_2;
+	@%p20 bra 	BB28_95;
+	bra.uni 	BB28_2;
 
-BB26_2:
+BB28_2:
 	mov.f64 	%fd45, %fd1;
-tmp488:
+tmp502:
 	.loc	1 22 46
-	bra.uni	tmp489;
-tmp489:
+	bra.uni	tmp503;
+tmp503:
 	.loc	2 894 10
 	sqrt.rn.f64 	%fd46, %fd45;
-tmp490:
+tmp504:
 	.loc	1 22 46
 	mov.f64 	%fd4, %fd46;
-tmp491:
+tmp505:
 	.loc	1 23 1
 	cvt.rn.f64.s32	%fd47, %r60;
-tmp492:
+tmp506:
 	cvt.rn.f64.s32	%fd48, %r29;
 	sub.f64 	%fd49, %fd48, 0d3FF0000000000000;
-tmp493:
+tmp507:
 	.loc	1 23 59
-	bra.uni	tmp494;
-tmp494:
+	bra.uni	tmp508;
+tmp508:
 	.loc	2 1448 3
 	div.rn.f64 	%fd50, %fd47, %fd49;
-tmp495:
+tmp509:
 	.loc	1 23 59
 	mov.f64 	%fd5, %fd50;
-tmp496:
+tmp510:
 	.loc	1 24 1
 	shl.b32 	%r32, %r60, 3;
 	add.s32 	%r33, %r30, %r32;
 	ld.f64 	%fd51, [%r33];
 	setp.gt.f64	%p21, %fd51, 0d0000000000000000;
 	not.pred 	%p22, %p21;
-	@%p22 bra 	BB26_48;
-	bra.uni 	BB26_3;
+	@%p22 bra 	BB28_48;
+	bra.uni 	BB28_3;
 
-BB26_3:
+BB28_3:
 	mov.f64 	%fd6, %fd4;
-tmp497:
+tmp511:
 	mov.f64 	%fd7, %fd5;
-tmp498:
+tmp512:
 	.loc	1 26 44
-	bra.uni	tmp499;
-tmp499:
+	bra.uni	tmp513;
+tmp513:
 	.loc	3 352 10
 	{
 	.reg .b32 %temp; 
@@ -7454,176 +7615,176 @@ tmp499:
 	setp.eq.f64	%p1, %fd69, 0d3FF0000000000000;
 	setp.eq.f64	%p61, %fd6, 0d3FF0000000000000;
 	mov.pred 	%p97, -1;
-	@%p61 bra 	BB26_5;
-	bra.uni 	BB26_4;
+	@%p61 bra 	BB28_5;
+	bra.uni 	BB28_4;
 
-BB26_4:
+BB28_4:
 	setp.eq.f64	%p97, %fd7, 0d0000000000000000;
 
-BB26_5:
+BB28_5:
 	not.pred 	%p62, %p97;
-	@%p62 bra 	BB26_7;
-	bra.uni 	BB26_6;
+	@%p62 bra 	BB28_7;
+	bra.uni 	BB28_6;
 
-BB26_6:
+BB28_6:
 	mov.f64 	%fd85, 0d3FF0000000000000;
-	bra.uni 	BB26_47;
+	bra.uni 	BB28_47;
 
-BB26_7:
+BB28_7:
 	abs.f64 	%fd70, %fd6;
 	setp.le.f64	%p64, %fd70, 0d7FF0000000000000;
 	not.pred 	%p65, %p64;
 	mov.pred 	%p98, -1;
-	@%p65 bra 	BB26_9;
-	bra.uni 	BB26_8;
+	@%p65 bra 	BB28_9;
+	bra.uni 	BB28_8;
 
-BB26_8:
+BB28_8:
 	abs.f64 	%fd71, %fd7;
 	setp.le.f64	%p66, %fd71, 0d7FF0000000000000;
 	not.pred 	%p98, %p66;
 
-BB26_9:
+BB28_9:
 	not.pred 	%p67, %p98;
-	@%p67 bra 	BB26_11;
-	bra.uni 	BB26_10;
+	@%p67 bra 	BB28_11;
+	bra.uni 	BB28_10;
 
-BB26_10:
+BB28_10:
 	add.f64 	%fd85, %fd6, %fd7;
-	bra.uni 	BB26_46;
+	bra.uni 	BB28_46;
 
-BB26_11:
+BB28_11:
 	abs.f64 	%fd72, %fd7;
 	setp.eq.f64	%p68, %fd72, 0d7FF0000000000000;
 	not.pred 	%p69, %p68;
-	@%p69 bra 	BB26_19;
-	bra.uni 	BB26_12;
+	@%p69 bra 	BB28_19;
+	bra.uni 	BB28_12;
 
-BB26_12:
+BB28_12:
 	abs.f64 	%fd76, %fd6;
 	setp.gt.f64	%p91, %fd76, 0d3FF0000000000000;
 	mov.u32 	%r61, 0;
 	not.pred 	%p92, %p91;
-	@%p92 bra 	BB26_14;
-	bra.uni 	BB26_13;
+	@%p92 bra 	BB28_14;
+	bra.uni 	BB28_13;
 
-BB26_13:
+BB28_13:
 	mov.u32 	%r61, 2146435072;
 
-BB26_14:
+BB28_14:
 	setp.lt.s32	%p93, %r4, 0;
 	not.pred 	%p94, %p93;
-	@%p94 bra 	BB26_16;
-	bra.uni 	BB26_15;
+	@%p94 bra 	BB28_16;
+	bra.uni 	BB28_15;
 
-BB26_15:
+BB28_15:
 	xor.b32  	%r61, %r61, 2146435072;
 
-BB26_16:
+BB28_16:
 	setp.eq.f64	%p95, %fd6, 0dBFF0000000000000;
 	not.pred 	%p96, %p95;
-	@%p96 bra 	BB26_18;
-	bra.uni 	BB26_17;
+	@%p96 bra 	BB28_18;
+	bra.uni 	BB28_17;
 
-BB26_17:
+BB28_17:
 	mov.u32 	%r61, 1072693248;
 
-BB26_18:
+BB28_18:
 	mov.u32 	%r57, 0;
 	mov.b64 	%fd85, {%r57, %r61};
-	bra.uni 	BB26_45;
+	bra.uni 	BB28_45;
 
-BB26_19:
+BB28_19:
 	abs.f64 	%fd73, %fd6;
 	setp.eq.f64	%p70, %fd73, 0d7FF0000000000000;
 	not.pred 	%p71, %p70;
-	@%p71 bra 	BB26_27;
-	bra.uni 	BB26_20;
+	@%p71 bra 	BB28_27;
+	bra.uni 	BB28_20;
 
-BB26_20:
+BB28_20:
 	setp.ge.s32	%p85, %r4, 0;
 	mov.u32 	%r62, 0;
 	not.pred 	%p86, %p85;
-	@%p86 bra 	BB26_22;
-	bra.uni 	BB26_21;
+	@%p86 bra 	BB28_22;
+	bra.uni 	BB28_21;
 
-BB26_21:
+BB28_21:
 	mov.u32 	%r62, 2146435072;
 
-BB26_22:
+BB28_22:
 	setp.lt.s32	%p88, %r3, 0;
 	mov.pred 	%p102, 0;
 	not.pred 	%p89, %p88;
-	@%p89 bra 	BB26_24;
-	bra.uni 	BB26_23;
+	@%p89 bra 	BB28_24;
+	bra.uni 	BB28_23;
 
-BB26_23:
+BB28_23:
 	mov.pred 	%p102, %p1;
 
-BB26_24:
+BB28_24:
 	not.pred 	%p90, %p102;
-	@%p90 bra 	BB26_26;
-	bra.uni 	BB26_25;
+	@%p90 bra 	BB28_26;
+	bra.uni 	BB28_25;
 
-BB26_25:
+BB28_25:
 	xor.b32  	%r62, %r62, -2147483648;
 
-BB26_26:
+BB28_26:
 	mov.u32 	%r53, 0;
 	mov.b64 	%fd85, {%r53, %r62};
-	bra.uni 	BB26_44;
+	bra.uni 	BB28_44;
 
-BB26_27:
+BB28_27:
 	setp.eq.f64	%p72, %fd6, 0d0000000000000000;
 	not.pred 	%p73, %p72;
-	@%p73 bra 	BB26_33;
-	bra.uni 	BB26_28;
+	@%p73 bra 	BB28_33;
+	bra.uni 	BB28_28;
 
-BB26_28:
+BB28_28:
 	mov.u32 	%r49, 0;
 	not.pred 	%p82, %p1;
 	mov.u32 	%r65, %r49;
-	@%p82 bra 	BB26_30;
-	bra.uni 	BB26_29;
+	@%p82 bra 	BB28_30;
+	bra.uni 	BB28_29;
 
-BB26_29:
+BB28_29:
 	mov.u32 	%r65, %r3;
 
-BB26_30:
+BB28_30:
 	mov.u32 	%r64, %r65;
 	setp.lt.s32	%p83, %r4, 0;
 	not.pred 	%p84, %p83;
-	@%p84 bra 	BB26_32;
-	bra.uni 	BB26_31;
+	@%p84 bra 	BB28_32;
+	bra.uni 	BB28_31;
 
-BB26_31:
+BB28_31:
 	or.b32  	%r64, %r64, 2146435072;
 
-BB26_32:
+BB28_32:
 	mov.u32 	%r50, 0;
 	mov.b64 	%fd85, {%r50, %r64};
-	bra.uni 	BB26_43;
+	bra.uni 	BB28_43;
 
-BB26_33:
+BB28_33:
 	setp.lt.s32	%p75, %r3, 0;
 	mov.pred 	%p99, 0;
 	not.pred 	%p76, %p75;
-	@%p76 bra 	BB26_35;
-	bra.uni 	BB26_34;
+	@%p76 bra 	BB28_35;
+	bra.uni 	BB28_34;
 
-BB26_34:
+BB28_34:
 	cvt.rzi.f64.f64	%fd74, %fd7;
 	setp.neu.f64	%p99, %fd7, %fd74;
 
-BB26_35:
+BB28_35:
 	not.pred 	%p77, %p99;
-	@%p77 bra 	BB26_37;
-	bra.uni 	BB26_36;
+	@%p77 bra 	BB28_37;
+	bra.uni 	BB28_36;
 
-BB26_36:
+BB28_36:
 	mov.f64 	%fd85, 0dFFF8000000000000;
-	bra.uni 	BB26_42;
+	bra.uni 	BB28_42;
 
-BB26_37:
+BB28_37:
 	abs.f64 	%fd75, %fd6;
 	// Callseq Start 28
 	{
@@ -7648,18 +7809,18 @@ BB26_37:
 	mov.pred 	%p78, 0;
 	not.pred 	%p80, %p79;
 	mov.pred 	%p101, %p78;
-	@%p80 bra 	BB26_39;
-	bra.uni 	BB26_38;
+	@%p80 bra 	BB28_39;
+	bra.uni 	BB28_38;
 
-BB26_38:
+BB28_38:
 	mov.pred 	%p101, %p1;
 
-BB26_39:
+BB28_39:
 	not.pred 	%p81, %p101;
-	@%p81 bra 	BB26_41;
-	bra.uni 	BB26_40;
+	@%p81 bra 	BB28_41;
+	bra.uni 	BB28_40;
 
-BB26_40:
+BB28_40:
 	{
 	.reg .b32 %temp; 
 	mov.b64 	{%temp, %r46}, %fd85;
@@ -7670,35 +7831,35 @@ BB26_40:
 	}
 	xor.b32  	%r48, %r46, -2147483648;
 	mov.b64 	%fd85, {%r47, %r48};
-tmp500:
+tmp514:
 
-BB26_41:
+BB28_41:
 
-BB26_42:
+BB28_42:
 
-BB26_43:
+BB28_43:
 
-BB26_44:
+BB28_44:
 
-BB26_45:
+BB28_45:
 
-BB26_46:
+BB28_46:
 
-BB26_47:
+BB28_47:
 	.loc	1 26 44
 	mov.f64 	%fd87, %fd85;
-tmp501:
-	bra.uni 	BB26_93;
-tmp502:
+tmp515:
+	bra.uni 	BB28_93;
+tmp516:
 
-BB26_48:
+BB28_48:
 	mov.f64 	%fd23, %fd4;
-tmp503:
+tmp517:
 	mov.f64 	%fd24, %fd5;
-tmp504:
+tmp518:
 	.loc	1 30 46
-	bra.uni	tmp505;
-tmp505:
+	bra.uni	tmp519;
+tmp519:
 	.loc	3 352 10
 	{
 	.reg .b32 %temp; 
@@ -7716,176 +7877,176 @@ tmp505:
 	setp.eq.f64	%p10, %fd56, 0d3FF0000000000000;
 	setp.eq.f64	%p24, %fd23, 0d3FF0000000000000;
 	mov.pred 	%p103, -1;
-	@%p24 bra 	BB26_50;
-	bra.uni 	BB26_49;
+	@%p24 bra 	BB28_50;
+	bra.uni 	BB28_49;
 
-BB26_49:
+BB28_49:
 	setp.eq.f64	%p103, %fd24, 0d0000000000000000;
 
-BB26_50:
+BB28_50:
 	not.pred 	%p25, %p103;
-	@%p25 bra 	BB26_52;
-	bra.uni 	BB26_51;
+	@%p25 bra 	BB28_52;
+	bra.uni 	BB28_51;
 
-BB26_51:
+BB28_51:
 	mov.f64 	%fd86, 0d3FF0000000000000;
-	bra.uni 	BB26_92;
+	bra.uni 	BB28_92;
 
-BB26_52:
+BB28_52:
 	abs.f64 	%fd57, %fd23;
 	setp.le.f64	%p27, %fd57, 0d7FF0000000000000;
 	not.pred 	%p28, %p27;
 	mov.pred 	%p104, -1;
-	@%p28 bra 	BB26_54;
-	bra.uni 	BB26_53;
+	@%p28 bra 	BB28_54;
+	bra.uni 	BB28_53;
 
-BB26_53:
+BB28_53:
 	abs.f64 	%fd58, %fd24;
 	setp.le.f64	%p29, %fd58, 0d7FF0000000000000;
 	not.pred 	%p104, %p29;
 
-BB26_54:
+BB28_54:
 	not.pred 	%p30, %p104;
-	@%p30 bra 	BB26_56;
-	bra.uni 	BB26_55;
+	@%p30 bra 	BB28_56;
+	bra.uni 	BB28_55;
 
-BB26_55:
+BB28_55:
 	add.f64 	%fd86, %fd23, %fd24;
-	bra.uni 	BB26_91;
+	bra.uni 	BB28_91;
 
-BB26_56:
+BB28_56:
 	abs.f64 	%fd59, %fd24;
 	setp.eq.f64	%p31, %fd59, 0d7FF0000000000000;
 	not.pred 	%p32, %p31;
-	@%p32 bra 	BB26_64;
-	bra.uni 	BB26_57;
+	@%p32 bra 	BB28_64;
+	bra.uni 	BB28_57;
 
-BB26_57:
+BB28_57:
 	abs.f64 	%fd63, %fd23;
 	setp.gt.f64	%p54, %fd63, 0d3FF0000000000000;
 	mov.u32 	%r66, 0;
 	not.pred 	%p55, %p54;
-	@%p55 bra 	BB26_59;
-	bra.uni 	BB26_58;
+	@%p55 bra 	BB28_59;
+	bra.uni 	BB28_58;
 
-BB26_58:
+BB28_58:
 	mov.u32 	%r66, 2146435072;
 
-BB26_59:
+BB28_59:
 	setp.lt.s32	%p56, %r16, 0;
 	not.pred 	%p57, %p56;
-	@%p57 bra 	BB26_61;
-	bra.uni 	BB26_60;
+	@%p57 bra 	BB28_61;
+	bra.uni 	BB28_60;
 
-BB26_60:
+BB28_60:
 	xor.b32  	%r66, %r66, 2146435072;
 
-BB26_61:
+BB28_61:
 	setp.eq.f64	%p58, %fd23, 0dBFF0000000000000;
 	not.pred 	%p59, %p58;
-	@%p59 bra 	BB26_63;
-	bra.uni 	BB26_62;
+	@%p59 bra 	BB28_63;
+	bra.uni 	BB28_62;
 
-BB26_62:
+BB28_62:
 	mov.u32 	%r66, 1072693248;
 
-BB26_63:
+BB28_63:
 	mov.u32 	%r45, 0;
 	mov.b64 	%fd86, {%r45, %r66};
-	bra.uni 	BB26_90;
+	bra.uni 	BB28_90;
 
-BB26_64:
+BB28_64:
 	abs.f64 	%fd60, %fd23;
 	setp.eq.f64	%p33, %fd60, 0d7FF0000000000000;
 	not.pred 	%p34, %p33;
-	@%p34 bra 	BB26_72;
-	bra.uni 	BB26_65;
+	@%p34 bra 	BB28_72;
+	bra.uni 	BB28_65;
 
-BB26_65:
+BB28_65:
 	setp.ge.s32	%p48, %r16, 0;
 	mov.u32 	%r67, 0;
 	not.pred 	%p49, %p48;
-	@%p49 bra 	BB26_67;
-	bra.uni 	BB26_66;
+	@%p49 bra 	BB28_67;
+	bra.uni 	BB28_66;
 
-BB26_66:
+BB28_66:
 	mov.u32 	%r67, 2146435072;
 
-BB26_67:
+BB28_67:
 	setp.lt.s32	%p51, %r15, 0;
 	mov.pred 	%p108, 0;
 	not.pred 	%p52, %p51;
-	@%p52 bra 	BB26_69;
-	bra.uni 	BB26_68;
+	@%p52 bra 	BB28_69;
+	bra.uni 	BB28_68;
 
-BB26_68:
+BB28_68:
 	mov.pred 	%p108, %p10;
 
-BB26_69:
+BB28_69:
 	not.pred 	%p53, %p108;
-	@%p53 bra 	BB26_71;
-	bra.uni 	BB26_70;
+	@%p53 bra 	BB28_71;
+	bra.uni 	BB28_70;
 
-BB26_70:
+BB28_70:
 	xor.b32  	%r67, %r67, -2147483648;
 
-BB26_71:
+BB28_71:
 	mov.u32 	%r41, 0;
 	mov.b64 	%fd86, {%r41, %r67};
-	bra.uni 	BB26_89;
+	bra.uni 	BB28_89;
 
-BB26_72:
+BB28_72:
 	setp.eq.f64	%p35, %fd23, 0d0000000000000000;
 	not.pred 	%p36, %p35;
-	@%p36 bra 	BB26_78;
-	bra.uni 	BB26_73;
+	@%p36 bra 	BB28_78;
+	bra.uni 	BB28_73;
 
-BB26_73:
+BB28_73:
 	mov.u32 	%r37, 0;
 	not.pred 	%p45, %p10;
 	mov.u32 	%r70, %r37;
-	@%p45 bra 	BB26_75;
-	bra.uni 	BB26_74;
+	@%p45 bra 	BB28_75;
+	bra.uni 	BB28_74;
 
-BB26_74:
+BB28_74:
 	mov.u32 	%r70, %r15;
 
-BB26_75:
+BB28_75:
 	mov.u32 	%r69, %r70;
 	setp.lt.s32	%p46, %r16, 0;
 	not.pred 	%p47, %p46;
-	@%p47 bra 	BB26_77;
-	bra.uni 	BB26_76;
+	@%p47 bra 	BB28_77;
+	bra.uni 	BB28_76;
 
-BB26_76:
+BB28_76:
 	or.b32  	%r69, %r69, 2146435072;
 
-BB26_77:
+BB28_77:
 	mov.u32 	%r38, 0;
 	mov.b64 	%fd86, {%r38, %r69};
-	bra.uni 	BB26_88;
+	bra.uni 	BB28_88;
 
-BB26_78:
+BB28_78:
 	setp.lt.s32	%p38, %r15, 0;
 	mov.pred 	%p105, 0;
 	not.pred 	%p39, %p38;
-	@%p39 bra 	BB26_80;
-	bra.uni 	BB26_79;
+	@%p39 bra 	BB28_80;
+	bra.uni 	BB28_79;
 
-BB26_79:
+BB28_79:
 	cvt.rzi.f64.f64	%fd61, %fd24;
 	setp.neu.f64	%p105, %fd24, %fd61;
 
-BB26_80:
+BB28_80:
 	not.pred 	%p40, %p105;
-	@%p40 bra 	BB26_82;
-	bra.uni 	BB26_81;
+	@%p40 bra 	BB28_82;
+	bra.uni 	BB28_81;
 
-BB26_81:
+BB28_81:
 	mov.f64 	%fd86, 0dFFF8000000000000;
-	bra.uni 	BB26_87;
+	bra.uni 	BB28_87;
 
-BB26_82:
+BB28_82:
 	abs.f64 	%fd62, %fd23;
 	// Callseq Start 27
 	{
@@ -7910,18 +8071,18 @@ BB26_82:
 	mov.pred 	%p41, 0;
 	not.pred 	%p43, %p42;
 	mov.pred 	%p107, %p41;
-	@%p43 bra 	BB26_84;
-	bra.uni 	BB26_83;
+	@%p43 bra 	BB28_84;
+	bra.uni 	BB28_83;
 
-BB26_83:
+BB28_83:
 	mov.pred 	%p107, %p10;
 
-BB26_84:
+BB28_84:
 	not.pred 	%p44, %p107;
-	@%p44 bra 	BB26_86;
-	bra.uni 	BB26_85;
+	@%p44 bra 	BB28_86;
+	bra.uni 	BB28_85;
 
-BB26_85:
+BB28_85:
 	{
 	.reg .b32 %temp; 
 	mov.b64 	{%temp, %r34}, %fd86;
@@ -7932,34 +8093,34 @@ BB26_85:
 	}
 	xor.b32  	%r36, %r34, -2147483648;
 	mov.b64 	%fd86, {%r35, %r36};
-tmp506:
+tmp520:
 
-BB26_86:
+BB28_86:
 
-BB26_87:
+BB28_87:
 
-BB26_88:
+BB28_88:
 
-BB26_89:
+BB28_89:
 
-BB26_90:
+BB28_90:
 
-BB26_91:
+BB28_91:
 
-BB26_92:
+BB28_92:
 	.loc	1 30 46
 	neg.f64 	%fd87, %fd86;
-tmp507:
+tmp521:
 
-BB26_93:
+BB28_93:
 	mov.f64 	%fd78, %fd87;
-tmp508:
+tmp522:
 	.loc	1 32 59
-	bra.uni	tmp509;
-tmp509:
+	bra.uni	tmp523;
+tmp523:
 	.loc	2 589 10
 	abs.f64 	%fd79, %fd78;
-tmp510:
+tmp524:
 	.loc	1 32 59
 	mul.f64 	%fd80, %fd79, 0d4014000000000000;
 	shl.b32 	%r58, %r60, 3;
@@ -7968,21 +8129,21 @@ tmp510:
 	mul.f64 	%fd82, %fd87, %fd81;
 	sub.f64 	%fd83, %fd80, %fd82;
 	add.f64 	%fd84, %fd84, %fd83;
-tmp511:
+tmp525:
 
 	.loc	1 18 127
 	add.s32 	%r60, %r60, 1;
-tmp512:
-	bra.uni 	BB26_1;
-tmp513:
+tmp526:
+	bra.uni 	BB28_1;
+tmp527:
 
-BB26_95:
+BB28_95:
 	.loc	1 35 1
 	mov.f64 	%fd44, %fd84;
 	st.param.f64	[func_retval0+0], %fd44;
 	ret;
-tmp514:
-func_end26:
+tmp528:
+func_end28:
 }
 
 	// .globl	_Z24wrapped_fitness_functionPdiS_d
@@ -7993,7 +8154,7 @@ func_end26:
 	.param .b64 _Z24wrapped_fitness_functionPdiS_d_param_3
 )
 {
-	.local .align 8 .b8 	__local_depot27[8];
+	.local .align 8 .b8 	__local_depot29[8];
 	.reg .b32 	%SP;
 	.reg .b32 	%SPL;
 	.reg .s32 	%r<7>;
@@ -8001,19 +8162,19 @@ func_end26:
 
 
 	.loc 1 38 1
-func_begin27:
+func_begin29:
 	.loc	1 0 0
 
 	.loc 1 38 1
 
-	mov.u32 	%r6, __local_depot27;
+	mov.u32 	%r6, __local_depot29;
 	cvta.local.u32 	%SP, %r6;
 	ld.param.u32 	%r1, [_Z24wrapped_fitness_functionPdiS_d_param_0];
 	ld.param.u32 	%r2, [_Z24wrapped_fitness_functionPdiS_d_param_1];
 	ld.param.u32 	%r3, [_Z24wrapped_fitness_functionPdiS_d_param_2];
 	ld.param.f64 	%fd1, [_Z24wrapped_fitness_functionPdiS_d_param_3];
-tmp515:
-func_exec_begin27:
+tmp529:
+func_exec_begin29:
 	.loc	1 41 1
 	// Callseq Start 29
 	{
@@ -8123,8 +8284,8 @@ func_exec_begin27:
 	mov.f64 	%fd4, %fd3;
 	st.param.f64	[func_retval0+0], %fd4;
 	ret;
-tmp516:
-func_end27:
+tmp530:
+func_end29:
 }
 
 	// .globl	generateData
@@ -8144,7 +8305,7 @@ func_end27:
 
 
 	.loc 1 53 1
-func_begin28:
+func_begin30:
 	.loc	1 0 0
 
 	.loc 1 53 1
@@ -8155,9 +8316,9 @@ func_begin28:
 	ld.param.u32 	%r7, [generateData_param_3];
 	ld.param.u32 	%r8, [generateData_param_4];
 	ld.param.u32 	%r9, [generateData_param_5];
-func_exec_begin28:
+func_exec_begin30:
 	.loc	1 60 1
-tmp517:
+tmp531:
 	// Callseq Start 34
 	{
 	.reg .b32 temp_param_reg;
@@ -8180,55 +8341,55 @@ tmp517:
 	}// Callseq End 34
 	mov.u32 	%r10, 0;
 	.loc	1 62 1
-tmp518:
+tmp532:
 	mov.b32 	%r17, %r10;
-tmp519:
+tmp533:
 
-BB28_1:
+BB30_1:
 	.loc	1 62 1
 	setp.lt.s32	%p1, %r17, %r4;
 	not.pred 	%p2, %p1;
-	@%p2 bra 	BB28_7;
-	bra.uni 	BB28_2;
+	@%p2 bra 	BB30_7;
+	bra.uni 	BB30_2;
 
-BB28_2:
+BB30_2:
 	.loc	1 64 1
-tmp520:
+tmp534:
 	shl.b32 	%r11, %r17, 3;
 	add.s32 	%r12, %r8, %r11;
 	ld.f64 	%fd2, [%r12];
 	setp.lt.f64	%p3, %fd2, 0d0000000000000000;
 	not.pred 	%p4, %p3;
-	@%p4 bra 	BB28_4;
-	bra.uni 	BB28_3;
+	@%p4 bra 	BB30_4;
+	bra.uni 	BB30_3;
 
-BB28_3:
+BB30_3:
 	.loc	1 66 1
-tmp521:
+tmp535:
 	shl.b32 	%r15, %r17, 3;
 	add.s32 	%r16, %r8, %r15;
 	mov.u64 	%rd2, -4606056518893174784;
 	st.u64 	[%r16], %rd2;
-	bra.uni 	BB28_5;
-tmp522:
+	bra.uni 	BB30_5;
+tmp536:
 
-BB28_4:
+BB30_4:
 	.loc	1 70 1
 	shl.b32 	%r13, %r17, 3;
 	add.s32 	%r14, %r8, %r13;
 	mov.u64 	%rd1, 4617315517961601024;
 	st.u64 	[%r14], %rd1;
-tmp523:
+tmp537:
 
-BB28_5:
+BB30_5:
 
 	.loc	1 62 25
 	add.s32 	%r17, %r17, 1;
-tmp524:
-	bra.uni 	BB28_1;
-tmp525:
+tmp538:
+	bra.uni 	BB30_1;
+tmp539:
 
-BB28_7:
+BB30_7:
 	.loc	1 74 24
 	// Callseq Start 35
 	{
@@ -8250,266 +8411,148 @@ BB28_7:
 	//{
 	}// Callseq End 35
 	st.f64 	[%r9], %fd1;
-tmp526:
+tmp540:
 	.loc	1 75 2
 	ret;
-tmp527:
-func_end28:
-}
-
-	// .globl	kernelUpdateParticle
-.visible .entry kernelUpdateParticle(
-	.param .u32 kernelUpdateParticle_param_0,
-	.param .u32 kernelUpdateParticle_param_1,
-	.param .u32 kernelUpdateParticle_param_2,
-	.param .u32 kernelUpdateParticle_param_3,
-	.param .u32 kernelUpdateParticle_param_4,
-	.param .u32 kernelUpdateParticle_param_5,
-	.param .f64 kernelUpdateParticle_param_6,
-	.param .f64 kernelUpdateParticle_param_7
-)
-{
-	.reg .pred 	%p<3>;
-	.reg .s32 	%r<32>;
-	.reg .f64 	%fd<19>;
-
-
-	.loc 1 77 1
-func_begin29:
-	.loc	1 0 0
-
-	.loc 1 77 1
-
-	ld.param.u32 	%r2, [kernelUpdateParticle_param_0];
-	ld.param.u32 	%r3, [kernelUpdateParticle_param_1];
-	ld.param.u32 	%r4, [kernelUpdateParticle_param_2];
-	ld.param.u32 	%r5, [kernelUpdateParticle_param_3];
-	ld.param.u32 	%r6, [kernelUpdateParticle_param_4];
-	ld.param.u32 	%r7, [kernelUpdateParticle_param_5];
-	ld.param.f64 	%fd1, [kernelUpdateParticle_param_6];
-	ld.param.f64 	%fd2, [kernelUpdateParticle_param_7];
-func_exec_begin29:
-	.loc	1 82 1
-tmp528:
-	mov.u32 	%r8, %ctaid.x;
-	mov.u32 	%r9, %ntid.x;
-	mul.lo.s32 	%r10, %r8, %r9;
-	mov.u32 	%r11, %tid.x;
-	add.s32 	%r1, %r10, %r11;
-tmp529:
-	.loc	1 84 1
-	mul.lo.s32 	%r12, %r6, %r7;
-	setp.ge.s32	%p1, %r1, %r12;
-	not.pred 	%p2, %p1;
-	@%p2 bra 	BB29_2;
-	bra.uni 	BB29_1;
-
-BB29_1:
-	.loc	1 85 1
-tmp530:
-	bra.uni 	BB29_3;
-tmp531:
-
-BB29_2:
-	.loc	1 87 1
-	mov.u32 	%r13, d_OMEGA;
-	cvta.const.u32 	%r14, %r13;
-	ld.f64 	%fd3, [%r14];
-	shl.b32 	%r15, %r1, 3;
-	add.s32 	%r16, %r3, %r15;
-	ld.f64 	%fd4, [%r16];
-	mul.f64 	%fd5, %fd3, %fd4;
-	shl.b32 	%r17, %r1, 3;
-	add.s32 	%r18, %r4, %r17;
-	ld.f64 	%fd6, [%r18];
-	shl.b32 	%r19, %r1, 3;
-	add.s32 	%r20, %r2, %r19;
-	ld.f64 	%fd7, [%r20];
-	sub.f64 	%fd8, %fd6, %fd7;
-	mul.f64 	%fd9, %fd1, %fd8;
-	add.f64 	%fd10, %fd5, %fd9;
-	rem.s32 	%r21, %r1, %r7;
-	shl.b32 	%r22, %r21, 3;
-	add.s32 	%r23, %r5, %r22;
-	ld.f64 	%fd11, [%r23];
-	shl.b32 	%r24, %r1, 3;
-	add.s32 	%r25, %r2, %r24;
-	ld.f64 	%fd12, [%r25];
-	sub.f64 	%fd13, %fd11, %fd12;
-	mul.f64 	%fd14, %fd2, %fd13;
-	add.f64 	%fd15, %fd10, %fd14;
-	shl.b32 	%r26, %r1, 3;
-	add.s32 	%r27, %r3, %r26;
-	st.f64 	[%r27], %fd15;
-	.loc	1 91 1
-	shl.b32 	%r28, %r1, 3;
-	add.s32 	%r29, %r3, %r28;
-	ld.f64 	%fd16, [%r29];
-	shl.b32 	%r30, %r1, 3;
-	add.s32 	%r31, %r2, %r30;
-	ld.f64 	%fd17, [%r31];
-	add.f64 	%fd18, %fd17, %fd16;
-	st.f64 	[%r31], %fd18;
-tmp532:
-
-BB29_3:
-	.loc	1 92 2
-	ret;
-tmp533:
-func_end29:
-}
-
-	// .globl	kernelUpdatePBest
-.visible .entry kernelUpdatePBest(
-	.param .u32 kernelUpdatePBest_param_0,
-	.param .u32 kernelUpdatePBest_param_1,
-	.param .u32 kernelUpdatePBest_param_2,
-	.param .u32 kernelUpdatePBest_param_3,
-	.param .u32 kernelUpdatePBest_param_4,
-	.param .u32 kernelUpdatePBest_param_5,
-	.param .f64 kernelUpdatePBest_param_6
-)
-{
-	.local .align 8 .b8 	__local_depot30[648];
-	.reg .b32 	%SP;
-	.reg .b32 	%SPL;
-	.reg .pred 	%p<13>;
-	.reg .s32 	%r<45>;
-	.reg .f64 	%fd<7>;
-
-
-	.loc 1 94 1
-func_begin30:
-	.loc	1 0 0
-
-	.loc 1 94 1
-
-	mov.u32 	%r44, __local_depot30;
-	cvta.local.u32 	%SP, %r44;
-	ld.param.u32 	%r8, [kernelUpdatePBest_param_0];
-	ld.param.u32 	%r9, [kernelUpdatePBest_param_1];
-	ld.param.u32 	%r10, [kernelUpdatePBest_param_2];
-	ld.param.u32 	%r11, [kernelUpdatePBest_param_3];
-	ld.param.u32 	%r12, [kernelUpdatePBest_param_4];
-	ld.param.u32 	%r13, [kernelUpdatePBest_param_5];
-	ld.param.f64 	%fd1, [kernelUpdatePBest_param_6];
-	st.u32 	[%SP+0], %r10;
-tmp534:
-func_exec_begin30:
-	.loc	1 98 1
-	mov.u32 	%r14, %ctaid.x;
-	mov.u32 	%r15, %ntid.x;
-	mul.lo.s32 	%r16, %r14, %r15;
-	mov.u32 	%r17, %tid.x;
-	add.s32 	%r1, %r16, %r17;
-tmp535:
-	.loc	1 102 1
-	mul.lo.s32 	%r18, %r11, %r12;
-	setp.ge.s32	%p4, %r1, %r18;
-	mov.pred 	%p12, -1;
-	@%p4 bra 	BB30_2;
-	bra.uni 	BB30_1;
-
-BB30_1:
-	rem.s32 	%r19, %r1, %r12;
-	setp.ne.s32	%p12, %r19, 0;
-
-BB30_2:
-	not.pred 	%p5, %p12;
-	@%p5 bra 	BB30_4;
-	bra.uni 	BB30_3;
-
-BB30_3:
-	.loc	1 103 1
-tmp536:
-	bra.uni 	BB30_15;
-tmp537:
-
-BB30_4:
-	mov.u32 	%r20, 0;
-	.loc	1 105 1
-tmp538:
-	mov.b32 	%r42, %r20;
-tmp539:
-
-BB30_5:
-	.loc	1 105 1
-	setp.lt.s32	%p6, %r42, %r12;
-	not.pred 	%p7, %p6;
-	@%p7 bra 	BB30_8;
-	bra.uni 	BB30_6;
-
-BB30_6:
-	.loc	1 107 1
-tmp540:
-	add.s32 	%r30, %r1, %r42;
-	shl.b32 	%r31, %r30, 3;
-	add.s32 	%r32, %r8, %r31;
-	ld.f64 	%fd5, [%r32];
-	shl.b32 	%r33, %r42, 3;
-	add.u32 	%r34, %SP, 8;
-	add.s32 	%r35, %r34, %r33;
-	st.f64 	[%r35], %fd5;
-	.loc	1 108 1
-	add.s32 	%r36, %r1, %r42;
-	shl.b32 	%r37, %r36, 3;
-	add.s32 	%r38, %r9, %r37;
-	ld.f64 	%fd6, [%r38];
-	shl.b32 	%r39, %r42, 3;
-	add.u32 	%r40, %SP, 328;
-	add.s32 	%r41, %r40, %r39;
-	st.f64 	[%r41], %fd6;
 tmp541:
+func_end30:
+}
 
-	.loc	1 105 31
-	add.s32 	%r42, %r42, 1;
+	// .globl	transposeKernel
+.visible .entry transposeKernel(
+	.param .u32 transposeKernel_param_0,
+	.param .u32 transposeKernel_param_1,
+	.param .u32 transposeKernel_param_2,
+	.param .u32 transposeKernel_param_3,
+	.param .u32 transposeKernel_param_4,
+	.param .u32 transposeKernel_param_5,
+	.param .u32 transposeKernel_param_6,
+	.param .f64 transposeKernel_param_7
+)
+{
+	.reg .pred 	%p<9>;
+	.reg .s32 	%r<44>;
+	.reg .f64 	%fd<10>;
+
+
+	.loc 1 77 1
+func_begin31:
+	.loc	1 0 0
+
+	.loc 1 77 1
+
+	ld.param.u32 	%r11, [transposeKernel_param_0];
+	ld.param.u32 	%r12, [transposeKernel_param_1];
+	ld.param.u32 	%r13, [transposeKernel_param_2];
+	ld.param.u32 	%r14, [transposeKernel_param_3];
+	ld.param.u32 	%r15, [transposeKernel_param_4];
+	ld.param.u32 	%r16, [transposeKernel_param_5];
+	ld.param.u32 	%r17, [transposeKernel_param_6];
+	ld.param.f64 	%fd2, [transposeKernel_param_7];
+func_exec_begin31:
+	.loc	1 86 1
 tmp542:
-	bra.uni 	BB30_5;
+	mov.u32 	%r18, %ctaid.x;
+	mov.u32 	%r19, %ntid.x;
+	mul.lo.s32 	%r20, %r18, %r19;
+	mov.u32 	%r21, %tid.x;
+	add.s32 	%r1, %r20, %r21;
 tmp543:
+	.loc	1 88 1
+	setp.ge.s32	%p1, %r1, %r15;
+	not.pred 	%p2, %p1;
+	@%p2 bra 	BB31_2;
+	bra.uni 	BB31_1;
 
-BB30_8:
-	add.u32 	%r21, %SP, 8;
-	.loc	1 111 6
+BB31_1:
+	.loc	1 88 1
 tmp544:
+	bra.uni 	BB31_13;
+tmp545:
+
+BB31_2:
+	.loc	1 90 1
+	mul.lo.s32 	%r22, %r1, %r16;
+	shl.b32 	%r23, %r22, 3;
+	add.s32 	%r2, %r11, %r23;
+tmp546:
+	.loc	1 91 1
+	mul.lo.s32 	%r24, %r1, %r16;
+	shl.b32 	%r25, %r24, 3;
+	add.s32 	%r3, %r12, %r25;
+tmp547:
+	mov.u32 	%r26, 0;
+	.loc	1 93 1
+tmp548:
+	mov.b32 	%r42, %r26;
+tmp549:
+
+BB31_3:
+	.loc	1 93 1
+	setp.lt.s32	%p3, %r42, %r16;
+	not.pred 	%p4, %p3;
+	@%p4 bra 	BB31_6;
+	bra.uni 	BB31_4;
+
+BB31_4:
+	.loc	1 95 1
+tmp550:
+	shl.b32 	%r38, %r42, 3;
+	add.s32 	%r39, %r3, %r38;
+	ld.f64 	%fd7, [%r39];
+	shl.b32 	%r40, %r42, 3;
+	add.s32 	%r41, %r2, %r40;
+	ld.f64 	%fd8, [%r41];
+	add.f64 	%fd9, %fd8, %fd7;
+	st.f64 	[%r41], %fd9;
+tmp551:
+
+	.loc	1 93 31
+	add.s32 	%r42, %r42, 1;
+tmp552:
+	bra.uni 	BB31_3;
+tmp553:
+
+BB31_6:
+	mov.f64 	%fd3, 0dC014000000000000;
+	mov.f64 	%fd4, 0d4014000000000000;
+	.loc	1 98 1
 	// Callseq Start 36
 	{
 	.reg .b32 temp_param_reg;
 	// <end>}
 	.param .b32 param0;
-	st.param.b32	[param0+0], %r21;
+	st.param.b32	[param0+0], %r2;
 	.param .b32 param1;
-	st.param.b32	[param1+0], %r12;
-	.param .b32 param2;
-	st.param.b32	[param2+0], %r13;
+	st.param.b32	[param1+0], %r16;
+	.param .b64 param2;
+	st.param.f64	[param2+0], %fd3;
 	.param .b64 param3;
-	st.param.f64	[param3+0], %fd1;
-	.param .b64 retval0;
-	call.uni (retval0), 
-	_Z24wrapped_fitness_functionPdiS_d, 
+	st.param.f64	[param3+0], %fd4;
+	call.uni 
+	_Z5clampPdidd, 
 	(
 	param0, 
 	param1, 
 	param2, 
 	param3
 	);
-	ld.param.f64	%fd2, [retval0+0];
 	
 	//{
 	}// Callseq End 36
-	add.u32 	%r22, %SP, 328;
-	.loc	1 111 128
+	.loc	1 100 50
 	// Callseq Start 37
 	{
 	.reg .b32 temp_param_reg;
 	// <end>}
 	.param .b32 param0;
-	st.param.b32	[param0+0], %r22;
+	st.param.b32	[param0+0], %r2;
 	.param .b32 param1;
-	st.param.b32	[param1+0], %r12;
+	st.param.b32	[param1+0], %r16;
 	.param .b32 param2;
-	st.param.b32	[param2+0], %r13;
+	st.param.b32	[param2+0], %r17;
 	.param .b64 param3;
-	st.param.f64	[param3+0], %fd1;
+	st.param.f64	[param3+0], %fd2;
 	.param .b64 retval0;
 	call.uni (retval0), 
 	_Z24wrapped_fitness_functionPdiS_d, 
@@ -8519,57 +8562,327 @@ tmp544:
 	param2, 
 	param3
 	);
-	ld.param.f64	%fd3, [retval0+0];
+	ld.param.f64	%fd1, [retval0+0];
+tmp554:
 	
 	//{
 	}// Callseq End 37
-	setp.lt.f64	%p8, %fd2, %fd3;
-	not.pred 	%p9, %p8;
-	@%p9 bra 	BB30_14;
-	bra.uni 	BB30_9;
+	.loc	1 102 1
+tmp555:
+	shl.b32 	%r27, %r1, 3;
+	add.s32 	%r28, %r14, %r27;
+	ld.f64 	%fd5, [%r28];
+	setp.lt.f64	%p5, %fd1, %fd5;
+	not.pred 	%p6, %p5;
+	@%p6 bra 	BB31_12;
+	bra.uni 	BB31_7;
 
-BB30_9:
-	mov.u32 	%r23, 0;
-	.loc	1 114 1
-tmp545:
-	mov.b32 	%r43, %r23;
-tmp546:
+BB31_7:
+	.loc	1 104 1
+tmp556:
+	shl.b32 	%r29, %r1, 3;
+	add.s32 	%r30, %r14, %r29;
+	st.f64 	[%r30], %fd1;
+	.loc	1 106 1
+	mul.lo.s32 	%r31, %r1, %r16;
+	shl.b32 	%r32, %r31, 3;
+	add.s32 	%r7, %r13, %r32;
+tmp557:
+	mov.u32 	%r33, 0;
+	.loc	1 108 1
+tmp558:
+	mov.b32 	%r43, %r33;
+tmp559:
 
-BB30_10:
-	.loc	1 114 1
-	setp.lt.s32	%p10, %r43, %r12;
-	not.pred 	%p11, %p10;
-	@%p11 bra 	BB30_13;
-	bra.uni 	BB30_11;
+BB31_8:
+	.loc	1 108 1
+	setp.lt.s32	%p7, %r43, %r16;
+	not.pred 	%p8, %p7;
+	@%p8 bra 	BB31_11;
+	bra.uni 	BB31_9;
 
-BB30_11:
-	.loc	1 115 1
-tmp547:
-	add.s32 	%r24, %r1, %r43;
-	shl.b32 	%r25, %r24, 3;
-	add.s32 	%r26, %r8, %r25;
-	ld.f64 	%fd4, [%r26];
-	add.s32 	%r27, %r1, %r43;
-	shl.b32 	%r28, %r27, 3;
-	add.s32 	%r29, %r9, %r28;
-	st.f64 	[%r29], %fd4;
-tmp548:
+BB31_9:
+	.loc	1 109 1
+tmp560:
+	shl.b32 	%r34, %r43, 3;
+	add.s32 	%r35, %r2, %r34;
+	ld.f64 	%fd6, [%r35];
+	shl.b32 	%r36, %r43, 3;
+	add.s32 	%r37, %r7, %r36;
+	st.f64 	[%r37], %fd6;
+tmp561:
 
-	.loc	1 114 31
+	.loc	1 108 31
 	add.s32 	%r43, %r43, 1;
-tmp549:
-	bra.uni 	BB30_10;
-tmp550:
+tmp562:
+	bra.uni 	BB31_8;
+tmp563:
 
-BB30_13:
+BB31_11:
 
-BB30_14:
+BB31_12:
 
-BB30_15:
-	.loc	1 117 2
+BB31_13:
+	.loc	1 111 2
 	ret;
-tmp551:
-func_end30:
+tmp564:
+func_end31:
+}
+
+	// .globl	updateVelocityKernel
+.visible .entry updateVelocityKernel(
+	.param .u32 updateVelocityKernel_param_0,
+	.param .u32 updateVelocityKernel_param_1,
+	.param .u32 updateVelocityKernel_param_2,
+	.param .u32 updateVelocityKernel_param_3,
+	.param .u32 updateVelocityKernel_param_4,
+	.param .u32 updateVelocityKernel_param_5,
+	.param .u32 updateVelocityKernel_param_6,
+	.param .f64 updateVelocityKernel_param_7,
+	.param .f64 updateVelocityKernel_param_8
+)
+{
+	.local .align 8 .b8 	__local_depot32[640];
+	.reg .b32 	%SP;
+	.reg .b32 	%SPL;
+	.reg .pred 	%p<9>;
+	.reg .s32 	%r<67>;
+	.reg .f64 	%fd<22>;
+
+
+	.loc 1 113 1
+func_begin32:
+	.loc	1 0 0
+
+	.loc 1 113 1
+
+	mov.u32 	%r66, __local_depot32;
+	cvta.local.u32 	%SP, %r66;
+	ld.param.u32 	%r15, [updateVelocityKernel_param_0];
+	ld.param.u32 	%r16, [updateVelocityKernel_param_1];
+	ld.param.u32 	%r17, [updateVelocityKernel_param_2];
+	ld.param.u32 	%r18, [updateVelocityKernel_param_3];
+	ld.param.u32 	%r19, [updateVelocityKernel_param_4];
+	ld.param.u32 	%r20, [updateVelocityKernel_param_5];
+	ld.param.u32 	%r21, [updateVelocityKernel_param_6];
+	ld.param.f64 	%fd6, [updateVelocityKernel_param_7];
+	ld.param.f64 	%fd7, [updateVelocityKernel_param_8];
+tmp565:
+func_exec_begin32:
+	.loc	1 124 1
+	mov.u32 	%r22, %ctaid.x;
+	mov.u32 	%r23, %ntid.x;
+	mul.lo.s32 	%r24, %r22, %r23;
+	mov.u32 	%r25, %tid.x;
+	add.s32 	%r1, %r24, %r25;
+tmp566:
+	.loc	1 126 1
+	setp.ge.s32	%p1, %r1, %r20;
+	not.pred 	%p2, %p1;
+	@%p2 bra 	BB32_2;
+	bra.uni 	BB32_1;
+
+BB32_1:
+	.loc	1 126 1
+tmp567:
+	bra.uni 	BB32_11;
+tmp568:
+
+BB32_2:
+	.loc	1 128 1
+	mul.lo.s32 	%r26, %r1, %r21;
+	shl.b32 	%r27, %r26, 3;
+	add.s32 	%r2, %r15, %r27;
+tmp569:
+	.loc	1 129 1
+	mul.lo.s32 	%r28, %r1, %r21;
+	shl.b32 	%r29, %r28, 3;
+	add.s32 	%r3, %r16, %r29;
+tmp570:
+	.loc	1 130 1
+	mul.lo.s32 	%r30, %r1, %r21;
+	shl.b32 	%r31, %r30, 3;
+	add.s32 	%r4, %r17, %r31;
+tmp571:
+	.loc	1 131 1
+	shl.b32 	%r32, %r1, 3;
+	add.s32 	%r33, %r18, %r32;
+	ld.f64 	%fd8, [%r33];
+	mov.f64 	%fd9, %fd8;
+tmp572:
+	.loc	1 133 1
+	mul.lo.s32 	%r34, %r1, 2;
+	shl.b32 	%r35, %r34, 2;
+	add.s32 	%r36, %r19, %r35;
+tmp573:
+	.loc	1 135 1
+	ld.u32 	%r37, [%r36];
+	mov.b32 	%r38, %r37;
+tmp574:
+	.loc	1 136 1
+	mul.lo.s32 	%r39, %r38, %r21;
+	shl.b32 	%r40, %r39, 3;
+	add.s32 	%r5, %r17, %r40;
+tmp575:
+	.loc	1 137 1
+	shl.b32 	%r41, %r38, 3;
+	add.s32 	%r42, %r18, %r41;
+	ld.f64 	%fd10, [%r42];
+	mov.f64 	%fd1, %fd10;
+tmp576:
+	.loc	1 139 1
+	ld.u32 	%r43, [%r36+4];
+	mov.b32 	%r44, %r43;
+tmp577:
+	.loc	1 140 1
+	mul.lo.s32 	%r45, %r44, %r21;
+	shl.b32 	%r46, %r45, 3;
+	add.s32 	%r6, %r17, %r46;
+tmp578:
+	.loc	1 141 1
+	shl.b32 	%r47, %r44, 3;
+	add.s32 	%r48, %r18, %r47;
+	ld.f64 	%fd11, [%r48];
+	mov.f64 	%fd2, %fd11;
+tmp579:
+	.loc	1 143 1
+	mov.u32 	%r64, %r4;
+tmp580:
+	.loc	1 144 1
+	mov.f64 	%fd21, %fd9;
+tmp581:
+	.loc	1 146 1
+	setp.lt.f64	%p3, %fd1, %fd21;
+	not.pred 	%p4, %p3;
+	@%p4 bra 	BB32_4;
+	bra.uni 	BB32_3;
+
+BB32_3:
+	.loc	1 148 1
+tmp582:
+	mov.u32 	%r64, %r5;
+tmp583:
+	.loc	1 149 1
+	mov.f64 	%fd21, %fd1;
+tmp584:
+
+BB32_4:
+	.loc	1 152 1
+	setp.lt.f64	%p5, %fd2, %fd21;
+	not.pred 	%p6, %p5;
+	@%p6 bra 	BB32_6;
+	bra.uni 	BB32_5;
+
+BB32_5:
+	.loc	1 154 1
+tmp585:
+	mov.u32 	%r64, %r6;
+tmp586:
+
+BB32_6:
+	add.u32 	%r49, %SP, 0;
+	.loc	1 158 1
+	// Callseq Start 38
+	{
+	.reg .b32 temp_param_reg;
+	// <end>}
+	.param .b32 param0;
+	st.param.b32	[param0+0], %r2;
+	.param .b32 param1;
+	st.param.b32	[param1+0], %r4;
+	.param .b32 param2;
+	st.param.b32	[param2+0], %r21;
+	.param .b32 param3;
+	st.param.b32	[param3+0], %r49;
+	call.uni 
+	_Z14vector_betweenPdS_iS_, 
+	(
+	param0, 
+	param1, 
+	param2, 
+	param3
+	);
+	
+	//{
+	}// Callseq End 38
+	add.u32 	%r50, %SP, 320;
+	.loc	1 161 1
+	// Callseq Start 39
+	{
+	.reg .b32 temp_param_reg;
+	// <end>}
+	.param .b32 param0;
+	st.param.b32	[param0+0], %r2;
+	.param .b32 param1;
+	st.param.b32	[param1+0], %r64;
+	.param .b32 param2;
+	st.param.b32	[param2+0], %r21;
+	.param .b32 param3;
+	st.param.b32	[param3+0], %r50;
+	call.uni 
+	_Z14vector_betweenPdS_iS_, 
+	(
+	param0, 
+	param1, 
+	param2, 
+	param3
+	);
+	
+	//{
+	}// Callseq End 39
+	mov.u32 	%r51, 0;
+	.loc	1 163 1
+tmp587:
+	mov.b32 	%r65, %r51;
+tmp588:
+
+BB32_7:
+	.loc	1 163 1
+	setp.lt.s32	%p7, %r65, %r21;
+	not.pred 	%p8, %p7;
+	@%p8 bra 	BB32_10;
+	bra.uni 	BB32_8;
+
+BB32_8:
+	.loc	1 165 1
+tmp589:
+	shl.b32 	%r52, %r65, 3;
+	add.s32 	%r53, %r3, %r52;
+	ld.f64 	%fd12, [%r53];
+	mov.u32 	%r54, d_OMEGA;
+	cvta.const.u32 	%r55, %r54;
+	ld.f64 	%fd13, [%r55];
+	mul.f64 	%fd14, %fd12, %fd13;
+	shl.b32 	%r56, %r65, 3;
+	add.u32 	%r57, %SP, 320;
+	add.s32 	%r58, %r57, %r56;
+	ld.f64 	%fd15, [%r58];
+	mul.f64 	%fd16, %fd6, %fd15;
+	add.f64 	%fd17, %fd14, %fd16;
+	shl.b32 	%r59, %r65, 3;
+	add.u32 	%r60, %SP, 0;
+	add.s32 	%r61, %r60, %r59;
+	ld.f64 	%fd18, [%r61];
+	mul.f64 	%fd19, %fd7, %fd18;
+	add.f64 	%fd20, %fd17, %fd19;
+	shl.b32 	%r62, %r65, 3;
+	add.s32 	%r63, %r3, %r62;
+	st.f64 	[%r63], %fd20;
+tmp590:
+
+	.loc	1 163 31
+	add.s32 	%r65, %r65, 1;
+tmp591:
+	bra.uni 	BB32_7;
+tmp592:
+
+BB32_10:
+
+BB32_11:
+	.loc	1 167 2
+	ret;
+tmp593:
+func_end32:
 }
 
 .func  (.param .b64 func_retval0) __internal_trig_reduction_slowpathd(
@@ -8577,7 +8890,7 @@ func_end30:
 	.param .b32 __internal_trig_reduction_slowpathd_param_1
 )
 {
-	.local .align 16 .b8 	__local_depot31[128];
+	.local .align 16 .b8 	__local_depot33[128];
 	.reg .b32 	%SP;
 	.reg .b32 	%SPL;
 	.reg .pred 	%p<15>;
@@ -8586,7 +8899,7 @@ func_end30:
 	.reg .s64 	%rd<80>;
 
 
-	mov.u32 	%r51, __local_depot31;
+	mov.u32 	%r51, __local_depot33;
 	cvta.local.u32 	%SP, %r51;
 	ld.param.f64 	%fd4, [__internal_trig_reduction_slowpathd_param_0];
 	ld.param.u32 	%r18, [__internal_trig_reduction_slowpathd_param_1];
@@ -8599,13 +8912,13 @@ func_end30:
 	and.b32  	%r2, %r20, 2047;
 	setp.eq.s32	%p1, %r2, 2047;
 	not.pred 	%p2, %p1;
-	@%p2 bra 	BB31_2;
-	bra.uni 	BB31_1;
+	@%p2 bra 	BB33_2;
+	bra.uni 	BB33_1;
 
-BB31_1:
-	bra.uni 	BB31_17;
+BB33_1:
+	bra.uni 	BB33_17;
 
-BB31_2:
+BB33_2:
 	sub.s32 	%r3, %r2, 1024;
 	mov.b64 	 %rd20, %fd4;
 	shl.b64 	%rd21, %rd20, 11;
@@ -8617,16 +8930,16 @@ BB31_2:
 	st.u64 	[%SP+72], %rd22;
 	sub.s32 	%r47, %r4, 1;
 
-BB31_3:
+BB33_3:
 	add.s32 	%r23, %r4, 3;
 	mov.u32 	%r24, 18;
 	min.s32 	%r25, %r24, %r23;
 	setp.lt.s32	%p3, %r47, %r25;
 	not.pred 	%p4, %p3;
-	@%p4 bra 	BB31_6;
-	bra.uni 	BB31_4;
+	@%p4 bra 	BB33_6;
+	bra.uni 	BB33_4;
 
-BB31_4:
+BB33_4:
 	shl.b32 	%r38, %r47, 3;
 	mov.u32 	%r39, __cudart_i2opi_d;
 	cvta.const.u32 	%r40, %r39;
@@ -8667,9 +8980,9 @@ BB31_4:
 	st.u64 	[%r46], %rd74;
 
 	add.s32 	%r47, %r47, 1;
-	bra.uni 	BB31_3;
+	bra.uni 	BB33_3;
 
-BB31_6:
+BB33_6:
 	ld.u64 	%rd23, [%SP+72];
 	sub.s32 	%r26, %r4, 1;
 	sub.s32 	%r27, %r47, %r26;
@@ -8682,10 +8995,10 @@ BB31_6:
 	ld.u64 	%rd76, [%SP+104];
 	setp.ne.s32	%p5, %r8, 0;
 	not.pred 	%p6, %p5;
-	@%p6 bra 	BB31_8;
-	bra.uni 	BB31_7;
+	@%p6 bra 	BB33_8;
+	bra.uni 	BB33_7;
 
-BB31_7:
+BB33_7:
 	mov.u32 	%r31, 64;
 	sub.s32 	%r32, %r31, %r8;
 	shl.b64 	%rd24, %rd76, %r8;
@@ -8696,7 +9009,7 @@ BB31_7:
 	shr.u64 	%rd28, %rd27, %r32;
 	or.b64  	%rd75, %rd26, %rd28;
 
-BB31_8:
+BB33_8:
 	shr.u64 	%rd29, %rd76, 62;
 	cvt.u32.u64	%r33, %rd29;
 	shl.b64 	%rd30, %rd76, 2;
@@ -8708,20 +9021,20 @@ BB31_8:
 	add.s32 	%r48, %r33, %r9;
 	setp.ne.s32	%p7, %r49, 0;
 	not.pred 	%p8, %p7;
-	@%p8 bra 	BB31_10;
-	bra.uni 	BB31_9;
+	@%p8 bra 	BB33_10;
+	bra.uni 	BB33_9;
 
-BB31_9:
+BB33_9:
 	neg.s32 	%r48, %r48;
 
-BB31_10:
+BB33_10:
 	st.u32 	[%r18], %r48;
 	setp.ne.s32	%p9, %r9, 0;
 	not.pred 	%p10, %p9;
-	@%p10 bra 	BB31_12;
-	bra.uni 	BB31_11;
+	@%p10 bra 	BB33_12;
+	bra.uni 	BB33_11;
 
-BB31_11:
+BB33_11:
 	mov.u64 	%rd36, 0;
 	// inline asm
 	{
@@ -8748,21 +9061,21 @@ BB31_11:
 	ld.u64 	%rd78, [%SP+72];
 	xor.b32  	%r49, %r49, -2147483648;
 
-BB31_12:
+BB33_12:
 	clz.b64 	%r50, %rd78;
 	setp.ne.s32	%p11, %r50, 0;
 	not.pred 	%p12, %p11;
-	@%p12 bra 	BB31_14;
-	bra.uni 	BB31_13;
+	@%p12 bra 	BB33_14;
+	bra.uni 	BB33_13;
 
-BB31_13:
+BB33_13:
 	shl.b64 	%rd41, %rd78, %r50;
 	mov.u32 	%r34, 64;
 	sub.s32 	%r35, %r34, %r50;
 	shr.u64 	%rd42, %rd77, %r35;
 	or.b64  	%rd78, %rd41, %rd42;
 
-BB31_14:
+BB33_14:
 	mov.u64 	%rd46, -3958705157555305931;
 	// inline asm
 	{
@@ -8792,10 +9105,10 @@ BB31_14:
 	ld.u64 	%rd79, [%SP+72];
 	setp.gt.s64	%p13, %rd79, 0;
 	not.pred 	%p14, %p13;
-	@%p14 bra 	BB31_16;
-	bra.uni 	BB31_15;
+	@%p14 bra 	BB33_16;
+	bra.uni 	BB33_15;
 
-BB31_15:
+BB33_15:
 	// inline asm
 	{
 	.reg .u32 r0, r1, r2, r3, a0, a1, a2, a3, b0, b1, b2, b3;
@@ -8820,7 +9133,7 @@ BB31_15:
 	ld.u64 	%rd79, [%SP+72];
 	add.s32 	%r50, %r50, 1;
 
-BB31_16:
+BB33_16:
 	cvt.u64.u32	%rd57, %r49;
 	shl.b64 	%rd58, %rd57, 32;
 	mov.u32 	%r36, 1022;
@@ -8835,7 +9148,7 @@ BB31_16:
 	or.b64  	%rd66, %rd58, %rd65;
 	mov.b64 	 %fd4, %rd66;
 
-BB31_17:
+BB33_17:
 	st.param.f64	[func_retval0+0], %fd4;
 	ret;
 }
@@ -8845,7 +9158,7 @@ BB31_17:
 	.param .b64 __internal_accurate_pow_param_1
 )
 {
-	.local .align 16 .b8 	__local_depot32[272];
+	.local .align 16 .b8 	__local_depot34[272];
 	.reg .b32 	%SP;
 	.reg .b32 	%SPL;
 	.reg .pred 	%p<21>;
@@ -8855,7 +9168,7 @@ BB31_17:
 	.reg .s64 	%rd<4>;
 
 
-	mov.u32 	%r50, __local_depot32;
+	mov.u32 	%r50, __local_depot34;
 	cvta.local.u32 	%SP, %r50;
 	ld.param.f64 	%fd16, [__internal_accurate_pow_param_0];
 	ld.param.f64 	%fd17, [__internal_accurate_pow_param_1];
@@ -8870,10 +9183,10 @@ BB31_17:
 	shr.u32 	%r46, %r45, 20;
 	setp.eq.s32	%p1, %r46, 0;
 	not.pred 	%p2, %p1;
-	@%p2 bra 	BB32_2;
-	bra.uni 	BB32_1;
+	@%p2 bra 	BB34_2;
+	bra.uni 	BB34_1;
 
-BB32_1:
+BB34_1:
 	mul.f64 	%fd18, %fd16, 0d4350000000000000;
 	{
 	.reg .b32 %temp; 
@@ -8886,17 +9199,17 @@ BB32_1:
 	shr.u32 	%r22, %r45, 20;
 	sub.s32 	%r46, %r22, 54;
 
-BB32_2:
+BB34_2:
 	sub.s32 	%r47, %r46, 1023;
 	and.b32  	%r23, %r45, -2146435073;
 	or.b32  	%r24, %r23, 1072693248;
 	mov.b64 	%fd220, {%r44, %r24};
 	setp.gt.u32	%p3, %r24, 1073127582;
 	not.pred 	%p4, %p3;
-	@%p4 bra 	BB32_4;
-	bra.uni 	BB32_3;
+	@%p4 bra 	BB34_4;
+	bra.uni 	BB34_3;
 
-BB32_3:
+BB34_3:
 	{
 	.reg .b32 %temp; 
 	mov.b64 	{%r25, %temp}, %fd220;
@@ -8909,7 +9222,7 @@ BB32_3:
 	mov.b64 	%fd220, {%r25, %r27};
 	add.s32 	%r47, %r47, 1;
 
-BB32_4:
+BB34_4:
 	sub.f64 	%fd21, %fd220, 0d3FF0000000000000;
 	add.f64 	%fd20, %fd220, 0d3FF0000000000000;
 	// inline asm
@@ -9138,13 +9451,13 @@ BB32_4:
 	add.s32 	%r34, %r48, %r48;
 	setp.ge.u32	%p5, %r34, -33554432;
 	not.pred 	%p6, %p5;
-	@%p6 bra 	BB32_6;
-	bra.uni 	BB32_5;
+	@%p6 bra 	BB34_6;
+	bra.uni 	BB34_5;
 
-BB32_5:
+BB34_5:
 	and.b32  	%r48, %r48, -15728641;
 
-BB32_6:
+BB34_6:
 	mov.b64 	%fd171, {%r14, %r48};
 	ld.f64 	%fd172, [%SP+248];
 	mul.rn.f64 	%fd173, %fd172, %fd171;
@@ -9165,23 +9478,23 @@ BB32_6:
 	}
 	mov.b32 	 %f1, %r17;
 	mov.pred 	%p7, -1;
-	@%p7 bra 	BB32_8;
-	bra.uni 	BB32_7;
+	@%p7 bra 	BB34_8;
+	bra.uni 	BB34_7;
 
-BB32_7:
+BB34_7:
 	abs.ftz.f32 	%f5, %f1;
-	bra.uni 	BB32_9;
+	bra.uni 	BB34_9;
 
-BB32_8:
+BB34_8:
 	abs.f32 	%f5, %f1;
 
-BB32_9:
+BB34_9:
 	setp.lt.f32	%p8, %f5, 0f40874911;
 	not.pred 	%p9, %p8;
-	@%p9 bra 	BB32_14;
-	bra.uni 	BB32_10;
+	@%p9 bra 	BB34_14;
+	bra.uni 	BB34_10;
 
-BB32_10:
+BB34_10:
 	mov.f64 	%fd184, 0d3FF71547652B82FE;
 	mul.rn.f64 	%fd185, %fd4, %fd184;
 	mov.f64 	%fd186, 0d4338000000000000;
@@ -9222,15 +9535,15 @@ BB32_10:
 	abs.s32 	%r35, %r18;
 	setp.lt.s32	%p15, %r35, 1023;
 	not.pred 	%p16, %p15;
-	@%p16 bra 	BB32_12;
-	bra.uni 	BB32_11;
+	@%p16 bra 	BB34_12;
+	bra.uni 	BB34_11;
 
-BB32_11:
+BB34_11:
 	shl.b32 	%r41, %r18, 20;
 	add.s32 	%r49, %r41, 1072693248;
-	bra.uni 	BB32_13;
+	bra.uni 	BB34_13;
 
-BB32_12:
+BB34_12:
 	add.s32 	%r36, %r18, 2046;
 	div.u32 	%r37, %r36, 2;
 	shl.b32 	%r38, %r37, 20;
@@ -9240,64 +9553,64 @@ BB32_12:
 	mov.b64 	%fd216, {%r40, %r38};
 	mul.f64 	%fd221, %fd221, %fd216;
 
-BB32_13:
+BB34_13:
 	mov.u32 	%r42, 0;
 	mov.b64 	%fd217, {%r42, %r49};
 	mul.f64 	%fd222, %fd221, %fd217;
-	bra.uni 	BB32_20;
+	bra.uni 	BB34_20;
 
-BB32_14:
+BB34_14:
 	setp.lt.s32	%p10, %r17, 0;
 	not.pred 	%p11, %p10;
-	@%p11 bra 	BB32_16;
-	bra.uni 	BB32_15;
+	@%p11 bra 	BB34_16;
+	bra.uni 	BB34_15;
 
-BB32_15:
+BB34_15:
 	mov.f64 	%fd222, 0d0000000000000000;
-	bra.uni 	BB32_17;
+	bra.uni 	BB34_17;
 
-BB32_16:
+BB34_16:
 	mov.f64 	%fd222, 0d7FF0000000000000;
 
-BB32_17:
+BB34_17:
 	abs.f64 	%fd183, %fd4;
 	setp.le.f64	%p12, %fd183, 0d7FF0000000000000;
 	not.pred 	%p13, %p12;
 	not.pred 	%p14, %p13;
-	@%p14 bra 	BB32_19;
-	bra.uni 	BB32_18;
+	@%p14 bra 	BB34_19;
+	bra.uni 	BB34_18;
 
-BB32_18:
+BB34_18:
 	add.f64 	%fd222, %fd4, %fd4;
 
-BB32_19:
+BB34_19:
 
-BB32_20:
+BB34_20:
 	abs.f64 	%fd218, %fd222;
 	setp.eq.f64	%p17, %fd218, 0d7FF0000000000000;
 	selp.u32	%r43, 1, 0, %p17;
 	setp.ne.s32	%p18, %r43, 0;
 	not.pred 	%p19, %p18;
 	not.pred 	%p20, %p19;
-	@%p20 bra 	BB32_22;
-	bra.uni 	BB32_21;
+	@%p20 bra 	BB34_22;
+	bra.uni 	BB34_21;
 
-BB32_21:
+BB34_21:
 	ld.f64 	%fd219, [%SP+256];
 	fma.rn.f64 	%fd222, %fd222, %fd219, %fd222;
 
-BB32_22:
+BB34_22:
 	st.param.f64	[func_retval0+0], %fd222;
 	ret;
 }
 
-	.file	1 "E:/effective_pso/ParticleSwarmOptimization/NativeGPU/f5_linear_slope_kernel.cu", 1472737794, 3665
+	.file	1 "E:/effective_pso/ParticleSwarmOptimization/NativeGPU/f5_linear_slope_kernel.cu", 1473095630, 5108
 	.file	2 "e:\\cuda\\include\\device_functions.hpp", 1424261298, 140584
 	.file	3 "e:\\cuda\\include\\math_functions_dbl_ptx3.hpp", 1424261300, 13323
-	.file	4 "e:\\effective_pso\\particleswarmoptimization\\nativegpu\\bbob_generators.cuh", 1472833036, 9134
+	.file	4 "e:\\effective_pso\\particleswarmoptimization\\nativegpu\\bbob_generators.cuh", 1473092763, 9541
 
 .section .debug_info {
- .b32 12362
+ .b32 13554
  .b8 2
  .b8 0
  .b32 .debug_abbrev
@@ -9922,7 +10235,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 6
- .b32 12231
+ .b32 13417
  .b8 6
  .b8 144
  .b8 177
@@ -10029,7 +10342,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 10
- .b32 12231
+ .b32 13417
  .b8 6
  .b8 144
  .b8 180
@@ -10045,7 +10358,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 10
- .b32 12231
+ .b32 13417
  .b8 6
  .b8 144
  .b8 181
@@ -10118,7 +10431,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 19
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 179
@@ -10134,7 +10447,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 19
- .b32 12200
+ .b32 13386
  .b8 6
  .b8 144
  .b8 180
@@ -10155,7 +10468,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 19
- .b32 12242
+ .b32 13428
  .b32 .debug_loc
  .b8 8
 
@@ -10181,7 +10494,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 23
- .b32 12253
+ .b32 13439
  .b8 7
  .b8 3
  .b32 __local_depot2
@@ -10202,7 +10515,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 21
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+88
  .b8 13
 
@@ -10211,7 +10524,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 25
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+240
  .b8 13
 
@@ -10222,7 +10535,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 22
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+344
  .b8 13
 
@@ -10237,7 +10550,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 24
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+400
  .b8 8
 
@@ -10614,7 +10927,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 57
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 182
@@ -10630,7 +10943,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 57
- .b32 12278
+ .b32 13464
  .b8 6
  .b8 144
  .b8 183
@@ -10649,7 +10962,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 57
- .b32 12283
+ .b32 13469
  .b8 6
  .b8 144
  .b8 184
@@ -10683,7 +10996,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 59
- .b32 12288
+ .b32 13474
  .b8 7
  .b8 3
  .b32 __local_depot3
@@ -10698,7 +11011,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 58
- .b32 12200
+ .b32 13386
  .b32 .debug_loc+456
  .b8 8
 
@@ -11146,7 +11459,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 81
- .b32 12303
+ .b32 13489
  .b8 6
  .b8 144
  .b8 178
@@ -11169,7 +11482,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 81
- .b32 12303
+ .b32 13489
  .b8 6
  .b8 144
  .b8 179
@@ -11238,7 +11551,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 82
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+512
  .b8 12
 
@@ -11252,7 +11565,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 82
- .b32 12242
+ .b32 13428
  .b8 6
  .b8 144
  .b8 181
@@ -11427,7 +11740,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 116
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 180
@@ -11445,7 +11758,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 116
- .b32 12283
+ .b32 13469
  .b8 5
  .b8 144
  .b8 181
@@ -11462,7 +11775,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 116
- .b32 12278
+ .b32 13464
  .b8 5
  .b8 144
  .b8 182
@@ -11489,7 +11802,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 117
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+712
  .b8 8
 
@@ -11660,7 +11973,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 126
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 182
@@ -11744,7 +12057,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 129
- .b32 12200
+ .b32 13386
  .b32 .debug_loc+768
  .b8 8
 
@@ -12170,7 +12483,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 145
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 182
@@ -12397,7 +12710,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 155
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 180
@@ -12570,7 +12883,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 164
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 177
@@ -12620,7 +12933,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 164
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 179
@@ -12636,7 +12949,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 164
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 180
@@ -12667,7 +12980,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 167
- .b32 12308
+ .b32 13494
  .b8 7
  .b8 3
  .b32 __local_depot12
@@ -12726,7 +13039,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 171
- .b32 12323
+ .b32 13509
  .b8 5
  .b8 144
  .b8 179
@@ -12821,7 +13134,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 183
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 180
@@ -12874,7 +13187,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 183
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 182
@@ -12988,7 +13301,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 192
- .b32 12278
+ .b32 13464
  .b8 5
  .b8 144
  .b8 183
@@ -13003,7 +13316,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 192
- .b32 12329
+ .b32 13515
  .b8 5
  .b8 144
  .b8 184
@@ -13023,7 +13336,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 192
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 185
@@ -13050,7 +13363,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 193
- .b32 12200
+ .b32 13386
  .b32 .debug_loc+1186
  .b8 13
 
@@ -13059,7 +13372,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 193
- .b32 12200
+ .b32 13386
  .b32 .debug_loc+1242
  .b8 0
  .b8 0
@@ -13162,7 +13475,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 201
- .b32 12278
+ .b32 13464
  .b8 6
  .b8 144
  .b8 185
@@ -13178,7 +13491,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 201
- .b32 12329
+ .b32 13515
  .b8 6
  .b8 144
  .b8 176
@@ -13197,7 +13510,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 201
- .b32 12283
+ .b32 13469
  .b8 6
  .b8 144
  .b8 177
@@ -13229,7 +13542,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 203
- .b32 12335
+ .b32 13521
  .b8 7
  .b8 3
  .b32 __local_depot15
@@ -13244,7 +13557,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 204
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+1298
  .b8 13
 
@@ -13253,7 +13566,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 204
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+1354
  .b8 13
 
@@ -13274,7 +13587,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 204
- .b32 12242
+ .b32 13428
  .b32 .debug_loc+1520
  .b8 8
 
@@ -13319,7 +13632,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 220
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 177
@@ -13540,7 +13853,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 225
- .b32 12329
+ .b32 13515
  .b8 5
  .b8 144
  .b8 184
@@ -13555,7 +13868,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 225
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 185
@@ -13570,7 +13883,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 225
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 176
@@ -13588,7 +13901,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 225
- .b32 12278
+ .b32 13464
  .b8 6
  .b8 144
  .b8 177
@@ -13618,7 +13931,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 226
- .b32 12200
+ .b32 13386
  .b32 .debug_loc+1720
  .b8 12
 
@@ -13637,7 +13950,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 227
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 179
@@ -13657,7 +13970,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 226
- .b32 12200
+ .b32 13386
  .b32 .debug_loc+1776
  .b8 0
  .b8 0
@@ -13750,7 +14063,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 238
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 182
@@ -14070,7 +14383,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 255
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 182
@@ -14367,7 +14680,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 274
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 182
@@ -14990,7 +15303,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 296
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 180
@@ -15174,7 +15487,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 303
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 182
@@ -15447,7 +15760,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 314
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 180
@@ -15616,7 +15929,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 321
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 180
@@ -15697,7 +16010,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 323
- .b32 12308
+ .b32 13494
  .b8 7
  .b8 3
  .b32 __local_depot23
@@ -15826,7 +16139,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 336
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 183
@@ -15877,7 +16190,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 336
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 185
@@ -15904,7 +16217,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 338
- .b32 12308
+ .b32 13494
  .b8 7
  .b8 3
  .b32 __local_depot24
@@ -16051,7 +16364,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 352
- .b32 12231
+ .b32 13417
  .b8 6
  .b8 144
  .b8 180
@@ -16067,7 +16380,7 @@ BB32_22:
  .b8 0
  .b32 4
  .b32 352
- .b32 12231
+ .b32 13417
  .b8 6
  .b8 144
  .b8 181
@@ -16076,6 +16389,324 @@ BB32_22:
  .b8 171
  .b8 2
  .b8 2
+ .b8 0
+ .b8 6
+
+ .b8 95
+ .b8 90
+ .b8 53
+ .b8 99
+ .b8 108
+ .b8 97
+ .b8 109
+ .b8 112
+ .b8 80
+ .b8 100
+ .b8 105
+ .b8 100
+ .b8 100
+
+ .b8 0
+ .b8 95
+ .b8 90
+ .b8 53
+ .b8 99
+ .b8 108
+ .b8 97
+ .b8 109
+ .b8 112
+ .b8 80
+ .b8 100
+ .b8 105
+ .b8 100
+ .b8 100
+
+ .b8 0
+ .b32 4
+ .b32 361
+ .b32 1824
+ .b8 1
+ .b32 func_begin26
+ .b32 func_end26
+ .b8 1
+ .b8 156
+ .b8 7
+
+ .b8 118
+ .b8 101
+ .b8 99
+ .b8 116
+ .b8 111
+ .b8 114
+
+ .b8 0
+ .b32 4
+ .b32 361
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 180
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 7
+
+ .b8 108
+ .b8 101
+ .b8 110
+ .b8 103
+ .b8 116
+ .b8 104
+
+ .b8 0
+ .b32 4
+ .b32 361
+ .b32 460
+ .b8 5
+ .b8 144
+ .b8 181
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 7
+
+ .b8 109
+ .b8 105
+ .b8 110
+
+ .b8 0
+ .b32 4
+ .b32 361
+ .b32 205
+ .b8 6
+ .b8 144
+ .b8 180
+ .b8 200
+ .b8 153
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 7
+
+ .b8 109
+ .b8 97
+ .b8 120
+
+ .b8 0
+ .b32 4
+ .b32 361
+ .b32 205
+ .b8 6
+ .b8 144
+ .b8 181
+ .b8 200
+ .b8 153
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 8
+
+ .b32 tmp483
+ .b32 tmp489
+ .b8 8
+
+ .b32 tmp483
+ .b32 tmp488
+ .b8 8
+
+ .b32 tmp483
+ .b32 tmp488
+ .b8 8
+
+ .b32 tmp483
+ .b32 tmp488
+ .b8 13
+
+ .b8 105
+
+ .b8 0
+ .b32 4
+ .b32 363
+ .b32 460
+ .b32 .debug_loc+2481
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 6
+
+ .b8 95
+ .b8 90
+ .b8 49
+ .b8 52
+ .b8 118
+ .b8 101
+ .b8 99
+ .b8 116
+ .b8 111
+ .b8 114
+ .b8 95
+ .b8 98
+ .b8 101
+ .b8 116
+ .b8 119
+ .b8 101
+ .b8 101
+ .b8 110
+ .b8 80
+ .b8 100
+ .b8 83
+ .b8 95
+ .b8 105
+ .b8 83
+ .b8 95
+
+ .b8 0
+ .b8 95
+ .b8 90
+ .b8 49
+ .b8 52
+ .b8 118
+ .b8 101
+ .b8 99
+ .b8 116
+ .b8 111
+ .b8 114
+ .b8 95
+ .b8 98
+ .b8 101
+ .b8 116
+ .b8 119
+ .b8 101
+ .b8 101
+ .b8 110
+ .b8 80
+ .b8 100
+ .b8 83
+ .b8 95
+ .b8 105
+ .b8 83
+ .b8 95
+
+ .b8 0
+ .b32 4
+ .b32 369
+ .b32 1824
+ .b8 1
+ .b32 func_begin27
+ .b32 func_end27
+ .b8 1
+ .b8 156
+ .b8 7
+
+ .b8 102
+ .b8 114
+ .b8 111
+ .b8 109
+
+ .b8 0
+ .b32 4
+ .b32 369
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 180
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 7
+
+ .b8 116
+ .b8 111
+
+ .b8 0
+ .b32 4
+ .b32 369
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 181
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 7
+
+ .b8 100
+ .b8 105
+ .b8 109
+ .b8 101
+ .b8 110
+ .b8 115
+ .b8 105
+ .b8 111
+ .b8 110
+ .b8 115
+
+ .b8 0
+ .b32 4
+ .b32 369
+ .b32 460
+ .b8 5
+ .b8 144
+ .b8 182
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 7
+
+ .b8 114
+ .b8 101
+ .b8 115
+ .b8 117
+ .b8 108
+ .b8 116
+
+ .b8 0
+ .b32 4
+ .b32 369
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 183
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 8
+
+ .b32 tmp490
+ .b32 tmp496
+ .b8 8
+
+ .b32 tmp490
+ .b32 tmp495
+ .b8 8
+
+ .b32 tmp490
+ .b32 tmp495
+ .b8 8
+
+ .b32 tmp490
+ .b32 tmp495
+ .b8 13
+
+ .b8 105
+
+ .b8 0
+ .b32 4
+ .b32 371
+ .b32 460
+ .b32 .debug_loc+2537
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 0
  .b8 0
  .b8 6
 
@@ -16137,8 +16768,8 @@ BB32_22:
  .b32 12
  .b32 205
  .b8 1
- .b32 func_begin26
- .b32 func_end26
+ .b32 func_begin28
+ .b32 func_end28
  .b8 1
  .b8 156
  .b8 7
@@ -16148,7 +16779,7 @@ BB32_22:
  .b8 0
  .b32 1
  .b32 12
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 184
@@ -16201,7 +16832,7 @@ BB32_22:
  .b8 0
  .b32 1
  .b32 12
- .b32 12236
+ .b32 13422
  .b8 6
  .b8 144
  .b8 176
@@ -16212,16 +16843,16 @@ BB32_22:
  .b8 2
  .b8 8
 
- .b32 tmp483
- .b32 tmp514
+ .b32 tmp497
+ .b32 tmp528
  .b8 8
 
- .b32 tmp483
- .b32 tmp514
+ .b32 tmp497
+ .b32 tmp528
  .b8 8
 
- .b32 tmp483
- .b32 tmp514
+ .b32 tmp497
+ .b32 tmp528
  .b8 12
 
  .b8 97
@@ -16255,7 +16886,7 @@ BB32_22:
  .b32 1
  .b32 16
  .b32 205
- .b32 .debug_loc+2481
+ .b32 .debug_loc+2593
  .b8 13
 
  .b8 105
@@ -16263,24 +16894,24 @@ BB32_22:
  .b8 0
  .b32 1
  .b32 15
- .b32 12200
- .b32 .debug_loc+2540
+ .b32 13386
+ .b32 .debug_loc+2652
  .b8 8
 
- .b32 tmp486
- .b32 tmp513
+ .b32 tmp500
+ .b32 tmp527
  .b8 8
 
- .b32 tmp486
- .b32 tmp513
+ .b32 tmp500
+ .b32 tmp527
  .b8 8
 
- .b32 tmp487
- .b32 tmp513
+ .b32 tmp501
+ .b32 tmp527
  .b8 8
 
- .b32 tmp489
- .b32 tmp511
+ .b32 tmp503
+ .b32 tmp525
  .b8 12
 
  .b8 98
@@ -16332,12 +16963,12 @@ BB32_22:
  .b32 1
  .b32 20
  .b32 205
- .b32 .debug_loc+2596
+ .b32 .debug_loc+2708
  .b8 9
 
  .b32 358
- .b32 tmp489
- .b32 tmp490
+ .b32 tmp503
+ .b32 tmp504
  .b32 1
  .b32 22
  .b8 7
@@ -16361,8 +16992,8 @@ BB32_22:
  .b8 9
 
  .b32 470
- .b32 tmp494
- .b32 tmp495
+ .b32 tmp508
+ .b32 tmp509
  .b32 1
  .b32 23
  .b8 7
@@ -16402,17 +17033,17 @@ BB32_22:
  .b8 0
  .b8 8
 
- .b32 tmp496
- .b32 tmp507
+ .b32 tmp510
+ .b32 tmp521
  .b8 8
 
- .b32 tmp499
- .b32 tmp502
+ .b32 tmp513
+ .b32 tmp516
  .b8 9
 
  .b32 683
- .b32 tmp499
- .b32 tmp500
+ .b32 tmp513
+ .b32 tmp514
  .b32 1
  .b32 26
  .b8 7
@@ -16451,13 +17082,13 @@ BB32_22:
  .b8 0
  .b8 8
 
- .b32 tmp505
- .b32 tmp507
+ .b32 tmp519
+ .b32 tmp521
  .b8 9
 
  .b32 683
- .b32 tmp505
- .b32 tmp506
+ .b32 tmp519
+ .b32 tmp520
  .b32 1
  .b32 30
  .b8 7
@@ -16500,8 +17131,8 @@ BB32_22:
  .b8 9
 
  .b32 318
- .b32 tmp509
- .b32 tmp510
+ .b32 tmp523
+ .b32 tmp524
  .b32 1
  .b32 32
  .b8 7
@@ -16608,8 +17239,8 @@ BB32_22:
  .b32 38
  .b32 205
  .b8 1
- .b32 func_begin27
- .b32 func_end27
+ .b32 func_begin29
+ .b32 func_end29
  .b8 1
  .b8 156
  .b8 7
@@ -16619,7 +17250,7 @@ BB32_22:
  .b8 0
  .b32 1
  .b32 38
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 177
@@ -16670,7 +17301,7 @@ BB32_22:
  .b8 0
  .b32 1
  .b32 39
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 144
  .b8 179
@@ -16699,16 +17330,16 @@ BB32_22:
  .b8 2
  .b8 8
 
- .b32 tmp515
- .b32 tmp516
+ .b32 tmp529
+ .b32 tmp530
  .b8 8
 
- .b32 tmp515
- .b32 tmp516
+ .b32 tmp529
+ .b32 tmp530
  .b8 8
 
- .b32 tmp515
- .b32 tmp516
+ .b32 tmp529
+ .b32 tmp530
  .b8 12
 
  .b8 116
@@ -16719,10 +17350,10 @@ BB32_22:
  .b8 0
  .b32 1
  .b32 42
- .b32 12350
+ .b32 13536
  .b8 7
  .b8 3
- .b32 __local_depot27
+ .b32 __local_depot29
  .b8 35
  .b8 0
 
@@ -16765,8 +17396,8 @@ BB32_22:
  .b32 53
  .b32 1824
  .b8 1
- .b32 func_begin28
- .b32 func_end28
+ .b32 func_begin30
+ .b32 func_end30
  .b8 1
  .b8 156
  .b8 7
@@ -16864,7 +17495,7 @@ BB32_22:
  .b8 0
  .b32 1
  .b32 57
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 3
  .b32 generateData_param_4
@@ -16889,27 +17520,27 @@ BB32_22:
  .b8 0
  .b32 1
  .b32 58
- .b32 12236
+ .b32 13422
  .b8 5
  .b8 3
  .b32 generateData_param_5
  .b8 7
  .b8 8
 
- .b32 tmp517
- .b32 tmp527
+ .b32 tmp531
+ .b32 tmp541
  .b8 8
 
- .b32 tmp517
- .b32 tmp526
+ .b32 tmp531
+ .b32 tmp540
  .b8 8
 
- .b32 tmp517
- .b32 tmp526
+ .b32 tmp531
+ .b32 tmp540
  .b8 8
 
- .b32 tmp518
- .b32 tmp525
+ .b32 tmp532
+ .b32 tmp539
  .b8 13
 
  .b8 105
@@ -16918,7 +17549,7 @@ BB32_22:
  .b32 1
  .b32 62
  .b32 460
- .b32 .debug_loc+2655
+ .b32 .debug_loc+2767
  .b8 0
  .b8 0
  .b8 0
@@ -16926,56 +17557,46 @@ BB32_22:
  .b8 0
  .b8 6
 
- .b8 107
+ .b8 116
+ .b8 114
+ .b8 97
+ .b8 110
+ .b8 115
+ .b8 112
+ .b8 111
+ .b8 115
+ .b8 101
+ .b8 75
  .b8 101
  .b8 114
  .b8 110
  .b8 101
  .b8 108
- .b8 85
- .b8 112
- .b8 100
- .b8 97
- .b8 116
- .b8 101
- .b8 80
- .b8 97
- .b8 114
- .b8 116
- .b8 105
- .b8 99
- .b8 108
- .b8 101
 
  .b8 0
- .b8 107
+ .b8 116
+ .b8 114
+ .b8 97
+ .b8 110
+ .b8 115
+ .b8 112
+ .b8 111
+ .b8 115
+ .b8 101
+ .b8 75
  .b8 101
  .b8 114
  .b8 110
  .b8 101
  .b8 108
- .b8 85
- .b8 112
- .b8 100
- .b8 97
- .b8 116
- .b8 101
- .b8 80
- .b8 97
- .b8 114
- .b8 116
- .b8 105
- .b8 99
- .b8 108
- .b8 101
 
  .b8 0
  .b32 1
  .b32 77
  .b32 1824
  .b8 1
- .b32 func_begin29
- .b32 func_end29
+ .b32 func_begin31
+ .b32 func_end31
  .b8 1
  .b8 156
  .b8 7
@@ -16992,11 +17613,11 @@ BB32_22:
 
  .b8 0
  .b32 1
- .b32 77
- .b32 12236
+ .b32 78
+ .b32 13422
  .b8 5
  .b8 3
- .b32 kernelUpdateParticle_param_0
+ .b32 transposeKernel_param_0
  .b8 7
  .b8 7
 
@@ -17013,15 +17634,22 @@ BB32_22:
 
  .b8 0
  .b32 1
- .b32 77
- .b32 12236
+ .b32 79
+ .b32 13422
  .b8 5
  .b8 3
- .b32 kernelUpdateParticle_param_1
+ .b32 transposeKernel_param_1
  .b8 7
  .b8 7
 
  .b8 112
+ .b8 101
+ .b8 114
+ .b8 115
+ .b8 111
+ .b8 110
+ .b8 97
+ .b8 108
  .b8 66
  .b8 101
  .b8 115
@@ -17030,27 +17658,40 @@ BB32_22:
 
  .b8 0
  .b32 1
- .b32 78
- .b32 12236
+ .b32 80
+ .b32 13422
  .b8 5
  .b8 3
- .b32 kernelUpdateParticle_param_2
+ .b32 transposeKernel_param_2
  .b8 7
  .b8 7
 
- .b8 103
+ .b8 112
+ .b8 101
+ .b8 114
+ .b8 115
+ .b8 111
+ .b8 110
+ .b8 97
+ .b8 108
  .b8 66
  .b8 101
  .b8 115
  .b8 116
+ .b8 86
+ .b8 97
+ .b8 108
+ .b8 117
+ .b8 101
+ .b8 115
 
  .b8 0
  .b32 1
- .b32 78
- .b32 12236
+ .b32 81
+ .b32 13422
  .b8 5
  .b8 3
- .b32 kernelUpdateParticle_param_3
+ .b32 transposeKernel_param_3
  .b8 7
  .b8 7
 
@@ -17071,11 +17712,11 @@ BB32_22:
 
  .b8 0
  .b32 1
- .b32 79
+ .b32 82
  .b32 460
  .b8 5
  .b8 3
- .b32 kernelUpdateParticle_param_4
+ .b32 transposeKernel_param_4
  .b8 7
  .b8 7
 
@@ -17097,37 +17738,37 @@ BB32_22:
 
  .b8 0
  .b32 1
- .b32 79
+ .b32 83
  .b32 460
  .b8 5
  .b8 3
- .b32 kernelUpdateParticle_param_5
+ .b32 transposeKernel_param_5
  .b8 7
  .b8 7
 
- .b8 114
- .b8 49
+ .b8 120
+ .b8 111
+ .b8 112
+ .b8 116
 
  .b8 0
  .b32 1
- .b32 80
- .b32 205
- .b8 6
- .b8 144
- .b8 177
- .b8 200
- .b8 153
- .b8 171
- .b8 2
- .b8 2
+ .b32 84
+ .b32 13422
+ .b8 5
+ .b8 3
+ .b32 transposeKernel_param_6
+ .b8 7
  .b8 7
 
- .b8 114
- .b8 50
+ .b8 102
+ .b8 111
+ .b8 112
+ .b8 116
 
  .b8 0
  .b32 1
- .b32 80
+ .b32 84
  .b32 205
  .b8 6
  .b8 144
@@ -17139,23 +17780,23 @@ BB32_22:
  .b8 2
  .b8 8
 
- .b32 tmp528
- .b32 tmp533
+ .b32 tmp542
+ .b32 tmp564
  .b8 8
 
- .b32 tmp528
- .b32 tmp532
+ .b32 tmp542
+ .b32 tmp563
  .b8 8
 
- .b32 tmp528
- .b32 tmp532
+ .b32 tmp542
+ .b32 tmp563
  .b8 12
 
  .b8 105
 
  .b8 0
  .b32 1
- .b32 82
+ .b32 86
  .b32 460
  .b8 5
  .b8 144
@@ -17164,115 +17805,7 @@ BB32_22:
  .b8 149
  .b8 1
  .b8 2
- .b8 0
- .b8 0
- .b8 0
- .b8 0
- .b8 6
-
- .b8 107
- .b8 101
- .b8 114
- .b8 110
- .b8 101
- .b8 108
- .b8 85
- .b8 112
- .b8 100
- .b8 97
- .b8 116
- .b8 101
- .b8 80
- .b8 66
- .b8 101
- .b8 115
- .b8 116
-
- .b8 0
- .b8 107
- .b8 101
- .b8 114
- .b8 110
- .b8 101
- .b8 108
- .b8 85
- .b8 112
- .b8 100
- .b8 97
- .b8 116
- .b8 101
- .b8 80
- .b8 66
- .b8 101
- .b8 115
- .b8 116
-
- .b8 0
- .b32 1
- .b32 94
- .b32 1824
- .b8 1
- .b32 func_begin30
- .b32 func_end30
- .b8 1
- .b8 156
- .b8 7
-
- .b8 103
- .b8 66
- .b8 101
- .b8 115
- .b8 116
-
- .b8 0
- .b32 1
- .b32 94
- .b32 12236
- .b8 7
- .b8 3
- .b32 __local_depot30
- .b8 35
- .b8 0
-
- .b8 6
- .b8 7
-
- .b8 112
- .b8 111
- .b8 115
- .b8 105
- .b8 116
- .b8 105
- .b8 111
- .b8 110
- .b8 115
-
- .b8 0
- .b32 1
- .b32 94
- .b32 12236
- .b8 5
- .b8 3
- .b32 kernelUpdatePBest_param_0
- .b8 7
- .b8 7
-
- .b8 112
- .b8 66
- .b8 101
- .b8 115
- .b8 116
- .b8 115
-
- .b8 0
- .b32 1
- .b32 94
- .b32 12236
- .b8 5
- .b8 3
- .b32 kernelUpdatePBest_param_1
- .b8 7
- .b8 7
+ .b8 12
 
  .b8 112
  .b8 97
@@ -17282,72 +17815,60 @@ BB32_22:
  .b8 99
  .b8 108
  .b8 101
- .b8 115
- .b8 67
+ .b8 76
  .b8 111
- .b8 117
- .b8 110
- .b8 116
+ .b8 99
 
  .b8 0
  .b32 1
- .b32 95
- .b32 460
+ .b32 90
+ .b32 13422
  .b8 5
- .b8 3
- .b32 kernelUpdatePBest_param_3
- .b8 7
- .b8 7
+ .b8 144
+ .b8 178
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 12
 
- .b8 100
+ .b8 112
+ .b8 97
+ .b8 114
+ .b8 116
  .b8 105
- .b8 109
+ .b8 99
+ .b8 108
  .b8 101
+ .b8 86
+ .b8 101
+ .b8 108
+
+ .b8 0
+ .b32 1
+ .b32 91
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 179
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 12
+
  .b8 110
- .b8 115
- .b8 105
- .b8 111
- .b8 110
- .b8 115
- .b8 67
- .b8 111
+ .b8 101
+ .b8 119
+ .b8 86
+ .b8 97
+ .b8 108
  .b8 117
- .b8 110
- .b8 116
+ .b8 101
 
  .b8 0
  .b32 1
- .b32 95
- .b32 460
- .b8 5
- .b8 3
- .b32 kernelUpdatePBest_param_4
- .b8 7
- .b8 7
-
- .b8 120
- .b8 111
- .b8 112
- .b8 116
-
- .b8 0
- .b32 1
- .b32 96
- .b32 12236
- .b8 5
- .b8 3
- .b32 kernelUpdatePBest_param_5
- .b8 7
- .b8 7
-
- .b8 102
- .b8 111
- .b8 112
- .b8 116
-
- .b8 0
- .b32 1
- .b32 96
+ .b32 100
  .b32 205
  .b8 6
  .b8 144
@@ -17359,23 +17880,29 @@ BB32_22:
  .b8 2
  .b8 8
 
- .b32 tmp534
- .b32 tmp551
+ .b32 tmp548
+ .b32 tmp553
+ .b8 13
+
+ .b8 105
+
+ .b8 0
+ .b32 1
+ .b32 93
+ .b32 460
+ .b32 .debug_loc+2823
+ .b8 0
  .b8 8
 
- .b32 tmp534
- .b32 tmp550
+ .b32 tmp555
+ .b32 tmp563
  .b8 8
 
- .b32 tmp534
- .b32 tmp550
+ .b32 tmp556
+ .b32 tmp563
  .b8 12
 
- .b8 116
- .b8 101
- .b8 109
  .b8 112
- .b8 80
  .b8 97
  .b8 114
  .b8 116
@@ -17383,44 +17910,371 @@ BB32_22:
  .b8 99
  .b8 108
  .b8 101
+ .b8 80
+ .b8 101
+ .b8 114
+ .b8 115
+ .b8 111
+ .b8 110
+ .b8 97
+ .b8 108
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+
+ .b8 0
+ .b32 1
+ .b32 106
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 183
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 8
+
+ .b32 tmp558
+ .b32 tmp563
+ .b8 13
+
+ .b8 105
+
+ .b8 0
+ .b32 1
+ .b32 108
+ .b32 460
+ .b32 .debug_loc+2879
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 0
+ .b8 6
+
+ .b8 117
+ .b8 112
+ .b8 100
+ .b8 97
+ .b8 116
+ .b8 101
+ .b8 86
+ .b8 101
+ .b8 108
+ .b8 111
+ .b8 99
+ .b8 105
+ .b8 116
+ .b8 121
+ .b8 75
+ .b8 101
+ .b8 114
+ .b8 110
+ .b8 101
+ .b8 108
+
+ .b8 0
+ .b8 117
+ .b8 112
+ .b8 100
+ .b8 97
+ .b8 116
+ .b8 101
+ .b8 86
+ .b8 101
+ .b8 108
+ .b8 111
+ .b8 99
+ .b8 105
+ .b8 116
+ .b8 121
+ .b8 75
+ .b8 101
+ .b8 114
+ .b8 110
+ .b8 101
+ .b8 108
+
+ .b8 0
+ .b32 1
+ .b32 113
+ .b32 1824
+ .b8 1
+ .b32 func_begin32
+ .b32 func_end32
+ .b8 1
+ .b8 156
+ .b8 7
+
+ .b8 112
+ .b8 111
+ .b8 115
+ .b8 105
+ .b8 116
+ .b8 105
+ .b8 111
+ .b8 110
+ .b8 115
+
+ .b8 0
+ .b32 1
+ .b32 114
+ .b32 13422
+ .b8 5
+ .b8 3
+ .b32 updateVelocityKernel_param_0
+ .b8 7
+ .b8 7
+
+ .b8 118
+ .b8 101
+ .b8 108
+ .b8 111
+ .b8 99
+ .b8 105
+ .b8 116
+ .b8 105
+ .b8 101
+ .b8 115
+
+ .b8 0
+ .b32 1
+ .b32 115
+ .b32 13422
+ .b8 5
+ .b8 3
+ .b32 updateVelocityKernel_param_1
+ .b8 7
+ .b8 7
+
+ .b8 112
+ .b8 101
+ .b8 114
+ .b8 115
+ .b8 111
+ .b8 110
+ .b8 97
+ .b8 108
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+ .b8 115
+
+ .b8 0
+ .b32 1
+ .b32 116
+ .b32 13422
+ .b8 5
+ .b8 3
+ .b32 updateVelocityKernel_param_2
+ .b8 7
+ .b8 7
+
+ .b8 112
+ .b8 101
+ .b8 114
+ .b8 115
+ .b8 111
+ .b8 110
+ .b8 97
+ .b8 108
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+ .b8 86
+ .b8 97
+ .b8 108
+ .b8 117
+ .b8 101
+ .b8 115
+
+ .b8 0
+ .b32 1
+ .b32 117
+ .b32 13422
+ .b8 5
+ .b8 3
+ .b32 updateVelocityKernel_param_3
+ .b8 7
+ .b8 7
+
+ .b8 110
+ .b8 101
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 98
+ .b8 111
+ .b8 114
+ .b8 115
+
+ .b8 0
+ .b32 1
+ .b32 118
+ .b32 13551
+ .b8 5
+ .b8 3
+ .b32 updateVelocityKernel_param_4
+ .b8 7
+ .b8 7
+
+ .b8 112
+ .b8 97
+ .b8 114
+ .b8 116
+ .b8 105
+ .b8 99
+ .b8 108
+ .b8 101
+ .b8 115
+ .b8 67
+ .b8 111
+ .b8 117
+ .b8 110
+ .b8 116
+
+ .b8 0
+ .b32 1
+ .b32 119
+ .b32 460
+ .b8 5
+ .b8 3
+ .b32 updateVelocityKernel_param_5
+ .b8 7
+ .b8 7
+
+ .b8 100
+ .b8 105
+ .b8 109
+ .b8 101
+ .b8 110
+ .b8 115
+ .b8 105
+ .b8 111
+ .b8 110
+ .b8 115
+ .b8 67
+ .b8 111
+ .b8 117
+ .b8 110
+ .b8 116
+
+ .b8 0
+ .b32 1
+ .b32 120
+ .b32 460
+ .b8 5
+ .b8 3
+ .b32 updateVelocityKernel_param_6
+ .b8 7
+ .b8 7
+
+ .b8 112
+ .b8 104
+ .b8 105
  .b8 49
 
  .b8 0
  .b32 1
- .b32 99
- .b32 12308
+ .b32 121
+ .b32 205
+ .b8 6
+ .b8 144
+ .b8 182
+ .b8 200
+ .b8 153
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 7
+
+ .b8 112
+ .b8 104
+ .b8 105
+ .b8 50
+
+ .b8 0
+ .b32 1
+ .b32 122
+ .b32 205
+ .b8 6
+ .b8 144
+ .b8 183
+ .b8 200
+ .b8 153
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 8
+
+ .b32 tmp565
+ .b32 tmp593
+ .b8 8
+
+ .b32 tmp565
+ .b32 tmp592
+ .b8 8
+
+ .b32 tmp565
+ .b32 tmp592
+ .b8 12
+
+ .b8 116
+ .b8 111
+ .b8 80
+ .b8 101
+ .b8 114
+ .b8 115
+ .b8 111
+ .b8 110
+ .b8 97
+ .b8 108
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+
+ .b8 0
+ .b32 1
+ .b32 157
+ .b32 13494
  .b8 7
  .b8 3
- .b32 __local_depot30
+ .b32 __local_depot32
  .b8 35
- .b8 8
+ .b8 0
 
  .b8 6
  .b8 12
 
  .b8 116
- .b8 101
- .b8 109
- .b8 112
- .b8 80
- .b8 97
- .b8 114
- .b8 116
- .b8 105
- .b8 99
+ .b8 111
+ .b8 71
  .b8 108
+ .b8 111
+ .b8 98
+ .b8 97
+ .b8 108
+ .b8 66
  .b8 101
- .b8 50
+ .b8 115
+ .b8 116
 
  .b8 0
  .b32 1
- .b32 100
- .b32 12308
+ .b32 160
+ .b32 13494
  .b8 8
  .b8 3
- .b32 __local_depot30
+ .b32 __local_depot32
  .b8 35
- .b8 200
+ .b8 192
  .b8 2
 
  .b8 6
@@ -17430,7 +18284,7 @@ BB32_22:
 
  .b8 0
  .b32 1
- .b32 98
+ .b32 124
  .b32 460
  .b8 5
  .b8 144
@@ -17439,43 +18293,387 @@ BB32_22:
  .b8 149
  .b8 1
  .b8 2
- .b8 8
+ .b8 12
 
- .b32 tmp538
- .b32 tmp543
- .b8 13
-
- .b8 106
-
- .b8 0
- .b32 1
- .b32 105
- .b32 460
- .b32 .debug_loc+2711
- .b8 0
- .b8 8
-
- .b32 tmp544
- .b32 tmp550
- .b8 8
-
- .b32 tmp545
- .b32 tmp550
- .b8 8
-
- .b32 tmp545
- .b32 tmp550
- .b8 13
-
- .b8 107
+ .b8 112
+ .b8 97
+ .b8 114
+ .b8 116
+ .b8 105
+ .b8 99
+ .b8 108
+ .b8 101
+ .b8 76
+ .b8 111
+ .b8 99
 
  .b8 0
  .b32 1
- .b32 114
+ .b32 128
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 178
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 12
+
+ .b8 112
+ .b8 97
+ .b8 114
+ .b8 116
+ .b8 105
+ .b8 99
+ .b8 108
+ .b8 101
+ .b8 86
+ .b8 101
+ .b8 108
+
+ .b8 0
+ .b32 1
+ .b32 129
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 179
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 12
+
+ .b8 112
+ .b8 97
+ .b8 114
+ .b8 116
+ .b8 105
+ .b8 99
+ .b8 108
+ .b8 101
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+
+ .b8 0
+ .b32 1
+ .b32 130
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 180
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 12
+
+ .b8 112
+ .b8 97
+ .b8 114
+ .b8 116
+ .b8 105
+ .b8 99
+ .b8 108
+ .b8 101
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+ .b8 86
+ .b8 97
+ .b8 108
+ .b8 117
+ .b8 101
+
+ .b8 0
+ .b32 1
+ .b32 131
+ .b32 205
+ .b8 6
+ .b8 144
+ .b8 185
+ .b8 200
+ .b8 153
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 12
+
+ .b8 112
+ .b8 97
+ .b8 114
+ .b8 116
+ .b8 105
+ .b8 99
+ .b8 108
+ .b8 101
+ .b8 78
+ .b8 101
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 98
+ .b8 111
+ .b8 114
+ .b8 115
+
+ .b8 0
+ .b32 1
+ .b32 133
+ .b32 13551
+ .b8 6
+ .b8 144
+ .b8 182
+ .b8 230
+ .b8 200
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 12
+
+ .b8 108
+ .b8 101
+ .b8 102
+ .b8 116
+ .b8 78
+ .b8 101
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 98
+ .b8 111
+ .b8 114
+ .b8 73
+ .b8 100
+
+ .b8 0
+ .b32 1
+ .b32 135
  .b32 460
- .b32 .debug_loc+2767
+ .b8 6
+ .b8 144
+ .b8 184
+ .b8 230
+ .b8 200
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 12
+
+ .b8 108
+ .b8 101
+ .b8 102
+ .b8 116
+ .b8 78
+ .b8 101
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 98
+ .b8 111
+ .b8 114
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+
  .b8 0
+ .b32 1
+ .b32 136
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 181
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 12
+
+ .b8 108
+ .b8 101
+ .b8 102
+ .b8 116
+ .b8 78
+ .b8 101
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 98
+ .b8 111
+ .b8 114
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+ .b8 86
+ .b8 97
+ .b8 108
+
  .b8 0
+ .b32 1
+ .b32 137
+ .b32 205
+ .b8 6
+ .b8 144
+ .b8 177
+ .b8 200
+ .b8 153
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 12
+
+ .b8 114
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 116
+ .b8 78
+ .b8 101
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 98
+ .b8 111
+ .b8 114
+ .b8 73
+ .b8 100
+
+ .b8 0
+ .b32 1
+ .b32 139
+ .b32 460
+ .b8 6
+ .b8 144
+ .b8 180
+ .b8 232
+ .b8 200
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 12
+
+ .b8 114
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 116
+ .b8 78
+ .b8 101
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 98
+ .b8 111
+ .b8 114
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+
+ .b8 0
+ .b32 1
+ .b32 140
+ .b32 13422
+ .b8 5
+ .b8 144
+ .b8 182
+ .b8 228
+ .b8 149
+ .b8 1
+ .b8 2
+ .b8 12
+
+ .b8 114
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 116
+ .b8 78
+ .b8 101
+ .b8 105
+ .b8 103
+ .b8 104
+ .b8 98
+ .b8 111
+ .b8 114
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+ .b8 86
+ .b8 97
+ .b8 108
+
+ .b8 0
+ .b32 1
+ .b32 141
+ .b32 205
+ .b8 6
+ .b8 144
+ .b8 178
+ .b8 200
+ .b8 153
+ .b8 171
+ .b8 2
+ .b8 2
+ .b8 13
+
+ .b8 103
+ .b8 108
+ .b8 111
+ .b8 98
+ .b8 97
+ .b8 108
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+
+ .b8 0
+ .b32 1
+ .b32 143
+ .b32 13422
+ .b32 .debug_loc+2935
+ .b8 13
+
+ .b8 103
+ .b8 108
+ .b8 111
+ .b8 98
+ .b8 97
+ .b8 108
+ .b8 66
+ .b8 101
+ .b8 115
+ .b8 116
+ .b8 86
+ .b8 97
+ .b8 108
+
+ .b8 0
+ .b32 1
+ .b32 144
+ .b32 205
+ .b32 .debug_loc+3023
+ .b8 8
+
+ .b32 tmp587
+ .b32 tmp592
+ .b8 13
+
+ .b8 105
+
+ .b8 0
+ .b32 1
+ .b32 163
+ .b32 460
+ .b32 .debug_loc+3082
  .b8 0
  .b8 0
  .b8 0
@@ -17483,7 +18681,7 @@ BB32_22:
  .b8 0
  .b8 15
 
- .b32 12212
+ .b32 13398
  .b8 115
  .b8 105
  .b8 122
@@ -17529,10 +18727,10 @@ BB32_22:
  .b32 4
  .b8 18
 
- .b32 12242
+ .b32 13428
  .b8 19
 
- .b32 12268
+ .b32 13454
  .b32 31
  .b8 0
  .b8 20
@@ -17546,16 +18744,16 @@ BB32_22:
  .b8 5
  .b8 16
 
- .b32 12200
+ .b32 13386
  .b8 16
 
- .b32 12242
+ .b32 13428
  .b8 18
 
  .b32 205
  .b8 19
 
- .b32 12268
+ .b32 13454
  .b32 5999
  .b8 0
  .b8 16
@@ -17566,23 +18764,23 @@ BB32_22:
  .b32 205
  .b8 19
 
- .b32 12268
+ .b32 13454
  .b32 39
  .b8 0
  .b8 17
 
- .b32 12231
+ .b32 13417
  .b8 12
  .b8 17
 
- .b32 12308
+ .b32 13494
  .b8 12
  .b8 18
 
  .b32 205
  .b8 19
 
- .b32 12268
+ .b32 13454
  .b32 1999
  .b8 0
  .b8 18
@@ -17590,9 +18788,13 @@ BB32_22:
  .b32 205
  .b8 19
 
- .b32 12268
+ .b32 13454
  .b32 0
  .b8 0
+ .b8 17
+
+ .b32 460
+ .b8 12
  .b8 0
 }
 .section .debug_abbrev {
@@ -19574,133 +20776,197 @@ BB32_22:
  .b8 2
  .b32 0
  .b32 0
- .b32 tmp485
- .b32 tmp487
- .b8 7
+ .b32 tmp484
+ .b32 tmp484
+ .b8 6
  .b8 0
  .b8 144
- .b8 180
- .b8 240
- .b8 144
- .b8 179
- .b8 214
- .b8 4
- .b32 tmp487
- .b32 tmp511
- .b8 7
- .b8 0
- .b8 144
- .b8 180
- .b8 240
- .b8 144
- .b8 179
- .b8 214
- .b8 4
- .b32 tmp511
- .b32 func_end26
- .b8 7
- .b8 0
- .b8 144
- .b8 180
- .b8 240
- .b8 144
- .b8 179
- .b8 214
- .b8 4
- .b32 0
- .b32 0
- .b32 tmp487
+ .b8 181
+ .b8 226
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp484
  .b32 tmp487
  .b8 6
  .b8 0
  .b8 144
- .b8 176
- .b8 236
+ .b8 181
+ .b8 226
  .b8 200
  .b8 171
  .b8 2
  .b32 tmp487
- .b32 tmp512
- .b8 6
- .b8 0
- .b8 144
- .b8 176
- .b8 236
- .b8 200
- .b8 171
- .b8 2
- .b32 tmp512
  .b32 func_end26
  .b8 6
  .b8 0
  .b8 144
- .b8 176
- .b8 236
+ .b8 181
+ .b8 226
  .b8 200
  .b8 171
  .b8 2
+ .b32 0
+ .b32 0
+ .b32 tmp491
+ .b32 tmp491
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 181
+ .b8 226
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp491
+ .b32 tmp494
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 181
+ .b8 226
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp494
+ .b32 func_end27
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 181
+ .b8 226
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 0
+ .b32 0
+ .b32 tmp499
+ .b32 tmp501
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 180
+ .b8 240
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
+ .b32 tmp501
+ .b32 tmp525
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 180
+ .b8 240
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
+ .b32 tmp525
+ .b32 func_end28
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 180
+ .b8 240
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
  .b32 0
  .b32 0
  .b32 tmp501
- .b32 tmp507
- .b8 7
- .b8 0
- .b8 144
- .b8 183
- .b8 240
- .b8 144
- .b8 179
- .b8 214
- .b8 4
- .b32 tmp507
- .b32 tmp507
- .b8 7
- .b8 0
- .b8 144
- .b8 183
- .b8 240
- .b8 144
- .b8 179
- .b8 214
- .b8 4
- .b32 tmp507
- .b32 func_end26
- .b8 7
- .b8 0
- .b8 144
- .b8 183
- .b8 240
- .b8 144
- .b8 179
- .b8 214
- .b8 4
- .b32 0
- .b32 0
- .b32 tmp519
- .b32 tmp519
+ .b32 tmp501
  .b8 6
  .b8 0
  .b8 144
- .b8 183
- .b8 226
+ .b8 176
+ .b8 236
  .b8 200
  .b8 171
  .b8 2
- .b32 tmp519
- .b32 tmp524
+ .b32 tmp501
+ .b32 tmp526
  .b8 6
  .b8 0
  .b8 144
- .b8 183
- .b8 226
+ .b8 176
+ .b8 236
  .b8 200
  .b8 171
  .b8 2
- .b32 tmp524
+ .b32 tmp526
  .b32 func_end28
  .b8 6
  .b8 0
  .b8 144
+ .b8 176
+ .b8 236
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 0
+ .b32 0
+ .b32 tmp515
+ .b32 tmp521
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 183
+ .b8 240
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
+ .b32 tmp521
+ .b32 tmp521
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 183
+ .b8 240
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
+ .b32 tmp521
+ .b32 func_end28
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 183
+ .b8 240
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
+ .b32 0
+ .b32 0
+ .b32 tmp533
+ .b32 tmp533
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 183
+ .b8 226
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp533
+ .b32 tmp538
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 183
+ .b8 226
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp538
+ .b32 func_end30
+ .b8 6
+ .b8 0
+ .b8 144
  .b8 183
  .b8 226
  .b8 200
@@ -19708,8 +20974,8 @@ BB32_22:
  .b8 2
  .b32 0
  .b32 0
- .b32 tmp539
- .b32 tmp539
+ .b32 tmp549
+ .b32 tmp549
  .b8 6
  .b8 0
  .b8 144
@@ -19718,8 +20984,8 @@ BB32_22:
  .b8 200
  .b8 171
  .b8 2
- .b32 tmp539
- .b32 tmp542
+ .b32 tmp549
+ .b32 tmp552
  .b8 6
  .b8 0
  .b8 144
@@ -19728,8 +20994,8 @@ BB32_22:
  .b8 200
  .b8 171
  .b8 2
- .b32 tmp542
- .b32 func_end30
+ .b32 tmp552
+ .b32 func_end31
  .b8 6
  .b8 0
  .b8 144
@@ -19740,8 +21006,8 @@ BB32_22:
  .b8 2
  .b32 0
  .b32 0
- .b32 tmp546
- .b32 tmp546
+ .b32 tmp559
+ .b32 tmp559
  .b8 6
  .b8 0
  .b8 144
@@ -19750,8 +21016,8 @@ BB32_22:
  .b8 200
  .b8 171
  .b8 2
- .b32 tmp546
- .b32 tmp549
+ .b32 tmp559
+ .b32 tmp562
  .b8 6
  .b8 0
  .b8 144
@@ -19760,13 +21026,132 @@ BB32_22:
  .b8 200
  .b8 171
  .b8 2
- .b32 tmp549
- .b32 func_end30
+ .b32 tmp562
+ .b32 func_end31
  .b8 6
  .b8 0
  .b8 144
  .b8 179
  .b8 232
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 0
+ .b32 0
+ .b32 tmp580
+ .b32 tmp583
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 180
+ .b8 236
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp583
+ .b32 tmp584
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 180
+ .b8 236
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp584
+ .b32 tmp586
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 180
+ .b8 236
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp586
+ .b32 tmp586
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 180
+ .b8 236
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp586
+ .b32 func_end32
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 180
+ .b8 236
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 0
+ .b32 0
+ .b32 tmp581
+ .b32 tmp584
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 177
+ .b8 228
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
+ .b32 tmp584
+ .b32 tmp584
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 177
+ .b8 228
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
+ .b32 tmp584
+ .b32 func_end32
+ .b8 7
+ .b8 0
+ .b8 144
+ .b8 177
+ .b8 228
+ .b8 144
+ .b8 179
+ .b8 214
+ .b8 4
+ .b32 0
+ .b32 0
+ .b32 tmp588
+ .b32 tmp588
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 181
+ .b8 236
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp588
+ .b32 tmp591
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 181
+ .b8 236
+ .b8 200
+ .b8 171
+ .b8 2
+ .b32 tmp591
+ .b32 func_end32
+ .b8 6
+ .b8 0
+ .b8 144
+ .b8 181
+ .b8 236
  .b8 200
  .b8 171
  .b8 2
@@ -19776,11 +21161,11 @@ BB32_22:
 .section .debug_ranges {
 }
 .section .debug_pubnames {
- .b32 1091
+ .b32 1137
  .b8 2
  .b8 0
  .b32 .debug_info
- .b32 12362
+ .b32 13554
  .b32 398
  .b8 95
  .b8 95
@@ -19834,26 +21219,6 @@ BB32_22:
  .b8 80
  .b8 100
  .b8 105
- .b8 0
-
- .b32 11729
- .b8 107
- .b8 101
- .b8 114
- .b8 110
- .b8 101
- .b8 108
- .b8 85
- .b8 112
- .b8 100
- .b8 97
- .b8 116
- .b8 101
- .b8 80
- .b8 66
- .b8 101
- .b8 115
- .b8 116
  .b8 0
 
  .b32 9989
@@ -20000,7 +21365,7 @@ BB32_22:
  .b8 105
  .b8 0
 
- .b32 10104
+ .b32 10562
  .b8 95
  .b8 90
  .b8 49
@@ -20175,29 +21540,6 @@ BB32_22:
  .b8 108
  .b8 0
 
- .b32 11377
- .b8 107
- .b8 101
- .b8 114
- .b8 110
- .b8 101
- .b8 108
- .b8 85
- .b8 112
- .b8 100
- .b8 97
- .b8 116
- .b8 101
- .b8 80
- .b8 97
- .b8 114
- .b8 116
- .b8 105
- .b8 99
- .b8 108
- .b8 101
- .b8 0
-
  .b32 6117
  .b8 95
  .b8 90
@@ -20358,6 +21700,40 @@ BB32_22:
  .b8 105
  .b8 0
 
+ .b32 10104
+ .b8 95
+ .b8 90
+ .b8 53
+ .b8 99
+ .b8 108
+ .b8 97
+ .b8 109
+ .b8 112
+ .b8 80
+ .b8 100
+ .b8 105
+ .b8 100
+ .b8 100
+ .b8 0
+
+ .b32 11835
+ .b8 116
+ .b8 114
+ .b8 97
+ .b8 110
+ .b8 115
+ .b8 112
+ .b8 111
+ .b8 115
+ .b8 101
+ .b8 75
+ .b8 101
+ .b8 114
+ .b8 110
+ .b8 101
+ .b8 108
+ .b8 0
+
  .b32 607
  .b8 108
  .b8 111
@@ -20431,7 +21807,7 @@ BB32_22:
  .b8 100
  .b8 0
 
- .b32 10817
+ .b32 11275
  .b8 95
  .b8 90
  .b8 50
@@ -20558,7 +21934,7 @@ BB32_22:
  .b8 100
  .b8 0
 
- .b32 11082
+ .b32 11540
  .b8 103
  .b8 101
  .b8 110
@@ -20627,6 +22003,29 @@ BB32_22:
  .b8 80
  .b8 100
  .b8 105
+ .b8 0
+
+ .b32 12413
+ .b8 117
+ .b8 112
+ .b8 100
+ .b8 97
+ .b8 116
+ .b8 101
+ .b8 86
+ .b8 101
+ .b8 108
+ .b8 111
+ .b8 99
+ .b8 105
+ .b8 116
+ .b8 121
+ .b8 75
+ .b8 101
+ .b8 114
+ .b8 110
+ .b8 101
+ .b8 108
  .b8 0
 
  .b32 683
@@ -20704,6 +22103,34 @@ BB32_22:
  .b8 100
  .b8 105
  .b8 100
+ .b8 0
+
+ .b32 10320
+ .b8 95
+ .b8 90
+ .b8 49
+ .b8 52
+ .b8 118
+ .b8 101
+ .b8 99
+ .b8 116
+ .b8 111
+ .b8 114
+ .b8 95
+ .b8 98
+ .b8 101
+ .b8 116
+ .b8 119
+ .b8 101
+ .b8 101
+ .b8 110
+ .b8 80
+ .b8 100
+ .b8 83
+ .b8 95
+ .b8 105
+ .b8 83
+ .b8 95
  .b8 0
 
  .b32 5329

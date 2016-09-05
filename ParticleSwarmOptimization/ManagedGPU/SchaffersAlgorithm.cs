@@ -25,6 +25,11 @@ namespace ManagedGPU
             base.Dispose();
         }
 
+        protected override void Cleanup()
+        {
+            Dispose();
+        }
+
         public SchaffersAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
 
         protected override void Init()

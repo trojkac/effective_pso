@@ -57,45 +57,95 @@ extern "C" {
         bbob2009_copy_rotation_matrix(rot1, vars_affine_m, vars_affine_b, dimension);
     }
 
-    __global__ void kernelUpdateParticle(double *positions, double *velocities,
-                                         double *pBests, double *gBest,
-                                         int particlesCount, int dimensionsCount,
-                                         double r1, double r2)
+    __global__ void transposeKernel(
+        double* positions,
+        double* velocities,
+        double* personalBests,
+        double* personalBestValues,
+        int particlesCount,
+        int dimensionsCount,
+        double* xopt, double* M, double* b, double fopt)
     {
         int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-        if(i >= particlesCount * dimensionsCount)
-            return;
+        if(i >= particlesCount) return;
 
-        velocities[i] = d_OMEGA * velocities[i] + r1 * (pBests[i] - positions[i])
-            + r2 * (gBest[i % dimensionsCount] - positions[i]);
+        double* particleLoc = positions + i * dimensionsCount;
+        double* particleVel = velocities + i * dimensionsCount;
 
-        // Update posisi particle
-        positions[i] += velocities[i];
-    }
-
-    __global__ void kernelUpdatePBest(double *positions, double *pBests, double* gBest,
-                                      int particlesCount, int dimensionsCount,
-                                      double* xopt, double* M, double* b, double fopt)
-    {
-        int i = blockIdx.x * blockDim.x + threadIdx.x;
-        double tempParticle1[MAX_DIMENSIONS];
-        double tempParticle2[MAX_DIMENSIONS];
-
-        if(i >= particlesCount * dimensionsCount || i % dimensionsCount != 0)
-            return;
-
-        for(int j = 0; j < dimensionsCount; j++)
+        for(int i = 0; i < dimensionsCount; i++)
         {
-            tempParticle1[j] = positions[i + j];
-            tempParticle2[j] = pBests[i + j];
+            particleLoc[i] += particleVel[i];
         }
 
-        if(wrapped_fitness_function(tempParticle1, dimensionsCount, xopt, M, b, fopt) <
-           wrapped_fitness_function(tempParticle2, dimensionsCount, xopt, M, b, fopt))
+        clamp(particleLoc, dimensionsCount, -5.0, 5.0);
+
+        double newValue = wrapped_fitness_function(particleLoc, dimensionsCount, xopt, M, b, fopt);
+        
+        if(newValue < personalBestValues[i])
         {
-            for(int k = 0; k < dimensionsCount; k++)
-                pBests[i + k] = positions[i + k];
+            personalBestValues[i] = newValue;
+
+            double* particlePersonalBest = personalBests + i * dimensionsCount;
+
+            for(int i = 0; i < dimensionsCount; i++)
+                particlePersonalBest[i] = particleLoc[i];
+        }
+    }
+
+    __global__ void updateVelocityKernel(
+        double* positions,
+        double* velocities,
+        double* personalBests,
+        double* personalBestValues,
+        int* neighbors,
+        int particlesCount,
+        int dimensionsCount,
+        double phi1,
+        double phi2)
+    {
+        int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+        if(i >= particlesCount) return;
+
+        double* particleLoc = positions + i * dimensionsCount;
+        double* particleVel = velocities + i * dimensionsCount;
+        double* particleBest = personalBests + i * dimensionsCount;
+        double particleBestValue = personalBestValues[i];
+
+        int* particleNeighbors = neighbors + i * 2;
+
+        int leftNeighborId = particleNeighbors[0];
+        double* leftNeighborBest = personalBests + leftNeighborId * dimensionsCount;
+        double leftNeighborBestVal = personalBestValues[leftNeighborId];
+
+        int rightNeighborId = particleNeighbors[1];
+        double* rightNeighborBest = personalBests + rightNeighborId * dimensionsCount;
+        double rightNeighborBestVal = personalBestValues[rightNeighborId];
+
+        double* globalBest = particleBest;
+        double globalBestVal = particleBestValue;
+
+        if(leftNeighborBestVal < globalBestVal)
+        {
+            globalBest = leftNeighborBest;
+            globalBestVal = leftNeighborBestVal;
+        }
+
+        if(rightNeighborBestVal < globalBestVal)
+        {
+            globalBest = rightNeighborBest;
+        }
+
+        double toPersonalBest[MAX_DIMENSIONS];
+        vector_between(particleLoc, particleBest, dimensionsCount, toPersonalBest);
+
+        double toGlobalBest[MAX_DIMENSIONS];
+        vector_between(particleLoc, globalBest, dimensionsCount, toGlobalBest);
+
+        for(int i = 0; i < dimensionsCount; i++)
+        {
+            particleVel[i] = particleVel[i] * d_OMEGA + phi1 * toGlobalBest[i] + phi2 * toPersonalBest[i];
         }
     }
 }

@@ -75,5 +75,10 @@ namespace ManagedGPU
             Xopt.Dispose();
             base.Dispose();
         }
+
+        protected override void Cleanup()
+        {
+            Dispose();
+        }
     }
 }

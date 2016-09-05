@@ -34,22 +34,6 @@ __device__ double wrapped_fitness_function(double x[], int number_of_variables,
     return temp[0];
 }
 
-__device__ void clamp(double* vector, int length, double min, double max)
-{
-    for(int i = 0; i < length; i++)
-    {
-        vector[i] = vector[i] < min ? min : (vector[i] > max ? max : vector[i]);
-    }
-}
-
-__device__ void vector_between(double* from, double* to, int dimensions, double* result)
-{
-    for(int i = 0; i < dimensions; i++)
-    {
-        result[i] = to[i] - from[i];
-    }
-}
-
 extern "C" {
     __global__ void generateData(int dimension,
                                  int rseed,

@@ -23,6 +23,11 @@ namespace ManagedGPU
             base.Dispose();
         }
 
+        protected override void Cleanup()
+        {
+            Dispose();
+        }
+
         private double rseed;
 
         public SchwefelAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }

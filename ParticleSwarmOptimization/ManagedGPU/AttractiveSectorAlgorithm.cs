@@ -18,6 +18,11 @@ namespace ManagedGPU
             base.Dispose();
         }
 
+        protected override void Cleanup()
+        {
+            Dispose();
+        }
+
         public AttractiveSectorAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
 
         protected override void Init()

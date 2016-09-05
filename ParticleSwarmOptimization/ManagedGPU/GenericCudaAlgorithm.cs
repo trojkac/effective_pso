@@ -157,6 +157,7 @@ namespace ManagedGPU
             ThreadHandler = new Thread(() =>
             {
                 Run();
+                Cleanup();
             });
 
             ThreadHandler.Start();
@@ -183,7 +184,6 @@ namespace ManagedGPU
         public double Run()
         {
             InitContext();
-
             if (SyncWithCpu)
             {
                 PushGpuState();
@@ -231,5 +231,7 @@ namespace ManagedGPU
             DevicePersonalBests.Dispose();
             Ctx.Dispose();
         }
+
+        protected abstract void Cleanup();
     }
 }

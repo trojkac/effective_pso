@@ -15,6 +15,11 @@ namespace ManagedGPU
             base.Dispose();
         }
 
+        protected override void Cleanup()
+        {
+            Dispose();
+        }
+
         public BuecheRastriginAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
 
         protected override void Init()

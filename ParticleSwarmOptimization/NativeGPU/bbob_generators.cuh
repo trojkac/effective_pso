@@ -357,3 +357,19 @@ __device__ double coco_double_min(const double a, const double b) {
 		return b;
 	}
 }
+
+__device__ void clamp(double* vector, int length, double min, double max)
+{
+    for(int i = 0; i < length; i++)
+    {
+        vector[i] = vector[i] < min ? min : (vector[i] > max ? max : vector[i]);
+    }
+}
+
+__device__ void vector_between(double* from, double* to, int dimensions, double* result)
+{
+    for(int i = 0; i < dimensions; i++)
+    {
+        result[i] = to[i] - from[i];
+    }
+}
