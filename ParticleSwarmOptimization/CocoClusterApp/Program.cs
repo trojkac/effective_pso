@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using Node;
+using Narkhedegs.PerformanceMeasurement;
 
 namespace CocoClusterApp
 {
@@ -29,12 +30,14 @@ namespace CocoClusterApp
                 Console.WriteLine("CocoSingleCpuApp <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo>");
                 return;
             }
+            var timeStr = DateTime.Now.Hour.ToString("D2") + DateTime.Now.Minute.ToString("D2");
+            var logger = new FileLogger("time_log_" + timeStr);
 
             var nodeParamsDeserialize = new ParametersSerializer<NodeParameters>();
             var psoParamsDeserialize = new ParametersSerializer<PsoParameters>();
             var nodeParams = nodeParamsDeserialize.Deserialize("nodeParams.xml");
             var psoParams = psoParamsDeserialize.Deserialize("psoParams.xml");
-            
+
             MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.Ports.ToArray(), nodeParams.NrOfVCpu);
             if (nodeParams.PeerAddress != null)
             {
@@ -44,6 +47,7 @@ namespace CocoClusterApp
             }
             else
             {
+                var chronometer = new Chronometer();
                 string dims = args[0];
                 var functionsFrom = int.Parse(args[1]);
                 var functionsTo = int.Parse(args[2]);
@@ -64,7 +68,7 @@ namespace CocoClusterApp
                     /* Set some options for the observer. See documentation for other options. */
                     var observerOptions =
                         "result_folder: PSO_on_bbob_" +
-                        DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString()
+                        timeStr
                         + " algorithm_name: PSO"
                         + " algorithm_info: \"A simple Random search algorithm\"";
                     /* Initialize the suite and observer */
@@ -87,7 +91,7 @@ namespace CocoClusterApp
                         var settings = psoParams;
                         settings.TargetValueCondition = false;
                         settings.IterationsLimitCondition = true;
-                        settings.Iterations = (int)evaluations;
+                        settings.Iterations = (int)Math.Ceiling(evaluations /(double)particlesNum);
 
                         var function = new FitnessFunction(Problem.evaluateFunction);
                         FunctionFactory.SaveToCache(Problem.Id, function);
@@ -107,8 +111,12 @@ namespace CocoClusterApp
                         };
                         settings.FunctionParameters.SearchSpace = bounds;
                         settings.Particles = new ParticlesCount[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) };
-                        machineManager.StartPsoAlgorithm(psoParams);
-                        machineManager.GetResult();
+                        var runtimeMs = chronometer.Measure(() =>
+                        {
+                            machineManager.StartPsoAlgorithm(psoParams);
+                            machineManager.GetResult();
+                        });
+                        logger.Log(String.Format("{0}: {1} {2}", Problem.Id, function.EvaluationsCount, runtimeMs));
                     }
                     benchmark.finalizeBenchmark();
                 }
