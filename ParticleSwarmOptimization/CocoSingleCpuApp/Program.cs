@@ -108,8 +108,8 @@ namespace CocoSingleCpuApp
                                 LocationDimensions = settings.FunctionParameters.Dimension,
                                 FunctionNumber = Int32.Parse(Problem.FunctionNumber.Substring(1)),
                                 InstanceNumber = instanceNr,
-                                Iterations = 1000,
-                                ParticlesCount = 96,
+                                Iterations = 5000,
+                                ParticlesCount = 640,
                                 SyncWithCpu = true
                             });
 
