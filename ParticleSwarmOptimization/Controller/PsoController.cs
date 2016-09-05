@@ -6,6 +6,7 @@ using Algorithm;
 using Common;
 using Common.Parameters;
 using NetworkManager;
+using ManagedGPU;
 
 namespace Controller
 {
@@ -57,24 +58,49 @@ namespace Controller
         }
 
 
-        public void Run(PsoParameters psoParameters, PsoService.ProxyParticle[] proxyParticleServices = null)
+        public void Run(PsoParameters psoParameters, IParticle[] proxyParticleServices = null)
         {
-
             _function = FunctionFactory.GetFitnessFunction(psoParameters.FunctionParameters);
+
+            var parts = psoParameters.FunctionParameters.FitnessFunctionType.Split('_');
+            var functionNr = Int32.Parse(parts[1].Substring(1));
+            var instanceStr = parts[2];
+            var instanceNr = Int32.Parse(instanceStr.Substring(1));
+
+            var gpu = GpuController.Setup(
+                new CudaParams
+                {
+                    FitnessFunction = _function,
+                    FitnessDimensions = 1,
+                    LocationDimensions = psoParameters.FunctionParameters.Dimension,
+                    FunctionNumber = functionNr,
+                    InstanceNumber = instanceNr,
+                    Iterations = 5000,
+                    ParticlesCount = 640,
+                    SyncWithCpu = true
+                });
+
+            var cudaAlgorithm = gpu.Item2;
+            var cudaParticle = gpu.Item1;
+
             var particles = CreateParticles(psoParameters.Particles, _function, psoParameters.FunctionParameters.Dimension, psoParameters.FunctionParameters.SearchSpace);
             if (proxyParticleServices != null)
             {
                 particles.AddRange(proxyParticleServices);
             }
+
+            particles.Add(cudaParticle);
+
             var token = _tokenSource.Token;
             var algorithm = new PsoAlgorithm(psoParameters, _function, particles.ToArray());
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
                 RunningParameters = psoParameters;
                 //var r = algorithm.Run(particles,_nodeId.ToString());
+                cudaAlgorithm.RunAsync();
                 var r = algorithm.Run();
                 if (CalculationsCompleted != null) CalculationsCompleted((ParticleState)r);
-
+                cudaAlgorithm.Wait();
                 return (ParticleState)r;
             }, token);
         }

@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 using System.IO;
 using Node;
 using Narkhedegs.PerformanceMeasurement;
+using ManagedGPU;
 
 namespace CocoClusterApp
 {
@@ -115,6 +116,7 @@ namespace CocoClusterApp
                             FitnessFunctionType = Problem.Id
                         };
                         settings.FunctionParameters.SearchSpace = bounds;
+                        
                         settings.Particles = new ParticlesCount[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) };
                         var runtimeMs = chronometer.Measure(() =>
                         {

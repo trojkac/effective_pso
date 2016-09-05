@@ -64,6 +64,10 @@
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ManagedGPU\ManagedGPU.csproj">
+      <Project>{b949184e-1e88-4a23-bd0b-e27de2201d49}</Project>
+      <Name>ManagedGPU</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Node\Node.csproj">
       <Project>{78963d19-f2e3-41d3-90b4-6f03aecf9c0b}</Project>
       <Name>Node</Name>
