@@ -38,7 +38,7 @@ namespace CocoClusterApp
                 machineManager.Register(nodeParams.PeerAddress);
                 Console.WriteLine("Working...");
                 Console.WriteLine("Press ENTER to finish");
-                ConsoleKeyInfo pressed;
+                ConsoleKeyInfo pressed = new ConsoleKeyInfo();
                 while(pressed.Key != ConsoleKey.Enter){
                     pressed = Console.ReadKey();
                 };
