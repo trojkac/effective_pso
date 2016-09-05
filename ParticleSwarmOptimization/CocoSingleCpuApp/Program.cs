@@ -8,7 +8,7 @@ using Common;
 using Algorithm;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using ManagedGPU;
+using Common.Parameters;
 
 namespace CocoSingleCpuApp
 {
@@ -71,7 +71,6 @@ namespace CocoSingleCpuApp
                         if (Problem.isFinalTargetHit() || (evaluationsRemaining <= 0))
                             break;
 
-
                         var settings = new PsoParameters()
                         {
                             TargetValueCondition = false,
@@ -95,9 +94,8 @@ namespace CocoSingleCpuApp
                             Dimension = function.LocationDim,
                             SearchSpace = bounds
                         };
-                        settings.FunctionParameters.SearchSpace = bounds;
-
-                        var gpu = GpuController.Setup(
+						
+						var gpu = GpuController.Setup(
                             new CudaParams
                             {
                                 FitnessFunction = function,
@@ -109,25 +107,21 @@ namespace CocoSingleCpuApp
                                 ParticlesCount = 96,
                                 SyncWithCpu = true
                             });
-
-                        var cudaParticle = gpu.Item1;
-                        var cudaAlgorithm = gpu.Item2;
-
+						
+                        settings.FunctionParameters.SearchSpace = bounds;
                         var particles = new IParticle[particlesNum];
-                        particles[0] = cudaParticle;
-                        for (var i = 1; i < particlesNum; i++)
+                        for (var i = 0; i < particlesNum; i++)
                         {
                             particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
                                 function.FitnessDim, function, bounds);
                         }
 
                         var algorithm = new PsoAlgorithm(settings, function, particles);
-                        cudaAlgorithm.RunAsync();
-                        algorithm.Run();
-                        cudaAlgorithm.Wait();
 
+                        algorithm.Run();
                         /* Call the optimization algorithm for the remaining number of evaluations */
-                        
+
+
                         /* Break the loop if the algorithm performed no evaluations or an unexpected thing happened */
                         if (Problem.getEvaluations() == evaluationsDone)
                         {

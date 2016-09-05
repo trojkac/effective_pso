@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Chronometer, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Narkhedegs.Chronometer.0.0.3\lib\net45\Chronometer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="CocoWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\CocoWrapper\CocoWrapper\bin\Release\CocoWrapper.dll</HintPath>
@@ -55,7 +59,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="DistributorTests.cs" />
     <Compile Include="ProxyParticleTests.cs" />
     <Compile Include="PsoSettingsFactory.cs" />
     <Compile Include="ServiceTests.cs" />
@@ -90,6 +93,9 @@
       <Project>{62092d57-280b-4cda-990f-ecc3e678695f}</Project>
       <Name>Tests_Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Common
+namespace Common.Parameters
 {
-    public class NodeParameters
+    public class NodeParameters : IParameters
     {
         public int NrOfVCpu { get; set; }
         public bool IsGpu { get; set; }

@@ -7,6 +7,7 @@ namespace Common
     /// <typeparam name="TFitness">Specifies elements of fitness value space</typeparam>
     public interface IFitnessFunction<TLocation, TFitness>
     {
+        int EvaluationsCount { get; }
         TFitness Evaluate(TLocation x);
         IState<TLocation, TFitness> BestEvaluation { get; }
 

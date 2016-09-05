@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Common;
+using Common.Parameters;
 using NetworkManager;
 using PsoService;
 
@@ -14,5 +15,6 @@ namespace Controller
         PsoImplementationType[] GetAvailableImplementationTypes();
         event CalculationCompletedHandler CalculationsCompleted;
         void RemoteControllerFinished(RemoteCalculationsFinishedHandlerArgs args);
+        ParticleState Stop();
     }
 }

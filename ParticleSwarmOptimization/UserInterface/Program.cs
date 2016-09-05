@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Common;
+using Common.Parameters;
 using Node;
 
 namespace UserInterface
@@ -14,33 +15,22 @@ namespace UserInterface
     {
         public static void Main(string[] args)
         {
-            var nodeParamsSerializer = new XmlSerializer(typeof (NodeParameters));
-            var psoParamsSerializer = new XmlSerializer(typeof (PsoParameters));
-            NodeParameters nodeParams;
-            PsoParameters psoParams;
-            using (var nodeFileReader = new StreamReader("nodeParams.xml"))
-            {
-                nodeParams = (NodeParameters)nodeParamsSerializer.Deserialize(nodeFileReader);    
-            }
-            using (var psoFileReader = new StreamReader("psoParams.xml"))
-            {
-                psoParams = (PsoParameters) psoParamsSerializer.Deserialize(psoFileReader);
-            }
-            MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.Ports.ToArray(), nodeParams.NrOfVCpu);
-            if (nodeParams.PeerAddress != null)
-            {
-                machineManager.Register(nodeParams.PeerAddress);
-            }
 
-            char c = 'c';
-            bool cont = true;
+            var nodeParamsDeserialize = new ParametersSerializer<NodeParameters>();
+            var psoParamsDeserialize = new ParametersSerializer<PsoParameters>();
+            var nodeParams = nodeParamsDeserialize.Deserialize("nodeParams.xml");
+            var psoParams = psoParamsDeserialize.Deserialize("psoParams.xml");
+            
+            var machineManager = new MachineManager(nodeParams.Ip,nodeParams.Ports.ToArray());
+
+            var cont = true;
             while (cont)
             {
                 Console.WriteLine("1 - Start Calculations");
                 Console.WriteLine("0 - Exit");
                 Console.WriteLine("");
                 Console.Write("choice:");
-                c = Console.ReadKey().KeyChar;
+                var c = Console.ReadKey().KeyChar;
                 Console.WriteLine("\n\n");
 
                 switch (c)
@@ -53,10 +43,6 @@ namespace UserInterface
                     case '0':
                         cont = false;
                         break;
-                    default:
-                        break;
-
-
                 }
             }
         }

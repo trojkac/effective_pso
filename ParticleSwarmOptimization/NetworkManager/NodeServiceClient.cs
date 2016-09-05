@@ -2,6 +2,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Common;
+using Common.Parameters;
 
 namespace NetworkManager
 {
@@ -53,17 +54,31 @@ namespace NetworkManager
         }
 
 
-        public void StartCalculation(PsoParameters parameters)
+        public void StartCalculation(PsoParameters parameters, NetworkNodeInfo mainNodeInfo)
         {
             try
             {
-                Proxy.StartCalculation(parameters);
+                Proxy.StartCalculation(parameters, mainNodeInfo);
 
             }
             catch
             {
 
             }
+        }
+
+        public ParticleState StopCalculation()
+        {
+            try
+            {
+                return Proxy.StopCalculation();
+
+            }
+            catch
+            {
+
+            }
+            return new ParticleState();
         }
 
         public void CalculationsFinished(NetworkNodeInfo source, ParticleState result)
@@ -90,7 +105,7 @@ namespace NetworkManager
         public TcpNodeServiceClient(string tcpAddress)
         {
             Address = new EndpointAddress(tcpAddress);
-            Binding = new NetTcpBinding();
+            Binding = new NetTcpBinding(SecurityMode.None);
             ChannelFactory = new ChannelFactory<INodeService>(Binding);
             Proxy = ChannelFactory.CreateChannel(Address);
         }

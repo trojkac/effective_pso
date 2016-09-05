@@ -2,30 +2,10 @@ using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 
-namespace Common
+namespace Common.Parameters
 {
-
-    public class ParticlesCount
-    {
-        public PsoParticleType ParticleType;
-        public int Count;
-
-        public ParticlesCount(PsoParticleType psoParticleType, int p)
-        {
-            // TODO: Complete member initialization
-            ParticleType = psoParticleType;
-            Count = p;
-        }
-
-        public ParticlesCount()
-        {
-            Count = 0;
-            ParticleType = PsoParticleType.Standard;
-        }
-    }
-
     [DataContract]
-    public struct PsoParameters
+    public class PsoParameters : IParameters
     {
 
         /// <summary>
@@ -71,6 +51,17 @@ namespace Common
             Particles = particlesSet;
             FunctionParameters = functionParams;
 
+        }
+
+        public PsoParameters()
+        {
+            Epsilon = 0;
+            TargetValue = 0;
+            Iterations = 0;
+            IterationsLimitCondition = true;
+            TargetValueCondition = false;
+            Particles = new ParticlesCount[0];
+            FunctionParameters = new FunctionParameters();
         }
     }
 }

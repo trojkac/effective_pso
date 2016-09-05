@@ -6,11 +6,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using Common;
 using System.Threading.Tasks;
+using Common.Parameters;
 using PsoService;
 
 namespace NetworkManager
 {
-    public delegate void RegisterNodeHandler(NetworkNodeInfo newNode);
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     public class NodeService : INodeService, IReconnaissance
     {
@@ -19,6 +19,7 @@ namespace NetworkManager
         public event StartCalculationsHandler StartCalculations;
         public event RegisterNodeHandler RegisterNode;
         public event RemoteCalculationsFinishedHandler RemoteCalculationsFinished;
+        public event StopCalculationsHandler StopCalculations;
         public NetworkNodeInfo Info { get; set; }
         public IPsoManager PsoManager { get; private set; }
         /// <summary>
@@ -83,10 +84,18 @@ namespace NetworkManager
             });
         }
 
-        public void StartCalculation(PsoParameters parameters)
+        public void StartCalculation(PsoParameters parameters, NetworkNodeInfo mainNodeInfo)
         {
             Debug.WriteLine("{0}: starting calculations.", Info.Id);
-            if (StartCalculations != null) StartCalculations(parameters);
+            if (StartCalculations != null) StartCalculations(parameters, mainNodeInfo);
+        }
+
+        public ParticleState StopCalculation()
+        {
+            var pState = new ParticleState();
+            Debug.WriteLine("{0}: received stop calculations", Info.Id);
+            if (StopCalculations != null) pState = StopCalculations();
+            return pState;
         }
 
         public void CalculationsFinished(NetworkNodeInfo source, ParticleState result)
@@ -113,21 +122,6 @@ namespace NetworkManager
                 NodeServiceClient nodeServiceClient = new TcpNodeServiceClient(networkNodeInfo.TcpAddress);
                 nodeServiceClient.UpdateNodes(KnownNodes.ToArray());
             }
-        }
-
-    }
-
-    public delegate void RemoteCalculationsFinishedHandler(RemoteCalculationsFinishedHandlerArgs args);
-
-    public class RemoteCalculationsFinishedHandlerArgs
-    {
-        public NetworkNodeInfo Source;
-        public object Result;
-
-        public RemoteCalculationsFinishedHandlerArgs(NetworkNodeInfo source, object result)
-        {
-            Source = source;
-            Result = result;
         }
     }
 }

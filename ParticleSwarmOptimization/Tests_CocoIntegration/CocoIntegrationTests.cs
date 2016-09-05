@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Algorithm;
 using CocoWrapper;
 using Common;
+using Common.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests

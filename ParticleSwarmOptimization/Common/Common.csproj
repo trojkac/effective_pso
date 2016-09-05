@@ -41,7 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomFitnessFunction.cs" />
+    <Compile Include="AbstractFitnessFunction.cs" />
+    <Compile Include="FunctionFactory.cs" />
     <Compile Include="Euclidean.cs" />
     <Compile Include="FirstValueOptimization.cs" />
     <Compile Include="FitnessFunction.cs" />
@@ -53,16 +54,24 @@
     <Compile Include="Logger.cs" />
     <Compile Include="NetworkNodeInfo.cs" />
     <Compile Include="NormMinimalization.cs" />
+    <Compile Include="DimensionBound.cs" />
+    <Compile Include="parameters\IParameters.cs" />
+    <Compile Include="parameters\IParametersSerializer.cs" />
+    <Compile Include="parameters\ParametersSerializer.cs" />
+    <Compile Include="ParticlesCount.cs" />
     <Compile Include="ParticleState.cs" />
     <Compile Include="PortFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PsoImplementationType.cs" />
     <Compile Include="PsoParticleType.cs" />
     <Compile Include="PsoServiceLocator.cs" />
-    <Compile Include="PsoParameters.cs" />
+    <Compile Include="parameters\PsoParameters.cs" />
+    <Compile Include="QuadraticFunction.cs" />
     <Compile Include="RandomGenerator.cs" />
-    <Compile Include="NodeParameters.cs" />
-    <Compile Include="FunctionParameters.cs" />
+    <Compile Include="parameters\NodeParameters.cs" />
+    <Compile Include="parameters\FunctionParameters.cs" />
+    <Compile Include="RastriginFunction.cs" />
+    <Compile Include="RosenbrockFunction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CocoWrapper\CocoWrapper.csproj">
