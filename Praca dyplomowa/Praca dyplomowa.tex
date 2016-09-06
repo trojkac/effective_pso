@@ -311,18 +311,17 @@ Artykuł \cite{BlockOccupancyGpu} bada zależność między wydajnością algory
 
 \section{Klaster i komunikacja między węzłami}
 
-\section{Krótkie wprowadzenie do architektury CUDA}
+\section{Obliczenia na procesorze graficznym}
+\subsection{Krótkie wprowadzenie do architektury CUDA}
 %[Prosty opis bloków, wątków]
 Opis części programu na GPU wymaga krótkiego wprowadzenia do organizacji wątków i pamięci w architekturze CUDA.
 
 Podstawową jednostką obliczeniową 
-%[to chyba niezbyt dobre określenie] 
 w architekturze CUDA jest pojedynczy wątek GPU. Dzięki dostępowi do tysięcy wątków na procesorze graficznym możliwe jest stosowanie modelu SIMT (Single Instruction Multiple Threads). Każdy wątek ma dostęp do swojej lokalnej pamięci wątku. \\
-Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątki. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy.
+Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątki. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
 
-\section{PSO na GPU}
-%[Tytuł roboczy]
-Architektura części naszego programu odpowiadającej za obliczenia na GPU jest inspirowana pracami wspomnianymi powyżej. Całość opiera się na topologii pierścienia.
+\subsection{Implementacja algorytmu dla procesora graficznego}
+Architektura części naszego programu odpowiadającej za obliczenia na GPU jest inspirowana pracami wspomnianymi powyżej. \cite{PsoCuda} \cite{GpuBasedPso} Całość opiera się na topologii pierścienia.
 
 Rój cząstek na GPU działa w synchronizacji z rojem na CPU poprzez wyszczególnienie po obu stronach cząstek odpowiedzialnych za przekazywanie swojej pozycji w roju na danej jednostce obliczeniowej rojowi na drugim procesorze (czyli pośrednio przekazuje pozycję własnego roju). Odnosząc się do topologii pierścienia, można wyobrazić to sobie jako most łączący 2 pierścienie.
 
@@ -332,8 +331,19 @@ Podstawową jednostką w ramach roju na GPU są cząstki w rojach zorganizowanyc
 
 Taka organizacja cząstek pozwala na zmaksymalizowanie zużycia mocy obliczeniowej GPU - liczba cząstek w ogólnym roju odpowiada liczbie dostępnych wątków. Topologia pierścienia pozwala na ograniczenie potrzeby komunikacji międzywątkowej dzięki stałemu zestawowi dwóch sąsiadów. Organizacja mniejszych rojów w blokach wątków umożliwia korzystanie ze znacznie szybszej pamięci dzielonej.
 
-\section{Szczegóły implementacyjne}
+\subsection{Komunikacja między procesorami obliczeniowymi}
+Celem implementacji algorytmu dla procesorów graficznych było współgranie obliczeń na CPU i GPU. Roje z obu jednostek obliczeniowych tworzą jeden większy rój, dzięki temu szybciej zbiegający algorytm na GPU ma szansę na nakierowanie roju CPU w dobrym kierunku.
+
+Komunikacja odbywa się w sposób niewidoczny dla samego algorytmu PSO poprzez specjalną cząstkę obecną zarówno w roju GPU i CPU. Cząstka ta przy zapytaniu o jej stan przez inną cząstkę z roju CPU odpowiada stanem wybranej cząstki z roju na GPU (analogicznie w przypadku zapytania ze strony GPU). 
+
+Synchronizacja stanów odbywa się co krok algorytmu na GPU. Dzieje się to w sposób przezroczysty dla algorytmu na CPU, ale konieczność pobrania stanu cząstki z pamięci graficznej wymusza drobną modyfikacje algorytmu na GPU.
+
+\subsection{Szczegóły implementacyjne}
 Zestaw narzędzi CUDA udostępnia rozszerzenia jedynie dla języków C i C++. W celu integracji z pozostałą częścią systemu użyta została biblioteka ManagedCUDA, umożliwiająca łatwą kooperację środowisk .NET i CUDA.
+
+Obliczenia na procesorze graficznym zarządzane są przez osobny wątek działający równolegle do algorytmu działającego na CPU. Wątek ten kontroluje inicjalizację środowiska, wykonanie i zakończenie algorytmu oraz komunikację między rojami GPU i CPU. 
+
+Na część natywną, odpowiadającą za działanie algorytmu na procesorze graficznym, składają się częsci algorytmu PSO, wywoływane przez wątek zarządzający, oraz funkcje używane do benchmarkowania.
 
 \chapter{Testy}
 
@@ -370,6 +380,8 @@ Poniżej znajdują się wyniki testów naszej biblioteki przy użyciu platformy 
 \chapter{Wymagania techniczne i instrukcja}
 
 \section{Wymagania sprzętowe i programowe}
+
+W celu uruchomienia obliczeń na procesorze graficznym wymagana jest karta graficzna wspierająca wersję (compute capability) 2.0 architektury CUDA. 
 
 \section{Instrukcja użytkownika i programisty}
 
