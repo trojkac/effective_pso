@@ -11,7 +11,7 @@ __constant__ double PI = 3.1415;
 
 __device__ double fitness_function(double x[], int number_of_variables)
 {
-    static const double condition = 1.0e6;
+    const double condition = 1.0e6;
     size_t i = 0;
     double result;
 

@@ -9,7 +9,7 @@ __constant__ double d_phi = 1.4;
 
 __constant__ double PI = 3.1415;
 
-__device__ double fitness_function(double x[], int number_of_variables, double* rotation, double number_of_peaks, double* peak_values, double* x_local, double* arr_scales)
+__device__ double fitness_function(double x[], int number_of_variables, double* rotation, int number_of_peaks, double* peak_values, double* x_local, double* arr_scales)
 {
     size_t i, j; /* Loop over dim */
     double tmx[MAX_DIMENSIONS];
@@ -80,7 +80,7 @@ __device__ double fitness_function(double x[], int number_of_variables, double* 
 }
 
 __device__ double wrapped_fitness_function(double x[], int number_of_variables,
-                                           double* rotation, double number_of_peaks, double* peak_values, double* x_local, double* arr_scales)
+                                           double* rotation, int number_of_peaks, double* peak_values, double* x_local, double* arr_scales)
 {
     double temp[1];
     temp[0] = fitness_function(x, number_of_variables, rotation, number_of_peaks, peak_values, x_local, arr_scales);
@@ -93,84 +93,12 @@ extern "C" {
     __global__ void generateData(int dimension,
                                  int rseed,
                                  double* rotation, 
-                                 double number_of_peaks, 
+                                 int number_of_peaks, 
                                  double* peak_values, 
                                  double* x_local, 
                                  double* arr_scales)
     {
-        size_t i, j, k;
-        double maxcondition = 1000.0;
-        double maxcondition1 = 1000.0;
-        double b, c;
-        double random_numbers[101 * MAX_DIMENSIONS];
-        double fitvalues[2] = { 1.1, 9.1 };
 
-        if(number_of_peaks == 101.0)
-        {
-            maxcondition1 = sqrt(maxcondition1);
-            b = 10.;
-            c = 5.;
-        }
-        else if(number_of_peaks == 21.0)
-        {
-            b = 9.8;
-            c = 4.9;
-        }
-
-        double rot[MAX_DIMENSIONS][MAX_DIMENSIONS];
-
-        bbob2009_compute_rotation(dimension, rot, rseed);
-
-        double* row;
-
-        for(i = 0; i < dimension; i++)
-        {
-            row = rotation + i * dimension;
-            for(j = 0; j < dimension; i++)
-            {
-                row[j] = rot[i][j];
-            }
-        }
-
-        double arrCondition[101];
-        arrCondition[0] = maxcondition1;
-        peak_values[0] = 10;
-
-        for(i = 1; i < number_of_peaks; ++i)
-        {
-            arrCondition[i] = pow(maxcondition, (double)(i) / ((double)(number_of_peaks - 2)));
-            peak_values[i] = (double)(i - 1) / (double)(number_of_peaks - 2) * (fitvalues[1] - fitvalues[0])
-                + fitvalues[0];
-        }
-
-        for(i = 0; i < number_of_peaks; ++i)
-        {
-            row = arr_scales + i * (int)number_of_peaks;
-            for(j = 0; j < dimension; ++j)
-            {
-                row[j] = pow(arrCondition[i],
-                                             (j / ((double)(dimension - 1)) - 0.5));
-            }
-        }
-
-        bbob2009_unif(random_numbers, dimension * number_of_peaks, rseed);
-        for(i = 0; i < dimension; ++i)
-        {
-            row = x_local + i * dimension;
-            double* rotrow = rotation + i * dimension;
-            for(j = 0; j < number_of_peaks; ++j)
-            {
-                row[j] = 0.;
-                for(k = 0; k < dimension; ++k)
-                {
-                    row[j] += rotrow[k] * (b * random_numbers[j * dimension + k] - c);
-                }
-                if(j == 0)
-                {
-                    row[j] *= 0.8;
-                }
-            }
-        }
     }
 
     __global__ void transposeKernel(
@@ -180,7 +108,7 @@ extern "C" {
         double* personalBestValues,
         int particlesCount,
         int dimensionsCount,
-        double* rotation, double number_of_peaks, double* peak_values, double* x_local, double* arr_scales)
+        double* rotation, int number_of_peaks, double* peak_values, double* x_local, double* arr_scales)
     {
         int i = blockIdx.x * blockDim.x + threadIdx.x;
 

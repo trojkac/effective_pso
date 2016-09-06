@@ -29,7 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ManagedCuda">
@@ -68,6 +68,7 @@
     <Compile Include="RosenbrockRotatedAlgorithm.cs" />
     <Compile Include="SchaffersAlgorithm.cs" />
     <Compile Include="SchwefelAlgorithm.cs" />
+    <Compile Include="SharpRidgeAlgorithm.cs" />
     <Compile Include="SphereAlgorithm.cs" />
     <Compile Include="StateProxy.cs" />
     <Compile Include="StepEllipsoidAlgorithm.cs" />
@@ -84,10 +85,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="f10_ellipsoidal_rotated_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="f11_discus_kernel.ptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="f12_bent_cigar_kernel.ptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="f13_sharp_ridge_kernel.ptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="f14_different_powers_kernel.ptx">

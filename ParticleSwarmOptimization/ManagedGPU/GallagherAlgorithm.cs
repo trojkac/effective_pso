@@ -1,10 +1,11 @@
-﻿using ManagedCuda;
+﻿using System;
+using ManagedCuda;
 
 namespace ManagedGPU
 {
     class GallagherAlgorithm : GenericCudaAlgorithm
     {
-        public double PeaksCount { get; set; }
+        public int PeaksCount { get; set; }
 
         protected CudaDeviceVariable<double> Rotation;
         protected CudaDeviceVariable<double> PeakValues;
@@ -31,14 +32,15 @@ namespace ManagedGPU
         {
             var kernelFileName = KernelFile;
             var initKernel = Ctx.LoadKernel(kernelFileName, "generateData");
+            initKernel.BlockDimensions = 1;
+            initKernel.GridDimensions = 1;
 
             Rotation = new CudaDeviceVariable<double>(DimensionsCount * DimensionsCount);
-            PeakValues = new CudaDeviceVariable<double>((int)PeaksCount);
-            XLocal = new CudaDeviceVariable<double>(DimensionsCount * (int)PeaksCount);
-            ArrScales = new CudaDeviceVariable<double>(DimensionsCount * (int)PeaksCount);
+            PeakValues = new CudaDeviceVariable<double>(PeaksCount);
+            XLocal = new CudaDeviceVariable<double>(DimensionsCount * PeaksCount);
+            ArrScales = new CudaDeviceVariable<double>(DimensionsCount * PeaksCount);
 
-            long rseed = FunctionNumber + 10000 * InstanceNumber;
-
+            int rseed = FunctionNumber + 10000 * InstanceNumber;
             initKernel.Run(
                 DimensionsCount, 
                 rseed, 

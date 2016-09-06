@@ -89,7 +89,8 @@ namespace Controller
                 particles.AddRange(proxyParticleServices);
             }
 
-            particles.Add(cudaParticle);
+            if (functionNr != 21 && functionNr != 22)
+                particles.Add(cudaParticle);
 
             var token = _tokenSource.Token;
             var algorithm = new PsoAlgorithm(psoParameters, _function, particles.ToArray());
@@ -97,10 +98,14 @@ namespace Controller
             {
                 RunningParameters = psoParameters;
                 //var r = algorithm.Run(particles,_nodeId.ToString());
-                cudaAlgorithm.RunAsync();
+
+                if (functionNr != 21 && functionNr != 22)
+                    cudaAlgorithm.RunAsync();
                 var r = algorithm.Run();
                 if (CalculationsCompleted != null) CalculationsCompleted((ParticleState)r);
-                cudaAlgorithm.Wait();
+
+                if (functionNr != 21 && functionNr != 22)
+                    cudaAlgorithm.Wait();
                 return (ParticleState)r;
             }, token);
         }

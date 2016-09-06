@@ -42,6 +42,9 @@
                 case 12: 
                     return new BentCigarAlgorithm(parameters, proxy);
 
+                case 13:
+                    return new SharpRidgeAlgorithm(parameters, proxy);
+
                 case 14:
                     return new DifferentPowersAlgorithm(parameters, proxy);
 

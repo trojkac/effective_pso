@@ -108,8 +108,8 @@ namespace CocoSingleCpuApp
                                 LocationDimensions = settings.FunctionParameters.Dimension,
                                 FunctionNumber = Int32.Parse(Problem.FunctionNumber.Substring(1)),
                                 InstanceNumber = instanceNr,
-                                Iterations = 5000,
-                                ParticlesCount = 640,
+                                Iterations = 2000,
+                                ParticlesCount = 320,
                                 SyncWithCpu = true
                             });
 
@@ -119,19 +119,23 @@ namespace CocoSingleCpuApp
                         settings.FunctionParameters.SearchSpace = bounds;
                         var particles = new IParticle[particlesNum];
 
-                        particles[0] = cudaParticle;
-                        for (var i = 1; i < particlesNum; i++)
+                        for (var i = 0; i < particlesNum; i++)
                         {
                             particles[i] = ParticleFactory.Create(PsoParticleType.Standard, function.LocationDim,
                                 function.FitnessDim, function, bounds);
                         }
-
+                        if (instanceNr != 22 && instanceNr != 21)
+                            particles[0] = cudaParticle;
+                        
                         var algorithm = new PsoAlgorithm(settings, function, particles);
 
-                        cudaAlgorithm.RunAsync();
+                        if (instanceNr != 22 && instanceNr != 21)
+                            cudaAlgorithm.RunAsync();
                         algorithm.Run();
                         /* Call the optimization algorithm for the remaining number of evaluations */
-                        cudaAlgorithm.Wait();
+
+                        if (instanceNr != 22 && instanceNr != 21)
+                            cudaAlgorithm.Wait();
 
                         /* Break the loop if the algorithm performed no evaluations or an unexpected thing happened */
                         if (Problem.getEvaluations() == evaluationsDone)

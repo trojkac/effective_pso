@@ -103,13 +103,13 @@ namespace ManagedGPU
                     DevicePersonalBestValues.DevicePointer,
                     ParticlesCount,
                     DimensionsCount,
-                    Xopt,
+                    Xopt.DevicePointer,
                     Fopt,
                     Penalty,
-                    M,
-                    B,
-                    Ak,
-                    Bk,
+                    M.DevicePointer,
+                    B.DevicePointer,
+                    Ak.DevicePointer,
+                    Bk.DevicePointer,
                     F0
              );  
         }

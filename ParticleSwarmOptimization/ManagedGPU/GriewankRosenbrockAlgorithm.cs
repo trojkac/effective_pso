@@ -79,7 +79,6 @@ namespace ManagedGPU
                     DeviceVelocities.DevicePointer,
                     DevicePersonalBests.DevicePointer,
                     DevicePersonalBestValues.DevicePointer,
-                    DeviceNeighbors.DevicePointer,
                     ParticlesCount,
                     DimensionsCount,
                     Xopt.DevicePointer,

@@ -46,8 +46,6 @@ extern "C" {
                                  int rseed,
                                  int function,
                                  int instance,
-                                 double* vars_affine_m,
-                                 double* vars_affine_b,
                                  double* vars_shift_xopt,
                                  double* obj_shift_fopt)
     {
@@ -59,29 +57,6 @@ extern "C" {
         }
 
         obj_shift_fopt[0] = bbob2009_compute_fopt(function, instance);
-
-        double rot1[MAX_DIMENSIONS][MAX_DIMENSIONS];
-        double rot2[MAX_DIMENSIONS][MAX_DIMENSIONS];
-
-        bbob2009_compute_rotation(dimension, rot1, rseed + 1000000);
-        bbob2009_compute_rotation(dimension, rot2, rseed);
-
-        double *current_row;
-
-        for(int i = 0; i < dimension; ++i)
-        {
-            vars_affine_b[i] = 0.0;
-            current_row = vars_affine_m + i * dimension;
-            for(int j = 0; j < dimension; ++j)
-            {
-                current_row[j] = 0.0;
-                for(int k = 0; k < dimension; ++k)
-                {
-                    double exponent = 1.0 * (int)k / ((double)(long)dimension - 1.0);
-                    current_row[j] += rot1[i][k] * pow(sqrt(10.0), exponent) * rot2[k][j];
-                }
-            }
-        }
     }
 
     __global__ void transposeKernel(

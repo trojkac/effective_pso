@@ -2,21 +2,19 @@
 
 namespace ManagedGPU
 {
-    class RastriginRotatedAlgorithm : GenericCudaAlgorithm
+    class SharpRidgeAlgorithm : GenericCudaAlgorithm
     {
-        protected CudaDeviceVariable<double> Xopt;
         protected CudaDeviceVariable<double> M;
         protected CudaDeviceVariable<double> B;
+        protected CudaDeviceVariable<double> Xopt;
 
         protected double Fopt;
 
-        protected double Asymmetric = 0.2;
-
         public override void Dispose()
         {
-            Xopt.Dispose();
             M.Dispose();
             B.Dispose();
+            Xopt.Dispose();
             base.Dispose();
         }
 
@@ -25,24 +23,24 @@ namespace ManagedGPU
             Dispose();
         }
 
-        public RastriginRotatedAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
+        public SharpRidgeAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
 
         protected override void Init()
         {
             var kernelFileName = KernelFile;
             var initKernel = Ctx.LoadKernel(kernelFileName, "generateData");
-            Xopt = new CudaDeviceVariable<double>(DimensionsCount);
-            M = new CudaDeviceVariable<double>(DimensionsCount * DimensionsCount);
             B = new CudaDeviceVariable<double>(DimensionsCount);
+            M = new CudaDeviceVariable<double>(DimensionsCount * DimensionsCount);
+            Xopt = new CudaDeviceVariable<double>(DimensionsCount);
 
             var d_fopt = new CudaDeviceVariable<double>(1);
 
             long rseed = FunctionNumber + 10000 * InstanceNumber;
 
             initKernel.Run(
-                DimensionsCount, 
-                rseed, 
-                FunctionNumber, 
+                DimensionsCount,
+                rseed,
+                FunctionNumber,
                 InstanceNumber,
                 M.DevicePointer,
                 B.DevicePointer,
@@ -56,7 +54,7 @@ namespace ManagedGPU
 
         protected override string KernelFile
         {
-            get { return "f15_rastrigin_rotated_kernel.ptx"; }
+            get { return "f13_sharp_ridge_kernel.ptx"; }
         }
 
         protected override void RunUpdateVelocityKernel()
@@ -84,11 +82,10 @@ namespace ManagedGPU
                     ParticlesCount,
                     DimensionsCount,
                     Xopt.DevicePointer,
-                    Fopt,
-                    Asymmetric,
                     M.DevicePointer,
-                    B.DevicePointer
-             );  
+                    B.DevicePointer,
+                    Fopt
+             );
         }
     }
 }
