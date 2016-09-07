@@ -10,6 +10,25 @@
 \usepackage{latexsym}
 \usepackage{cite}
 \usepackage{verbatim}
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  showstringspaces=false,
+  commentstyle=\color{gray}\upshape
+}
+\lstdefinelanguage{XML}
+{
+  basicstyle=\ttfamily\tiny,
+  morestring=[b]",
+  morestring=[s]{>}{<},
+  morecomment=[s]{<?}{?>},
+  stringstyle=\color{black},
+  identifierstyle=\color{blue},
+  keywordstyle=\color{cyan},
+  morekeywords={xmlns,version,type}% list your attributes here
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -395,7 +414,7 @@ COCO framework składa się z zestawu benchmarków napisanych w języku C wraz z
 \section{Wyniki testów}
 
 Poniżej znajdują się wyniki testów naszej biblioteki przy użyciu platformy COCO. % oraz %niezależnych od niej testów czasowych.
-Zestawiamy ze sobą z jednej strony wyniki otrzymane przy użyciu pojedynczego węzła obliczeniowego z drugiej zaś wyniki głównego węzła obliczeniowego klastra mającego do dyspozycji 4 jednostki obliczeniowe, a zatem ma do dyspozycji około 4-krotnie większą liczbę ewaluacji funkcji celu niż pojedynczy węzeł. Porównanie rezultatów wskazuje na nieco lepsze jakościowo rozwiązanie korzystające z obliczeń równoległych. Ogólnie jednak gorsze efekty uzyskane przez nasz program w porównaniu z najlepszymi algorytmami optymalizacyjnymi uwidaczniają słabsze działanie standardowego algorytmu PSO. 
+Zestawiamy ze sobą z jednej strony wyniki otrzymane przy użyciu pojedynczego węzła obliczeniowego z drugiej zaś wyniki głównego węzła obliczeniowego klastra mającego do dyspozycji 4 jednostki obliczeniowe, a zatem ma do dyspozycji około 4-krotnie większą liczbę ewaluacji funkcji, oraz pojedynczego węzła używającego GPU do przeprowadzenia dodatkowych obliczeń. Porównanie rezultatów wskazuje na nieco lepsze jakościowo rozwiązanie korzystające z obliczeń równoległych. Ogólnie jednak gorsze efekty uzyskane przez nasz program w porównaniu z najlepszymi algorytmami optymalizacyjnymi uwidaczniają słabsze działanie standardowego algorytmu PSO. 
 %coco na klastrze jest inne
 
 \subsection{Pojedynczy węzeł obliczeniowy}
@@ -413,6 +432,9 @@ Zestawiamy ze sobą z jednej strony wyniki otrzymane przy użyciu pojedynczego w
 %    \label{fig:poasdasd}
 %\end{figure}
 
+\subsection{Pojedynczy węzeł obliczeniowy z wykorzystaniem GPU}
+
+
 \section{Interpretacja wyników}
 
 Słabsze od optymalnych wyniki algorytmu PSO mogą wskazywać na to, że standardowa jego wersja nie sprawdza się w przypadku bardziej skomplikowanych funkcji. W celu poprawy rezultatów należałoby wprowadzić modyfikacje algorytmu takie jak np. opisana we wstępie hybrydyzacja z innymi algorytmami lub połączenie z innymi wersjami PSO.
@@ -421,9 +443,91 @@ Słabsze od optymalnych wyniki algorytmu PSO mogą wskazywać na to, że standar
 
 \section{Wymagania sprzętowe i programowe}
 
-W celu uruchomienia obliczeń na procesorze graficznym wymagana jest karta graficzna wspierająca wersję (compute capability) 2.0 architektury CUDA.
+Do uruchomienia aplikacji niezbędny jest komputer z systemem operacyjnym Windows z
+platformą .NET 4.5. W celu uruchomienia obliczeń na procesorze graficznym wymagana jest karta graficzna wspierająca wersję (compute capability) 2.0 architektury CUDA.
 
-\section{Instrukcja użytkownika i programisty}
+\section{Instrukcja użytkownika}
+
+\subsection{Interfejs użytkownika}
+Interfejs użytkownika pozwala na uruchomienie obliczeń dla jednej z zestawu predefiniowanych funkcji celu, włączając w to funkcje z benchmarku BBOB, używając zaimplementowanych typów algorytmu PSO. Umożliwia on odpowiednie dobranie parametrów funkcji celu oraz algorytmu. Za jego pomocą możliwym jest również utworzenie klastra obliczeniowego na wielu komputerach. Wybór oraz parametryzacja funkcji, algorytmu oraz konfiguracja klastra są kontrolowane przez odpowiednie pliki konfiguracyjne. 
+\subsubsection{Klaster obliczeniowy}
+Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwe NodeParameters. 
+Dziećmi elementu głównego są elementy:
+\begin{enumerate}
+	\item NrOfVCpu - wartość liczbowa definiująca liczbę węzłów, które zostaną utworzone przez program. Gdy przypiszemy mu wartość -1 obliczenia zostaną uruchomione na liczbie wątków dopasowanej do procesora.
+	\item IsGpu - wartość logiczna włączająca/wyłączająca obliczenia na GPU
+	\item Ip - adres interfejsu sieciowego maszyny, z którym będą mogły połączyć się pozostałe wątki klastra
+	\item Ports - tablica integerów z numerami portów, na których nasłuchiwać będą usługi WCF
+	\item PeerAddress - element zawierający adres węzła, do którego aplikacja powinna się podłączyć. Powinien zostać pominięty w przypadku, gdy użytkownik nie ma zamiaru łączyć się z innymi stacjami
+\end{enumerate}
+Przykładowy plik konfiguracyjny klastra:
+\lstset{language=XML}
+\begin{lstlisting}[frame=single]
+<?xml version="1.0" encoding="utf-8"?>
+<NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <NrOfVCpu>1</NrOfVCpu>
+  <IsGpu>false</IsGpu>
+  <Ip>25.123.241.71</Ip>
+  <Ports>
+    <int>8000</int>
+  </Ports>
+  <PeerAddress>net.tcp://25.123.244.149:8000/NodeService</PeerAddress>
+</NodeParameters>
+\end{lstlisting}
+
+\subsubsection{Algorytm PSO}
+Plik konfigurujący algorytm PSO oraz funkcję celu również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
+Dziećmi elementu głównego są elementy:
+\begin{enumerate}
+	\item Particles - tablica definiująca liczbę oraz rodzaj cząstek użytych do obliczeń
+	\item IterationsLimitCondition, Iterations - wartość logiczna określająca czy warunek stopu ze względu na liczbę iteracji powinien być zastosowany oraz liczba iteracji do wykonania
+	\item TargetValueCondition, TargetValue, Epsilon - wartość logiczna określająca czy warunek stopu ze względu na osiągnięcie optimum powinien być zastosowany, optimum funkcji celu do wykonania oraz dokładność z jaką powinno być osiągnięte
+	\item FunctionParameters - definiujące parametry funkcji celu. Dziećmi tego elementu są:
+	\begin{enumerate}
+		\item FitnessFunctionType - typ funkcji celu. Id funkcji w przypadku funkcji z benchmarku BBOB
+		\item Dimension - wymiar funkcji
+		\item Coefficients - współczynniki funkcji
+		\item SearchSpace - tablica zawierająca dolną i górną granicę dziedziny poszukiwań
+	\end{enumerate}
+
+\end{enumerate}
+\clearpage
+Przykładowy plik konfiguracyjny algorytmu PSO:
+\lstset{language=XML}
+\begin{lstlisting}[frame=single]
+<?xml version="1.0" encoding="utf-8"?>
+<PsoParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Particles>
+    <ParticlesCount>
+      <ParticleType>Standard</ParticleType>
+      <Count>6</Count>
+    </ParticlesCount>
+  </Particles>
+  <IterationsLimitCondition>true</IterationsLimitCondition>
+  <Iterations>1000</Iterations>
+  <TargetValueCondition>false</TargetValueCondition>
+  <TargetValue>0</TargetValue>
+  <Epsilon>0</Epsilon>
+      <FunctionParameters>
+        <FitnessFunctionType>quadratic</FitnessFunctionType>
+        <Dimension>2</Dimension>
+        <Coefficients>
+          <double>1.0</double>
+          <double>1.0</double>
+        </Coefficients>
+        <SearchSpace>
+          <DimensionBound>
+            <Min>-5</Min>
+            <Max>5</Max>
+          </DimensionBound>
+    	  <DimensionBound>
+            <Min>-5</Min>
+            <Max>5</Max>
+          </DimensionBound>
+        </SearchSpace>
+      </FunctionParameters>
+</PsoParameters>
+\end{lstlisting}
 
 %-----------Koniec części zasadniczej-----------
 

@@ -27,7 +27,11 @@
 \contentsline {section}{\numberline {4.2}Wyniki test\IeC {\'o}w}{20}
 \contentsline {subsection}{\numberline {4.2.1}Pojedynczy w\IeC {\k e}ze\IeC {\l } obliczeniowy}{21}
 \contentsline {subsection}{\numberline {4.2.2}Klaster (4 w\IeC {\k e}z\IeC {\l }y obliczeniowe)}{21}
+\contentsline {subsection}{\numberline {4.2.3}Pojedynczy w\IeC {\k e}ze\IeC {\l } obliczeniowy z wykorzystaniem GPU}{21}
 \contentsline {section}{\numberline {4.3}Interpretacja wynik\IeC {\'o}w}{21}
 \contentsline {chapter}{\numberline {5}Wymagania techniczne i instrukcja}{22}
 \contentsline {section}{\numberline {5.1}Wymagania sprz\IeC {\k e}towe i programowe}{22}
-\contentsline {section}{\numberline {5.2}Instrukcja u\IeC {\.z}ytkownika i programisty}{22}
+\contentsline {section}{\numberline {5.2}Instrukcja u\IeC {\.z}ytkownika}{22}
+\contentsline {subsection}{\numberline {5.2.1}Interfejs u\IeC {\.z}ytkownika}{22}
+\contentsline {subsubsection}{Klaster obliczeniowy}{23}
+\contentsline {subsubsection}{Algorytm PSO}{23}
