@@ -11,7 +11,7 @@ namespace Algorithm
         private const double Phi = 1.4;
         private const double Omega = 0.64;
         private int sinceLastImprovement;
-        private const int iterationsToRestart = 10;
+        private const int iterationsToRestart = 500;
 
         public StandardParticle()
         {

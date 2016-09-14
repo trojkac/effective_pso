@@ -13,10 +13,16 @@ namespace Algorithm
 	public class PsoAlgorithm
 	{   
 	    private int _iteration;
+        private int _iterationsSinceImprovement = 0;
+        private const int _iterationsWithoutImprovementLimit = 500;
+        private double[] _currentBest;
+
 	    private readonly IFitnessFunction<double[],double[]> _fitnessFunction;
 	    private readonly IParticle[] _particles;
 	    private ILogger _logger;
 	    private PsoParameters _parameters;
+
+
 	    /// <summary>
 	    /// Creates PsoAlgorithm with specific parameters to solve given problem using precreated particles
 	    /// </summary>
@@ -43,6 +49,7 @@ namespace Algorithm
                 particle.UpdateNeighborhood(_particles);
 
 	        }
+            _currentBest = _fitnessFunction.BestEvaluation.FitnessValue;
 			while (_conditionCheck())
 			{
 			    foreach (var particle in _particles)
@@ -67,12 +74,26 @@ namespace Algorithm
 
 	    private bool _conditionCheck()
 		{
+            var optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
+            //if (optimization.IsBetter(_fitnessFunction.BestEvaluation.FitnessValue, _currentBest) == -1)
+            //{
+            //    _iterationsSinceImprovement = 0;
+            //    _currentBest = _fitnessFunction.BestEvaluation.FitnessValue;
+            //}
+            //else
+            //{
+            //    _iterationsSinceImprovement++;
+            //}
 			return 
                 (!_parameters.IterationsLimitCondition || _iteration++ < _parameters.Iterations)
                 && 
                 (!_parameters.TargetValueCondition ||
-                !(PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(new []{_parameters.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_parameters.Epsilon)));
+                !(optimization.AreClose(new []{_parameters.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_parameters.Epsilon)))
+                //&&
+                //_iterationsSinceImprovement < _iterationsWithoutImprovementLimit           
+                ;
 		}
 
-	};
+
+    };
 }

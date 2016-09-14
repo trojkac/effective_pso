@@ -43,5 +43,24 @@ namespace Tests_Common
             }
             return settings;
         }
+
+        public static PsoParameters QuadraticFunction(int dim)
+        {
+            var settings = QuadraticFunction1DFrom3To5();
+            settings.FunctionParameters.Dimension = dim;
+            settings.Iterations = 1000;
+            settings.IterationsLimitCondition = true;
+            settings.TargetValue = 0.0;
+            settings.TargetValueCondition = true;
+            settings.Epsilon = 1e-8;
+            settings.FunctionParameters.SearchSpace = new DimensionBound[dim];
+            settings.FunctionParameters.Coefficients = new double[dim];
+            for (int i = 0; i < dim; i++)
+            {
+                settings.FunctionParameters.SearchSpace[i] = new DimensionBound(-4.0, 4.0);
+                settings.FunctionParameters.Coefficients[i] = 1;
+            }
+            return settings;
+        }
     }
 }
