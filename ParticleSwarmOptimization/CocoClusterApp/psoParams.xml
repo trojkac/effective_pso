@@ -10,7 +10,7 @@
   <Iterations>1000</Iterations>
   <TargetValueCondition>false</TargetValueCondition>
   <TargetValue>0</TargetValue>
-  <Epsilon>0</Epsilon>
+  <Epsilon>1e-10</Epsilon>
 <!--  <FunctionParameters>-->
 <!--    <FitnessFunctionType>quadratic</FitnessFunctionType>-->
 <!--    <Dimension>20</Dimension>-->

@@ -11,7 +11,7 @@ namespace Algorithm
         private const double Phi = 1.4;
         private const double Omega = 0.64;
         private int sinceLastImprovement;
-        private const int iterationsToRestart = 100;
+        private const int iterationsToRestart = 400;
 
         public StandardParticle()
         {
@@ -62,7 +62,8 @@ namespace Algorithm
         public override void Transpose(IFitnessFunction<double[], double[]> function)
         {
             double[] newLocation;
-            if (sinceLastImprovement == iterationsToRestart)
+            bool restart = sinceLastImprovement == iterationsToRestart;
+            if (restart)
             {
                 newLocation = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, -5, 5);
                 sinceLastImprovement = 0;
@@ -75,12 +76,12 @@ namespace Algorithm
             var oldBest = PersonalBest;
             CurrentState = new ParticleState(newLocation, newVal);
 
-            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(newVal, PersonalBest.FitnessValue) < 0)
+            if (restart || PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(newVal, PersonalBest.FitnessValue) < 0)
             {
                 PersonalBest = CurrentState;
                 sinceLastImprovement = 0;
             }
-            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(oldBest.FitnessValue, PersonalBest.FitnessValue, 1e-5))
+            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(oldBest.FitnessValue, PersonalBest.FitnessValue, 1e-10))
             {
                 sinceLastImprovement++;
             }
