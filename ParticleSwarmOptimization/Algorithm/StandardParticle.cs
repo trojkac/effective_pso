@@ -10,12 +10,10 @@ namespace Algorithm
     {
         private const double Phi = 1.4;
         private const double Omega = 0.64;
-        private int sinceLastImprovement;
-        private const int iterationsToRestart = 500;
+
 
         public StandardParticle()
         {
-            sinceLastImprovement = 0;
         }
 
         private double[] GetClampedLocation(double[] vector)
@@ -30,10 +28,10 @@ namespace Algorithm
             PersonalBest = particleState;
             Velocity = velocity;
             Bounds = bounds;
-
+            
         }
 
-      
+
         public override void UpdateVelocity()
         {
             var globalBest = PersonalBest;
@@ -61,30 +59,15 @@ namespace Algorithm
 
         public override void Transpose(IFitnessFunction<double[], double[]> function)
         {
-            double[] newLocation; 
-            if (sinceLastImprovement == iterationsToRestart)
-            {
-                newLocation = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, -5, 5);
-                sinceLastImprovement = 0;
-            }
-            else
-            {
-                newLocation = GetClampedLocation(CurrentState.Location.Select((x, i) => x + Velocity[i]).ToArray());
-            }
+            var newLocation = GetClampedLocation(CurrentState.Location.Select((x, i) => x + Velocity[i]).ToArray());
             var newVal = function.Evaluate(newLocation);
-            var oldBest = PersonalBest;
+            
             CurrentState = new ParticleState(newLocation, newVal);
 
             if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(newVal,PersonalBest.FitnessValue) < 0)
             {
                 PersonalBest = CurrentState;
-                sinceLastImprovement = 0;
             }
-            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(oldBest.FitnessValue,PersonalBest.FitnessValue, 1e-5))
-            {
-                sinceLastImprovement++;
-            }
-         
         }
 
         public override void UpdateNeighborhood(IParticle[] allParticles)

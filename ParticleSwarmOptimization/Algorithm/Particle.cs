@@ -16,6 +16,17 @@ namespace Algorithm
 
         protected IParticle[] Neighborhood;
         public abstract void Init(ParticleState state, double[] velocity, DimensionBound[] bounds = null);
+        public void InitializeVelocity(IParticle particle)
+        {
+            if (Velocity == null)
+            {
+                return;
+            }
+            for (var i = 0; i < Velocity.Length; i++)
+            {
+                Velocity[i] = (particle.CurrentState.Location[i] - CurrentState.Location[i]) / 2;
+            }
+        }
         public abstract void UpdateVelocity();
         public abstract void Transpose(IFitnessFunction<double[], double[]> function);
         public abstract void UpdateNeighborhood(IParticle[] allParticles);
