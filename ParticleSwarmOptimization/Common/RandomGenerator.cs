@@ -39,6 +39,11 @@ namespace Common
             }
             return v;
         }
+
+        public int RandomInt(int min, int max)
+        {
+            return Random.Next(min,max);
+        }
         public static  RandomGenerator GetInstance(int? seed = null)
         {
             if (_generator != null && seed != _seed && seed != null)

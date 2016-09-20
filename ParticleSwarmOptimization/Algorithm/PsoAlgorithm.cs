@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace Algorithm
 	{   
 	    private int _iteration;
         private int _iterationsSinceImprovement = 0;
-        private const int _iterationsWithoutImprovementLimit = 500;
+        private const int _iterationsWithoutImprovementLimit = 2000;
         private double[] _currentBest;
 
 	    private readonly IFitnessFunction<double[],double[]> _fitnessFunction;
@@ -43,11 +44,19 @@ namespace Algorithm
 
 	    public IState<double[],double[]> Run()
 	    {
-	        foreach (var particle in _particles)
+
+	        for(var i = 0; i < _particles.Length; i++)
 	        {
+	            var particle = _particles[i];
+	            var j = i;
+	            while (j == i || _particles[j].CurrentState.Location == null)
+	            {
+	                j = RandomGenerator.GetInstance().RandomInt(0, _particles.Length);
+	            }
 	            particle.Transpose(_fitnessFunction);
                 particle.UpdateNeighborhood(_particles);
 
+	            particle.InitializeVelocity(_particles[j]);
 	        }
             _currentBest = _fitnessFunction.BestEvaluation.FitnessValue;
 			while (_conditionCheck())
@@ -75,22 +84,22 @@ namespace Algorithm
 	    private bool _conditionCheck()
 		{
             var optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
-            //if (optimization.IsBetter(_fitnessFunction.BestEvaluation.FitnessValue, _currentBest) == -1)
-            //{
-            //    _iterationsSinceImprovement = 0;
-            //    _currentBest = _fitnessFunction.BestEvaluation.FitnessValue;
-            //}
-            //else
-            //{
-            //    _iterationsSinceImprovement++;
-            //}
+            if (optimization.IsBetter(_fitnessFunction.BestEvaluation.FitnessValue, _currentBest) == -1)
+            {
+                _iterationsSinceImprovement = 0;
+                _currentBest = _fitnessFunction.BestEvaluation.FitnessValue;
+            }
+            else
+            {
+                _iterationsSinceImprovement++;
+            }
 			return 
                 (!_parameters.IterationsLimitCondition || _iteration++ < _parameters.Iterations)
                 && 
                 (!_parameters.TargetValueCondition ||
                 !(optimization.AreClose(new []{_parameters.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_parameters.Epsilon)))
-                //&&
-                //_iterationsSinceImprovement < _iterationsWithoutImprovementLimit           
+                &&
+                _iterationsSinceImprovement < _iterationsWithoutImprovementLimit           
                 ;
 		}
 
