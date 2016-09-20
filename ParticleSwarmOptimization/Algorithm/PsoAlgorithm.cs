@@ -15,7 +15,7 @@ namespace Algorithm
 	{   
 	    private int _iteration;
         private int _iterationsSinceImprovement = 0;
-        private const int _iterationsWithoutImprovementLimit = 20000;
+        private const int _iterationsWithoutImprovementLimit = 100;
         private double[] _currentBest;
 
 	    private readonly IFitnessFunction<double[],double[]> _fitnessFunction;
