@@ -60,7 +60,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ProxyParticleTests.cs" />
-    <Compile Include="PsoSettingsFactory.cs" />
     <Compile Include="ServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

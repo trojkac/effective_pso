@@ -89,7 +89,8 @@ namespace Algorithm
 
         public override void UpdateNeighborhood(IParticle[] allParticles)
         {
-            Neighborhood = allParticles.Where(particle => particle.Id == (Id+1)%allParticles.Length || (Id + allParticles.Length - 1)%allParticles.Length == particle.Id).ToArray();
+            Neighborhood = allParticles.Where(particle => particle.Id != Id).ToArray();
+            //allParticles.Where(particle => particle.Id == (Id+1)%allParticles.Length || (Id + allParticles.Length - 1)%allParticles.Length == particle.Id).ToArray();
         }
 
         public override int Id
