@@ -10,12 +10,18 @@ namespace Algorithm
     {
         private const double Phi = 1.4;
         private const double Omega = 0.64;
-        private int sinceLastImprovement;
-        private const int iterationsToRestart = 400;
+        private int _sinceLastImprovement;
+        private readonly int _iterationsToRestart = 50;
+        private readonly double _restartEpsilon;
 
         public StandardParticle()
         {
-            sinceLastImprovement = 0;
+        }
+
+        public StandardParticle(double restartEpsilon, int iterationsToRestart)
+        {
+            _restartEpsilon = restartEpsilon;
+            _iterationsToRestart = iterationsToRestart;
         }
 
         private double[] GetClampedLocation(double[] vector)
@@ -62,11 +68,11 @@ namespace Algorithm
         public override void Transpose(IFitnessFunction<double[], double[]> function)
         {
             double[] newLocation;
-            bool restart = sinceLastImprovement == iterationsToRestart;
+            bool restart = _sinceLastImprovement == _iterationsToRestart;
             if (restart)
             {
-                newLocation = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, -5, 5);
-                sinceLastImprovement = 0;
+                newLocation = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, Bounds);
+                _sinceLastImprovement = 0;
             }
             else
             {
@@ -76,14 +82,14 @@ namespace Algorithm
             var oldBest = PersonalBest;
             CurrentState = new ParticleState(newLocation, newVal);
 
-            if (restart || PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(newVal, PersonalBest.FitnessValue) < 0)
+            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(newVal, PersonalBest.FitnessValue) < 0)
             {
                 PersonalBest = CurrentState;
-                sinceLastImprovement = 0;
+                _sinceLastImprovement = 0;
             }
-            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(oldBest.FitnessValue, PersonalBest.FitnessValue, 1e-10))
+            if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().AreClose(oldBest.FitnessValue, PersonalBest.FitnessValue, _restartEpsilon))
             {
-                sinceLastImprovement++;
+                _sinceLastImprovement++;
             }
         }
 

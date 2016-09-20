@@ -12,8 +12,11 @@ namespace Algorithm
             int locationDim, 
             int fitnessDim,
             IFitnessFunction<double[],double[]> function, 
+            double restartEpsilon=double.MaxValue,
+            int iterationsToRestart=int.MaxValue,
             DimensionBound[] bounds = null, 
-            double[] initVelocity = null)
+            double[] initVelocity = null
+            )
         {
             IParticle particle = null;
             var rand = RandomGenerator.GetInstance();
@@ -21,7 +24,7 @@ namespace Algorithm
             {
                 case PsoParticleType.Standard:
                 case PsoParticleType.FullyInformed:
-                    particle = new StandardParticle();
+                    particle = new StandardParticle(restartEpsilon, iterationsToRestart);
                     break;
             }
 

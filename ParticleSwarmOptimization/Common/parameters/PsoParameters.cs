@@ -14,6 +14,10 @@ namespace Common.Parameters
         [DataMember]
         public ParticlesCount[] Particles;
 
+        [DataMember] public int ParticleIterationsToRestart;
+
+        [DataMember] public int PsoIterationsToRestart;
+
         [DataMember(IsRequired = true)]
         public bool IterationsLimitCondition;
 

@@ -15,7 +15,6 @@ namespace Algorithm
 	{   
 	    private int _iteration;
         private int _iterationsSinceImprovement = 0;
-        private const int _iterationsWithoutImprovementLimit = 100;
         private double[] _currentBest;
 
 	    private readonly IFitnessFunction<double[],double[]> _fitnessFunction;
@@ -84,7 +83,7 @@ namespace Algorithm
 	    private bool _conditionCheck()
 		{
             var optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
-            if (optimization.IsBetter(_fitnessFunction.BestEvaluation.FitnessValue, _currentBest) == -1)
+            if (optimization.AreClose(_fitnessFunction.BestEvaluation.FitnessValue, _currentBest, _parameters.Epsilon))
             {
                 _iterationsSinceImprovement = 0;
                 _currentBest = _fitnessFunction.BestEvaluation.FitnessValue;
@@ -99,7 +98,7 @@ namespace Algorithm
                 (!_parameters.TargetValueCondition ||
                 !(optimization.AreClose(new []{_parameters.TargetValue},_fitnessFunction.BestEvaluation.FitnessValue,_parameters.Epsilon)))
                 &&
-                _iterationsSinceImprovement < _iterationsWithoutImprovementLimit           
+                _iterationsSinceImprovement < _parameters.PsoIterationsToRestart           
                 ;
 		}
 
