@@ -40,19 +40,8 @@ namespace Algorithm
         }
 
 
-        public override void UpdateVelocity()
+        public override void UpdateVelocity(IState<double[], double[]> globalBest)
         {
-            var globalBest = PersonalBest;
-
-            // 1. Find global best
-            foreach (var particle in Neighborhood)
-            {
-                if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(particle.PersonalBest.FitnessValue,PersonalBest.FitnessValue)<0)
-                {
-                    globalBest = particle.PersonalBest;
-                }
-            }
-
             // 2.  get vectors o personal and global best
             var toPersonalBest = PsoServiceLocator.Instance.GetService<IMetric<double[]>>().VectorBetween(CurrentState.Location,PersonalBest.Location);
             var toGlobalBest = PsoServiceLocator.Instance.GetService<IMetric<double[]>>().VectorBetween(CurrentState.Location, globalBest.Location);
@@ -69,7 +58,7 @@ namespace Algorithm
         {
             double[] newLocation;
             bool restart = _sinceLastImprovement == _iterationsToRestart;
-            if (restart)
+            if (false)
             {
                 newLocation = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, Bounds);
                 _sinceLastImprovement = 0;

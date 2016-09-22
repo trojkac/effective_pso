@@ -10,7 +10,7 @@
   <Iterations>1000</Iterations>
   <TargetValueCondition>false</TargetValueCondition>
   <TargetValue>0</TargetValue>
-  <PsoIterationsToRestart>100000</PsoIterationsToRestart>
+  <PsoIterationsToRestart>13</PsoIterationsToRestart>
   <ParticleIterationsToRestart>500</ParticleIterationsToRestart>
   <Epsilon>1e-10</Epsilon>
 <!--  <FunctionParameters>-->

@@ -49,7 +49,7 @@ namespace ManagedGPU
             get { return _id; }
         }
 
-        public override void UpdateVelocity() { }
+        public override void UpdateVelocity(IState<double[], double[]> globalBest) { }
 
         private void PullGpuState()
         {

@@ -27,7 +27,7 @@ namespace Algorithm
                 Velocity[i] = (particle.CurrentState.Location[i] - CurrentState.Location[i]) / 2;
             }
         }
-        public abstract void UpdateVelocity();
+        public abstract void UpdateVelocity(IState<double[], double[]> globalBest);
         public abstract void Transpose(IFitnessFunction<double[], double[]> function);
         public abstract void UpdateNeighborhood(IParticle[] allParticles);
         public virtual ParticleState PersonalBest { get; protected set; }

@@ -11,7 +11,6 @@ namespace CocoClusterApp
     class Program
     {
 
-        public const int IndependentRestarts = 10000;
         public const int RandomSeed = 12;
         public static Problem Problem;
 
@@ -74,25 +73,30 @@ namespace CocoClusterApp
                     /* Iterate over all problems in the suite */
                     while ((Problem = benchmark.getNextProblem()) != null)
                     {
+                        var restarts = -1;
                         FitnessFunction function;
                         if (!functionsToOptimize.Contains(Problem.FunctionNumber)) continue;
-
+                        var evaluations = 0l;
                         var settings = SetupOptimizer(psoParams, out function);
-                        for (var i = 0; i < IndependentRestarts; i++)
+                        do
                         {
+                            restarts++;
+
                             var evalsDone = Problem.getEvaluations();
-                            var evaluations = settings.FunctionParameters.Dimension*budgetMultiplier - evalsDone;
+                            evaluations = settings.FunctionParameters.Dimension*budgetMultiplier - evalsDone;
 
                             settings.Iterations =
                                 (int) Math.Ceiling(evaluations/(double) settings.Particles.Sum(pc => pc.Count));
 
                             /* Break the loop if the target was hit or there are no more remaining evaluations */
-                            if (Problem.isFinalTargetHit() || (evaluations <= 0))
-                                break;
 
                             machineManager.StartPsoAlgorithm(psoParams);
                             machineManager.GetResult();
-                        }
+                        } while (!(Problem.isFinalTargetHit() || (evaluations <= 0)));
+                         Console.WriteLine("{0} evaluations", Problem.getEvaluations());
+                         Console.WriteLine("{0} restarts", restarts);
+
+
 
 
                     }
@@ -115,7 +119,7 @@ namespace CocoClusterApp
         private static PsoParameters SetupOptimizer(PsoParameters initialSettings, out FitnessFunction function)
         {
             var dimension = Problem.getDimension();
-            var particlesNum = dimension * 3;
+            var particlesNum = 40;//dimension * 3;
             var settings = initialSettings;
          
             settings.TargetValueCondition = false;
