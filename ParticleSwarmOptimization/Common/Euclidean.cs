@@ -14,5 +14,10 @@ namespace Common
         {
             return @from.Select((x, i) => to[i] - x).ToArray();
         }
+
+        public double Norm(double[] position)
+        {
+            return Math.Sqrt(position.Select(x => x*x).Sum());
+        }
     }
 }

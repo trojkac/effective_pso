@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractFitnessFunction.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="FunctionFactory.cs" />
     <Compile Include="Euclidean.cs" />
     <Compile Include="FirstValueOptimization.cs" />

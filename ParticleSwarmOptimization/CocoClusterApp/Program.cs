@@ -13,10 +13,10 @@ namespace CocoClusterApp
 
         public const int RandomSeed = 12;
         public static Problem Problem;
-
+        public static bool useCharged;
         static void Main(string[] args)
         {
-            
+
             var timeStr = DateTime.Now.Hour.ToString("D2") + DateTime.Now.Minute.ToString("D2");
 
             var nodeParamsDeserialize = new ParametersSerializer<NodeParameters>();
@@ -31,7 +31,8 @@ namespace CocoClusterApp
                 Console.WriteLine("Working...");
                 Console.WriteLine("Press ENTER to finish");
                 ConsoleKeyInfo pressed = new ConsoleKeyInfo();
-                while(pressed.Key != ConsoleKey.Enter){
+                while (pressed.Key != ConsoleKey.Enter)
+                {
                     pressed = Console.ReadKey();
                 };
             }
@@ -46,8 +47,13 @@ namespace CocoClusterApp
                 var functionsFrom = int.Parse(args[1]);
                 var functionsTo = int.Parse(args[2]);
                 var budgetMultiplier = int.Parse(args[3]);
+                useCharged = false;
+                if (args.Length > 4)
+                {
+                    useCharged = bool.Parse(args[4]);
+                }
                 var randomGenerator = RandomGenerator.GetInstance(RandomSeed);
-                CocoLibraryWrapper.cocoSetLogLevel("info");
+                CocoLibraryWrapper.cocoSetLogLevel("warning");
 
                 var functionsToOptimize = new List<string>();
                 for (var i = functionsFrom; i <= functionsTo; i++)
@@ -62,8 +68,9 @@ namespace CocoClusterApp
 
                     /* Set some options for the observer. See documentation for other options. */
                     var observerOptions =
-                        "result_folder: PSO_on_bbob_" +
-                        timeStr
+                        "result_folder: " +
+                        String.Format("{0}P_{1}G{2}", psoParams.ParticleIterationsToRestart,
+                            psoParams.PsoIterationsToRestart, useCharged ? "_charged" : "") 
                         + " algorithm_name: PSO"
                         + " algorithm_info: \"A simple Random search algorithm\"";
                     /* Initialize the suite and observer */
@@ -76,25 +83,21 @@ namespace CocoClusterApp
                         var restarts = -1;
                         FitnessFunction function;
                         if (!functionsToOptimize.Contains(Problem.FunctionNumber)) continue;
-                        var evaluations = 0l;
+                        var evaluations = 0L;
                         var settings = SetupOptimizer(psoParams, out function);
                         do
                         {
                             restarts++;
 
                             var evalsDone = Problem.getEvaluations();
-                            evaluations = settings.FunctionParameters.Dimension*budgetMultiplier - evalsDone;
+                            evaluations = settings.FunctionParameters.Dimension * budgetMultiplier - evalsDone;
 
                             settings.Iterations =
-                                (int) Math.Ceiling(evaluations/(double) settings.Particles.Sum(pc => pc.Count));
-
-                            /* Break the loop if the target was hit or there are no more remaining evaluations */
-
+                                (int)Math.Ceiling(evaluations / (double)settings.Particles.Sum(pc => pc.Count));
                             machineManager.StartPsoAlgorithm(psoParams);
                             machineManager.GetResult();
                         } while (!(Problem.isFinalTargetHit() || (evaluations <= 0)));
-                         Console.WriteLine("{0} evaluations", Problem.getEvaluations());
-                         Console.WriteLine("{0} restarts", restarts);
+                        Console.WriteLine("{0} | {1} evaluations | {2} restarts | {3:e} BestEval ", Problem.Id, Problem.getEvaluations(), restarts, function.BestEvaluation.FitnessValue[0]);
 
 
 
@@ -118,12 +121,12 @@ namespace CocoClusterApp
 
         private static PsoParameters SetupOptimizer(PsoParameters initialSettings, out FitnessFunction function)
         {
-            var dimension = Problem.getDimension();
-            var particlesNum = 40;//dimension * 3;
+            var particlesNum = initialSettings.ParticlesCount;
             var settings = initialSettings;
-         
+
             settings.TargetValueCondition = false;
             settings.IterationsLimitCondition = true;
+
 
             function = new FitnessFunction(Problem.evaluateFunction);
             FunctionFactory.SaveToCache(Problem.Id, function);
@@ -142,9 +145,16 @@ namespace CocoClusterApp
                 FitnessFunctionType = Problem.Id
             };
             settings.FunctionParameters.SearchSpace = bounds;
-            settings.Particles = new ParticlesCount[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) };
+            settings.Particles = useCharged ?
+                new[] { new ParticlesCount(PsoParticleType.Standard, 
+                    (int)Math.Ceiling(particlesNum/2.0)), 
+                    new ParticlesCount(PsoParticleType.ChargedParticle, (int)Math.Floor(particlesNum/2.0)),  }
+                    :
+                    new[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) }
+
+                    ;
             return settings;
-          
+
         }
     }
 }
