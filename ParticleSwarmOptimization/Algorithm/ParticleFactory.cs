@@ -29,6 +29,9 @@ namespace Algorithm
                 case PsoParticleType.ChargedParticle:
                     particle = new ChargedParticle();
                     break;
+                case PsoParticleType.DummyParticle:
+                    particle = new DummyParticle();
+                    break;
             }
 
             var x = bounds != null ? rand.RandomVector(locationDim, bounds) : rand.RandomVector(locationDim);

@@ -94,10 +94,10 @@ namespace Node
             }
         }
 
-        public void StartCalculations(PsoParameters parameters)
+        public void StartCalculations(PsoParameters parameters, PsoParameters parametersToSend = null)
         {
             if (PsoController.CalculationsRunning) return;
-            NetworkNodeManager.StartCalculations(parameters);
+            NetworkNodeManager.StartCalculations(parametersToSend ?? parameters);
             Run(parameters, NetworkNodeManager.NodeService.Info);
         }
 

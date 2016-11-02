@@ -4,6 +4,7 @@ namespace Common
     {
         Standard,
         FullyInformed,
-        ChargedParticle
+        ChargedParticle,
+        DummyParticle
     }
 }

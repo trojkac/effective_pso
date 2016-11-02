@@ -94,7 +94,19 @@ namespace CocoClusterApp
 
                             settings.Iterations =
                                 (int)Math.Ceiling(evaluations / (double)settings.Particles.Sum(pc => pc.Count));
-                            machineManager.StartPsoAlgorithm(psoParams);
+                            var sendParams = new PsoParameters()
+                            {
+                                Iterations = psoParams.Iterations,
+                                TargetValueCondition = psoParams.TargetValueCondition,
+                                IterationsLimitCondition = psoParams.IterationsLimitCondition,
+                                PsoIterationsToRestart = psoParams.PsoIterationsToRestart,
+                                ParticleIterationsToRestart = psoParams.ParticleIterationsToRestart,
+                                Epsilon = psoParams.Epsilon,
+                                FunctionParameters = psoParams.FunctionParameters,
+                                ParticlesCount = 20,
+                                Particles = new ParticlesCount[1] { new ParticlesCount(PsoParticleType.Standard, 20)}
+                            };
+                            machineManager.StartPsoAlgorithm(psoParams, sendParams);
                             machineManager.GetResult();
                         } while (!(Problem.isFinalTargetHit() || (evaluations <= 0)));
                         Console.WriteLine("{0} | {1} evaluations | {2} restarts | {3:e} BestEval ", Problem.Id, Problem.getEvaluations(), restarts, function.BestEvaluation.FitnessValue[0]);
@@ -145,14 +157,15 @@ namespace CocoClusterApp
                 FitnessFunctionType = Problem.Id
             };
             settings.FunctionParameters.SearchSpace = bounds;
-            settings.Particles = useCharged ?
-                new[] { new ParticlesCount(PsoParticleType.Standard, 
-                    (int)Math.Ceiling(particlesNum/2.0)), 
-                    new ParticlesCount(PsoParticleType.ChargedParticle, (int)Math.Floor(particlesNum/2.0)),  }
-                    :
-                    new[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) }
+            settings.Particles = new[] { new ParticlesCount(PsoParticleType.DummyParticle, 1) };
+            //settings.Particles = useCharged ?
+            //    new[] { new ParticlesCount(PsoParticleType.Standard, 
+            //        (int)Math.Ceiling(particlesNum/2.0)), 
+            //        new ParticlesCount(PsoParticleType.ChargedParticle, (int)Math.Floor(particlesNum/2.0)),  }
+            //        :
+            //        new[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) }
 
-                    ;
+            //        ;
             return settings;
 
         }

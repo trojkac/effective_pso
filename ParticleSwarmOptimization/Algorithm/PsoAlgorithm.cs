@@ -51,7 +51,7 @@ namespace Algorithm
 	        {
 	            var particle = _particles[i];
 	            var j = i;
-	            while (j == i || _particles[j].CurrentState.Location == null)
+	            while( _parameters.ParticlesCount != 1 && ( j == i || _particles[j].CurrentState.Location == null ) )
 	            {
 	                j = RandomGenerator.GetInstance().RandomInt(0, _particles.Length);
 	            }

@@ -2,8 +2,11 @@
 <NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <NrOfVCpu>1</NrOfVCpu>
   <IsGpu>false</IsGpu>
-  <Ip>192.168.143.25</Ip>
+  <Ip>25.82.112.193</Ip>
   <Ports>
     <int>8000</int>
   </Ports>
+  <!--<PeerAddress>
+    net.tcp://127.0.0.1:8000/NodeService
+  </PeerAddress>-->
 </NodeParameters>
