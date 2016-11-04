@@ -37,8 +37,8 @@ namespace ManagedGPU
 
             foreach (var particle in Neighborhood)
             {
-                if (PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(particle.PersonalBest.FitnessValue, best.FitnessValue) < 0)
-                    best = particle.PersonalBest;
+                if (Optimization.IsBetter(particle.CurrentState.FitnessValue, best.FitnessValue) < 0)
+                    best = particle.CurrentState;
             }
 
             return best;
@@ -59,7 +59,7 @@ namespace ManagedGPU
             get { return _id; }
         }
 
-        public override void UpdateVelocity() { }
+        public override void UpdateVelocity(IState<double[], double[]> globalBest) { }
 
         private void PullGpuState()
         {
@@ -78,7 +78,7 @@ namespace ManagedGPU
 
         private bool CurrentIsBetterThanBest()
         {
-            return PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().IsBetter(CurrentState.FitnessValue, PersonalBest.FitnessValue) < 0;
+            return Optimization.IsBetter(CurrentState.FitnessValue, PersonalBest.FitnessValue) < 0;
         }
     }
 }

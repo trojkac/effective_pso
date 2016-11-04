@@ -1,31 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CocoWrapper;
 using Common;
 using Common.Parameters;
-using Algorithm;
-using System.Xml;
-using System.Xml.Serialization;
-using System.IO;
 using Node;
-using Narkhedegs.PerformanceMeasurement;
-using ManagedGPU;
 
 namespace CocoClusterApp
 {
     class Program
     {
 
-        public const int IndependentRestarts = 1;
         public const int RandomSeed = 12;
         public static Problem Problem;
-
+        public static bool useCharged;
         static void Main(string[] args)
         {
-            
+
             var timeStr = DateTime.Now.Hour.ToString("D2") + DateTime.Now.Minute.ToString("D2");
 
             var nodeParamsDeserialize = new ParametersSerializer<NodeParameters>();
@@ -40,7 +31,8 @@ namespace CocoClusterApp
                 Console.WriteLine("Working...");
                 Console.WriteLine("Press ENTER to finish");
                 ConsoleKeyInfo pressed = new ConsoleKeyInfo();
-                while(pressed.Key != ConsoleKey.Enter){
+                while (pressed.Key != ConsoleKey.Enter)
+                {
                     pressed = Console.ReadKey();
                 };
             }
@@ -51,19 +43,22 @@ namespace CocoClusterApp
                     Console.WriteLine("CocoSingleCpuApp <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>");
                     return;
                 }
-                var logger = new FileLogger("time_log_" + timeStr);
-                var chronometer = new Chronometer();
-                string dims = args[0];
+                var dims = args[0];
                 var functionsFrom = int.Parse(args[1]);
                 var functionsTo = int.Parse(args[2]);
                 var budgetMultiplier = int.Parse(args[3]);
-                RandomGenerator randomGenerator = RandomGenerator.GetInstance(RandomSeed);
-                CocoLibraryWrapper.cocoSetLogLevel("info");
+                useCharged = false;
+                if (args.Length > 4)
+                {
+                    useCharged = bool.Parse(args[4]);
+                }
+                var randomGenerator = RandomGenerator.GetInstance(RandomSeed);
+                CocoLibraryWrapper.cocoSetLogLevel("warning");
 
                 var functionsToOptimize = new List<string>();
                 for (var i = functionsFrom; i <= functionsTo; i++)
                 {
-                    functionsToOptimize.Add(String.Format("f{0:D3}", i));
+                    functionsToOptimize.Add(string.Format("f{0:D3}", i));
                 }
                 Console.WriteLine("Press any key on the keyboard when ready...");
                 Console.ReadKey();
@@ -73,8 +68,9 @@ namespace CocoClusterApp
 
                     /* Set some options for the observer. See documentation for other options. */
                     var observerOptions =
-                        "result_folder: PSO_on_bbob_" +
-                        timeStr
+                        "result_folder: " +
+                        String.Format("{0}P_{1}G{2}", psoParams.ParticleIterationsToRestart,
+                            psoParams.PsoIterationsToRestart, useCharged ? "_charged" : "") 
                         + " algorithm_name: PSO"
                         + " algorithm_info: \"A simple Random search algorithm\"";
                     /* Initialize the suite and observer */
@@ -84,46 +80,28 @@ namespace CocoClusterApp
                     /* Iterate over all problems in the suite */
                     while ((Problem = benchmark.getNextProblem()) != null)
                     {
+                        var restarts = -1;
+                        FitnessFunction function;
                         if (!functionsToOptimize.Contains(Problem.FunctionNumber)) continue;
-
-                        var dimension = Problem.getDimension();
-                        var particlesNum = dimension * 3;
-                        var evaluations = (long)(dimension * budgetMultiplier);
-
-                        /* Break the loop if the target was hit or there are no more remaining evaluations */
-                        if (Problem.isFinalTargetHit() || (evaluations <= 0))
-                            break;
-
-                        var settings = psoParams;
-                        settings.TargetValueCondition = false;
-                        settings.IterationsLimitCondition = true;
-                        settings.Iterations = (int)Math.Ceiling(evaluations /(double)particlesNum);
-
-                        var function = new FitnessFunction(Problem.evaluateFunction);
-                        FunctionFactory.SaveToCache(Problem.Id, function);
-                        var upper = Problem.getLargestValuesOfInterest();
-                        var bounds =
-                            Problem.getSmallestValuesOfInterest()
-                                .Select((x, i) => new DimensionBound(x, upper[i]))
-                                .ToArray();
-
-                        function.FitnessDim = Problem.getNumberOfObjectives();
-                        function.LocationDim = Problem.getDimension();
-                        settings.FunctionParameters = new FunctionParameters
+                        var evaluations = 0L;
+                        var settings = SetupOptimizer(psoParams, out function);
+                        do
                         {
-                            Dimension = function.LocationDim,
-                            SearchSpace = bounds,
-                            FitnessFunctionType = Problem.Id
-                        };
-                        settings.FunctionParameters.SearchSpace = bounds;
-                        
-                        settings.Particles = new ParticlesCount[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) };
-                        var runtimeMs = chronometer.Measure(() =>
-                        {
+                            restarts++;
+
+                            var evalsDone = Problem.getEvaluations();
+                            evaluations = settings.FunctionParameters.Dimension * budgetMultiplier - evalsDone;
+
+                            settings.Iterations =
+                                (int)Math.Ceiling(evaluations / (double)settings.Particles.Sum(pc => pc.Count));
                             machineManager.StartPsoAlgorithm(psoParams);
                             machineManager.GetResult();
-                        });
-                        logger.Log(String.Format("{0}: {1} {2}", Problem.Id, function.EvaluationsCount, runtimeMs));
+                        } while (!(Problem.isFinalTargetHit() || (evaluations <= 0)));
+                        Console.WriteLine("{0} | {1} evaluations | {2} restarts | {3:e} BestEval ", Problem.Id, Problem.getEvaluations(), restarts, function.BestEvaluation.FitnessValue[0]);
+
+
+
+
                     }
                     benchmark.finalizeBenchmark();
                 }
@@ -138,6 +116,44 @@ namespace CocoClusterApp
 
 
             Console.WriteLine("Done");
+
+        }
+
+        private static PsoParameters SetupOptimizer(PsoParameters initialSettings, out FitnessFunction function)
+        {
+            var particlesNum = initialSettings.ParticlesCount;
+            var settings = initialSettings;
+
+            settings.TargetValueCondition = false;
+            settings.IterationsLimitCondition = true;
+
+
+            function = new FitnessFunction(Problem.evaluateFunction);
+            FunctionFactory.SaveToCache(Problem.Id, function);
+            var upper = Problem.getLargestValuesOfInterest();
+            var bounds =
+                Problem.getSmallestValuesOfInterest()
+                    .Select((x, i) => new DimensionBound(x, upper[i]))
+                    .ToArray();
+
+            function.FitnessDim = Problem.getNumberOfObjectives();
+            function.LocationDim = Problem.getDimension();
+            settings.FunctionParameters = new FunctionParameters
+            {
+                Dimension = function.LocationDim,
+                SearchSpace = bounds,
+                FitnessFunctionType = Problem.Id
+            };
+            settings.FunctionParameters.SearchSpace = bounds;
+            settings.Particles = useCharged ?
+                new[] { new ParticlesCount(PsoParticleType.Standard, 
+                    (int)Math.Ceiling(particlesNum/2.0)), 
+                    new ParticlesCount(PsoParticleType.ChargedParticle, (int)Math.Floor(particlesNum/2.0)),  }
+                    :
+                    new[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) }
+
+                    ;
+            return settings;
 
         }
     }

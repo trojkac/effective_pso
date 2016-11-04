@@ -8,5 +8,6 @@ namespace Common
     {
         double Distance(TLocation from, TLocation to);
         TLocation VectorBetween(TLocation from, TLocation to);
+        double Norm(TLocation position);
     }
 }

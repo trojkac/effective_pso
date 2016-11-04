@@ -3,6 +3,7 @@ using System.Linq;
 using Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PsoService;
+using Tests_Common;
 
 namespace Tests
 {

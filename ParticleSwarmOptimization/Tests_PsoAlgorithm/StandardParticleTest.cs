@@ -15,7 +15,7 @@ namespace Tests_PsoAlgorithm
             FitnessFunctionEvaluation ffe = values => values;
             var function = new FitnessFunction(ffe);
             var initVelocity = new[] {-1.0, 2, -3, 4};
-            var particle = ParticleFactory.Create(PsoParticleType.Standard, 4, 1, function, null, initVelocity);
+            var particle = ParticleFactory.Create(PsoParticleType.Standard, 4, 1, function,1e-10,100, null, initVelocity);
             var initState = particle.CurrentState;
             particle.Transpose(function);
             for (int i = 0; i < 4; i++)

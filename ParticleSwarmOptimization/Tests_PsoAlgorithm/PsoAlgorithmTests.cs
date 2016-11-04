@@ -13,9 +13,11 @@ namespace Tests_PsoAlgorithm
         [TestMethod]
         public void RunSimpleAlgorithm()
         {
-            var settings = PsoSettingsFactory.QuadraticFunction1DFrom3To5();
+            int dim = 5;
+            var settings = PsoSettingsFactory.QuadraticFunction(dim);
+            settings.Iterations = 250000;
             var function = new QuadraticFunction(settings.FunctionParameters);
-            var particlesNum = 30;
+            var particlesNum = 15;
             var particles = new IParticle[particlesNum];
 
             for (var i = 0; i < particlesNum; i++)
