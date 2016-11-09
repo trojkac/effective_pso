@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using Common;
@@ -44,44 +45,52 @@ namespace Algorithm
 	        _optimizer = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
 	    }
 
-	    public IState<double[],double[]> Run()
+	    public IState<double[],double[]> Run(CancellationToken token = new CancellationToken())
 	    {
-
-	        for(var i = 0; i < _particles.Length; i++)
+	        try
 	        {
-	            var particle = _particles[i];
-	            var j = i;
-	            while( _parameters.ParticlesCount != 1 && ( j == i || _particles[j].CurrentState.Location == null ) )
+	            for (var i = 0; i < _particles.Length; i++)
 	            {
-	                j = RandomGenerator.GetInstance().RandomInt(0, _particles.Length);
-	            }
-	            particle.Transpose(_fitnessFunction);
-                particle.UpdateNeighborhood(_particles);
+	                var particle = _particles[i];
+	                var j = i;
+	                while (_parameters.ParticlesCount != 1 && (j == i || _particles[j].CurrentState.Location == null))
+	                {
+	                    j = RandomGenerator.GetInstance().RandomInt(0, _particles.Length);
+	                }
+	                particle.Transpose(_fitnessFunction);
+	                particle.UpdateNeighborhood(_particles);
 
-	            particle.InitializeVelocity(_particles[j]);
+	                particle.InitializeVelocity(_particles[j]);
+	            }
+	            var _currentBest = GetCurrentBest();
+	            _globalBest = new ParticleState(_currentBest.Location, _currentBest.FitnessValue);
+	            while (_conditionCheck())
+	            {
+	                token.ThrowIfCancellationRequested();
+	                
+	                foreach (var particle in _particles)
+	                {
+	                    particle.Transpose(_fitnessFunction);
+	                }
+	                foreach (var particle in _particles)
+	                {
+	                    particle.UpdateVelocity(_globalBest);
+	                }
+	                if (_logger != null)
+	                {
+	                    _logger.Log(String.Format("ITERATION {0}:", _iteration));
+	                    foreach (var particle in _particles)
+	                    {
+	                        _logger.Log((Particle) particle);
+	                    }
+	                }
+	            }
 	        }
-	        var _currentBest = GetCurrentBest();
-            _globalBest = new ParticleState(_currentBest.Location,_currentBest.FitnessValue);
-			while (_conditionCheck())
-			{
-			    foreach (var particle in _particles)
-			    {
-                    particle.Transpose(_fitnessFunction);
-			    }
-			    foreach (var particle in _particles)
-			    {
-                    particle.UpdateVelocity(_globalBest);
-			    }
-			    if (_logger != null)
-			    {
-			        _logger.Log(String.Format("ITERATION {0}:",_iteration));
-			        foreach (var particle in _particles)
-			        {
-			            _logger.Log((Particle)particle);
-			        }
-			    }
-			}
-			return _fitnessFunction.BestEvaluation;
+	        catch (OperationCanceledException ex)
+	        {
+	            
+	        }
+	        return _fitnessFunction.BestEvaluation;
 		}
 
 	    private bool _conditionCheck()

@@ -79,7 +79,7 @@ namespace Controller
             {
                 RunningParameters = psoParameters;
                 //var r = algorithm.Run(particles,_nodeId.ToString());
-                var r = algorithm.Run();
+                var r = algorithm.Run(token);
                 if (CalculationsCompleted != null) CalculationsCompleted((ParticleState)r);
 
                 return (ParticleState)r;
