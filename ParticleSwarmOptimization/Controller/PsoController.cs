@@ -34,8 +34,15 @@ namespace Controller
 
         public ParticleState Stop()
         {
-            _tokenSource.Cancel();
+            stopCalculationsAndPrepareToken();
             return (ParticleState) _function.BestEvaluation;
+        }
+
+        private void stopCalculationsAndPrepareToken()
+        {
+            _tokenSource.Cancel();
+            _tokenSource.Dispose();
+            _tokenSource = new CancellationTokenSource();
         }
 
         public bool CalculationsRunning { get { return RunningAlgorithm != null && !RunningAlgorithm.IsCompleted; } }

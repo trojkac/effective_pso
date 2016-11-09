@@ -147,7 +147,7 @@ namespace PsoService
 
 
         private int _getBestCounter = 0;
-        private const int RemoteCheckInterval = 1000;
+        private const int RemoteCheckInterval = 200;
         public override ParticleState PersonalBest
         {
             get
