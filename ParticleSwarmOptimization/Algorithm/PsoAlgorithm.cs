@@ -108,12 +108,12 @@ namespace Algorithm
 
 	    private IState<double[], double[]> GetCurrentBest()
 	    {
-            var currentBest = _particles[0].CurrentState;
+            var currentBest = _particles[0].PersonalBest;
             foreach (var particle in _particles)
             {
-                if (particle.CurrentState.FitnessValue != null && _optimizer.IsBetter(currentBest.FitnessValue, particle.CurrentState.FitnessValue) > 0)
+                if (_optimizer.IsBetter(currentBest.FitnessValue, particle.PersonalBest.FitnessValue) > 0)
                 {
-                    currentBest = new ParticleState(particle.CurrentState.Location, particle.CurrentState.FitnessValue);
+                    currentBest = new ParticleState(particle.PersonalBest.Location, particle.PersonalBest.FitnessValue);
                 }
             }
             return currentBest;

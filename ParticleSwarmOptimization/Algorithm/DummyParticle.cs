@@ -16,6 +16,7 @@ namespace Algorithm
 
         public override void UpdateVelocity(Common.IState<double[], double[]> globalBest)
         {
+            CurrentState = new Common.ParticleState(globalBest.Location, globalBest.FitnessValue);
         }
 
         private int fibonacci(int n)
@@ -29,30 +30,12 @@ namespace Algorithm
 
         public override void UpdateNeighborhood(IParticle[] allParticles)
         {
-            if(Neighborhood == null)
-            {
-                Neighborhood = allParticles.Where(particle => particle.Id != Id).ToArray();
-            }
+   
         }
 
         public override void Transpose(Common.IFitnessFunction<double[], double[]> function)
         {
-            var best = CurrentState;
-            if(Neighborhood != null)
-            {
-                foreach (var particle in Neighborhood)
-                {
-                    if (Optimization.IsBetter(best.FitnessValue, particle.PersonalBest.FitnessValue) > 0)
-                        best = particle.PersonalBest;
-                }
-            }
-            
-
-
-            var fitness = function.Evaluate(best.Location);
-            CurrentState = new Common.ParticleState(best.Location, best.FitnessValue);
-            PersonalBest = new Common.ParticleState(best.Location, best.FitnessValue);
-
+            var fitness = function.Evaluate(CurrentState.Location);
         }
     }
 }
