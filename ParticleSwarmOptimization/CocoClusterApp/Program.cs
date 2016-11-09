@@ -157,15 +157,16 @@ namespace CocoClusterApp
                 FitnessFunctionType = Problem.Id
             };
             settings.FunctionParameters.SearchSpace = bounds;
-            settings.Particles = new[] { new ParticlesCount(PsoParticleType.DummyParticle, 1) };
-            //settings.Particles = useCharged ?
-            //    new[] { new ParticlesCount(PsoParticleType.Standard, 
-            //        (int)Math.Ceiling(particlesNum/2.0)), 
-            //        new ParticlesCount(PsoParticleType.ChargedParticle, (int)Math.Floor(particlesNum/2.0)),  }
-            //        :
-            //        new[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) }
+            //settings.Particles = new[] { new ParticlesCount(PsoParticleType.DummyParticle, 1) };
 
-            //        ;
+            settings.Particles = useCharged ?
+                new[] { new ParticlesCount(PsoParticleType.Standard, 
+                    (int)Math.Ceiling(particlesNum/2.0)), 
+                    new ParticlesCount(PsoParticleType.ChargedParticle, (int)Math.Floor(particlesNum/2.0)),  }
+                    :
+                    new[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) }
+
+                    ;
             return settings;
 
         }

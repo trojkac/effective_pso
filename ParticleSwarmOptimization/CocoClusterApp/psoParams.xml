@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PsoParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ParticlesCount>
-    1
+    20
   </ParticlesCount>
   <Particles>
     <ParticlesCount>
       <ParticleType>Standard</ParticleType>
-      <Count>6</Count>
+      <Count>20</Count>
     </ParticlesCount>
   </Particles>
   <IterationsLimitCondition>true</IterationsLimitCondition>
   <Iterations>1000</Iterations>
   <TargetValueCondition>false</TargetValueCondition>
   <TargetValue>0</TargetValue>
-  <PsoIterationsToRestart>40</PsoIterationsToRestart>
-  <ParticleIterationsToRestart>100</ParticleIterationsToRestart>
+  <PsoIterationsToRestart>40000000</PsoIterationsToRestart>
+  <ParticleIterationsToRestart>10000000</ParticleIterationsToRestart>
   <Epsilon>1e-10</Epsilon>
   <!--  <FunctionParameters>-->
   <!--    <FitnessFunctionType>quadratic</FitnessFunctionType>-->

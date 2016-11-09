@@ -53,8 +53,7 @@ namespace Node
 
         public ParticleState GetResult()
         {
-            _vCpuManagers[0].PsoController.RunningAlgorithm.Wait();
-            return _vCpuManagers[0].PsoController.RunningAlgorithm.Result;
+            return _vCpuManagers[0].GetResult();
         }
     }
 }
