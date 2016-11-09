@@ -83,9 +83,8 @@ namespace CocoClusterApp
                         var restarts = -1;
                         FitnessFunction function;
                         if (!functionsToOptimize.Contains(Problem.FunctionNumber)) continue;
-                        var evaluations = 0L;
                         var settings = SetupOptimizer(psoParams, out function);
-                        var evauluations = settings.FunctionParameters.Dimension * budgetMultiplier;
+                        var evaluations = (long) settings.FunctionParameters.Dimension * budgetMultiplier;
                         var evaluationsLeft = evaluations;
 
                         do
