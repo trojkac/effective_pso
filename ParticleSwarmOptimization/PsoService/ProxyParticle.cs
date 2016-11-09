@@ -121,10 +121,12 @@ namespace PsoService
 
         public override void UpdateNeighborhood(IParticle[] allParticles)
         {
-            _coupledParticle = allParticles.Where(p => p.Id != Id).First();
-            if(_coupledParticle != null)
-                _particleService.UpdateBestState(_coupledParticle.PersonalBest);
-
+            if (_coupledParticle == null)
+            {
+                _coupledParticle = allParticles.Where(p => p.Id != Id).First();
+                if (_coupledParticle != null)
+                    _particleService.UpdateBestState(_coupledParticle.PersonalBest);
+            }
         }
 
         public override void Init(ParticleState state, double[] velocity, DimensionBound[] bounds = null)
@@ -139,6 +141,7 @@ namespace PsoService
 
         public override void UpdateVelocity(IState<double[], double[]> globalBest)
         {
+            _particleService.UpdateBestState((ParticleState)globalBest);
         }
 
         public override void Transpose(IFitnessFunction<double[], double[]> function)
