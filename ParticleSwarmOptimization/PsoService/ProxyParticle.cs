@@ -87,6 +87,7 @@ namespace PsoService
             {
                 var s = _particleClient.GetBestState();
                 _particleService.UpdateBestState(s);
+                _getBestCounter++;
                 _communicationErrorCount = 0;
             }
             catch
@@ -147,13 +148,16 @@ namespace PsoService
 
 
         private int _getBestCounter = 0;
-        private const int RemoteCheckInterval = 25;
+        private const int RemoteCheckInterval = 10;
         public override ParticleState PersonalBest
         {
             get
             {
-                if (_getBestCounter != 0) return _particleService.GetBestState();
-                _getBestCounter = RemoteCheckInterval;
+                if (_getBestCounter == RemoteCheckInterval)
+                {
+                    _getBestCounter = 0;
+                    return _particleService.GetBestState();
+                }
                 return GetRemoteBest();
             }
         }

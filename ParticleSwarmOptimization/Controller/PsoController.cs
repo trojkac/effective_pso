@@ -87,8 +87,10 @@ namespace Controller
 
         public void UpdateResultWithOtherNodes(ParticleState[] bestFrmOtherNodes)
         {
+
             foreach (var particleState in bestFrmOtherNodes)
             {
+                if (particleState.Location == null) continue;
                 _function.Evaluate(particleState.Location);
             }
         }

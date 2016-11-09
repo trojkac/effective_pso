@@ -60,8 +60,7 @@ namespace Tests
             vcpus[0].StartCalculations(settings);
 
 
-            var task = vcpus[0].PsoController.RunningAlgorithm;
-            var result = task.Result;
+            var result = vcpus[0].GetResult() ;
             Assert.AreEqual(0.0, result.FitnessValue[0], 0.1);
         }
 

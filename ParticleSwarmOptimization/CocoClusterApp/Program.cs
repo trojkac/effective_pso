@@ -96,7 +96,7 @@ namespace CocoClusterApp
                                 (int)Math.Ceiling(evaluations / (double)settings.Particles.Sum(pc => pc.Count));
                             var sendParams = new PsoParameters()
                             {
-                                Iterations = psoParams.Iterations,
+                                Iterations = psoParams.Iterations/20,
                                 TargetValueCondition = psoParams.TargetValueCondition,
                                 IterationsLimitCondition = psoParams.IterationsLimitCondition,
                                 PsoIterationsToRestart = psoParams.PsoIterationsToRestart,
