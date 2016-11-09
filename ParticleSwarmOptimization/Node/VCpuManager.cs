@@ -17,7 +17,6 @@ namespace Node
         public IPsoManager PsoRingManager { get; set; }
         private IPsoController _psoController { get; set; }
 
-        private Mutex _calculationsMutex;
 
 
         public VCpuManager(string tcpAddress, int tcpPort, string pipeName, IPsoController psoController = null, IPsoManager psoRingManager = null)
@@ -26,7 +25,6 @@ namespace Node
             _psoController = psoController ?? new PsoController(NetworkNodeManager.NodeService.Info.Id);
             PsoRingManager = psoRingManager ?? new PsoRingManager(NetworkNodeManager.NodeService.Info.Id);
             NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses = PsoRingManager.GetProxyParticlesAddresses();
-            _calculationsMutex = new Mutex();
             var uris = new List<Uri>();
             foreach (var address in NetworkNodeManager.NodeService.Info.ProxyParticlesAddresses)
             {
@@ -49,8 +47,8 @@ namespace Node
         {
             if (_mainNodeInfo == NetworkNodeManager.NodeService.Info)
             {
-                NetworkNodeManager.StopCalculations();
-                _calculationsMutex.ReleaseMutex();
+                var bestFromNodes = NetworkNodeManager.StopCalculations();
+                _psoController.UpdateResultWithOtherNodes(bestFromNodes);
             }
             else
             {
@@ -62,7 +60,7 @@ namespace Node
 
         public ParticleState GetResult()
         {
-            _calculationsMutex.WaitOne();
+            _psoController.RunningAlgorithm.Wait();
             return _psoController.RunningAlgorithm.Result;
         }
 
@@ -104,7 +102,6 @@ namespace Node
         public void StartCalculations(PsoParameters parameters, PsoParameters parametersToSend = null)
         {
             if (_psoController.CalculationsRunning) return;
-            _calculationsMutex.Close();
             NetworkNodeManager.StartCalculations(parametersToSend ?? parameters);
             Run(parameters, NetworkNodeManager.NodeService.Info);
         }

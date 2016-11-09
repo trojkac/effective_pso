@@ -84,5 +84,13 @@ namespace Controller
         {
             throw new NotImplementedException();
         }
+
+        public void UpdateResultWithOtherNodes(ParticleState[] bestFrmOtherNodes)
+        {
+            foreach (var particleState in bestFrmOtherNodes)
+            {
+                _function.Evaluate(particleState.Location);
+            }
+        }
     }
 }

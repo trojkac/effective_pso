@@ -10,7 +10,7 @@
     </ParticlesCount>
   </Particles>
   <IterationsLimitCondition>true</IterationsLimitCondition>
-  <Iterations>1000</Iterations>
+  <Iterations>10000</Iterations>
   <TargetValueCondition>false</TargetValueCondition>
   <TargetValue>0</TargetValue>
   <PsoIterationsToRestart>40000000</PsoIterationsToRestart>

@@ -16,5 +16,6 @@ namespace Controller
         event CalculationCompletedHandler CalculationsCompleted;
         void RemoteControllerFinished(RemoteCalculationsFinishedHandlerArgs args);
         ParticleState Stop();
+        void UpdateResultWithOtherNodes(ParticleState[] bestFromNodes);
     }
 }
