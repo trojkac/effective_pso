@@ -2,7 +2,7 @@
 <NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <NrOfVCpu>1</NrOfVCpu>
   <IsGpu>false</IsGpu>
-  <Ip>25.82.112.193</Ip>
+  <Ip>192.168.1.101</Ip>
   <Ports>
     <int>8000</int>
   </Ports>
