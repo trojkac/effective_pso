@@ -85,18 +85,19 @@ namespace CocoClusterApp
                         if (!functionsToOptimize.Contains(Problem.FunctionNumber)) continue;
                         var evaluations = 0L;
                         var settings = SetupOptimizer(psoParams, out function);
+                        var evauluations = settings.FunctionParameters.Dimension * budgetMultiplier;
+                        var evaluationsLeft = evaluations;
+
                         do
                         {
                             restarts++;
 
-                            var evalsDone = Problem.getEvaluations();
-                            evaluations = settings.FunctionParameters.Dimension * budgetMultiplier - evalsDone;
 
                             settings.Iterations =
-                                (int)Math.Ceiling(evaluations / (double)settings.Particles.Sum(pc => pc.Count));
+                                (int)Math.Ceiling(evaluations / ((double)settings.Particles.Sum(pc => pc.Count)));
                             var sendParams = new PsoParameters()
                             {
-                                Iterations = psoParams.Iterations/20,
+                                Iterations = psoParams.Iterations,
                                 TargetValueCondition = psoParams.TargetValueCondition,
                                 IterationsLimitCondition = psoParams.IterationsLimitCondition,
                                 PsoIterationsToRestart = psoParams.PsoIterationsToRestart,
@@ -108,7 +109,10 @@ namespace CocoClusterApp
                             };
                             machineManager.StartPsoAlgorithm(psoParams, sendParams);
                             machineManager.GetResult();
-                        } while (!(Problem.isFinalTargetHit() || (evaluations <= 0)));
+
+                            var evalsDone = Problem.getEvaluations();
+                            evaluationsLeft  = evaluations - evalsDone;
+                        } while (!Problem.isFinalTargetHit() && evaluationsLeft > 0 );
                         Console.WriteLine("{0} | {1} evaluations | {2} restarts | {3:e} BestEval ", Problem.Id, Problem.getEvaluations(), restarts, function.BestEvaluation.FitnessValue[0]);
 
 
