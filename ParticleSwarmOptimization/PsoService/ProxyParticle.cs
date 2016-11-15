@@ -14,6 +14,10 @@ namespace PsoService
     public class ProxyParticle : Particle
     {
 
+
+        private int _getBestCounter = 0;
+        private const int RemoteCheckInterval = 200;
+        private IParticle _coupledParticle;
         private ProxyManager _proxyManager;
 
         public NetworkNodeInfo RemoteNode { get { return _proxyManager.RemoteNode; } }
@@ -68,10 +72,6 @@ namespace PsoService
         {
         }
 
-
-        private int _getBestCounter = 0;
-        private const int RemoteCheckInterval = 200;
-        private IParticle _coupledParticle;
         public override ParticleState PersonalBest
         {
             get
