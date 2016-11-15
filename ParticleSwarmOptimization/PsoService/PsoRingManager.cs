@@ -9,12 +9,12 @@ namespace PsoService
     public class PsoRingManager : IPsoManager
     {
         public event CommunicationBreakdown CommunicationLost;
-        private Tuple<NetworkNodeInfo, ProxyParticle> _left;
-        private Tuple<NetworkNodeInfo, ProxyParticle> _right;
+        private Tuple<NetworkNodeInfo, ProxyManager> _left;
+        private Tuple<NetworkNodeInfo, ProxyManager> _right;
         public PsoRingManager(ulong nodeId)
         {
-            _left = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
-            _right = new Tuple<NetworkNodeInfo, ProxyParticle>(null, ProxyParticle.CreateProxyParticle(nodeId));
+            _left = new Tuple<NetworkNodeInfo, ProxyManager>(null, new ProxyManager(nodeId, 1));
+            _right = new Tuple<NetworkNodeInfo, ProxyManager>(null, new ProxyManager(nodeId, 2));
 
             _left.Item2.CommunicationBreakdown += OnLeftCommunicationFailure;
             _right.Item2.CommunicationBreakdown += OnRightCommunicationFailure;
@@ -60,12 +60,12 @@ namespace PsoService
             if (_left.Item1 == null || previous.Id != _left.Item1.Id || !previous.ProxyParticlesAddresses.Contains(_left.Item2.RemoteAddress))
             {
                 _left.Item2.UpdateRemoteAddress(previous.ProxyParticlesAddresses[0]);
-                _left = new Tuple<NetworkNodeInfo, ProxyParticle>(previous, _left.Item2);
+                _left = new Tuple<NetworkNodeInfo, ProxyManager>(previous, _left.Item2);
             }
             if (_right.Item1 == null || next.Id != _right.Item1.Id || !next.ProxyParticlesAddresses.Contains(_right.Item2.RemoteAddress))
             {
                 _right.Item2.UpdateRemoteAddress(next.ProxyParticlesAddresses[next.ProxyParticlesAddresses.Length - 1]);
-                _right = new Tuple<NetworkNodeInfo, ProxyParticle>(next, _right.Item2);
+                _right = new Tuple<NetworkNodeInfo, ProxyManager>(next, _right.Item2);
 
             }
         }
@@ -80,7 +80,9 @@ namespace PsoService
 
         public ProxyParticle[] GetProxyParticles()
         {
-            return new[] {_left.Item2, _right.Item2};
+            var particleLeft = new ProxyParticle(_left.Item2);
+            var particleRight = new ProxyParticle(_right.Item2);
+            return new[] { particleLeft, particleRight };
         }
     }
 }
