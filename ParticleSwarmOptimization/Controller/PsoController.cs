@@ -41,6 +41,7 @@ namespace Controller
         private void stopCalculationsAndPrepareToken()
         {
             _tokenSource.Cancel();
+            RunningAlgorithm.Wait();
             _tokenSource.Dispose();
             _tokenSource = new CancellationTokenSource();
         }
