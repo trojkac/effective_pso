@@ -27,6 +27,10 @@ namespace PsoService
         {
             throw new System.NotImplementedException();
         }
+        public void RestartState()
+        {
+            throw new NotImplementedException();
+        }
 
         public static IParticleService CreateClient(string remoteNeighborAddress)
         {

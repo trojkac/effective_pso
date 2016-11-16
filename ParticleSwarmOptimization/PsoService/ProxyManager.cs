@@ -67,7 +67,7 @@ namespace PsoService
         }
         public void RestartState()
         {
-            _particleService = new ParticleService();
+            _particleService.RestartState();
         }
         internal ParticleState GetRemoteBestState()
         {

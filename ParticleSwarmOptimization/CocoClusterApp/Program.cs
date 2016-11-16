@@ -94,19 +94,19 @@ namespace CocoClusterApp
 
                             settings.Iterations =
                                 (int)Math.Ceiling(evaluations / ((double)settings.Particles.Sum(pc => pc.Count)));
-                            var sendParams = new PsoParameters()
-                            {
-                                Iterations = psoParams.Iterations,
-                                TargetValueCondition = psoParams.TargetValueCondition,
-                                IterationsLimitCondition = psoParams.IterationsLimitCondition,
-                                PsoIterationsToRestart = psoParams.PsoIterationsToRestart,
-                                ParticleIterationsToRestart = psoParams.ParticleIterationsToRestart,
-                                Epsilon = psoParams.Epsilon,
-                                FunctionParameters = psoParams.FunctionParameters,
-                                ParticlesCount = 20,
-                                Particles = new ParticlesCount[1] { new ParticlesCount(PsoParticleType.Standard, 20)}
-                            };
-                            machineManager.StartPsoAlgorithm(psoParams, sendParams);
+                            //var sendParams = new PsoParameters()
+                            //{
+                            //    Iterations = psoParams.Iterations,
+                            //    TargetValueCondition = psoParams.TargetValueCondition,
+                            //    IterationsLimitCondition = psoParams.IterationsLimitCondition,
+                            //    PsoIterationsToRestart = psoParams.PsoIterationsToRestart,
+                            //    ParticleIterationsToRestart = psoParams.ParticleIterationsToRestart,
+                            //    Epsilon = psoParams.Epsilon,
+                            //    FunctionParameters = psoParams.FunctionParameters,
+                            //    ParticlesCount = 20,
+                            //    Particles = new ParticlesCount[1] { new ParticlesCount(PsoParticleType.Standard, 20)}
+                            //};
+                            machineManager.StartPsoAlgorithm(psoParams);
                             machineManager.GetResult();
 
                             var evalsDone = Problem.getEvaluations();
@@ -160,16 +160,10 @@ namespace CocoClusterApp
                 FitnessFunctionType = Problem.Id
             };
             settings.FunctionParameters.SearchSpace = bounds;
-            settings.Particles = new[] { new ParticlesCount(PsoParticleType.Standard, 20) };
-            settings.ParticlesCount = 20;
-            //settings.Particles = useCharged ?
-            //    new[] { new ParticlesCount(PsoParticleType.Standard, 
-            //        (int)Math.Ceiling(particlesNum/2.0)), 
-            //        new ParticlesCount(PsoParticleType.ChargedParticle, (int)Math.Floor(particlesNum/2.0)),  }
-            //        :
-            //        new[] { new ParticlesCount(PsoParticleType.Standard, particlesNum) }
 
-            //        ;
+            settings.Particles =
+                new[] { new ParticlesCount(useCharged ? PsoParticleType.ChargedParticle :
+                    PsoParticleType.Standard, particlesNum) };  
             return settings;
 
         }

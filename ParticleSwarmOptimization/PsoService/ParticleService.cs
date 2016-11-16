@@ -38,5 +38,12 @@ namespace PsoService
         {
             BestKnownState = state;
         }
+
+        public void RestartState()
+        {
+            _bestKnownState =
+                new ParticleState(new double[1], PsoServiceLocator.Instance.GetService<IOptimization<double[]>>().WorstValue(1));
+
+        }
     }
 }
