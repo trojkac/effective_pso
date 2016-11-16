@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChargedParticle.cs" />
+    <Compile Include="DummyParticle.cs" />
     <Compile Include="ParticleFactory.cs" />
     <Compile Include="PsoAlgorithm.cs" />
     <Compile Include="IParticle.cs" />

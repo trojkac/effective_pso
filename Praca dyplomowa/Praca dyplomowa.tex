@@ -10,6 +10,25 @@
 \usepackage{latexsym}
 \usepackage{cite}
 \usepackage{verbatim}
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  showstringspaces=false,
+  commentstyle=\color{gray}\upshape
+}
+\lstdefinelanguage{XML}
+{
+  basicstyle=\ttfamily\tiny,
+  morestring=[b]",
+  morestring=[s]{>}{<},
+  morecomment=[s]{<?}{?>},
+  stringstyle=\color{black},
+  identifierstyle=\color{blue},
+  keywordstyle=\color{cyan},
+  morekeywords={xmlns,version,type}% list your attributes here
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -309,20 +328,40 @@ Artykuł \cite{BlockOccupancyGpu} bada zależność między wydajnością algory
 
 \section{Architektura węzła obliczeniowego}
 
-\section{Klaster i komunikacja między węzłami}
+Poniżej przedstawiamy najważniejsze klasy składające się na pojedynczy węzeł obliczeniowy.
 
-\section{Krótkie wprowadzenie do architektury CUDA}
+\subsection{MachineManager}
+Klasa zarządzająca działaniem maszyny. Umożliwiająca wykorzystanie dostępnych zasobów - rozpoznanie liczby wątków procesora oraz obecność karty graficznej i jej kompatybilność z technologią CUDA.
+
+\subsection{VCpuManager}
+Klasa odpowiedzialna za uruchomienie obliczeń algorytmu na pojedynczym wątku procesora oraz połączenie z pozostałymi węzłami klastra. Węzłem nazywamy tutaj pojedynczy wątek procesora, reprezentujący obliczenia jednego roju cząstek. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejsy IPsoManager, który zarządza warstwą logiczną klastra PSO oraz INodeService odpowiedzialny za komunikację pomiędzy węzłami korzystający z technologii WCF.  
+
+
+\subsection{PsoController}
+Klasa, która na podstawie przekazanych jej parametrów problemu oraz algorytmu rozpoczyna wykonanie obliczeń. 
+
+\section{Klaster i komunikacja między węzłami}
+Komunikacja między węzłami przebiega na dwóch opisanych poniżej poziomach. 
+
+\subsection{Komunikacja na poziomie algorytmu}
+Jednym z nich jest komunikacja na poziomie rojów cząstek przekazujących sobie informacje o dotychczas najlepszym odnalezionym położeniu. Połączenia pomiędzy węzłami w tej warstwie zarządzane są przez interfejs IPsoManager, który posiadając informacje o połączonych jednostkach definiuje sąsiedztwa pomiędzy nimi. W przypadku naszego klastra implementuje on strukturę pierścienia, w której każdy węzeł posiada dwóch sąsiadów. Połączenia pomiędzy rojami działającymi wewnątrz jednej maszyny, ale korzystające z różnych wątków procesora przebiegają w ten sam sposób co połączenia między różnymi maszynami. Wszystkie wątki wszystkich maszyn tworzą jeden pierścień. Komunikacja pomiędzy rojami jest dwustronna. Z perspektywy cząstek wewnątrz roju, sąsiedni rój jest reprezentowany przez cząstkę proxy. Ona sama nie jest częścią algorytmu (nie wykonuje ewaluacji funkcji celu), przekazuje jedynie najlepsze znane położenie zwykłej cząstki z nią zespolonej pomiędzy rojami. Lokalnie podaje najlepszy wynik znany cząstce proxy z roju sąsiedniego, natomiast do niej przekazuje informacje od lokalnej cząstki. Poza informacjami przekazywanymi przez cząstki proxy, po zakończeniu obliczeń każdy z węzłów rozsyła do pozostałych argument, dla którego wartość funkcji celu jest najbardziej zbliżona do poszukiwanego optimum.
+
+
+\subsection{Infrastruktura klastra}
+Klaster obliczeniowy jest oparty na topologii pełnej siatki, w której każdy węzeł połączony jest z wszystkimi pozostałymi. Każdy z wątków procesora jest dołączany do sieci niezależnie od pozostałych. Komunikacja realizowana jest za pomocą usług WCF korzystających z protokołu sieciowego TCP. Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów. Każdy z węzłów jest równoważny wszystkim pozostałym, to znaczy nie istnieje centralny serwer zarządzający pracą sieci, dzięki czemu obliczenia mogą być zapoczątkowane przez dowolny z nich. 
+
+\section{Obliczenia na procesorze graficznym}
+\subsection{Krótkie wprowadzenie do architektury CUDA}
 %[Prosty opis bloków, wątków]
 Opis części programu na GPU wymaga krótkiego wprowadzenia do organizacji wątków i pamięci w architekturze CUDA.
 
 Podstawową jednostką obliczeniową 
 %[to chyba niezbyt dobre określenie] 
 w architekturze CUDA jest pojedynczy wątek GPU. Dzięki dostępowi do tysięcy wątków na procesorze graficznym możliwe jest stosowanie modelu SIMT (Single Instruction Multiple Threads). Każdy wątek ma dostęp do swojej lokalnej pamięci wątku. \\
-Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątki. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy.
+Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątki. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
 
-\section{PSO na GPU}
-%[Tytuł roboczy]
-Architektura części naszego programu odpowiadającej za obliczenia na GPU jest inspirowana pracami wspomnianymi powyżej. Całość opiera się na topologii pierścienia.
+\subsection{Implementacja algorytmu dla procesora graficznego}
+Architektura części naszego programu odpowiadającej za obliczenia na GPU jest inspirowana pracami wspomnianymi powyżej. \cite{PsoCuda} \cite{GpuBasedPso} Całość opiera się na topologii pierścienia.
 
 Rój cząstek na GPU działa w synchronizacji z rojem na CPU poprzez wyszczególnienie po obu stronach cząstek odpowiedzialnych za przekazywanie swojej pozycji w roju na danej jednostce obliczeniowej rojowi na drugim procesorze (czyli pośrednio przekazuje pozycję własnego roju). Odnosząc się do topologii pierścienia, można wyobrazić to sobie jako most łączący 2 pierścienie.
 
@@ -332,8 +371,19 @@ Podstawową jednostką w ramach roju na GPU są cząstki w rojach zorganizowanyc
 
 Taka organizacja cząstek pozwala na zmaksymalizowanie zużycia mocy obliczeniowej GPU - liczba cząstek w ogólnym roju odpowiada liczbie dostępnych wątków. Topologia pierścienia pozwala na ograniczenie potrzeby komunikacji międzywątkowej dzięki stałemu zestawowi dwóch sąsiadów. Organizacja mniejszych rojów w blokach wątków umożliwia korzystanie ze znacznie szybszej pamięci dzielonej.
 
-\section{Szczegóły implementacyjne}
+\subsection{Komunikacja między procesorami obliczeniowymi}
+ Celem implementacji algorytmu dla procesorów graficznych było współgranie obliczeń na CPU i GPU. Roje z obu jednostek obliczeniowych tworzą jeden większy rój, dzięki temu szybciej zbiegający algorytm na GPU ma szansę na nakierowanie roju CPU w dobrym kierunku.
+ 
+ Komunikacja odbywa się w sposób niewidoczny dla samego algorytmu PSO poprzez specjalną cząstkę obecną zarówno w roju GPU i CPU. Cząstka ta przy zapytaniu o jej stan przez inną cząstkę z roju CPU odpowiada stanem wybranej cząstki z roju na GPU (analogicznie w przypadku zapytania ze strony GPU).       
+ 
+ Synchronizacja stanów odbywa się co krok algorytmu na GPU. Dzieje się to w sposób przezroczysty dla algorytmu na CPU, ale konieczność pobrania stanu cząstki z pamięci graficznej wymusza drobną modyfikacje algorytmu na GPU.
+ 
+ \subsection{Szczegóły implementacyjne}
 Zestaw narzędzi CUDA udostępnia rozszerzenia jedynie dla języków C i C++. W celu integracji z pozostałą częścią systemu użyta została biblioteka ManagedCUDA, umożliwiająca łatwą kooperację środowisk .NET i CUDA.
+
+Obliczenia na procesorze graficznym zarządzane są przez osobny wątek działający równolegle do algorytmu działającego na CPU. Wątek ten kontroluje inicjalizację środowiska, wykonanie i zakończenie algorytmu oraz komunikację między rojami GPU i CPU. 
+ 
+ Na część natywną, odpowiadającą za działanie algorytmu na procesorze graficznym, składają się części algorytmu PSO, wywoływane przez wątek zarządzający, oraz funkcje używane do benchmarkowania.
 
 \chapter{Testy}
 
@@ -363,15 +413,121 @@ COCO framework składa się z zestawu benchmarków napisanych w języku C wraz z
 
 \section{Wyniki testów}
 
-Poniżej znajdują się wyniki testów naszej biblioteki przy użyciu platformy COCO oraz niezależnych od niej testów czasowych.
+Poniżej znajdują się wyniki testów naszej biblioteki przy użyciu platformy COCO. % oraz %niezależnych od niej testów czasowych.
+Zestawiamy ze sobą z jednej strony wyniki otrzymane przy użyciu pojedynczego węzła obliczeniowego z drugiej zaś wyniki głównego węzła obliczeniowego klastra mającego do dyspozycji 4 jednostki obliczeniowe, a zatem ma do dyspozycji około 4-krotnie większą liczbę ewaluacji funkcji, oraz pojedynczego węzła używającego GPU do przeprowadzenia dodatkowych obliczeń. Porównanie rezultatów wskazuje na nieco lepsze jakościowo rozwiązanie korzystające z obliczeń równoległych. Ogólnie jednak gorsze efekty uzyskane przez nasz program w porównaniu z najlepszymi algorytmami optymalizacyjnymi uwidaczniają słabsze działanie standardowego algorytmu PSO. 
+%coco na klastrze jest inne
+
+\subsection{Pojedynczy węzeł obliczeniowy}
+
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=0.8\textwidth,natwidth=610,natheight=642]{S3/pprldmany-single-%functions/pprldmany.pdf}
+%\end{figure}
+
+\subsection{Klaster (4 węzły obliczeniowe)}
+
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=0.8\textwidth,natwidth=610,natheight=642]{C2/pprldmany-single-%functions/pprldmany.pdf}
+%    \label{fig:poasdasd}
+%\end{figure}
+
+\subsection{Pojedynczy węzeł obliczeniowy z wykorzystaniem GPU}
+
 
 \section{Interpretacja wyników}
+
+Słabsze od optymalnych wyniki algorytmu PSO mogą wskazywać na to, że standardowa jego wersja nie sprawdza się w przypadku bardziej skomplikowanych funkcji. W celu poprawy rezultatów należałoby wprowadzić modyfikacje algorytmu takie jak np. opisana we wstępie hybrydyzacja z innymi algorytmami lub połączenie z innymi wersjami PSO.
 
 \chapter{Wymagania techniczne i instrukcja}
 
 \section{Wymagania sprzętowe i programowe}
 
-\section{Instrukcja użytkownika i programisty}
+Do uruchomienia aplikacji niezbędny jest komputer z systemem operacyjnym Windows z
+platformą .NET 4.5. W celu uruchomienia obliczeń na procesorze graficznym wymagana jest karta graficzna wspierająca wersję (compute capability) 2.0 architektury CUDA.
+
+\section{Instrukcja użytkownika}
+
+\subsection{Interfejs użytkownika}
+Interfejs użytkownika pozwala na uruchomienie obliczeń dla jednej z zestawu predefiniowanych funkcji celu, włączając w to funkcje z benchmarku BBOB, używając zaimplementowanych typów algorytmu PSO. Umożliwia on odpowiednie dobranie parametrów funkcji celu oraz algorytmu. Za jego pomocą możliwym jest również utworzenie klastra obliczeniowego na wielu komputerach. Wybór oraz parametryzacja funkcji, algorytmu oraz konfiguracja klastra są kontrolowane przez odpowiednie pliki konfiguracyjne. 
+\subsubsection{Klaster obliczeniowy}
+Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwe NodeParameters. 
+Dziećmi elementu głównego są elementy:
+\begin{enumerate}
+	\item NrOfVCpu - wartość liczbowa definiująca liczbę węzłów, które zostaną utworzone przez program. Gdy przypiszemy mu wartość -1 obliczenia zostaną uruchomione na liczbie wątków dopasowanej do procesora.
+	\item IsGpu - wartość logiczna włączająca/wyłączająca obliczenia na GPU
+	\item Ip - adres interfejsu sieciowego maszyny, z którym będą mogły połączyć się pozostałe wątki klastra
+	\item Ports - tablica integerów z numerami portów, na których nasłuchiwać będą usługi WCF
+	\item PeerAddress - element zawierający adres węzła, do którego aplikacja powinna się podłączyć. Powinien zostać pominięty w przypadku, gdy użytkownik nie ma zamiaru łączyć się z innymi stacjami
+\end{enumerate}
+Przykładowy plik konfiguracyjny klastra:
+\lstset{language=XML}
+\begin{lstlisting}[frame=single]
+<?xml version="1.0" encoding="utf-8"?>
+<NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <NrOfVCpu>1</NrOfVCpu>
+  <IsGpu>false</IsGpu>
+  <Ip>25.123.241.71</Ip>
+  <Ports>
+    <int>8000</int>
+  </Ports>
+  <PeerAddress>net.tcp://25.123.244.149:8000/NodeService</PeerAddress>
+</NodeParameters>
+\end{lstlisting}
+
+\subsubsection{Algorytm PSO}
+Plik konfigurujący algorytm PSO oraz funkcję celu również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
+Dziećmi elementu głównego są elementy:
+\begin{enumerate}
+	\item Particles - tablica definiująca liczbę oraz rodzaj cząstek użytych do obliczeń
+	\item IterationsLimitCondition, Iterations - wartość logiczna określająca czy warunek stopu ze względu na liczbę iteracji powinien być zastosowany oraz liczba iteracji do wykonania
+	\item TargetValueCondition, TargetValue, Epsilon - wartość logiczna określająca czy warunek stopu ze względu na osiągnięcie optimum powinien być zastosowany, optimum funkcji celu do wykonania oraz dokładność z jaką powinno być osiągnięte
+	\item FunctionParameters - definiujące parametry funkcji celu. Dziećmi tego elementu są:
+	\begin{enumerate}
+		\item FitnessFunctionType - typ funkcji celu. Id funkcji w przypadku funkcji z benchmarku BBOB
+		\item Dimension - wymiar funkcji
+		\item Coefficients - współczynniki funkcji
+		\item SearchSpace - tablica zawierająca dolną i górną granicę dziedziny poszukiwań
+	\end{enumerate}
+
+\end{enumerate}
+\clearpage
+Przykładowy plik konfiguracyjny algorytmu PSO:
+\lstset{language=XML}
+\begin{lstlisting}[frame=single]
+<?xml version="1.0" encoding="utf-8"?>
+<PsoParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Particles>
+    <ParticlesCount>
+      <ParticleType>Standard</ParticleType>
+      <Count>6</Count>
+    </ParticlesCount>
+  </Particles>
+  <IterationsLimitCondition>true</IterationsLimitCondition>
+  <Iterations>1000</Iterations>
+  <TargetValueCondition>false</TargetValueCondition>
+  <TargetValue>0</TargetValue>
+  <Epsilon>0</Epsilon>
+      <FunctionParameters>
+        <FitnessFunctionType>quadratic</FitnessFunctionType>
+        <Dimension>2</Dimension>
+        <Coefficients>
+          <double>1.0</double>
+          <double>1.0</double>
+        </Coefficients>
+        <SearchSpace>
+          <DimensionBound>
+            <Min>-5</Min>
+            <Max>5</Max>
+          </DimensionBound>
+    	  <DimensionBound>
+            <Min>-5</Min>
+            <Max>5</Max>
+          </DimensionBound>
+        </SearchSpace>
+      </FunctionParameters>
+</PsoParameters>
+\end{lstlisting}
 
 %-----------Koniec części zasadniczej-----------
 

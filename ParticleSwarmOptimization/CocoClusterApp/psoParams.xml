@@ -1,122 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PsoParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ParticlesCount>
+    20
+  </ParticlesCount>
   <Particles>
     <ParticlesCount>
       <ParticleType>Standard</ParticleType>
-      <Count>6</Count>
+      <Count>20</Count>
     </ParticlesCount>
   </Particles>
   <IterationsLimitCondition>true</IterationsLimitCondition>
-  <Iterations>1000</Iterations>
+  <Iterations>10000</Iterations>
   <TargetValueCondition>false</TargetValueCondition>
   <TargetValue>0</TargetValue>
-  <Epsilon>0</Epsilon>
-<!--  <FunctionParameters>-->
-<!--    <FitnessFunctionType>quadratic</FitnessFunctionType>-->
-<!--    <Dimension>20</Dimension>-->
-<!--    <Coefficients>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--      <double>1.0</double>-->
-<!--    </Coefficients>-->
-<!--    <SearchSpace>-->
-<!--      <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--	  <DimensionBound>-->
-<!--        <Min>-5</Min>-->
-<!--        <Max>5</Max>-->
-<!--      </DimensionBound>-->
-<!--    </SearchSpace>-->
-<!--  </FunctionParameters>-->
+  <PsoIterationsToRestart>40000000</PsoIterationsToRestart>
+  <ParticleIterationsToRestart>10000000</ParticleIterationsToRestart>
+  <Epsilon>1e-10</Epsilon>
+  <!--  <FunctionParameters>-->
+  <!--    <FitnessFunctionType>quadratic</FitnessFunctionType>-->
+  <!--    <Dimension>20</Dimension>-->
+  <!--    <Coefficients>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--      <double>1.0</double>-->
+  <!--    </Coefficients>-->
+  <!--    <SearchSpace>-->
+  <!--      <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--	  <DimensionBound>-->
+  <!--        <Min>-5</Min>-->
+  <!--        <Max>5</Max>-->
+  <!--      </DimensionBound>-->
+  <!--    </SearchSpace>-->
+  <!--  </FunctionParameters>-->
 </PsoParameters>

@@ -16,5 +16,7 @@ namespace PsoService
         ParticleState GetBestState();
 
         void UpdateBestState(ParticleState state);
+
+        void RestartState();
     }
 }

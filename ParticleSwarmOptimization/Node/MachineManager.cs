@@ -46,15 +46,14 @@ namespace Node
                 vcpu.NetworkNodeManager.Register(new NetworkNodeInfo(remoteAddress, "asd"));
             }
         }
-        public void StartPsoAlgorithm(PsoParameters parameters)
+        public void StartPsoAlgorithm(PsoParameters parameters, PsoParameters paramsToSend = null)
         {
-            _vCpuManagers[0].StartCalculations(parameters);
+            _vCpuManagers[0].StartCalculations(parameters, paramsToSend);
         }
 
         public ParticleState GetResult()
         {
-            _vCpuManagers[0].PsoController.RunningAlgorithm.Wait();
-            return _vCpuManagers[0].PsoController.RunningAlgorithm.Result;
+            return _vCpuManagers[0].GetResult();
         }
     }
 }

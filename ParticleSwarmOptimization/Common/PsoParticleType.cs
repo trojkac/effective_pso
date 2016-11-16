@@ -3,6 +3,8 @@ namespace Common
     public enum PsoParticleType
     {
         Standard,
-        FullyInformed
+        FullyInformed,
+        ChargedParticle,
+        DummyParticle
     }
 }

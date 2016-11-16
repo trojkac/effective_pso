@@ -35,21 +35,29 @@ namespace Controller
 
         public ParticleState Stop()
         {
-            _tokenSource.Cancel();
+            stopCalculationsAndPrepareToken();
             return (ParticleState) _function.BestEvaluation;
+        }
+
+        private void stopCalculationsAndPrepareToken()
+        {
+            _tokenSource.Cancel();
+            RunningAlgorithm.Wait();
+            _tokenSource.Dispose();
+            _tokenSource = new CancellationTokenSource();
         }
 
         public bool CalculationsRunning { get { return RunningAlgorithm != null && !RunningAlgorithm.IsCompleted; } }
         public Task<ParticleState> RunningAlgorithm { get; private set; }
         public PsoParameters RunningParameters { get; private set; }
-        private static List<IParticle> CreateParticles(ParticlesCount[] particlesParameters, IFitnessFunction<double[],double[]> function, int dimensions, DimensionBound[] bounds)
+        private static List<IParticle> CreateParticles(PsoParameters parameters, IFitnessFunction<double[],double[]> function)
         {
             var particles = new List<IParticle>();
-            foreach (var particle in particlesParameters)
+            foreach (var particle in parameters.Particles)
             {
                 for (int i = 0; i < particle.Count; i++)
                 {
-                    var p = ParticleFactory.Create(particle.ParticleType, dimensions, 1, function, bounds);
+                    var p = ParticleFactory.Create(particle.ParticleType, parameters.FunctionParameters.Dimension, 1, function, parameters.Epsilon, parameters.ParticleIterationsToRestart, parameters.FunctionParameters.SearchSpace);
                     particles.Add(p);
                 }
 
@@ -84,6 +92,8 @@ namespace Controller
             var cudaParticle = gpu.Item1;
 
             var particles = CreateParticles(psoParameters.Particles, _function, psoParameters.FunctionParameters.Dimension, psoParameters.FunctionParameters.SearchSpace);
+            _function = FunctionFactory.GetFitnessFunction(psoParameters.FunctionParameters);
+            var particles = CreateParticles(psoParameters, _function);
             if (proxyParticleServices != null)
             {
                 particles.AddRange(proxyParticleServices);
@@ -114,6 +124,16 @@ namespace Controller
         public PsoImplementationType[] GetAvailableImplementationTypes()
         {
             throw new NotImplementedException();
+        }
+
+        public void UpdateResultWithOtherNodes(ParticleState[] bestFrmOtherNodes)
+        {
+
+            foreach (var particleState in bestFrmOtherNodes)
+            {
+                if (particleState.Location == null) continue;
+                _function.Evaluate(particleState.Location);
+            }
         }
     }
 }

@@ -189,6 +189,11 @@ namespace CocoWrapper
             hubert2_coco_evaluate_function(problemPointer, y, xa, &ww);
             //hubert_coco_evaluate_function(problemPointer, y, ytab, xtab);
 
+            for (int i = 0; i < number_of_objectives; i++)
+            {
+                ytab[i] = y[i];
+            }
+
             coco_free_memory(y);
             coco_free_memory(xa);
             coco_free_memory(z);

@@ -80,19 +80,22 @@ namespace NetworkManager
             }
         }
 
-        public void StopCalculations()
+        public ParticleState[] StopCalculations()
         {
+            List<ParticleState> bestFromNodes = new List<ParticleState>();
             foreach (var client in NodeServiceClients)
             {
                 try
                 {
-                    client.StopCalculation();
+                    bestFromNodes.Add(client.StopCalculation());
                 }
                 catch
                 {
                     Debug.WriteLine("failed stoping calculations on {0}",client.Address);
                 }
             }
+
+            return bestFromNodes.ToArray();
         }
 
         public void StartCalculations(PsoParameters parameters, NetworkNodeInfo target)
