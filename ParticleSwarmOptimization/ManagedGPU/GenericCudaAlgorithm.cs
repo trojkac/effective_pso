@@ -8,6 +8,7 @@ namespace ManagedGPU
 {
     public abstract class GenericCudaAlgorithm : IDisposable
     {
+        private int SyncCounter = 200;
         protected bool SyncWithCpu;
 
         protected IFitnessFunction<double[], double[]> FitnessFunction;
@@ -195,7 +196,7 @@ namespace ManagedGPU
                 RunUpdateVelocityKernel();
                 RunTransposeKernel();
 
-                if (!SyncWithCpu) continue;
+                if (!SyncWithCpu || i % SyncCounter != 0) continue;
 
                 PushGpuState();
                 PullCpuState();

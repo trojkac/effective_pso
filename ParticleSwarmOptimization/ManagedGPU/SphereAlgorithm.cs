@@ -36,6 +36,8 @@ namespace ManagedGPU
             Fopt = fopt_arr[0];
         }
 
+
+
         protected override string KernelFile
         {
             get { return "f1_sphere_kernel.ptx"; }
