@@ -189,6 +189,16 @@ __device__ void transform_vars_shift(double* x, int number_of_variables, double*
 	}
 }
 
+__device__ void retransform_vars_shift(double* x, int number_of_variables, double* offset)
+{
+	int i;
+
+	for (i = 0; i < number_of_variables; ++i) {
+		x[i] = x[i] + offset[i];
+	}
+}
+
+
 __device__ void bbob2009_reshape(const size_t DIM, double B[40][40], double *vector) {
 	size_t i, j;
 	for (i = 0; i < DIM; i++) {

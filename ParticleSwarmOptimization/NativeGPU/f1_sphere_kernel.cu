@@ -30,7 +30,7 @@ __device__ double wrapped_fitness_function(double x[], int number_of_variables,
     double temp[1];
     temp[0] = fitness_function(x, number_of_variables);
     transform_obj_shift(temp, 1, fopt);
-
+	retransform_vars_shift(x, number_of_variables, xopt);
     return temp[0];
 }
 
