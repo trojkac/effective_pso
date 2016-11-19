@@ -9,8 +9,6 @@
 __constant__ double d_OMEGA = 0.64;
 __constant__ double d_phi = 1.4;
 
-__constant__ double PI = 3.1415;
-
 __device__ double fitness_function(double x[], int number_of_variables, double* ak, double* bk, double f0)
 {
     size_t i, j;
@@ -21,7 +19,7 @@ __device__ double fitness_function(double x[], int number_of_variables, double* 
     {
         for(j = 0; j < F_WEIERSTRASS_SUMMANDS; ++j)
         {
-            result += cos(2 * 3.1415 * (x[i] + 0.5) * bk[j]) * ak[j];
+            result += cos(coco_two_pi * (x[i] + 0.5) * bk[j]) * ak[j];
         }
     }
     result = 10.0 * pow(result / (double)(long)number_of_variables - f0, 3.0);
@@ -108,7 +106,14 @@ extern "C" {
 
         clamp(particleLoc, dimensionsCount, -5.0, 5.0);
 
-        double newValue = wrapped_fitness_function(particleLoc, dimensionsCount, xopt, fopt, penalty, M, b, ak, bk, f0);
+        double tempLocation[MAX_DIMENSIONS];
+
+        for(int i = 0; i < dimensionsCount; i++)
+        {
+            tempLocation[i] = particleLoc[i];
+        }
+
+        double newValue = wrapped_fitness_function(tempLocation, dimensionsCount, xopt, fopt, penalty, M, b, ak, bk, f0);
 
         if(newValue < personalBestValues[i])
         {

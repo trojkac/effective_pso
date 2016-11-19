@@ -7,8 +7,6 @@
 __constant__ double d_OMEGA = 0.64;
 __constant__ double d_phi = 1.4;
 
-__constant__ double PI = 3.1415;
-
 __device__ double fitness_function(double x[], int number_of_variables, double* xopt, double* rot1, double* rot2)
 {
     double result;
@@ -72,7 +70,7 @@ __device__ double fitness_function(double x[], int number_of_variables, double* 
     {
         sum1 += (x_hat[i] - mu0) * (x_hat[i] - mu0);
         sum2 += (x_hat[i] - mu1) * (x_hat[i] - mu1);
-        sum3 += cos(2 * 3.1415 * z[i]);
+        sum3 += cos(coco_two_pi * z[i]);
     }
     result = coco_double_min(sum1, d * (double)number_of_variables + s * sum2)
         + 10. * ((double)number_of_variables - sum3) + 1e4 * penalty;
@@ -140,7 +138,14 @@ extern "C" {
 
         clamp(particleLoc, dimensionsCount, -5.0, 5.0);
 
-        double newValue = wrapped_fitness_function(particleLoc, dimensionsCount, xopt, rot1, rot2);
+        double tempLocation[MAX_DIMENSIONS];
+
+        for(int i = 0; i < dimensionsCount; i++)
+        {
+            tempLocation[i] = particleLoc[i];
+        }
+
+        double newValue = wrapped_fitness_function(tempLocation, dimensionsCount, xopt, rot1, rot2);
 
         if(newValue < personalBestValues[i])
         {

@@ -7,8 +7,6 @@
 __constant__ double d_OMEGA = 0.64;
 __constant__ double d_phi = 1.4;
 
-__constant__ double PI = 3.1415;
-
 __device__ double fitness_function(double x[], int number_of_variables, double* rotation, int number_of_peaks, double* peak_values, double* x_local, double* arr_scales)
 {
     size_t i, j; /* Loop over dim */
@@ -124,7 +122,14 @@ extern "C" {
 
         clamp(particleLoc, dimensionsCount, -5.0, 5.0);
 
-        double newValue = wrapped_fitness_function(particleLoc, dimensionsCount, rotation, number_of_peaks, peak_values, x_local, arr_scales);
+        double tempLocation[MAX_DIMENSIONS];
+
+        for(int i = 0; i < dimensionsCount; i++)
+        {
+            tempLocation[i] = particleLoc[i];
+        }
+
+        double newValue = wrapped_fitness_function(tempLocation, dimensionsCount, rotation, number_of_peaks, peak_values, x_local, arr_scales);
 
         if(newValue < personalBestValues[i])
         {
