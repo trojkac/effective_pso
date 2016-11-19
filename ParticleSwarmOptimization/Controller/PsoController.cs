@@ -91,7 +91,6 @@ namespace Controller
             var cudaAlgorithm = gpu.Item2;
             var cudaParticle = gpu.Item1;
 
-            _function = FunctionFactory.GetFitnessFunction(psoParameters.FunctionParameters);
             var particles = CreateParticles(psoParameters, _function);
             if (proxyParticleServices != null)
             {

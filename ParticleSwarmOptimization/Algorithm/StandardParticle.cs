@@ -14,15 +14,15 @@ namespace Algorithm
         public StandardParticle(double restartEpsilon, int iterationsToRestart) : base(restartEpsilon,iterationsToRestart)
         {
         }
-
+     
 
 
         public override void UpdateVelocity(IState<double[], double[]> globalBest)
-                {
+        {
             // 1.  get vectors o personal and global best
             var toPersonalBest = Metric.VectorBetween(CurrentState.Location,PersonalBest.Location);
             var toGlobalBest = Metric.VectorBetween(CurrentState.Location, globalBest.Location);
-
+			
 			var phi1 = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length,0,Phi);
             var phi2 = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, 0, Phi);
             

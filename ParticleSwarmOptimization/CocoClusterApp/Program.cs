@@ -18,7 +18,7 @@ namespace CocoClusterApp
         public static bool useCharged;
         static void Main(string[] args)
         {
-            
+
             var timeStr = DateTime.Now.Hour.ToString("D2") + DateTime.Now.Minute.ToString("D2");
 
             var nodeParamsDeserialize = new ParametersSerializer<NodeParameters>();
@@ -141,27 +141,27 @@ namespace CocoClusterApp
             var particlesNum = initialSettings.ParticlesCount;
             var settings = initialSettings;
 
-                        settings.TargetValueCondition = false;
-                        settings.IterationsLimitCondition = true;
+            settings.TargetValueCondition = false;
+            settings.IterationsLimitCondition = true;
 
 
             function = new FitnessFunction(Problem.evaluateFunction);
-                        FunctionFactory.SaveToCache(Problem.Id, function);
-                        var upper = Problem.getLargestValuesOfInterest();
-                        var bounds =
-                            Problem.getSmallestValuesOfInterest()
-                                .Select((x, i) => new DimensionBound(x, upper[i]))
-                                .ToArray();
+            FunctionFactory.SaveToCache(Problem.Id, function);
+            var upper = Problem.getLargestValuesOfInterest();
+            var bounds =
+                Problem.getSmallestValuesOfInterest()
+                    .Select((x, i) => new DimensionBound(x, upper[i]))
+                    .ToArray();
 
-                        function.FitnessDim = Problem.getNumberOfObjectives();
-                        function.LocationDim = Problem.getDimension();
-                        settings.FunctionParameters = new FunctionParameters
-                        {
-                            Dimension = function.LocationDim,
-                            SearchSpace = bounds,
-                            FitnessFunctionType = Problem.Id
-                        };
-                        settings.FunctionParameters.SearchSpace = bounds;
+            function.FitnessDim = Problem.getNumberOfObjectives();
+            function.LocationDim = Problem.getDimension();
+            settings.FunctionParameters = new FunctionParameters
+            {
+                Dimension = function.LocationDim,
+                SearchSpace = bounds,
+                FitnessFunctionType = Problem.Id
+            };
+            settings.FunctionParameters.SearchSpace = bounds;
 
             settings.Particles =
                 new[] { new ParticlesCount(useCharged ? PsoParticleType.ChargedParticle :
