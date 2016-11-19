@@ -2,6 +2,8 @@
 #include <math_functions.h>
 
 const int MAX_DIMENSIONS = 40;
+#define coco_pi 3.14159265358979323846
+#define coco_two_pi 2.0 * 3.14159265358979323846
 
 __device__ double coco_double_round(const double number) {
 	return floor(number + 0.5);
@@ -60,7 +62,7 @@ __device__ void bbob2009_gauss(double *g, const size_t N, const long seed) {
 	bbob2009_unif(uniftmp, 2 * N, seed);
 
 	for (i = 0; i < N; i++) {
-		g[i] = sqrt(-2 * log(uniftmp[i])) * cos(2 * 3.14 * uniftmp[N + i]);
+		g[i] = sqrt(-2 * log(uniftmp[i])) * cos(2 * coco_pi * uniftmp[N + i]);
 		if (g[i] == 0.)
 			g[i] = 1e-99;
 	}
