@@ -9,7 +9,7 @@ namespace ManagedGPU
         protected CudaDeviceVariable<double> M;
         protected CudaDeviceVariable<double> B;
 
-        protected double Fopt;
+
 
         protected double Penalty = 10.0;
 

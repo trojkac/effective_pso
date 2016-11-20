@@ -7,9 +7,9 @@ namespace ManagedGPU
 
         protected CudaDeviceVariable<double> M;
         protected CudaDeviceVariable<double> B;
-        protected CudaDeviceVariable<double> Xopt;
 
-        protected double Fopt;
+
+
         protected double AsymmetricBeta = 0.5;
 
         public override void Dispose()

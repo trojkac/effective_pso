@@ -7,8 +7,6 @@ namespace ManagedGPU
     {
         protected CudaDeviceVariable<double> Xopt;
 
-        protected double Fopt;
-
         public SphereAlgorithm(CudaParams parameters, StateProxy proxy) : base(parameters, proxy) { }
 
         protected override void Init()

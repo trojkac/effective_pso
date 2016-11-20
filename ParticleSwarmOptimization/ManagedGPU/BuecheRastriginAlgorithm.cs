@@ -6,7 +6,7 @@ namespace ManagedGPU
     {
         protected CudaDeviceVariable<double> Xopt;
 
-        protected double Fopt;
+
         protected double Penalty = 100.0;
 
         public override void Dispose()

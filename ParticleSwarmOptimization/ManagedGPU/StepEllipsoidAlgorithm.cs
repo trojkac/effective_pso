@@ -8,7 +8,7 @@ namespace ManagedGPU
         protected CudaDeviceVariable<double> Rotation2;
         protected CudaDeviceVariable<double> Xopt;
 
-        protected double Fopt;
+
 
         public override void Dispose()
         {

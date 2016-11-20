@@ -53,13 +53,16 @@ namespace ManagedGPU
 
         protected CudaDeviceVariable<int> DeviceNeighbors; 
 
-        protected readonly Random Rng = new Random();
+        protected readonly RandomGenerator Random = RandomGenerator.GetInstance();
 
         protected CudaContext Ctx;
 
         protected abstract void Init();
 
         protected abstract string KernelFile { get; }
+
+        protected CudaDeviceVariable<double> Xopt;
+        protected double Fopt;
 
         private CudaDeviceVariable<double> _phis1;
         private CudaDeviceVariable<double> _phis2;
@@ -95,10 +98,11 @@ namespace ManagedGPU
             Transpose.GridDimensions = blocksNum;
             Transpose.BlockDimensions = threadsNum;
 
-            HostPositions = new double[size];
-            HostVelocities = new double[size];
-            HostPersonalBests = new double[size];
-            HostPersonalBestValues = new double[ParticlesCount];
+            HostPositions = Random.RandomVector(size, -5.0, 5.0);
+            HostVelocities = Random.RandomVector(size, -2.0, 2.0);
+            HostPersonalBests = (double[]) HostPositions.Clone();
+            HostPersonalBestValues = Enumerable.Repeat(double.MaxValue,ParticlesCount).ToArray();
+
             HostNeighbors = new int[ParticlesCount * 2];
 
             for (var i = 0; i < ParticlesCount*2; i += 2)
@@ -117,18 +121,6 @@ namespace ManagedGPU
 
                 HostNeighbors[i] = left;
                 HostNeighbors[i + 1] = right;
-            }
-
-            for (var i = 0; i < size; i++)
-            {
-                HostPositions[i] = RandomIn(Rng, -5.0f, 5.0f);
-                HostPersonalBests[i] = HostPositions[i];
-                HostVelocities[i] = RandomIn(Rng, -2.0f, 2.0f);
-            }
-
-            for (var i = 0; i < ParticlesCount; i++)
-            {
-                HostPersonalBestValues[i] = double.MaxValue;
             }
 
             DevicePositions = HostPositions;
@@ -251,16 +243,6 @@ namespace ManagedGPU
         }
 
         protected abstract void RunTransposeKernel();
-
-        protected static double RandomIn(Random rng, double min, double max)
-        {
-            return min + Random(rng) * (max - min);
-        }
-
-        protected static double Random(Random rng)
-        {
-            return rng.NextDouble();
-        }
 
         public virtual void Dispose()
         {

@@ -6,9 +6,7 @@ namespace ManagedGPU
     class RosenbrockAlgorithm : GenericCudaAlgorithm
     {
         protected CudaDeviceVariable<double> MinusOnes; 
-        protected CudaDeviceVariable<double> Xopt;
 
-        protected double Fopt;
         protected double Factor;
 
         public override void Dispose()

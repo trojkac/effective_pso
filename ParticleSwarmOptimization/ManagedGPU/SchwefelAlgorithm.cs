@@ -8,7 +8,7 @@ namespace ManagedGPU
         protected CudaDeviceVariable<double> B;
         protected CudaDeviceVariable<double> Xopt;
 
-        protected double Fopt;
+
 
         protected CudaDeviceVariable<double> Tmp1;
         protected CudaDeviceVariable<double> Tmp2;

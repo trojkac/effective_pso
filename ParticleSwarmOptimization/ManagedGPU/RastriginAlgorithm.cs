@@ -6,7 +6,7 @@ namespace ManagedGPU
     {
         protected CudaDeviceVariable<double> Xopt;
 
-        protected double Fopt;
+
 
         protected double Conditioning = 10.0;
         protected double Asymmetric = 0.2;
