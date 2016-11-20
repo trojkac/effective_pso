@@ -163,9 +163,12 @@ namespace CocoClusterApp
             };
             settings.FunctionParameters.SearchSpace = bounds;
 
-            settings.Particles =
-                new[] { new ParticlesCount(useCharged ? PsoParticleType.ChargedParticle :
-                    PsoParticleType.Standard, particlesNum) };  
+            //settings.Particles = 
+            //    new[] { new ParticlesCount(useCharged ? PsoParticleType.ChargedParticle :
+            //        PsoParticleType.Standard, particlesNum) };  
+
+            settings.Particles = new[] { new ParticlesCount(PsoParticleType.DummyParticle,1)};
+            settings.ParticlesCount = 1;
             return settings;
 
         }

@@ -4,6 +4,8 @@
 const int MAX_DIMENSIONS = 40;
 #define coco_pi 3.14159265358979323846
 #define coco_two_pi 2.0 * 3.14159265358979323846
+#define d_OMEGA 0.64
+#define d_phi 1.4
 
 __device__ double coco_double_round(const double number) {
 	return floor(number + 0.5);
@@ -190,16 +192,6 @@ __device__ void transform_vars_shift(double* x, int number_of_variables, double*
 		x[i] = x[i] - offset[i];
 	}
 }
-
-__device__ void retransform_vars_shift(double* x, int number_of_variables, double* offset)
-{
-	int i;
-
-	for (i = 0; i < number_of_variables; ++i) {
-		x[i] = x[i] + offset[i];
-	}
-}
-
 
 __device__ void bbob2009_reshape(const size_t DIM, double B[40][40], double *vector) {
 	size_t i, j;

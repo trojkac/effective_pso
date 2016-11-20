@@ -49,21 +49,6 @@ namespace ManagedGPU
             get { return "f2_ellipsoidal_kernel.ptx"; }
         }
 
-        protected override void RunUpdateVelocityKernel()
-        {
-            UpdateVelocity.Run(
-                    DevicePositions.DevicePointer,
-                    DeviceVelocities.DevicePointer,
-                    DevicePersonalBests.DevicePointer,
-                    DevicePersonalBestValues.DevicePointer,
-                    DeviceNeighbors.DevicePointer,
-                    ParticlesCount,
-                    DimensionsCount,
-                    Random(Rng),
-                    Random(Rng)
-                );
-        }
-
         protected override void RunTransposeKernel()
         {
             Transpose.Run(

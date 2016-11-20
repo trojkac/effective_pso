@@ -191,6 +191,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <CudaCompile Include="f7_step_ellipsoid.cu" />
     <CudaCompile Include="f8_rosenbrock_kernel.cu" />
     <CudaCompile Include="f9_rosenbrock_rotated_kernel.cu" />
+    <CudaCompile Include="update_velocity_kernel.cu" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bbob_generators.cuh" />

@@ -3,12 +3,14 @@ using System.Linq;
 using System.Threading;
 using Common;
 using ManagedCuda;
+using ManagedCuda.BasicTypes;
+
 
 namespace ManagedGPU
 {
     public abstract class GenericCudaAlgorithm : IDisposable
     {
-        private int SyncCounter = 200;
+        private int SyncCounter = 100;
         protected bool SyncWithCpu;
 
         protected IFitnessFunction<double[], double[]> FitnessFunction;
@@ -59,6 +61,11 @@ namespace ManagedGPU
 
         protected abstract string KernelFile { get; }
 
+        private CudaDeviceVariable<double> _phis1;
+        private CudaDeviceVariable<double> _phis2;
+
+
+
         protected GenericCudaAlgorithm(CudaParams parameters, StateProxy proxy)
         {
             Proxy = proxy;
@@ -69,6 +76,7 @@ namespace ManagedGPU
             SyncWithCpu = parameters.SyncWithCpu;
             FunctionNumber = parameters.FunctionNumber;
             InstanceNumber = parameters.InstanceNumber;
+
         }
 
         protected void InitContext()
@@ -79,7 +87,7 @@ namespace ManagedGPU
             var blocksNum = ParticlesCount / threadsNum;
             Ctx = new CudaContext(0);
 
-            UpdateVelocity = Ctx.LoadKernel(KernelFile, "updateVelocityKernel");
+            UpdateVelocity = Ctx.LoadKernel("update_velocity_kernel.ptx", "updateVelocityKernel");
             UpdateVelocity.GridDimensions = blocksNum;
             UpdateVelocity.BlockDimensions = threadsNum;
 
@@ -210,7 +218,37 @@ namespace ManagedGPU
             return bestValue;
         }
 
-        protected abstract void RunUpdateVelocityKernel();
+        protected  void RunUpdateVelocityKernel()
+        {
+            assignRandoms();
+            UpdateVelocity.Run(
+                    DevicePositions.DevicePointer,
+                    DeviceVelocities.DevicePointer,
+                    DevicePersonalBests.DevicePointer,
+                    DevicePersonalBestValues.DevicePointer,
+                    DeviceNeighbors.DevicePointer,
+                    ParticlesCount,
+                    DimensionsCount,
+                    _phis1.DevicePointer,
+                    _phis2.DevicePointer
+                );
+        }
+        private void assignRandoms()
+        {
+            if(_phis1 == null)
+            {
+                _phis1 = new CudaDeviceVariable<double>(ParticlesCount * DimensionsCount);
+            }
+            if (_phis2 == null)
+            {
+                _phis2 = new CudaDeviceVariable<double>(ParticlesCount * DimensionsCount);
+            }
+            var hostPhis1 = RandomGenerator.GetInstance().RandomVector(DimensionsCount * ParticlesCount, 0, 1);
+            var hostPhis2 = RandomGenerator.GetInstance().RandomVector(DimensionsCount * ParticlesCount, 0, 1);
+            _phis1.CopyToDevice(hostPhis1);
+            _phis2.CopyToDevice(hostPhis2);
+
+        }
 
         protected abstract void RunTransposeKernel();
 
@@ -230,6 +268,8 @@ namespace ManagedGPU
             DevicePersonalBestValues.Dispose();
             DeviceVelocities.Dispose();
             DevicePersonalBests.Dispose();
+            _phis1.Dispose();
+            _phis2.Dispose();
             Ctx.Dispose();
         }
 

@@ -4,8 +4,8 @@
 
 #include "bbob_generators.cuh"
 
-__constant__ double d_OMEGA = 0.64;
-__constant__ double d_phi = 1.4;
+
+
 
 __device__ double fitness_function(double x[], int number_of_variables)
 {
@@ -94,62 +94,6 @@ extern "C" {
 
             for(int i = 0; i < dimensionsCount; i++)
                 particlePersonalBest[i] = particleLoc[i];
-        }
-    }
-
-    __global__ void updateVelocityKernel(
-        double* positions,
-        double* velocities,
-        double* personalBests,
-        double* personalBestValues,
-        int* neighbors,
-        int particlesCount,
-        int dimensionsCount,
-        double phi1,
-        double phi2)
-    {
-        int i = blockIdx.x * blockDim.x + threadIdx.x;
-
-        if(i >= particlesCount) return;
-
-        double* particleLoc = positions + i * dimensionsCount;
-        double* particleVel = velocities + i * dimensionsCount;
-        double* particleBest = personalBests + i * dimensionsCount;
-        double particleBestValue = personalBestValues[i];
-
-        int* particleNeighbors = neighbors + i * 2;
-
-        int leftNeighborId = particleNeighbors[0];
-        double* leftNeighborBest = personalBests + leftNeighborId * dimensionsCount;
-        double leftNeighborBestVal = personalBestValues[leftNeighborId];
-
-        int rightNeighborId = particleNeighbors[1];
-        double* rightNeighborBest = personalBests + rightNeighborId * dimensionsCount;
-        double rightNeighborBestVal = personalBestValues[rightNeighborId];
-
-        double* globalBest = particleBest;
-        double globalBestVal = particleBestValue;
-
-        if(leftNeighborBestVal < globalBestVal)
-        {
-            globalBest = leftNeighborBest;
-            globalBestVal = leftNeighborBestVal;
-        }
-
-        if(rightNeighborBestVal < globalBestVal)
-        {
-            globalBest = rightNeighborBest;
-        }
-
-        double toPersonalBest[MAX_DIMENSIONS];
-        vector_between(particleLoc, particleBest, dimensionsCount, toPersonalBest);
-
-        double toGlobalBest[MAX_DIMENSIONS];
-        vector_between(particleLoc, globalBest, dimensionsCount, toGlobalBest);
-
-        for(int i = 0; i < dimensionsCount; i++)
-        {
-            particleVel[i] = particleVel[i] * d_OMEGA + phi1 * toGlobalBest[i] + phi2 * toPersonalBest[i];
         }
     }
 }
