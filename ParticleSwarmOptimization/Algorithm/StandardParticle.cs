@@ -8,27 +8,21 @@ namespace Algorithm
 {
     public class StandardParticle : Particle
     {
-        private const double Phi = 1.4;
-        private const double Omega = 0.64;
-
-        public StandardParticle(double restartEpsilon, int iterationsToRestart) : base(restartEpsilon,iterationsToRestart)
+        public StandardParticle(double restartEpsilon, int iterationsToRestart) : base(restartEpsilon, iterationsToRestart)
         {
         }
-     
-
 
         public override void UpdateVelocity(IState<double[], double[]> globalBest)
         {
             // 1.  get vectors o personal and global best
-            var toPersonalBest = Metric.VectorBetween(CurrentState.Location,PersonalBest.Location);
+            var toPersonalBest = Metric.VectorBetween(CurrentState.Location, PersonalBest.Location);
             var toGlobalBest = Metric.VectorBetween(CurrentState.Location, globalBest.Location);
-			
-			var phi1 = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length,0,Phi);
-            var phi2 = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, 0, Phi);
-            
-           
+
+            var phi1 = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
+            var phi2 = RandomGenerator.GetInstance().RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
+
             // 2. multiply velocity by Omega and add toGlobalBest and toPersonalBest
-            Velocity = Velocity.Select((v, i) => v*Omega + phi1[i] * toGlobalBest[i] + phi2[i] * toPersonalBest[i]).ToArray();
+            Velocity = Velocity.Select((v, i) => v * Constants.OMEGA + phi1[i] * toGlobalBest[i] + phi2[i] * toPersonalBest[i]).ToArray();
         }
         public override void UpdateNeighborhood(IParticle[] allParticles)
         {
