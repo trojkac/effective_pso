@@ -77,22 +77,22 @@ namespace Controller
         public void Run(PsoParameters psoParameters, IParticle[] proxyParticleServices = null)
         {
             _function = FunctionFactory.GetFitnessFunction(psoParameters.FunctionParameters);
-            var cudaParticle = PrepareCudaAlgorithm(psoParameters);            
-            var particles = PrepareParticles(psoParameters,proxyParticleServices,cudaParticle);
+            //var cudaParticle = PrepareCudaAlgorithm(psoParameters);            
+            var particles = PrepareParticles(psoParameters,proxyParticleServices,null);
             RunningParameters = psoParameters;
             _algorithm = new PsoAlgorithm(psoParameters, _function, particles.ToArray());
 
-            _cudaReadyLock = new AutoResetEvent(false);
-            RunningCudaAlgorithm = Task<ParticleState>.Factory.StartNew(() =>
-            {
-                _cudaAlgorithm.Initialize();
-                _cudaReadyLock.Set();
-                var result = _cudaAlgorithm.Run(_cudaTokenSource.Token);
-                _function.Evaluate(result.Location);
-                _cudaAlgorithm.Dispose();
-                return result;
+            _cudaReadyLock = new AutoResetEvent(true);
+            //RunningCudaAlgorithm = Task<ParticleState>.Factory.StartNew(() =>
+            //{
+            //    _cudaAlgorithm.Initialize();
+            //    _cudaReadyLock.Set();
+            //    var result = _cudaAlgorithm.Run(_cudaTokenSource.Token);
+            //    _function.Evaluate(result.Location);
+            //    _cudaAlgorithm.Dispose();
+            //    return result;
 
-            }, _cudaTokenSource.Token);
+            //}, _cudaTokenSource.Token);
 
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
@@ -153,6 +153,10 @@ namespace Controller
 
         private void StopCudaCalculations()
         {
+            if(RunningCudaAlgorithm == null)
+            {
+                return;
+            }
             if(RunningCudaAlgorithm.Status == TaskStatus.Running)
             {
                 _cudaTokenSource.Cancel();
