@@ -69,9 +69,6 @@ namespace ManagedGPU
         public override void Transpose(IFitnessFunction<double[], double[]> function)
         {
             PullGpuState();
-            var location = GetClampedLocation(CurrentState.Location);
-            CurrentState = new ParticleState(location, function.Evaluate(location));
-
             if (PersonalBest.FitnessValue == null || CurrentIsBetterThanBest())
                 PersonalBest = CurrentState;
         }

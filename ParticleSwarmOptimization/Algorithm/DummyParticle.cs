@@ -16,7 +16,7 @@ namespace Algorithm
 
         public override void UpdateVelocity(Common.IState<double[], double[]> globalBest)
         {
-            fibonacci(12);
+            fibonacci(17);
             CurrentState = new Common.ParticleState(globalBest.Location, globalBest.FitnessValue);
         }
 

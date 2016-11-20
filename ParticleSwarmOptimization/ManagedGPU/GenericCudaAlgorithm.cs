@@ -82,6 +82,12 @@ namespace ManagedGPU
 
         }
 
+        protected void InitializePhis()
+        {
+            _phis1 = new CudaDeviceVariable<double>(ParticlesCount * DimensionsCount);
+            _phis2 = new CudaDeviceVariable<double>(ParticlesCount * DimensionsCount);
+        }
+
         protected void InitContext()
         {
             var size = ParticlesCount * DimensionsCount;
@@ -151,13 +157,13 @@ namespace ManagedGPU
             Proxy.GpuState = new ParticleState(bestLoc, new []{ bestVal }); 
         }
 
-        public void RunAsync()
+        public void RunAsync(CancellationToken token = new CancellationToken())
         {
             if (ThreadHandler != null) return;
 
             ThreadHandler = new Thread(() =>
             {
-                Run();
+                Run(token);
                 Cleanup();
             });
 
@@ -182,26 +188,37 @@ namespace ManagedGPU
                 ThreadHandler.Abort();
         }
 
-        public double Run()
+        public double Run(CancellationToken token = new CancellationToken())
         {
             InitContext();
+            InitializePhis();
+
             if (SyncWithCpu)
             {
                 PushGpuState();
                 PullCpuState();
             }
-
-            for (var i = 0; i < Iterations; i++)
+            var i = 0;
+            try
             {
-                RunUpdateVelocityKernel();
-                RunTransposeKernel();
 
-                if (!SyncWithCpu || i % SyncCounter != 0) continue;
+                for (i = 0; i < Iterations; i++)
+                {
+                    token.ThrowIfCancellationRequested();
+                    RunUpdateVelocityKernel();
+                    RunTransposeKernel();
 
-                PushGpuState();
-                PullCpuState();
+                    if (!SyncWithCpu || i % SyncCounter != 0) continue;
+
+                    PushGpuState();
+                    PullCpuState();
+                }
             }
+            catch (OperationCanceledException ex)
+            {
 
+            }
+            Console.WriteLine("Performed CUDA Iterations: {0}", i);
             HostPersonalBestValues = DevicePersonalBestValues;
             HostPersonalBests = DevicePersonalBests;
 
@@ -227,14 +244,6 @@ namespace ManagedGPU
         }
         private void assignRandoms()
         {
-            if(_phis1 == null)
-            {
-                _phis1 = new CudaDeviceVariable<double>(ParticlesCount * DimensionsCount);
-            }
-            if (_phis2 == null)
-            {
-                _phis2 = new CudaDeviceVariable<double>(ParticlesCount * DimensionsCount);
-            }
             var hostPhis1 = RandomGenerator.GetInstance().RandomVector(DimensionsCount * ParticlesCount, 0, 1);
             var hostPhis2 = RandomGenerator.GetInstance().RandomVector(DimensionsCount * ParticlesCount, 0, 1);
             _phis1.CopyToDevice(hostPhis1);
@@ -256,5 +265,6 @@ namespace ManagedGPU
         }
 
         protected abstract void Cleanup();
+
     }
 }

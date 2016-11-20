@@ -16,11 +16,13 @@ namespace Controller
         private ulong _nodeId;
         IFitnessFunction<double[], double[]> _function;
         private CancellationTokenSource _tokenSource;
+        private CancellationTokenSource _cudaTokenSource;
 
         public PsoController(ulong nodeId)
         {
             _nodeId = nodeId;
             _tokenSource = new CancellationTokenSource();
+            _cudaTokenSource = new CancellationTokenSource();
         }
 
         public event CalculationCompletedHandler CalculationsCompleted;
@@ -49,7 +51,10 @@ namespace Controller
 
         public bool CalculationsRunning { get { return RunningAlgorithm != null && !RunningAlgorithm.IsCompleted; } }
         public Task<ParticleState> RunningAlgorithm { get; private set; }
+        private Task<double> RunningCudaAlgorithm { get; set; }
         public PsoParameters RunningParameters { get; private set; }
+        
+        
         private static List<IParticle> CreateParticles(PsoParameters parameters, IFitnessFunction<double[],double[]> function)
         {
             var particles = new List<IParticle>();
@@ -65,11 +70,32 @@ namespace Controller
             return particles;
         }
 
+        PsoAlgorithm _algorithm;
+        GenericCudaAlgorithm _cudaAlgorithm;
 
         public void Run(PsoParameters psoParameters, IParticle[] proxyParticleServices = null)
         {
             _function = FunctionFactory.GetFitnessFunction(psoParameters.FunctionParameters);
+            var cudaParticle = PrepareCudaAlgorithm(psoParameters);            
+            var particles = PrepareParticles(psoParameters,proxyParticleServices,cudaParticle);
+            RunningParameters = psoParameters;
+            _algorithm = new PsoAlgorithm(psoParameters, _function, particles.ToArray());
 
+
+            RunningCudaAlgorithm = Task<double>.Factory.StartNew(() =>
+            {
+                var result = _cudaAlgorithm.Run(_cudaTokenSource.Token);
+                _cudaAlgorithm.Dispose();
+                return result;
+
+            }, _cudaTokenSource.Token);
+            RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
+            {
+                return StartAlgorithm(_tokenSource.Token);
+            }, _tokenSource.Token);
+        }
+        private CudaParticle PrepareCudaAlgorithm(PsoParameters psoParameters)
+        {
             var parts = psoParameters.FunctionParameters.FitnessFunctionType.Split('_');
             var functionNr = Int32.Parse(parts[1].Substring(1));
             var instanceStr = parts[2];
@@ -88,36 +114,42 @@ namespace Controller
                     SyncWithCpu = true
                 });
 
-            var cudaAlgorithm = gpu.Item2;
-            var cudaParticle = gpu.Item1;
+            _cudaAlgorithm = gpu.Item2;
 
-            var particles = CreateParticles(psoParameters, _function);
+            return gpu.Item1;
+        }
+
+        private List<IParticle> PrepareParticles(PsoParameters psoParameters, IParticle[] proxyParticleServices, CudaParticle cudaParticle)
+        {
+            var particles = CreateParticles(psoParameters,_function);
             if (proxyParticleServices != null)
             {
                 particles.AddRange(proxyParticleServices);
             }
-
-            if (functionNr != 21 && functionNr != 22)
-                particles.Add(cudaParticle);
-
-            var token = _tokenSource.Token;
-            var algorithm = new PsoAlgorithm(psoParameters, _function, particles.ToArray());
-            RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
+            if(cudaParticle != null)
             {
-                RunningParameters = psoParameters;
-                //var r = algorithm.Run(particles,_nodeId.ToString());
-
-                if (functionNr != 21 && functionNr != 22)
-                    cudaAlgorithm.RunAsync();
-                var r = algorithm.Run();
-                if (CalculationsCompleted != null) CalculationsCompleted((ParticleState)r);
-
-                if (functionNr != 21 && functionNr != 22)
-                    cudaAlgorithm.Wait();
-                return (ParticleState)r;
-            }, token);
+                particles.Add(cudaParticle);
+            }
+            return particles;
         }
 
+        private ParticleState StartAlgorithm(CancellationToken token)
+        {
+            
+            var r = _algorithm.Run(token);
+            StopCudaCalculations();
+            if (CalculationsCompleted != null) CalculationsCompleted((ParticleState)r);
+            return (ParticleState)r;
+        }
+
+        private void StopCudaCalculations()
+        {
+
+            _cudaTokenSource.Cancel();
+            RunningCudaAlgorithm.Wait();
+            _cudaTokenSource.Dispose();
+            _cudaTokenSource = new CancellationTokenSource();
+        }
 
         public PsoImplementationType[] GetAvailableImplementationTypes()
         {
