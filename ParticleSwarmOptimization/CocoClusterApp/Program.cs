@@ -167,8 +167,8 @@ namespace CocoClusterApp
             //    new[] { new ParticlesCount(useCharged ? PsoParticleType.ChargedParticle :
             //        PsoParticleType.Standard, particlesNum) };  
 
-            settings.Particles = new[] { new ParticlesCount(PsoParticleType.DummyParticle,1)};
-            settings.ParticlesCount = 1;
+            settings.Particles = new[] { new ParticlesCount(PsoParticleType.ChargedParticle, 20), new ParticlesCount(PsoParticleType.Standard, 20) };
+            settings.ParticlesCount = 40;
             return settings;
 
         }

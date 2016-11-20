@@ -10,6 +10,8 @@ namespace Common
     {
         private static RandomGenerator _generator;
         private static int? _seed;
+        private object _randomLock;
+        private static object _generatorLock = new object();
         private Random Random;
 
 
@@ -17,40 +19,46 @@ namespace Common
         {
             _seed = seed ?? DateTime.Now.Millisecond;
             Random = new Random(_seed.Value);
+            _randomLock = new object();
         }
 
-        public double[] RandomVector(int dim, double min=-2, double max=2)
+        public double[] RandomVector(int dim, double min = -2, double max = 2)
         {
-            var v = new double[dim];
-            for (var i = 0; i < dim; i++)
-            {
-                v[i] = Random.NextDouble()*(max - min) + min;
-            }
-            return v;
+            return RandomVector(dim, Enumerable.Repeat(new DimensionBound(min, max), dim).ToArray());
         }
 
         public double[] RandomVector(int dim, DimensionBound[] bounds)
         {
-            if(bounds == null) throw new ArgumentNullException();
-            var v = new double[dim];
-            for (var i = 0; i < dim; i++)
+            lock (_randomLock)
             {
-                v[i] = Random.NextDouble() * (bounds[i].Max - bounds[i].Min) + bounds[i].Min;
+                if (bounds == null) throw new ArgumentNullException();
+                var v = new double[dim];
+                for (var i = 0; i < dim; i++)
+                {
+                    v[i] = Random.NextDouble() * (bounds[i].Max - bounds[i].Min) + bounds[i].Min;
+                }
+                return v;
             }
-            return v;
         }
 
         public int RandomInt(int min, int max)
         {
-            return Random.Next(min,max);
-        }
-        public static  RandomGenerator GetInstance(int? seed = null)
-        {
-            if (_generator != null && seed != _seed && seed != null)
+            lock(_randomLock)
             {
-                throw new ArgumentException("Generator already initialized with other seed value");
+                return Random.Next(min,max);
             }
-            return _generator ?? (_generator = new RandomGenerator(seed));
+        }
+
+        public static RandomGenerator GetInstance(int? seed = null)
+        {
+            lock (_generatorLock)
+            {
+                if (_generator != null && seed != _seed && seed != null)
+                {
+                    throw new ArgumentException("Generator already initialized with other seed value");
+                }
+                return _generator ?? (_generator = new RandomGenerator(seed));
+            }
         }
     }
 }

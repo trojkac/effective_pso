@@ -13,8 +13,8 @@
   <Iterations>10000</Iterations>
   <TargetValueCondition>false</TargetValueCondition>
   <TargetValue>0</TargetValue>
-  <PsoIterationsToRestart>40000000</PsoIterationsToRestart>
-  <ParticleIterationsToRestart>10000000</ParticleIterationsToRestart>
+  <PsoIterationsToRestart>100</PsoIterationsToRestart>
+  <ParticleIterationsToRestart>40</ParticleIterationsToRestart>
   <Epsilon>1e-10</Epsilon>
   <!--  <FunctionParameters>-->
   <!--    <FitnessFunctionType>quadratic</FitnessFunctionType>-->

@@ -153,8 +153,11 @@ namespace Controller
 
         private void StopCudaCalculations()
         {
-            _cudaTokenSource.Cancel();
-            RunningCudaAlgorithm.Wait();
+            if(RunningCudaAlgorithm.Status == TaskStatus.Running)
+            {
+                _cudaTokenSource.Cancel();
+                RunningCudaAlgorithm.Wait();
+            }
             _cudaTokenSource.Dispose();
             _cudaTokenSource = new CancellationTokenSource();
         }

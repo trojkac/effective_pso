@@ -206,7 +206,7 @@ namespace ManagedGPU
 
                 for (i = 0; i < Iterations; i++)
                 {
-                    token.ThrowIfCancellationRequested();
+                    if (i > 1000) token.ThrowIfCancellationRequested();
                     RunUpdateVelocityKernel();
                     RunTransposeKernel();
 
