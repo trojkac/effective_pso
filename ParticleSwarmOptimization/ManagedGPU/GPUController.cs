@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Linq;
-using ManagedCuda;
 
 namespace ManagedGPU
 {
     public static class GpuController
     {
-        public static Tuple<CudaParticle, CudaAlgorithm> Setup(CudaParams parameters)
+        public static Tuple<CudaParticle, GenericCudaAlgorithm> Setup(CudaParams parameters)
         {
             var proxy = CreateProxy(parameters);
-            return new Tuple<CudaParticle, CudaAlgorithm>(CreateParticle(proxy), CreateCudaAlgorithm(parameters, proxy));
+            return new Tuple<CudaParticle, GenericCudaAlgorithm>(CreateParticle(proxy), CreateCudaAlgorithm(parameters, proxy));
         }
 
         private static StateProxy CreateProxy(CudaParams parameters)
@@ -19,12 +18,14 @@ namespace ManagedGPU
 
         private static CudaParticle CreateParticle(StateProxy proxy)
         {
-            return new CudaParticle(proxy);
+            var particle = new CudaParticle(proxy);
+            particle.Init();
+            return particle;
         }
         
-        private static CudaAlgorithm CreateCudaAlgorithm(CudaParams parameters, StateProxy proxy)
+        private static GenericCudaAlgorithm CreateCudaAlgorithm(CudaParams parameters, StateProxy proxy)
         {
-            return new CudaAlgorithm(parameters, proxy);
+            return CudaAlgorithmFactory.AlgorithmForFunction(parameters, proxy);
         }
 
         private static double Random(Random rng)
@@ -41,5 +42,7 @@ namespace ManagedGPU
         {
             return particle.Sum(t => t*t);
         }
+
+
     }
 }

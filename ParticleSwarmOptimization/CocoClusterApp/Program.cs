@@ -5,6 +5,8 @@ using CocoWrapper;
 using Common;
 using Common.Parameters;
 using Node;
+using Narkhedegs.PerformanceMeasurement;
+using ManagedGPU;
 
 namespace CocoClusterApp
 {
@@ -161,9 +163,12 @@ namespace CocoClusterApp
             };
             settings.FunctionParameters.SearchSpace = bounds;
 
-            settings.Particles =
-                new[] { new ParticlesCount(useCharged ? PsoParticleType.ChargedParticle :
-                    PsoParticleType.Standard, particlesNum) };  
+            //settings.Particles = 
+            //    new[] { new ParticlesCount(useCharged ? PsoParticleType.ChargedParticle :
+            //        PsoParticleType.Standard, particlesNum) };  
+
+            settings.Particles = new[] { new ParticlesCount(PsoParticleType.ChargedParticle, 20), new ParticlesCount(PsoParticleType.Standard, 20) };
+            settings.ParticlesCount = 40;
             return settings;
 
         }

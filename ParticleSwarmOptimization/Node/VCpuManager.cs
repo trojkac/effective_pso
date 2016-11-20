@@ -5,6 +5,8 @@ using Common.Parameters;
 using Controller;
 using NetworkManager;
 using PsoService;
+using Algorithm;
+using ManagedGPU;
 using System.Threading;
 
 namespace Node
@@ -89,7 +91,7 @@ namespace Node
         {
             return NetworkNodeManager.NodeService.Info;
         }
-        
+
         public void Run(PsoParameters psoParameters, NetworkNodeInfo mainNodeInfo)
         {
             _mainNodeInfo = mainNodeInfo;

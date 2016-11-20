@@ -54,6 +54,10 @@
       <Project>{1abbf21a-d8d4-4ae0-a3ca-f8be3d11b84b}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ManagedGPU\ManagedGPU.csproj">
+      <Project>{b949184e-1e88-4a23-bd0b-e27de2201d49}</Project>
+      <Name>ManagedGPU</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetworkManager\NetworkManager.csproj">
       <Project>{F46E4D5D-06D4-45CD-A440-9DFAF32C6AAB}</Project>
       <Name>NetworkManager</Name>

@@ -12,7 +12,12 @@ namespace ManagedGPU
         internal CudaParticle(StateProxy proxy)
         {
             _proxy = proxy;
-            CurrentState = proxy.CpuState;
+        }
+
+        private double[] GetClampedLocation(double[] vector)
+        {
+            if (vector == null) return vector;
+            return vector.Select((x, i) => Math.Min(Math.Max(x, -5.0), 5.0)).ToArray();
         }
 
         public override void UpdateNeighborhood(IParticle[] allParticles)
@@ -28,20 +33,25 @@ namespace ManagedGPU
 
         private ParticleState BestNeighborState()
         {
-            ParticleState best = Neighborhood[0].CurrentState;
+            ParticleState best = Neighborhood[0].PersonalBest;
 
             foreach (var particle in Neighborhood)
             {
-                if (Optimization.IsBetter(particle.CurrentState.FitnessValue, best.FitnessValue) < 0)
-                    best = particle.CurrentState;
+                if (Optimization.IsBetter(particle.PersonalBest.FitnessValue, best.FitnessValue) < 0)
+                    best = particle.PersonalBest;
             }
 
             return best;
         }
 
+        public void Init()
+        {
+            Init(new ParticleState(null, null), null, null);
+        }
+
         public override void Init(ParticleState state, double[] velocity, DimensionBound[] bounds = null)
         {
-            CurrentState = state;
+            CurrentState = _proxy.GpuState;
         }
 
         public override int Id
@@ -59,8 +69,6 @@ namespace ManagedGPU
         public override void Transpose(IFitnessFunction<double[], double[]> function)
         {
             PullGpuState();
-            CurrentState = new ParticleState(CurrentState.Location, function.Evaluate(CurrentState.Location));
-
             if (PersonalBest.FitnessValue == null || CurrentIsBetterThanBest())
                 PersonalBest = CurrentState;
         }
