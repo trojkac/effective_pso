@@ -17,6 +17,7 @@ namespace Controller
         IFitnessFunction<double[], double[]> _function;
         private CancellationTokenSource _tokenSource;
         private CancellationTokenSource _cudaTokenSource;
+        private AutoResetEvent _cudaReadyLock;
 
         public PsoController(ulong nodeId)
         {
@@ -51,7 +52,7 @@ namespace Controller
 
         public bool CalculationsRunning { get { return RunningAlgorithm != null && !RunningAlgorithm.IsCompleted; } }
         public Task<ParticleState> RunningAlgorithm { get; private set; }
-        private Task<double> RunningCudaAlgorithm { get; set; }
+        private Task<ParticleState> RunningCudaAlgorithm { get; set; }
         public PsoParameters RunningParameters { get; private set; }
         
         
@@ -81,18 +82,26 @@ namespace Controller
             RunningParameters = psoParameters;
             _algorithm = new PsoAlgorithm(psoParameters, _function, particles.ToArray());
 
-
-            RunningCudaAlgorithm = Task<double>.Factory.StartNew(() =>
+            _cudaReadyLock = new AutoResetEvent(false);
+            RunningCudaAlgorithm = Task<ParticleState>.Factory.StartNew(() =>
             {
+                _cudaAlgorithm.Initialize();
+                _cudaReadyLock.Set();
                 var result = _cudaAlgorithm.Run(_cudaTokenSource.Token);
+                _function.Evaluate(result.Location);
                 _cudaAlgorithm.Dispose();
                 return result;
 
             }, _cudaTokenSource.Token);
+
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
+                _cudaReadyLock.WaitOne();
+                _cudaReadyLock.Dispose();
                 return StartAlgorithm(_tokenSource.Token);
             }, _tokenSource.Token);
+
+            
         }
         private CudaParticle PrepareCudaAlgorithm(PsoParameters psoParameters)
         {
@@ -144,7 +153,6 @@ namespace Controller
 
         private void StopCudaCalculations()
         {
-
             _cudaTokenSource.Cancel();
             RunningCudaAlgorithm.Wait();
             _cudaTokenSource.Dispose();

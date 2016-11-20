@@ -187,11 +187,13 @@ namespace ManagedGPU
             if (ThreadHandler != null)
                 ThreadHandler.Abort();
         }
-
-        public double Run(CancellationToken token = new CancellationToken())
+        public void Initialize()
         {
             InitContext();
             InitializePhis();
+        }
+        public ParticleState Run(CancellationToken token = new CancellationToken())
+        {
 
             if (SyncWithCpu)
             {
@@ -222,9 +224,20 @@ namespace ManagedGPU
             HostPersonalBestValues = DevicePersonalBestValues;
             HostPersonalBests = DevicePersonalBests;
 
-            var bestValue = HostPersonalBestValues.Min();
+            var optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
+            var bestValue = optimization.WorstValue(1);
+            var bestInd = 0;
+            for(var j = 0; j < HostPersonalBestValues.Length; j++)
+            {
+                if(optimization.IsBetter(bestValue,new[]{HostPersonalBestValues[j]}) > 0)
+                {
+                    bestInd = j;
+                    bestValue = new[] {HostPersonalBestValues[j]};
+                }
 
-            return bestValue;
+            }
+            var bestLoc = HostPersonalBests.Skip(DimensionsCount * bestInd).Take(DimensionsCount).ToArray();
+            return new ParticleState(bestLoc, bestValue);
         }
 
         protected  void RunUpdateVelocityKernel()
