@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using Common.parameters;
 
 namespace Common.Parameters
 {
@@ -46,6 +47,9 @@ namespace Common.Parameters
 
         [DataMember]
         public FunctionParameters FunctionParameters;
+
+        [DataMember] 
+        public GpuParameters GpuParameters;
 
         public PsoParameters(ParticlesCount[] particlesSet, FunctionParameters functionParams)
         {

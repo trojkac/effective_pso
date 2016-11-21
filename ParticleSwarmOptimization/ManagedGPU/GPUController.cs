@@ -1,10 +1,20 @@
 ﻿using System;
 using System.Linq;
+using ManagedCuda;
 
 namespace ManagedGPU
 {
     public static class GpuController
     {
+        public static bool AnySupportedGpu()
+        {
+            var devicesCount = CudaContext.GetDeviceCount();
+
+            return Enumerable
+                .Range(0, devicesCount)
+                .Any(deviceId => CudaContext.GetDeviceInfo(deviceId).ComputeCapability.Major >= 2);
+        }
+
         public static Tuple<CudaParticle, GenericCudaAlgorithm> Setup(CudaParams parameters)
         {
             var proxy = CreateProxy(parameters);

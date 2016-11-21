@@ -77,22 +77,33 @@ namespace Controller
         public void Run(PsoParameters psoParameters, IParticle[] proxyParticleServices = null)
         {
             _function = FunctionFactory.GetFitnessFunction(psoParameters.FunctionParameters);
-            var cudaParticle = PrepareCudaAlgorithm(psoParameters);            
+
+            var useGpu = psoParameters.GpuParameters.UseGpu && GpuController.AnySupportedGpu();
+
+            CudaParticle cudaParticle = null;
+                
+            if (useGpu)
+                cudaParticle = PrepareCudaAlgorithm(psoParameters);            
+
             var particles = PrepareParticles(psoParameters,proxyParticleServices,cudaParticle);
             RunningParameters = psoParameters;
             _algorithm = new PsoAlgorithm(psoParameters, _function, particles.ToArray());
 
             _cudaReadyLock = new AutoResetEvent(false);
-            RunningCudaAlgorithm = Task<ParticleState>.Factory.StartNew(() =>
-            {
-                _cudaAlgorithm.Initialize();
-                _cudaReadyLock.Set();
-                var result = _cudaAlgorithm.Run(_cudaTokenSource.Token);
-                _function.Evaluate(result.Location);
-                _cudaAlgorithm.Dispose();
-                return result;
 
-            }, _cudaTokenSource.Token);
+            if (useGpu)
+                RunningCudaAlgorithm = Task<ParticleState>.Factory.StartNew(() =>
+                {
+                    _cudaAlgorithm.Initialize();
+                    _cudaReadyLock.Set();
+                    var result = _cudaAlgorithm.Run(_cudaTokenSource.Token);
+                    _function.Evaluate(result.Location);
+                    _cudaAlgorithm.Dispose();
+                    return result;
+
+                }, _cudaTokenSource.Token);
+            else
+                _cudaReadyLock.Set();
 
             RunningAlgorithm = Task<ParticleState>.Factory.StartNew(delegate
             {
@@ -100,15 +111,14 @@ namespace Controller
                 _cudaReadyLock.Dispose();
                 return StartAlgorithm(_tokenSource.Token);
             }, _tokenSource.Token);
-
-            
         }
+
         private CudaParticle PrepareCudaAlgorithm(PsoParameters psoParameters)
         {
             var parts = psoParameters.FunctionParameters.FitnessFunctionType.Split('_');
-            var functionNr = Int32.Parse(parts[1].Substring(1));
+            var functionNr = int.Parse(parts[1].Substring(1));
             var instanceStr = parts[2];
-            var instanceNr = Int32.Parse(instanceStr.Substring(1));
+            var instanceNr = int.Parse(instanceStr.Substring(1));
 
             var gpu = GpuController.Setup(
                 new CudaParams
@@ -118,8 +128,8 @@ namespace Controller
                     LocationDimensions = psoParameters.FunctionParameters.Dimension,
                     FunctionNumber = functionNr,
                     InstanceNumber = instanceNr,
-                    Iterations = 5000,
-                    ParticlesCount = 640,
+                    Iterations = psoParameters.GpuParameters.Iterations,
+                    ParticlesCount = psoParameters.GpuParameters.ParticlesCount,
                     SyncWithCpu = true
                 });
 
@@ -153,7 +163,7 @@ namespace Controller
 
         private void StopCudaCalculations()
         {
-            if(RunningCudaAlgorithm.Status == TaskStatus.Running)
+            if(RunningCudaAlgorithm != null && RunningCudaAlgorithm.Status == TaskStatus.Running)
             {
                 _cudaTokenSource.Cancel();
                 RunningCudaAlgorithm.Wait();

@@ -56,6 +56,7 @@
     <Compile Include="NetworkNodeInfo.cs" />
     <Compile Include="NormMinimalization.cs" />
     <Compile Include="DimensionBound.cs" />
+    <Compile Include="parameters\GpuParameters.cs" />
     <Compile Include="parameters\IParameters.cs" />
     <Compile Include="parameters\IParametersSerializer.cs" />
     <Compile Include="parameters\ParametersSerializer.cs" />
