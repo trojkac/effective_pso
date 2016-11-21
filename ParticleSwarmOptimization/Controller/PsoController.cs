@@ -163,7 +163,12 @@ namespace Controller
 
         private void StopCudaCalculations()
         {
-            if(RunningCudaAlgorithm != null && RunningCudaAlgorithm.Status == TaskStatus.Running)
+            if(RunningCudaAlgorithm == null)
+            {
+                return;
+            }
+
+            if(RunningCudaAlgorithm.Status == TaskStatus.Running)
             {
                 _cudaTokenSource.Cancel();
                 RunningCudaAlgorithm.Wait();

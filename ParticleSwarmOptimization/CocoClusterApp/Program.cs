@@ -15,7 +15,6 @@ namespace CocoClusterApp
 
         public const int RandomSeed = 12;
         public static Problem Problem;
-        public static bool useCharged;
         static void Main(string[] args)
         {
 
@@ -49,11 +48,7 @@ namespace CocoClusterApp
                 var functionsFrom = int.Parse(args[1]);
                 var functionsTo = int.Parse(args[2]);
                 var budgetMultiplier = int.Parse(args[3]);
-                useCharged = false;
-                if (args.Length > 4)
-                {
-                    useCharged = bool.Parse(args[4]);
-                }
+
                 var randomGenerator = RandomGenerator.GetInstance(RandomSeed);
                 CocoLibraryWrapper.cocoSetLogLevel("warning");
 
@@ -71,8 +66,8 @@ namespace CocoClusterApp
                     /* Set some options for the observer. See documentation for other options. */
                     var observerOptions =
                         "result_folder: " +
-                        String.Format("{0}P_{1}G{2}", psoParams.ParticleIterationsToRestart,
-                            psoParams.PsoIterationsToRestart, useCharged ? "_charged" : "") 
+                        String.Format("{0}P_{1}G", psoParams.ParticleIterationsToRestart,
+                            psoParams.PsoIterationsToRestart) 
                         + " algorithm_name: PSO"
                         + " algorithm_info: \"A simple Random search algorithm\"";
                     /* Initialize the suite and observer */
@@ -162,13 +157,6 @@ namespace CocoClusterApp
                 FitnessFunctionType = Problem.Id
             };
             settings.FunctionParameters.SearchSpace = bounds;
-
-            //settings.Particles = 
-            //    new[] { new ParticlesCount(useCharged ? PsoParticleType.ChargedParticle :
-            //        PsoParticleType.Standard, particlesNum) };  
-
-            settings.Particles = new[] { new ParticlesCount(PsoParticleType.ChargedParticle, 20), new ParticlesCount(PsoParticleType.Standard, 20) };
-            settings.ParticlesCount = 40;
             return settings;
 
         }
