@@ -328,17 +328,31 @@ Artykuł \cite{BlockOccupancyGpu} bada zależność między wydajnością algory
 
 \section{Architektura węzła obliczeniowego}
 
-Poniżej przedstawiamy najważniejsze klasy składające się na pojedynczy węzeł obliczeniowy.
+Poniżej przedstawiamy najważniejsze klasy składające się na pojedynczy węzeł obliczeniowy. 
 
 \subsection{MachineManager}
-Klasa zarządzająca działaniem maszyny. Umożliwiająca wykorzystanie dostępnych zasobów - rozpoznanie liczby wątków procesora oraz obecność karty graficznej i jej kompatybilność z technologią CUDA.
+Klasa zarządzająca działaniem maszyny. Umożliwiająca wykorzystanie dostępnych zasobów - rozpoznanie liczby wątków procesora oraz obecność karty graficznej i jej kompatybilność z technologią CUDA. Jest obiektem zaimplementowanym według wzorca fasada, który jest odpowiedzialny za rozpoczęcie obliczeń alogrytmu oraz pobranie wyniku. Za pomocą metody \emph{Register} możemy podłączyć maszynę do klastra obliczeniowego. Odwołuje się do dwóch klas VCpuManager oraz GpuManager, za których pomocą udostępnia powyższe funkcjonalności.
+Korzysta z wielu VCpuManager'ów, z których każdy odpowiada pojednyczemu z wątkowi procesora. Domyślnie, tworzone jest tyle wątków, ile dostępnych procesorów posiada komputer. Programista, może jednak ustawić własną liczbę wątków.
 
 \subsection{VCpuManager}
-Klasa odpowiedzialna za uruchomienie obliczeń algorytmu na pojedynczym wątku procesora oraz połączenie z pozostałymi węzłami klastra. Węzłem nazywamy tutaj pojedynczy wątek procesora, reprezentujący obliczenia jednego roju cząstek. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejsy IPsoManager, który zarządza warstwą logiczną klastra PSO oraz INodeService odpowiedzialny za komunikację pomiędzy węzłami korzystający z technologii WCF.  
+Klasa odpowiedzialna za uruchomienie obliczeń algorytmu na pojedynczym wątku procesora oraz połączenie z pozostałymi węzłami klastra. Węzłem nazywamy tutaj pojedynczy wątek procesora, reprezentujący obliczenia jednego roju cząstek. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejsy \emph{IPsoManager}, który zarządza warstwą logiczną klastra PSO oraz \emph{INodeService} odpowiedzialny za komunikację pomiędzy węzłami korzystający z technologii WCF. \emph{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
 
 
 \subsection{PsoController}
-Klasa, która na podstawie przekazanych jej parametrów problemu oraz algorytmu rozpoczyna wykonanie obliczeń. 
+Klasa, która na podstawie przekazanych jej parametrów problemu oraz algorytmu rozpoczyna wykonanie obliczeń. Pozwala ona na sprawdzenie czy obecnie uruchomione są obliczenia. Konfiguracja algorytmu jest dokonana na podstawie parametrów przekazanyc przez klasę \emph{PsoParams}. Zawarte są w niej wszystkie informacje potrzebne do uruchomienia obliczeń:
+
+\begin{itemize}
+	\item Epsilon - dokładność obliczeń algorytmu
+	\item FunctionParams - parametry funkcji celu: 
+	
+	\item Iterations - maksymalna liczba iteracji do przeprowadzenia na wątku CPU
+	\item IterationsLimitCondition - wartość logiczna stanowiąca o zatrzymaniu algorytm po wykonaniu danej liczby iteracji
+	\item ParticleIterationsToRestart - liczba iteracji bez poprawy położenia cząstki, po której cząstka zostanie zrestartowana, czyli jej położenie zostanie wylosowane, a najlepsza wartość cząstki będzie równa nowemu położeniu
+	\item Particles - lista typów oraz ilości cząstek do wykorzystania
+	\item PsoIterationsToRestart - liczba iteracji bez poprawy najlepszego wyniku wszystkich cząstek, po której zakończone zostanie działanie algorytmu
+	\item TargetValue - wartość ekstremalna funkcji celu, do której dąży wynik algorytmu
+	\item TargetValueCondition - wartość logiczna stanowiąca, czy zatrzymać algorytm po zbliżeniu się na odległość \emph{Epsilon} od \emph{TargetValue}
+\end{itemize}
 
 \section{Klaster i komunikacja między węzłami}
 Komunikacja między węzłami przebiega na dwóch opisanych poniżej poziomach. 
