@@ -4,6 +4,12 @@
 \@writefile{toc}{\select@language{polish}}
 \@writefile{lof}{\select@language{polish}}
 \@writefile{lot}{\select@language{polish}}
+\providecommand\@newglossary[4]{}
+\@newglossary{main}{glg}{gls}{glo}
+\providecommand\@glsorder[1]{}
+\providecommand\@istfilename[1]{}
+\@istfilename{"Praca dyplomowa".xdy}
+\@glsorder{word}
 \select@language{polish}
 \@writefile{toc}{\select@language{polish}}
 \@writefile{lof}{\select@language{polish}}
@@ -11,22 +17,23 @@
 \@writefile{toc}{\contentsline {chapter}{\numberline {1}S\IeC {\l }owniczek}{4}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {1.1}Definicje i oznaczenia}{4}}
 \citation{Pso}
 \citation{Pso}
-\@writefile{toc}{\contentsline {chapter}{\numberline {2}Wst\IeC {\k e}p teoretyczny}{5}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {2}Wst\IeC {\k e}p teoretyczny}{6}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {2.1}Czym jest PSO?}{5}}
-\@writefile{toc}{\contentsline {section}{\numberline {2.2}Definicja algorytmu}{6}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.1}Czym jest PSO?}{6}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.2}Definicja algorytmu}{7}}
+\citation{PSO_2D_img}
 \citation{SPso}
+\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces Algorytm PSO w dw\IeC {\'o}ch wymiarach \cite  {PSO_2D_img}}}{8}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.3}Dotychczasowy stan bada\IeC {\'n} nad PSO}{8}}
 \citation{ComprLearnPso}
 \citation{ModPsoInertia}
 \citation{ParamSelPso}
 \citation{PsoFuzzyInertia}
 \citation{SelfOrgHPso}
 \citation{VmaxPso}
-\@writefile{toc}{\contentsline {section}{\numberline {2.3}Dotychczasowy stan bada\IeC {\'n} nad PSO}{7}}
 \citation{TopologyPso}
 \citation{PopStructPso}
 \citation{PsoNeighOp}
@@ -42,53 +49,77 @@
 \citation{HybridPsoBreedingSubpop}
 \citation{DissipativePso}
 \citation{ComputGlobOptPso}
-\@writefile{toc}{\contentsline {section}{\numberline {2.4}Istniej\IeC {\k a}ce implementacje i zastosowania PSO}{9}}
-\@writefile{toc}{\contentsline {section}{\numberline {2.5}R\IeC {\'o}wnoleg\IeC {\l }e i rozproszone PSO}{10}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.4}Istniej\IeC {\k a}ce implementacje i zastosowania PSO}{11}}
 \citation{AccelParallelPso}
 \citation{ComparisonParallelGpuPso}
 \citation{Pso8}
-\@writefile{toc}{\contentsline {section}{\numberline {2.6}Dotychczasowy stan bada\IeC {\'n} nad r\IeC {\'o}wnoleg\IeC {\l }ym i rozproszonym PSO}{11}}
+\@writefile{toc}{\contentsline {section}{\numberline {2.5}R\IeC {\'o}wnoleg\IeC {\l }e i rozproszone PSO}{12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5.1}Stan bada\IeC {\'n} nad r\IeC {\'o}wnoleg\IeC {\l }ym i rozproszonym PSO}{12}}
 \citation{CudaProgGuide}
 \citation{GpuBasedPso}
 \citation{PsoCuda}
 \citation{PsoGraphHardLocPat}
 \citation{BlockOccupancyGpu}
-\@writefile{toc}{\contentsline {chapter}{\numberline {3}Nasz program}{14}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {3}Zaimplementowany system optymalizacyjny}{15}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {3.1}Architektura w\IeC {\k e}z\IeC {\l }a obliczeniowego}{14}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}MachineManager}{14}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}VCpuManager}{15}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}PsoController}{15}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}Klaster i komunikacja mi\IeC {\k e}dzy w\IeC {\k e}z\IeC {\l }ami}{16}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}Komunikacja na poziomie algorytmu}{16}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.1}Architektura w\IeC {\k e}z\IeC {\l }a obliczeniowego}{15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Architektura w\IeC {\k e}z\IeC {\l }a obliczeniowego}}{16}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}MachineManager}{16}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}VCpuManager}{16}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}PsoController}{17}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}Klaster i komunikacja mi\IeC {\k e}dzy w\IeC {\k e}z\IeC {\l }ami}{17}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}Komunikacja na poziomie algorytmu}{17}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}Infrastruktura klastra}{18}}
 \citation{CudaProgGuide}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.2}{\ignorespaces Infrastuktura klastra}}{19}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}Obliczenia na procesorze graficznym}{19}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Kr\IeC {\'o}tkie wprowadzenie do architektury CUDA}{19}}
 \citation{PsoCuda}
 \citation{GpuBasedPso}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}Infrastruktura klastra}{17}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}Obliczenia na procesorze graficznym}{17}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Kr\IeC {\'o}tkie wprowadzenie do architektury CUDA}{17}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}Implementacja algorytmu dla procesora graficznego}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}Komunikacja mi\IeC {\k e}dzy procesorami obliczeniowymi}{18}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}Szczeg\IeC {\'o}\IeC {\l }y implementacyjne}{19}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.2}Implementacja algorytmu dla procesora graficznego}{21}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.3}{\ignorespaces Schemat dzia\IeC {\l }ania algorytmu PSO na GPU}}{21}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.3}Komunikacja mi\IeC {\k e}dzy procesorami obliczeniowymi}{22}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.4}Szczeg\IeC {\'o}\IeC {\l }y implementacyjne}{23}}
+\citation{Coco}
+\citation{Coco}
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}Platforma COCO}{24}}
+\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\contentsline {section}{\numberline {4.1}Testowanie algorytm\IeC {\'o}w optymalizacyjnych}{24}}
 \citation{CocoPlatform}
-\@writefile{toc}{\contentsline {chapter}{\numberline {4}Testy}{20}}
+\@writefile{toc}{\contentsline {section}{\numberline {4.2}Wrapper}{25}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.1}Eksport\textbackslash import funkcji z j\IeC {\k e}zyka C}{26}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.2}Wykorzystanie wrappera}{27}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}Testy}{29}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {4.1}Platforma COCO}{20}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.2}Wyniki test\IeC {\'o}w}{21}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.1}Pojedynczy w\IeC {\k e}ze\IeC {\l } obliczeniowy}{22}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.2}Klaster (4 w\IeC {\k e}z\IeC {\l }y obliczeniowe)}{22}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2.3}Pojedynczy w\IeC {\k e}ze\IeC {\l } obliczeniowy z wykorzystaniem GPU}{22}}
-\@writefile{toc}{\contentsline {section}{\numberline {4.3}Interpretacja wynik\IeC {\'o}w}{22}}
-\@writefile{toc}{\contentsline {chapter}{\numberline {5}Wymagania techniczne i instrukcja}{23}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.1}Wyniki test\IeC {\'o}w}{29}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.1}Pojedynczy w\IeC {\k e}ze\IeC {\l } obliczeniowy}{30}}
+\@writefile{toc}{\contentsline {subsubsection}{R\IeC {\'o}j z\IeC {\l }o\IeC {\.z}ony ze standardowych cz\IeC {\k a}stek}{30}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces Pojedynczy w\IeC {\k e}ze\IeC {\l } obliczeniowy}}{30}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.2}{\ignorespaces Wyniki roju 40 standardowych cz\IeC {\k a}stek}}{31}}
+\@writefile{toc}{\contentsline {subsubsection}{R\IeC {\'o}j korzystaj\IeC {\k a}cy z GPU i z\IeC {\l }o\IeC {\.z}ony z cz\IeC {\k a}stek standardowych i na\IeC {\l }adowanych}{32}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.3}{\ignorespaces Struktura w\IeC {\k e}z\IeC {\l }a obliczneniowego. R\IeC {\'o}j z\IeC {\l }o\IeC {\.z}ony z 40 cz\IeC {\k a}stek na CPU oraz 640 cz\IeC {\k a}stek na GPU}}{32}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.4}{\ignorespaces Wyniki roju 20 cz\IeC {\k a}stek standardowych i 20 cz\IeC {\k a}stek na\IeC {\l }adowanych oraz 640 cz\IeC {\k a}stek na GPU}}{33}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1.2}Klaster}{34}}
+\@writefile{toc}{\contentsline {subsubsection}{Struktura klastra testowego}{34}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.5}{\ignorespaces Struktura klastra testowego}}{34}}
+\@writefile{toc}{\contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z 2 w\IeC {\k e}z\IeC {\l }\IeC {\'o}w obliczeniowych}{35}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.6}{\ignorespaces Wyniki klastra z 2 w\IeC {\k e}z\IeC {\l }ami obliczeniowymi}}{35}}
+\@writefile{toc}{\contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z 4 w\IeC {\k e}z\IeC {\l }\IeC {\'o}w obliczeniowych}{36}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.7}{\ignorespaces Wyniki klastra z 4 w\IeC {\k e}z\IeC {\l }ami obliczeniowymi}}{36}}
+\@writefile{toc}{\contentsline {section}{\numberline {5.2}Interpretacja wynik\IeC {\'o}w}{36}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.8}{\ignorespaces Por\IeC {\'o}wnanie wersji z cz\IeC {\k a}stkami na\IeC {\l }adowanymi i GPU (k\IeC {\'o}\IeC {\l }ka) z wersj\IeC {\k a} podstawow\IeC {\k a} PSO}}{37}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5.9}{\ignorespaces Por\IeC {\'o}wnanie pojedynczego w\IeC {\k e}z\IeC {\l }a obliczeniowego (k\IeC {\'o}\IeC {\l }ka) z klaster o 4 w\IeC {\k e}z\IeC {\l }ach}}{38}}
+\@writefile{toc}{\contentsline {chapter}{\numberline {6}Wymagania techniczne i instrukcja}{39}}
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {section}{\numberline {5.1}Wymagania sprz\IeC {\k e}towe i programowe}{23}}
-\@writefile{toc}{\contentsline {section}{\numberline {5.2}Instrukcja u\IeC {\.z}ytkownika}{23}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2.1}Interfejs u\IeC {\.z}ytkownika}{23}}
-\@writefile{toc}{\contentsline {subsubsection}{Klaster obliczeniowy}{24}}
-\@writefile{toc}{\contentsline {subsubsection}{Algorytm PSO}{24}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.1}Wymagania sprz\IeC {\k e}towe i programowe}{39}}
+\@writefile{toc}{\contentsline {section}{\numberline {6.2}Instrukcja u\IeC {\.z}ytkownika}{39}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2.1}Interfejs u\IeC {\.z}ytkownika}{39}}
+\@writefile{toc}{\contentsline {subsubsection}{Klaster obliczeniowy}{40}}
+\@writefile{toc}{\contentsline {subsubsection}{Algorytm PSO}{40}}
 \bibcite{EObjGeneral}{1}
 \bibcite{EOlib}{2}
 \bibcite{Coco}{3}
@@ -96,32 +127,33 @@
 \bibcite{NewPso}{5}
 \bibcite{Pso}{6}
 \bibcite{SPso}{7}
-\bibcite{ComprLearnPso}{8}
-\bibcite{ModPsoInertia}{9}
-\bibcite{ParamSelPso}{10}
-\bibcite{PsoFuzzyInertia}{11}
-\bibcite{SelfOrgHPso}{12}
-\bibcite{VmaxPso}{13}
-\bibcite{TopologyPso}{14}
-\bibcite{PopStructPso}{15}
-\bibcite{PsoNeighOp}{16}
-\bibcite{MultiobjDynNeighPso}{17}
-\bibcite{UPso}{18}
-\bibcite{FullyInformedPso}{19}
-\bibcite{FitnessDistRatio}{20}
-\bibcite{SelectionPso}{21}
-\bibcite{HybridPsoBreedingSubpop}{22}
-\bibcite{EPso}{23}
-\bibcite{PsoCriticality}{24}
-\bibcite{CollisionAvoiding}{25}
-\bibcite{DissipativePso}{26}
-\bibcite{ComputGlobOptPso}{27}
-\bibcite{ComparisonParallelGpuPso}{28}
-\bibcite{ComparGpuPso}{29}
-\bibcite{BlockOccupancyGpu}{30}
-\bibcite{AccelParallelPso}{31}
-\bibcite{Pso8}{32}
-\bibcite{PsoCuda}{33}
-\bibcite{CudaProgGuide}{34}
-\bibcite{GpuBasedPso}{35}
-\bibcite{PsoGraphHardLocPat}{36}
+\bibcite{PSO_2D_img}{8}
+\bibcite{ComprLearnPso}{9}
+\bibcite{ModPsoInertia}{10}
+\bibcite{ParamSelPso}{11}
+\bibcite{PsoFuzzyInertia}{12}
+\bibcite{SelfOrgHPso}{13}
+\bibcite{VmaxPso}{14}
+\bibcite{TopologyPso}{15}
+\bibcite{PopStructPso}{16}
+\bibcite{PsoNeighOp}{17}
+\bibcite{MultiobjDynNeighPso}{18}
+\bibcite{UPso}{19}
+\bibcite{FullyInformedPso}{20}
+\bibcite{FitnessDistRatio}{21}
+\bibcite{SelectionPso}{22}
+\bibcite{HybridPsoBreedingSubpop}{23}
+\bibcite{EPso}{24}
+\bibcite{PsoCriticality}{25}
+\bibcite{CollisionAvoiding}{26}
+\bibcite{DissipativePso}{27}
+\bibcite{ComputGlobOptPso}{28}
+\bibcite{ComparisonParallelGpuPso}{29}
+\bibcite{ComparGpuPso}{30}
+\bibcite{BlockOccupancyGpu}{31}
+\bibcite{AccelParallelPso}{32}
+\bibcite{Pso8}{33}
+\bibcite{PsoCuda}{34}
+\bibcite{CudaProgGuide}{35}
+\bibcite{GpuBasedPso}{36}
+\bibcite{PsoGraphHardLocPat}{37}
