@@ -710,7 +710,7 @@ catch
 
 \newpage
 
-\section{Obliczenia na procesorze graficznym}
+\section{Implementacja PSO na GPU}
 \subsection{Porównanie implementacji PSO na CPU i GPU}
 Implementacja na CPU, w uproszczeniu, wygląda następująco:
 \begin{lstlisting}[frame=single]
@@ -734,7 +734,7 @@ while(condition) {
 }
 \end{lstlisting}
 
-Różnica polega na tym, że aktualizacja prędkości lub pozycji odbywa się w jednym kroku dla wszystkich cząstek. Technologia CUDA umożliwia nam działanie w właśnie takim modelu - wykonanie tej samej instrukcji dla wielu danych wejściowych (SIMD - Single Instruction Multiple Data). Stąd może wynikać potencjalny zysk czasowy przy obliczeniach na GPU.
+Różnica polega na tym, że aktualizacja prędkości lub pozycji odbywa się w jednym kroku dla wszystkich cząstek. Technologia CUDA umożliwia nam działanie w właśnie takim modelu - wykonanie tej samej instrukcji dla wielu danych wejściowych (SIMD - Single Instruction Multiple Data).
 
 \subsection{Krótkie wprowadzenie do architektury CUDA}
 %[Prosty opis bloków, wątków]
@@ -745,32 +745,7 @@ Podstawową jednostką obliczeniową
 w architekturze CUDA jest pojedynczy wątek GPU. Dzięki dostępowi do tysięcy wątków na procesorze graficznym możliwe jest stosowanie modelu SIMT (Single Instruction Multiple Threads). Każdy wątek ma dostęp do swojej lokalnej pamięci wątku. \\
 Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątków. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
 
-\begin{figure}[H]
-    \centering
- \includegraphics[scale=0.75]{gpu_diagram.pdf}
- \caption{Schemat działania algorytmu PSO na GPU}
-\end{figure}
-
-\subsection{Implementacja algorytmu dla procesora graficznego}
-
-Architektura części naszego programu odpowiadającej za obliczenia na GPU jest inspirowana pracami wspomnianymi powyżej. \cite{PsoCuda} \cite{GpuBasedPso} Całość opiera się na topologii pierścienia.
-
-Rój cząstek na GPU działa w synchronizacji z rojem na CPU poprzez wyszczególnienie po obu stronach cząstek odpowiedzialnych za przekazywanie swojej pozycji w roju na danej jednostce obliczeniowej rojowi na drugim procesorze (czyli pośrednio przekazuje pozycję własnego roju). Odnosząc się do topologii pierścienia, można wyobrazić to sobie jako most łączący 2 pierścienie.
-
-Dalej, rój na GPU składa się z mniejszych rojów działających w obrębie bloków. Każdy z mniejszych rojów komunikuje się z dwoma sąsiednimi rojami, tworząc pierścień. Komunikacja odbywa się analogicznie jak w przypadku komunikacji z CPU - dla każdego sąsiedztwa w bloku wybierana jest cząstka służąca do przekazywania swojej pozycji (czyli pośrednio pozycji roju).
-
-Podstawową jednostką w ramach roju na GPU są cząstki w rojach zorganizowanych w blokach. Każdy wątek w bloku odpowiada jednej cząstce w roju. Tak jak w poprzednim przypadku, tu również cząstki zorganizowane są w pierścień.
-
-Taka organizacja cząstek pozwala na zmaksymalizowanie zużycia mocy obliczeniowej GPU - liczba cząstek w ogólnym roju odpowiada liczbie dostępnych wątków. Topologia pierścienia pozwala na ograniczenie potrzeby komunikacji międzywątkowej dzięki stałemu zestawowi dwóch sąsiadów. Organizacja mniejszych rojów w blokach wątków umożliwia korzystanie ze znacznie szybszej pamięci dzielonej.
-
-\subsection{Komunikacja między procesorami obliczeniowymi}
- Celem implementacji algorytmu dla procesorów graficznych było współgranie obliczeń na CPU i GPU. Roje z obu jednostek obliczeniowych tworzą jeden większy rój, dzięki temu szybciej zbiegający algorytm na GPU ma szansę na nakierowanie roju CPU w dobrym kierunku.
- 
- Komunikacja odbywa się w sposób niewidoczny dla samego algorytmu PSO poprzez specjalną cząstkę obecną zarówno w roju GPU i CPU. Cząstka ta przy zapytaniu o jej stan przez inną cząstkę z roju CPU odpowiada stanem wybranej cząstki z roju na GPU (analogicznie w przypadku zapytania ze strony GPU).       
- 
- Synchronizacja stanów odbywa się co ustaloną liczbe iteracji na GPU. Dzieje się to w sposób przezroczysty dla algorytmu na CPU, ale konieczność pobrania stanu cząstki z pamięci graficznej wymusza drobną modyfikacje algorytmu na GPU.
- 
-\subsection{Szczegóły implementacyjne}
+\subsection{Implementacja algorytmu}
 Implementacja wsparcia dla obliczeń na procesorze graficznym składa się z dwóch modułów: NativeGPU oraz ManagedGPU. Integracja między tymi modułami, napisanymi w różnych językach programowania, odbywa się poprzez bibliotekę managedCuda.
 
 \subsubsection{managedCuda}
@@ -781,36 +756,73 @@ Moduł zawiera implementację algorytmu PSO oraz implementacje optymalizowanych 
 
 Zaimplementowane funkcje nie są wykorzystywane bezpośrednio przez pozostałe moduły. Biblioteka managedCuda wykorzystuje format pośredni PTX. Pliki z kernelami kompilowane są do tego pośredniego formatu, a następnie są wczytywane do pamięci trakcie uruchomienia obliczeń z poziomu C\#. W ten sposob możemy wykorzystać te funkcje w prosty sposób z poziomu reszty systemu. \\
 
-Kod podzielony jest na pliki zawierające kernele będące częścią algorytmu PSO, implementacje optymalizowanych funkcji oraz pomocnicze funkcje do operacji na wektorach i macierzach. \\
+Kod podzielony jest na pliki zawierające kernele będące częścią algorytmu PSO, implementacje optymalizowanych funkcji oraz pomocnicze funkcje do operacji na wektorach i macierzach.
 
-\textbf{update\_velocity\_kernel.cu} - zawiera kernel odpowiadający za wykonanie aktualizacji prędkości cząstek (pierwszy krok w głównej pętli algorytmu PSO). W przeciwieństwie do kernela, który aktualizuje lokalizacje cząstek, ten kernel jest niezależny od optymalizowanej funkcji ponieważ nie ewaluuje on optymalizowanej funkcji, przez co ma stały zestaw argumentów.
+\subsubsection{update\_velocity\_kernel.cu} 
+Zawiera kernel odpowiadający za wykonanie aktualizacji prędkości cząstek (pierwszy krok w głównej pętli algorytmu PSO). W przeciwieństwie do kernela, który aktualizuje lokalizacje cząstek, ten kernel jest niezależny od optymalizowanej funkcji ponieważ nie ewaluuje on optymalizowanej funkcji, przez co ma stały zestaw argumentów.
 
-\textbf{pliki dla optymalizowanych funkcji} - każdy z plików odpowiada różnej optymalizowanej funkcji i zawiera w sobie implementację tej funkcji w języku CUDA, kernel który inicjalizuje wartości specyficzne dla danej funkcji celu (współczynniki, macierze obrotów) oraz implementację kernela odpowiadającego za wykonanie aktualizacji lokalizacji cząstek (drugi krok w głównej pętli algorytmu PSO). Kernel aktualizujący lokalizacje różni się dla różnych optymalizowanych funkcji ze względu na różne parametry jakie te funkcje przyjmują.
+\subsubsection{Pliki dla optymalizowanych funkcji} 
+Każdy z plików odpowiada różnej optymalizowanej funkcji i zawiera w sobie implementację tej funkcji w języku CUDA, kernel który inicjalizuje wartości specyficzne dla danej funkcji celu (współczynniki, macierze obrotów) oraz implementację kernela odpowiadającego za wykonanie aktualizacji lokalizacji cząstek (drugi krok w głównej pętli algorytmu PSO). Kernel aktualizujący lokalizacje różni się dla różnych optymalizowanych funkcji ze względu na różne parametry jakie te funkcje przyjmują.
 
-\textbf{bbob\_generators.cuh} - zawiera implementacje przekształceń na wektorach i macierzach, które używane są w benchmarku BBOB, a także wiele prostych funkcji pomocniczych do działań na wektorach które były przydatne do implementacji funkcji celu lub algorytmu PSO.
+\subsubsection{bbob\_generators.cuh} 
+Zawiera implementacje przekształceń na wektorach i macierzach, które używane są w benchmarku BBOB, a także wiele prostych funkcji pomocniczych do działań na wektorach które były przydatne do implementacji funkcji celu lub algorytmu PSO.
+
+\newpage
 
 \subsubsection{ManagedGPU}
-Moduł ten udostępnia API w języku C\# pozwalające na uruchomienie obliczeń na karcie graficznej oraz synchronizację obliczeń na GPU z obliczeniami na CPU. \\
+Moduł ten udostępnia API w języku C\# pozwalające na uruchomienie obliczeń na karcie graficznej oraz synchronizację obliczeń na GPU z obliczeniami na CPU. 
 
-\textbf{ManagedGPU.GpuController} - klasa odpowiadająca za wstępną konfigurację obliczeń na GPU oraz umożliwiająca sprawdzenie możliwości maszyny obliczeniowej. Metody udostępniane przez tę klasę:
+\subsubsection{ManagedGPU.GpuController} 
+Klasa odpowiadająca za wstępną konfigurację obliczeń na GPU oraz umożliwiająca sprawdzenie możliwości maszyny obliczeniowej. Metody udostępniane przez tę klasę:
 \begin{itemize}
 \item AnySupportedGpu - sprawdza, czy na maszynie jest dostępna karta graficzna wspierająca technologię CUDA w odpowiedniej wersji. Dostęp do informacji na temat sprzętu umożliwia biblioteka managedCuda.
 \item Setup - korzystając z otrzymanych parametrów tworzy reprezentację algorytmu (CudaAlgorithm) oraz cząstkę proxy (CudaParticle) która może być wykorzystana do synchronizacji obliczeń CPU i GPU. Zwrócona para obiektów jest wystarczająca do uruchomienia obliczeń na GPU samodzielnie lub w synchronizacji z CPU.
 \end{itemize}
 
-\textbf{ManagedGPU.CudaAlgorithm} - klasa która reprezentuje algorytm optymalizujący pewną funkcję. Jest to klasa abstrakcyjna - zawiera główną pętlę algorytmu i metody umożliwiające kontrolę wykonania algorytmu. Ważne metody:
+\subsubsection{ManagedGPU.CudaAlgorithm} 
+Klasa która reprezentuje algorytm optymalizujący pewną funkcję. Jest to klasa abstrakcyjna - zawiera główną pętlę algorytmu i metody umożliwiające kontrolę wykonania algorytmu. Ważne metody:
 \begin{itemize}
-\item Initialize - metoda która przygotowuje zasoby do uruchomienia algorytmu na GPU. Wczytuje do pamięci odpowiedni dla optymalizowanej funkcji moduł PTX z funkcjami CUDA (moduły te zostaną omówione niżej) oraz alokuje pamięć na procesorze graficznym. Algorytm musi być zainicjalizowany przed uruchomieniem.
+\item Initialize - metoda która przygotowuje zasoby do uruchomienia algorytmu na GPU. Wczytuje do pamięci odpowiedni dla optymalizowanej funkcji moduł PTX z funkcjami CUDA oraz alokuje pamięć na procesorze graficznym. Algorytm musi być zainicjalizowany przed uruchomieniem.
 \item Run - uruchamia obliczenia na karcie graficznej. Parametrem wywołania tej metody jest token, który służy do przerwania obliczeń na GPU na żądanie. Metoda ta zawiera w sobie główną pętlę algorytmu PSO na GPU w której wywoływane są kernele CUDA 
 \item Dispose - metoda zwalniająca zasoby zaalokowane przez instancję algorytmu. Powinna zostać wywołana po zakończeniu obczliczeń.
 \end{itemize}
 
-\textbf{ManagedGPU.CudaParticle} - klasa która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU. Rozszerza ona klasę \textbf{Particle}, zatem może być traktowana jako zwykła cząstka z poziomu algorytmu CPU - umieszczenie takiej cząstki w roju na CPU symuluje sąsiedztwo między cząstkami na CPU i na GPU.
+\subsubsection{ManagedGPU.CudaParticle} 
+Klasa która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU. Rozszerza ona klasę \textbf{Particle}, zatem może być traktowana jako zwykła cząstka z poziomu algorytmu CPU - umieszczenie takiej cząstki w roju na CPU symuluje sąsiedztwo między cząstkami na CPU i na GPU.
+
+\newpage
+
+\begin{figure}[H]
+    \centering
+ \includegraphics[width=0.9\textwidth, clip, trim=0.0cm 10cm 11cm 0cm]{gpu_diagram.pdf}
+ \caption{Schemat działania algorytmu PSO na GPU}
+ \label{fig:gpu}
+\end{figure}
   
+Jak widać na schemacie \ref{fig:gpu}, wykonywaniem obliczeń na GPU zarządza wątek CPU. \\ 
+Przed uruchomieniem obliczeń obliczeń musi dojść do inicjalizacji algorytmu - kernele CUDA zostaną załadowane do pamięci oraz zostanie zaalokowana i zainicjowana pamięć na karcie graficznej. \\
+Uruchomienie algorytmu powoduje wystartowanie pętli, która działa przez zadaną liczbę iteracji lub dopóki nie zostanie wysłany sygnał z zewnątrz aby przerwać obliczenia (sygnał wysyłany jest przez Token będący parametrem metody uruchamiającej algorytm). \\
+W każdej iteracji tej pętli uruchamiane są dwa kernele: kernel aktualizujący prędkości cząstek oraz kernel aktualizujący pozycje cząstek. Po wykonaniu tych kroków algorytmu PSO może dojść do synchronizacji z CPU - synchronizacja zachodzi co ustaloną liczbę iteracji na GPU (w przypadku naszych testów była to empirycznie wyznaczona wartość 100 iteracji).
+
+\subsubsection{Organizacja cząstek na GPU}
+W roju cząstek na GPU stosujemy topologię pierścienia - każda z cząstek ma 2 sąsiadów, cząstkę o indeksie o jeden mniejszym i cząstkę o indeksie o jeden większym. Upraszcza to kernele po stronie CUDA i jest spójne z przyjętą topologią w pozostałej części systemu. \\
+Przy wykonaniu kerneli CUDA każda cząstka obsługiwana jest przez jeden wątek. Potencjalnie jest możliwe zwiększenie stopnia zrównoleglenia poprzez delegowanie pojedynczego wątku na obsługę pojedynczego wymiaru pozycji/prędkości cząstki, ale taka organizacja wątków nie jest możliwa dla wszystkich optymalizowanych funkcji. Dlatego, dla spójności w naszej implementacji, przyjęliśmy jeden wątek GPU na jedną cząstkę PSO.
+
+\subsubsection{Synchronizacja CPU i GPU}
+Roje na GPU i CPU synchronizowane są poprzez specjalny typ cząstki CudaParticle. Cząstka tego typu wygląda różnie w zależności od strony ją obserwującej. \\
+Jeśli cząstka CudaParticle znajdzie się w roju cząstek na CPU, zapytanie o jej cechy (np. lokalizację) zwróci cechy pewnej cząstki z roju na GPU (z czasu ostatniej synchronizacji).  \\
+Od strony algorytmu na GPU cząstka ta ma cechy najlepszej cząstki z roju na CPU. Jednak wątek zarządzający algorytmem na GPU nie korzysta bezpośrednio z cząstki CudaParticle - zamiast tego CudaParticle i odpowiadający jej CudaAlgorithm współdzielą obiekt CudaProxy poprzez który udostępniają swój stan i pobierają stan z drugiej strony. \\
+Synchronizacja odbywa się co ustaloną liczbę iteracji algorytmu na GPU - w iteracji synchronizacji stan pierwszej cząstki z cząstek GPU zostaje pobrany z pamięci GPU i przekazywany jest do cząstki CudaParticle, a następnie stan najlepszej cząstki z CPU nadpisuje stan pierwszej cząstki na GPU. 
+ 
 \subsubsection{Dodawanie własnych funkcji optymalizacyjnych}
 Architektura naszego rozwiązania pozwala na dodawanie nowych funkcji do optymalizacji na GPU. \\
 
-Aby dodać nową funkcję należy 
+Aby dodać nową funkcję należy:
+\begin{itemize}
+\item Dodać implementację funkcji w języku CUDA wraz z odpowiednim dla niej kernelem aktualizującym pozycję cząstki.
+\item Rozszerzyć klasę CudaAlgorithm dla implementowanej funkcji rozszerzając inicjalizację pamięci o dodatkowe współczynniki dla funkcji celu (jeśli potrzebne) oraz nadpisać wywołanie kernela aktualizującego pozycję cząstki.
+\item Dodać nową klasę do rejestru algorytmów ManagedCuda.CudaAlgorithmFactory z odpowiednim identyfikatorem (identyfikatory 1-24 zarezerwowane są dla funkcji z benchmarku BBOB.
+\end{itemize}
  
 \chapter{Platforma COCO}
 
