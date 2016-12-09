@@ -592,6 +592,31 @@ catch
 
 
 \section{Obliczenia na procesorze graficznym}
+\subsection{Porównanie implementacji PSO na CPU i GPU}
+Implementacja na CPU, w uproszczeniu, wygląda następująco:
+\begin{lstlisting}
+while(condition) {
+	foreach particle in particles:
+		particle.Transpose
+
+	foreach particle in particles:
+		particle.UpdateVelocity
+}
+\end{lstlisting}
+
+Zatem dopóki nie zostanie pewien warunek zakończenia, dla każdej cząstki aktualizujemy jej pozycję, a następnie dla każdej cząstki aktualizujemy jej prędkość.
+
+Z kolei implementację algorytmu dla GPU, również w uproszczeniu, można przedstawić jako:
+
+\begin{lstlisting}
+while(condition) {
+	RunTransposeKernel(particles)
+	RunUpdateVelocityKernel(particles)
+}
+\end{lstlisting}
+
+Różnica polega na tym, że aktualizacja prędkości lub pozycji odbywa się w jednym kroku dla wszystkich cząstek. Technologia CUDA umożliwia nam działanie w właśnie takim modelu - wykonanie tej samej instrukcji dla wielu danych wejściowych (SIMD - Single Instruction Multiple Data). Stąd może wynikać potencjalny zysk czasowy przy obliczeniach na GPU.
+
 \subsection{Krótkie wprowadzenie do architektury CUDA}
 %[Prosty opis bloków, wątków]
 Opis części programu na GPU wymaga krótkiego wprowadzenia do organizacji wątków i pamięci w architekturze CUDA.
@@ -599,7 +624,7 @@ Opis części programu na GPU wymaga krótkiego wprowadzenia do organizacji wąt
 Podstawową jednostką obliczeniową 
 %[to chyba niezbyt dobre określenie] 
 w architekturze CUDA jest pojedynczy wątek GPU. Dzięki dostępowi do tysięcy wątków na procesorze graficznym możliwe jest stosowanie modelu SIMT (Single Instruction Multiple Threads). Każdy wątek ma dostęp do swojej lokalnej pamięci wątku. \\
-Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątki. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
+Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątków. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
 
 \subsection{Implementacja algorytmu dla procesora graficznego}
 
@@ -624,14 +649,49 @@ Taka organizacja cząstek pozwala na zmaksymalizowanie zużycia mocy obliczeniow
  
  Komunikacja odbywa się w sposób niewidoczny dla samego algorytmu PSO poprzez specjalną cząstkę obecną zarówno w roju GPU i CPU. Cząstka ta przy zapytaniu o jej stan przez inną cząstkę z roju CPU odpowiada stanem wybranej cząstki z roju na GPU (analogicznie w przypadku zapytania ze strony GPU).       
  
- Synchronizacja stanów odbywa się co krok algorytmu na GPU. Dzieje się to w sposób przezroczysty dla algorytmu na CPU, ale konieczność pobrania stanu cząstki z pamięci graficznej wymusza drobną modyfikacje algorytmu na GPU.
+ Synchronizacja stanów odbywa się co ustaloną liczbe iteracji na GPU. Dzieje się to w sposób przezroczysty dla algorytmu na CPU, ale konieczność pobrania stanu cząstki z pamięci graficznej wymusza drobną modyfikacje algorytmu na GPU.
  
- \subsection{Szczegóły implementacyjne}
-Zestaw narzędzi CUDA udostępnia rozszerzenia jedynie dla języków C i C++. W celu integracji z pozostałą częścią systemu użyta została biblioteka ManagedCUDA, umożliwiająca łatwą kooperację środowisk .NET i CUDA.
+\subsection{Szczegóły implementacyjne}
+Implementacja wsparcia dla obliczeń na procesorze graficznym składa się z dwóch modułów: NativeGPU oraz ManagedGPU. Integracja między tymi modułami, napisanymi w różnych językach programowania, odbywa się poprzez bibliotekę managedCuda.
 
-Obliczenia na procesorze graficznym zarządzane są przez osobny wątek działający równolegle do algorytmu działającego na CPU. Wątek ten kontroluje inicjalizację środowiska, wykonanie i zakończenie algorytmu oraz komunikację między rojami GPU i CPU. 
- 
- Na część natywną, odpowiadającą za działanie algorytmu na procesorze graficznym, składają się części algorytmu PSO, wywoływane przez wątek zarządzający, oraz funkcje używane do benchmarkowania.
+\subsubsection{managedCuda}
+Biblioteka ta umożliwia na wykorzystanie potencjału kart graficznych wspierających technologię CUDA z poziomu platformy .NET. Daje ona dostęp do informacji o dostępnym sprzęcie, ułatwia zarządzanie pamięcią karty graficznej oraz umożliwia wykonywanie kerneli CUDA z poziomu kodu C\#. 
+
+\subsubsection{NativeGPU}
+Moduł zawiera implementację algorytmu PSO oraz implementacje optymalizowanych funkcji w języku CUDA. \\
+
+Zaimplementowane funkcje nie są wykorzystywane bezpośrednio przez pozostałe moduły. Biblioteka managedCuda wykorzystuje format pośredni PTX. Pliki z kernelami kompilowane są do tego pośredniego formatu, a następnie są wczytywane do pamięci trakcie uruchomienia obliczeń z poziomu C\#. W ten sposob możemy wykorzystać te funkcje w prosty sposób z poziomu reszty systemu. \\
+
+Kod podzielony jest na pliki zawierające kernele będące częścią algorytmu PSO, implementacje optymalizowanych funkcji oraz pomocnicze funkcje do operacji na wektorach i macierzach. \\
+
+\textbf{update\_velocity\_kernel.cu} - zawiera kernel odpowiadający za wykonanie aktualizacji prędkości cząstek (pierwszy krok w głównej pętli algorytmu PSO). W przeciwieństwie do kernela, który aktualizuje lokalizacje cząstek, ten kernel jest niezależny od optymalizowanej funkcji ponieważ nie ewaluuje on optymalizowanej funkcji, przez co ma stały zestaw argumentów.
+
+\textbf{pliki dla optymalizowanych funkcji} - każdy z plików odpowiada różnej optymalizowanej funkcji i zawiera w sobie implementację tej funkcji w języku CUDA, kernel który inicjalizuje wartości specyficzne dla danej funkcji celu (współczynniki, macierze obrotów) oraz implementację kernela odpowiadającego za wykonanie aktualizacji lokalizacji cząstek (drugi krok w głównej pętli algorytmu PSO). Kernel aktualizujący lokalizacje różni się dla różnych optymalizowanych funkcji ze względu na różne parametry jakie te funkcje przyjmują.
+
+\textbf{bbob\_generators.cuh} - zawiera implementacje przekształceń na wektorach i macierzach, które używane są w benchmarku BBOB, a także wiele prostych funkcji pomocniczych do działań na wektorach które były przydatne do implementacji funkcji celu lub algorytmu PSO.
+
+\subsubsection{ManagedGPU}
+Moduł ten udostępnia API w języku C\# pozwalające na uruchomienie obliczeń na karcie graficznej oraz synchronizację obliczeń na GPU z obliczeniami na CPU. \\
+
+\textbf{ManagedGPU.GpuController} - klasa odpowiadająca za wstępną konfigurację obliczeń na GPU oraz umożliwiająca sprawdzenie możliwości maszyny obliczeniowej. Metody udostępniane przez tę klasę:
+\begin{itemize}
+\item AnySupportedGpu - sprawdza, czy na maszynie jest dostępna karta graficzna wspierająca technologię CUDA w odpowiedniej wersji. Dostęp do informacji na temat sprzętu umożliwia biblioteka managedCuda.
+\item Setup - korzystając z otrzymanych parametrów tworzy reprezentację algorytmu (CudaAlgorithm) oraz cząstkę proxy (CudaParticle) która może być wykorzystana do synchronizacji obliczeń CPU i GPU. Zwrócona para obiektów jest wystarczająca do uruchomienia obliczeń na GPU samodzielnie lub w synchronizacji z CPU.
+\end{itemize}
+
+\textbf{ManagedGPU.CudaAlgorithm} - klasa która reprezentuje algorytm optymalizujący pewną funkcję. Jest to klasa abstrakcyjna - zawiera główną pętlę algorytmu i metody umożliwiające kontrolę wykonania algorytmu. Ważne metody:
+\begin{itemize}
+\item Initialize - metoda która przygotowuje zasoby do uruchomienia algorytmu na GPU. Wczytuje do pamięci odpowiedni dla optymalizowanej funkcji moduł PTX z funkcjami CUDA (moduły te zostaną omówione niżej) oraz alokuje pamięć na procesorze graficznym. Algorytm musi być zainicjalizowany przed uruchomieniem.
+\item Run - uruchamia obliczenia na karcie graficznej. Parametrem wywołania tej metody jest token, który służy do przerwania obliczeń na GPU na żądanie. Metoda ta zawiera w sobie główną pętlę algorytmu PSO na GPU w której wywoływane są kernele CUDA 
+\item Dispose - metoda zwalniająca zasoby zaalokowane przez instancję algorytmu. Powinna zostać wywołana po zakończeniu obczliczeń.
+\end{itemize}
+
+\textbf{ManagedGPU.CudaParticle} - klasa która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU. Rozszerza ona klasę \textbf{Particle}, zatem może być traktowana jako zwykła cząstka z poziomu algorytmu CPU - umieszczenie takiej cząstki w roju na CPU symuluje sąsiedztwo między cząstkami na CPU i na GPU.
+  
+\subsubsection{Dodawanie własnych funkcji optymalizacyjnych}
+Architektura naszego rozwiązania pozwala na dodawanie nowych funkcji do optymalizacji na GPU. \\
+
+Aby dodać nową funkcję należy 
  
 \chapter{Platforma COCO}
 
@@ -776,7 +836,7 @@ Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadzili�
 
 \begin{figure}[H]
     \centering
- \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{klasterBbobNoGpu.png}
+ \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{klasterBbobNoGPU.png}
  \caption{Struktura klastra testowego}
 \end{figure}
 
