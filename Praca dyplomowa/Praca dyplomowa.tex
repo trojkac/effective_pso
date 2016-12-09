@@ -18,6 +18,8 @@
 \usepackage{mfirstuc}
 \usepackage{listings}
 
+
+
 \lstset{
   basicstyle=\ttfamily\small,
   columns=fullflexible,
@@ -35,6 +37,9 @@
   keywordstyle=\color{cyan},
   morekeywords={xmlns,version,type}% list your attributes here
 }
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -387,6 +392,118 @@ Klasa, która na podstawie przekazanych jej parametrów problemu oraz algorytmu 
 	\item TargetValue - wartość ekstremalna funkcji celu, do której dąży wynik algorytmu
 	\item TargetValueCondition - wartość logiczna stanowiąca, czy zatrzymać algorytm po zbliżeniu się na odległość \emph{Epsilon} od \emph{TargetValue}
 \end{itemize}
+\section{Implementacja algorytmu}
+Algorytm PSO w wariencie uruchamianym na CPU został przez nas zaimplementowany w jęzku C\#, co różni się od wstępnych założeń projektu, w których zakładaliśmy jego implementację w języku C++ oraz opakowanie go klasą w technologii .NET . Początkowo algorytm został napisany zgodnie z założeniami systemu - algorytm w języku C++ natomiast jego opakowanie w języku C++/CLI. Jest to język oparty na C++ pozwalający na proste połączenie kodu natywnego C++ z kodem zarządzanym platformy .NET. Rozwiązanie takie było wystarczające dla tego modułu systemu, lecz okazało się być nadmierną komplikacją w budowie klastra oraz wykorzystaniu benchmarków BBOB.\\
+W pierwszym przypadku utrudnieniem była konieczność użycia klas udostępniających usługi WCF w natywnym kodzie C++, aby  z perspektywy cząstek komunikacja między zdalnymi węzłami przebiegała w sposób jednolity do interakcji z cząstkami lokalnymi, następnie opakowanie tych cząstek w klasy języka C\# .\\
+Drugi przypadek konfliktował z jednym z założeń, na podstawie którego programista mógł definiować funkcje celu w języku C\#. W celu spełnienia tego przekazywaliśmy funkcje z maszyny wirtualnej .NET do środowiska natywnego w celu ich wywołania przez cząstki. Wykorzystanie benchmarków wymagałoby dodatkowo odwrotnego opakowywania funkcji napisanych w C i rodziło dodatkowe komplikacje z odtwarzaniem funkcji dla zdalnych węzłów.
+\subsection{Algorytm}
+Zaimplementowanie algorytmu w języku C\# rozwiązało powyższe problemy oraz dodatkowo umożliwiło dużo przejrzystsze przekazywanie parametrów algorytmu oraz ułatwiało rozszerzanie algorytmu o nowe typy cząstek.
+Sam algorytm stworzony został przez nas w taki sposób, aby był jak najbardziej generyczny ze względu na rodzaj cząstek, przez co jest odpowiedzialny jedynie za przeprowadzenie odpowiednich kroków algorytmu, których dokładna implementacja zawarta jest w cząstkach. W pętli sprawdzane są warunki stopu oraz liczone iteracje od ostatniej poprawy algorytmu, jeśli któryś z warunków zostanie spełniony, lub iteracje bez poprawy osiągną ustalony limit działanie algorytmu zostaje przerwane.
+
+\lstset{style=sharpc}
+\begin{lstlisting}[frame=single]
+public IState<double[],double[]> Run(CancellationToken token)
+{
+	foreach(var particle in _particles)
+	{
+		var j = randomParticleIndex();	      
+		particle.Transpose(_fitnessFunction);
+	    particle.UpdateNeighborhood(_particles);
+		particle.InitializeVelocity(_particles[j]);
+	}
+	var _currentBest = GetCurrentBest();
+	_globalBest = new ParticleState(_currentBest.Location,
+	_currentBest.FitnessValue);
+	while (_conditionCheck())
+	{
+		foreach (var particle in _particles)
+		{
+	    	particle.Transpose(_fitnessFunction);
+	    }
+		foreach (var particle in _particles)
+	    {
+			particle.UpdateVelocity(_globalBest);
+		}
+	}
+	return _fitnessFunction.BestEvaluation;
+}
+\end{lstlisting}
+
+
+\subsection{Cząstka PSO}
+W naszym systemie cząstki są implementacją interfejsu IParticle, który zawiera właściwości potrzebne do identyfikacji cząstki, określenia jej położenia obecnego i najlepszego dotychczas odwiedzonego oraz metody   aktualizujące sąsiedztwo cząstki, jej prędkość i położenie. Od implementacji cząstek zależy topologia roju oraz sposób w jaki poruszają się po przestrzeni poszukiwań. 
+
+\subsubsection{StandardParticle}
+W celu dokładniejszego opisu cząstki przestawimy przykładową cząstkę zbudowaną zgodnie z założeniami SPSO.%Czy aby napewno
+Rozszerza ona abstrakcyjną klasę Particle, która zawiera elementy wspólne pomiędzy różnymi wersjami cząstek. Topologia jest ustalana poprzez funkcję UpdateNeighborhood, która wybiera sąsiadów, z którymi się komunikuje dana cząstka.
+\lstset{style=sharpc}
+\begin{lstlisting}[frame=single]
+public override void UpdateNeighborhood(IParticle[] allParticles)
+{
+	Neighborhood = allParticles
+	.Where(particle => particle.Id != Id)
+	.ToArray();
+}
+\end{lstlisting}
+
+Funkcja UpdateVelocity aktualizuje prędkość cząstki uwzględniając najlepsze położenia swoje oraz cząstek sąsiednich. W danym przykładzie, aby uzyskać wzrost wydajności algorytmu pojedyncza cząstka nie szuka najlepszej pozycji sąsiadów tylko otrzymuje globalną najlepszą wartość jako parametr funkcji. Jest to wartość identyczna z najlepszą wartością sąsiedztwa cząstki, gdyż w tym przypadku jest nim cały rój.
+
+\lstset{style=sharpc}
+\begin{lstlisting}[frame=single]
+
+        public override void UpdateVelocity(IState<double[], double[]> globalBest)
+        {
+            // 1.  get vectors to personal and global best
+            var toPersonalBest = Metric
+            .VectorBetween(CurrentState.Location, PersonalBest.Location);
+            
+            var toGlobalBest = 
+            Metric
+            .VectorBetween(CurrentState.Location, globalBest.Location);
+
+            var phi1 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
+            var phi2 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
+
+            // 2. multiply velocity by Omega and add toGlobalBest and toPersonalBest
+            Velocity = Velocity.Select((v, i) => v * Constants.OMEGA + phi1[i] * toGlobalBest[i] + phi2[i] * toPersonalBest[i]).ToArray();
+        }
+
+\end{lstlisting}
+
+Funkcja Transpose jest odziedziczona z klasy Particle, ponieważ jest wspólna dla stosowanych przez nas typów cząstek. Zmienia ona obecne położenie cząstki licząc przy tym liczbę iteracji bez poprawy wartości funkcji celu. Jeśli przekroczy ona ustalony w konfiguracji algorytmu limit, cząstka jest restartowana, czyli losowane jest jej położenie początkowe oraz zapominane najlepsze dotychczas rozwiązanie.
+
+\lstset{style=sharpc}
+\begin{lstlisting}[frame=single]
+public virtual void Transpose(IFitnessFunction<double[], double[]> function)
+        {
+            double[] newLocation;
+            if (_sinceLastImprovement == _iterationsToRestart)
+            {
+                newLocation = randomLocation()
+                _sinceLastImprovement = 0;
+            }
+            else
+            {
+                newLocation = GetClampedLocation(CurrentState.Location + Velocity);
+            }
+            var newVal = function.Evaluate(newLocation);
+            var oldBest = PersonalBest;
+            CurrentState = new ParticleState(newLocation, newVal);
+
+            if (Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
+            {
+                PersonalBest = CurrentState;
+                _sinceLastImprovement = 0;
+            }
+            else
+            {
+                _sinceLastImprovement++;
+            }
+        }
+\end{lstlisting}
+
+\subsection{Funkcja celu}
+Funkcje celu są obiektami implementującymi interfejs IFitnessFunction. Udostępniają one liczbę przeprowadzonych ewaluacji funkcji, najlepszą ewaluację oraz informacje o wymiarze przestrzeni poszukiwań i wartości funkcji. Funkcje są tworzone przez fabrykę funkcji FunctionsFactory na podstawie przekazanych do niej parametrów. W celu stworzenia odpowiedniej funkcji klient musi przekazać odpowiednią nazwę funkcji. Jest to szczególnie ważne w przypadku funkcji benchamrkowych, gdyż w nazwie zakodowany jest rodzaj funkcji oraz jej odpowiednia instancja. Dodatkowo fabryka funkcji umożliwia zapisanie danej funkcji w cache'u. Konieczność zastosowania pamięci tymczasowej była wynikiem integracji systemu z biblioteką COCO, która wymagała użycia jednej instancji funkcji celu w całym systemie.
 
 \section{Klaster i komunikacja między węzłami}
 Komunikacja między węzłami przebiega na dwóch opisanych poniżej poziomach. 
@@ -418,12 +535,6 @@ w architekturze CUDA jest pojedynczy wątek GPU. Dzięki dostępowi do tysięcy 
 Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątki. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
 
 \subsection{Implementacja algorytmu dla procesora graficznego}
-
-\begin{figure}[H]
-    \centering
- \includegraphics[width=27cm, height=20cm]{gpu_schema.png}
- \caption{Schemat działania algorytmu PSO na GPU}
-\end{figure}
 
 Architektura części naszego programu odpowiadającej za obliczenia na GPU jest inspirowana pracami wspomnianymi powyżej. \cite{PsoCuda} \cite{GpuBasedPso} Całość opiera się na topologii pierścienia.
 
@@ -548,7 +659,7 @@ Problem = benchmark.getNextProblem()
 \section{Wyniki testów}
 
 Poniżej znajdują się wyniki testów naszej biblioteki przy użyciu platformy COCO. % oraz %niezależnych od niej testów czasowych.
-Zestawiamy ze sobą z jednej strony wyniki otrzymane przy użyciu pojedynczego węzła obliczeniowego, zarówno z wykorzystaniem GPU, jak i bez niego, z drugiej zaś wyniki głównego węzła obliczeniowego klastra mającego do dyspozycji 2 i 4 jednostki obliczeniowe, a zatem mogącego wykonać około 2- i 4-krotnie większą liczbę ewaluacji funkcji, ale nie korzystającego z obliczeń na kartach graficznych. Porównanie rezultatów wskazuje lepsze jakościowo rozwiązanie korzystające z obliczeń równoległych. Dodatkowo porównujemy ze sobą wyniki działania węzła obliczeniowego korzystającego z roju standardowych cząstek z węzłem, którego połowa populacji stanowią cząstki naładowane (z opisanej wcześniej wersji algorytmu charged PSO). 
+Zestawiamy ze sobą z jednej strony wyniki otrzymane przy użyciu pojedynczego węzła obliczeniowego, zarówno z wykorzystaniem GPU, jak i bez niego, z drugiej zaś wyniki głównego węzła obliczeniowego klastra mającego do dyspozycji 2 i 4 jednostki obliczeniowe, a zatem mogącego wykonać około 2- i 4-krotnie większą liczbę ewaluacji funkcji, ale nie korzystającego z obliczeń na kartach graficznych. Porównanie rezultatów wskazuje lepsze jakościowo rozwiązanie korzystające z obliczeń równoległych. Dodatkowo porównujemy ze sobą wyniki działania węzła obliczeniowego korzystającego z roju standardowych cząstek z węzłem, którego połowa populacji stanowią cząstki naładowane (z opisanej wcześniej wersji algorytmu PSO). 
 Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadziliśmy do naszego rozwiązania, aby poprawić jego jakość są restarty algorytmu, gdy najlepsze znalezione rozwiązanie nie poprawi się przez odpowiednio długą liczbę iteracji oraz analogiczne restarty pojedynczych cząstek, które w przypadku braku poprawy znalezionego osobistego optimum, rozpoczynają poszukiwania od nowa w losowym punkcie dziedziny. Wyznaczona eksperymentalnie liczba iteracji, po których następują restarty 40 i 100 iteracji dla, odpowiednio, restarów cząstki i restartów globalnych.
 %coco na klastrze jest inne
 
