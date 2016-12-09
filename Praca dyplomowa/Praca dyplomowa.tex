@@ -149,7 +149,7 @@ W niniejszej pracy inżynierskiej prezentujemy rozproszony system do optymalizac
 
 %-----------Początek części zasadniczej-----------
 
-\chapter{Słowniczek}
+\chapter{Słownik}
 
 \textbf{Algorytm optymalizacyjny} - Algorytm rozwiązujący problem optymalizacji.\\
 \textbf{Benchmark} - Sposób oceny jakości sprzętu lub programu komputerowego polegający na uruchomieniu zestawu testów i porównaniu ich ze znanymi standardami.\\
@@ -354,26 +354,30 @@ Artykuł \cite{BlockOccupancyGpu} bada zależność między wydajnością algory
 
 \chapter{Zaimplementowany system optymalizacyjny}
 
+Stworzony przez nas system optymalizacyjny składa się z jednakowych węzłów obliczeniowych, które w celu rozproszenia obliczeń mogą łączyć się w klaster, a przy dostępnych zasobach, są w stanie zrównoleglić obliczenia pomiędzy wiele wątków procesora oraz uruchomić je na karcie graficznej.
+
+
 \section{Architektura węzła obliczeniowego}
 
 Poniżej przedstawiamy najważniejsze klasy składające się na pojedynczy węzeł obliczeniowy. 
 
-\begin{figure}[H]
-    \centering
- \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{WezlaArch.png}
- \caption{Architektura węzła obliczeniowego}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+% \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{WezlaArch.png}
+% \caption{Architektura węzła obliczeniowego}
+%\end{figure}
 
 \subsection{MachineManager}
-Klasa zarządzająca działaniem maszyny. Umożliwiająca wykorzystanie dostępnych zasobów - rozpoznanie liczby wątków procesora oraz obecność karty graficznej i jej kompatybilność z technologią CUDA. Jest obiektem zaimplementowanym według wzorca fasada, który jest odpowiedzialny za rozpoczęcie obliczeń alogrytmu oraz pobranie wyniku. Za pomocą metody \emph{Register} możemy podłączyć maszynę do klastra obliczeniowego. Odwołuje się do dwóch klas VCpuManager oraz GpuManager, za których pomocą udostępnia powyższe funkcjonalności.
-Korzysta z wielu VCpuManager'ów, z których każdy odpowiada pojednyczemu z wątkowi procesora. Domyślnie, tworzone jest tyle wątków, ile dostępnych procesorów posiada komputer. Programista, może jednak ustawić własną liczbę wątków.
+Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej na komputerze liczby procesorów. Jest obiektem zaimplementowanym według wzorca fasada, odpowiedzialnym za rozpoczęcie obliczeń algorytmu (metoda StartPsoAlgorithm) oraz pobranie wyników (metoda GetResult zwracająca obiekt klasy ParticleResult), zaś za pomocą metody \emph{Register} możemy podłączyć maszynę do klastra obliczeniowego. Obiekt klasy MachineManager posiada tablicę VCpuManager'ów, których liczba domyślnie odpowiada liczbie wątków procesora, lecz programista może ją ręcznie zmienić.
 
 \subsection{VCpuManager}
-Klasa odpowiedzialna za uruchomienie obliczeń algorytmu na pojedynczym wątku procesora oraz połączenie z pozostałymi węzłami klastra. Węzłem nazywamy tutaj pojedynczy wątek procesora, reprezentujący obliczenia jednego roju cząstek. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejsy \emph{IPsoManager}, który zarządza warstwą logiczną klastra PSO oraz \emph{INodeService} odpowiedzialny za komunikację pomiędzy węzłami korzystający z technologii WCF. \emph{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
+Klasa ta ma dwa zadania: 
+po pierwsze uruchamia obliczenia jednego roju cząstek PSO, po drugie, reprezentuje pojedynczy węzeł klastra obliczeniowego i odpowiada za nawiązanie połączenie z resztą klastra. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejs \emph{IPsoManager}, który zarządza warstwą logiczną klastra PSO i umożliwia m.in wywołanie metody Run, uruchamiającej obliczenia oraz obiekt klasy \emph{NetworkNodeManager} odpowiedzialny za komunikację pomiędzy węzłami, korzystający z technologii WCF. \emph{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
 
+\subsection{IPsoController}
+Jest to interfejs odpowiedzialny za uruchomienie obliczeń algorytmu PSO na podstawie podanych parametrów wykonania.
 
-\subsection{PsoController}
-Klasa, która na podstawie przekazanych jej parametrów problemu oraz algorytmu rozpoczyna wykonanie obliczeń. Pozwala ona na sprawdzenie czy obecnie uruchomione są obliczenia. Konfiguracja algorytmu jest dokonana na podstawie parametrów przekazanyc przez klasę \emph{PsoParams}. Zawarte są w niej wszystkie informacje potrzebne do uruchomienia obliczeń:
+Następujące informacje konfiguracyjne, zamknięte w klasie \emph{PsoParams}, potrzebne są do uruchomienia algorytmu:  
 
 \begin{itemize}
 	\item Epsilon - dokładność obliczeń algorytmu
@@ -381,31 +385,211 @@ Klasa, która na podstawie przekazanych jej parametrów problemu oraz algorytmu 
 	
 	\item Iterations - maksymalna liczba iteracji do przeprowadzenia na wątku CPU
 	\item IterationsLimitCondition - wartość logiczna stanowiąca o zatrzymaniu algorytm po wykonaniu danej liczby iteracji
-	\item ParticleIterationsToRestart - liczba iteracji bez poprawy położenia cząstki, po której cząstka zostanie zrestartowana, czyli jej położenie zostanie wylosowane, a najlepsza wartość cząstki będzie równa nowemu położeniu
+	\item ParticleIterationsToRestart - liczba iteracji bez poprawy położenia pojedynczej cząstki, po której dana cząstka zostanie zrestartowana, czyli jej położenie zostanie wylosowane, a najlepsza znana wartość zapomniana
 	\item Particles - lista typów oraz ilości cząstek do wykorzystania
 	\item PsoIterationsToRestart - liczba iteracji bez poprawy najlepszego wyniku wszystkich cząstek, po której zakończone zostanie działanie algorytmu
 	\item TargetValue - wartość ekstremalna funkcji celu, do której dąży wynik algorytmu
 	\item TargetValueCondition - wartość logiczna stanowiąca, czy zatrzymać algorytm po zbliżeniu się na odległość \emph{Epsilon} od \emph{TargetValue}
 \end{itemize}
 
-\section{Klaster i komunikacja między węzłami}
-Komunikacja między węzłami przebiega na dwóch opisanych poniżej poziomach. 
+Parametry te przekazywane są do metody Run.
 
-\subsection{Komunikacja na poziomie algorytmu}
-Jednym z nich jest komunikacja na poziomie rojów cząstek przekazujących sobie informacje o dotychczas najlepszym odnalezionym położeniu. Połączenia pomiędzy węzłami w tej warstwie zarządzane są przez interfejs IPsoManager, który posiadając informacje o połączonych jednostkach definiuje sąsiedztwa pomiędzy nimi. W przypadku naszego klastra implementuje on strukturę pierścienia, w której każdy węzeł posiada dwóch sąsiadów. Połączenia pomiędzy rojami działającymi wewnątrz jednej maszyny, ale korzystające z różnych wątków procesora przebiegają w ten sam sposób co połączenia między różnymi maszynami. Wszystkie wątki wszystkich maszyn tworzą jeden pierścień. Komunikacja pomiędzy rojami jest dwustronna. Z perspektywy cząstek wewnątrz roju, sąsiedni rój jest reprezentowany przez cząstkę proxy. Ona sama nie jest częścią algorytmu (nie wykonuje ewaluacji funkcji celu), przekazuje jedynie najlepsze znane położenie zwykłej cząstki z nią zespolonej pomiędzy rojami. Lokalnie podaje najlepszy wynik znany cząstce proxy z roju sąsiedniego, natomiast do niej przekazuje informacje od lokalnej cząstki. Poza informacjami przekazywanymi przez cząstki proxy, po zakończeniu obliczeń każdy z węzłów rozsyła do pozostałych argument, dla którego wartość funkcji celu jest najbardziej zbliżona do poszukiwanego optimum.
+\subsubsection{PsoController}
+Klasa PsoController implementująca IPsoController kontroluje wykonywanie obliczeń algorytmu PSO za pomocą obiektu \_algorithm klasy PsoAlgorithm oraz obiektu \_cudaAlgorithm klasy GenericCudaAlgorithm. 
+
+Na podstawie informacji zawartych w obiekcie PsoParams, PsoController tworzy cząstki PSO (obiekty implementujące interfejs IParticle) oraz funkcję celu (obiekt implementujący interfejs IFitnessFunction), które służą następnie do uruchomienia właściwych obliczeń, co następuje w funkcji StartAlgorithm wywoływanej z funkcji Run:
+
+\begin{lstlisting}[frame=single]
+_algorithm.Run(CancellationToken token)
+\end{lstlisting}
+
+W przypadku, gdy na maszynie dostępna jest karta graficzna spełniająca wymagania, na podstawie dostarczonych parametrów, w funkcji PrepareCudaAlgorithm przygotowywane jest również wywołanie algorytmu na GPU, zaś samo uruchomienie następuje w funkcji Run.
+
+Obliczenia na CPU jak i GPU wykonywane są asynchronicznie, z możliwością przerwania ich w dowolnym momencie.
+
+% Poniżej:
+% opis części odpowiadającej za komunikację na poziome algorytmu (między rojami)
+
+\subsection{IPsoManager}
+
+Interfejs IPsoManager odpowiada za komunikację pomiędzy rojami cząstek PSO znajdującymi się na różnych węzłach klastra obliczeniowego. Interfejs składa się z następujących metod:
+
+\begin{lstlisting}[frame=single]
+void UpdatePsoNeighborhood(
+NetworkNodeInfo[] allNetworkNodes, 
+NetworkNodeInfo currentNetworkNode);
+  
+Uri[] GetProxyParticlesAddresses();
+
+ProxyParticle[] GetProxyParticles();
+
+event CommunicationBreakdown CommunicationLost;
+\end{lstlisting}
+
+Komunikacja pomiędzy rojami cząstek zostanie opisana w dalszej części pracy.
+
+\subsubsection{PsoRingManager}
+PsoRingManager odpowiada za logiczne połączenie rojów na różnych węzłach obliczeniowych w pierścień (każdy rój posiada dwa roje sąsiednie).
+
+% Poniżej:
+% opis części węzła odpowiedzialnej za stworzenie klastra
+% i komunikację w jego obrębie
+
+\subsection{NetworkNodeManager}
+Jest to klasa odpowiadająca za infrastrukturę sieciową klastra. Najważniejszymi polami klasy są:
+
+\begin{lstlisting}[frame=single]
+private readonly int _tcpPort;
+private ServiceHost _tcpHost;
+public NodeService MyNodeService { get; set; }
+public List<NodeServiceClient> NodeServiceClients
+\end{lstlisting}
+
+Po otworzeniu za pomocą metody StartTcpNodeService serwisu \_tcpHost nasłuchującego na porcie \_tcpPort na połączenie TCP, NetworkNodeManager gotowy jest na przyjęcie połączenia TCP od innych węzłów. 
+
+Interfejs sieciowy udostępniany przez węzeł obliczeniowy przedstawia klasa NodeService opisana poniżej.
+
+Komunikacja w drugą stronę zachodzi przy użyciu obiektów klasy NodeServiceClient, które odpowiadają obiektom NodeService znajdującym się na zewnętrznych węzłach.
+
+\subsection{INodeService}
+Jest to interfejs sieciowy dla węzła obliczeniowego.
+
+\begin{lstlisting}[frame=single]
+ [ServiceContract]
+    public interface INodeService
+    {
+        [OperationContract] 
+        void UpdateNodes(NetworkNodeInfo[] nodes);
+
+        [OperationContract]
+        NetworkNodeInfo[] Register(NetworkNodeInfo source);
+
+        [OperationContract]
+        void Deregister(NetworkNodeInfo brokenNodeInfo);
+
+        [OperationContract]
+        void StartCalculation(
+        PsoParameters parameters, NetworkNodeInfo mainNodeInfo);
+
+        [OperationContract]
+        ParticleState StopCalculation();
+
+        [OperationContract]
+        void CalculationsFinished(
+        NetworkNodeInfo source, ParticleState result);
+
+        [OperationContract]
+        void CheckStatus();
+    }
+\end{lstlisting}
+
+Dokładniejszy schemat komunikacji między węzłami klastra zostanie dokładniej opisany w późniejszym rozdziale.
+
+\subsubsection{NodeService}
+Klasa ta stanowi implementację interfejsu sieciowego węzła obliczeniowego.
+
+\subsubsection{NodeServiceClient}
+Jest to klasa, za pomocą której obiekt implementujący INodeService jednego węzła wykonuje operacje na interfejsie sieciowym innego węzła. Technologia WCF umożliwia zaimplementowanie klienta usług sieciowych w prosty sposób - wystarczy dokonać następujące inicjalizacji:
+
+\begin{lstlisting}[frame=single]
+Address = new EndpointAddress(tcpAddress);
+Binding = new NetTcpBinding(SecurityMode.None);
+ChannelFactory = new ChannelFactory<INodeService>(Binding);
+INodeService Proxy = ChannelFactory.CreateChannel(Address);
+\end{lstlisting}             
+
+Na obiekcie Proxy można w tej chwili wykonywać wszystkie operacje, które implementuje interfejs sieciowy węzła o adresie tcpAddress.
+
+\section{Komunikacja w klastrze obliczeniowym}
+Komunikacja między węzłami przebiega na dwóch opisanych poniżej poziomach. Fizyczny sposób połączenia węzłów w klastrze jest oddzielony od logicznego powiązania rojów PSO, dzięki czemu system umożliwia zaimplementowanie różnych topologii rojów bez konieczności ingerencji w strukturę połączeń pomiędzy węzłami.
+
+\subsection{Komunikacja pomiędzy węzłami obliczeniowymi}
+Klaster obliczeniowy jest oparty na topologii pełnej siatki, w której każdy węzeł połączony jest z wszystkimi pozostałymi i dołączany jest do sieci niezależnie od pozostałych. Każdy z węzłów jest równoważny wszystkim pozostałym, to znaczy nie istnieje centralny serwer zarządzający pracą sieci, dzięki czemu obliczenia mogą być zapoczątkowane przez dowolny z nich.
+
+Komunikacja realizowana jest za pomocą usług WCF korzystających z protokołu sieciowego TCP. Modułem odpowiadającym za komunikację na poziomie klastra jest w każdym węźle INodeService, który, jako serwis sieciowy, opisany jest atrybutem [ServiceContract]. Udostępnia on następujące usługi, z których każda posiada atrybut [OperationContract] i można ją wywołać zdalnie używając NodeTcpClient'a.
+
+UpdateNodes - 
+
+Register - dodaje węzeł wywołujący zdalnie tę usługę do listy znanych węzłów węzła, który wykonuje usługę.
+
+Deregister - usuwa węzeł wywołujący zdalnie tę usługę z listy znanych węzłów węzła ją wykonującego.
+
+StartCalculation - nakazuje węzłowi rozpoczęcie obliczeń na podstawie podanych parametrów algorytmu.
+
+StopCalculation - nakazuje przerwanie obliczeń i zwrócenie informacji o ich dotychczasowym wyniku.
+
+CalculationsFinished - 
+
+Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
+
+[[[Diagram sekwencyjny]]]
+
+%\begin{figure}[H]
+%    \centering
+% \includegraphics[width=1\textwidth,natwidth=610,natheight=642]%{wholeCluster.png}
+% \caption{Infrastuktura klastra}
+%\end{figure}
+
+\subsubsection{Awaria}
+Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów.
+
+\subsection{Komunikacja na poziomie algorytmu PSO}
+Komunikacja pomiędzy rojami PSO na różnych węzłach obliczeniwych zarządzana jest przez interfejs IPsoManager, który posiadając informacje o połączonych jednostkach, definiuje sąsiedztwa pomiędzy nimi. W przypadku naszego klastra implementuje on strukturę pierścienia, w której każdy węzeł posiada dwóch sąsiadów. Połączenia pomiędzy rojami działającymi wewnątrz jednej maszyny, ale korzystające z różnych wątków procesora przebiegają w ten sam sposób co połączenia między różnymi maszynami. Wszystkie wątki, a dokładniej VCpuManager'y wszystkich maszyn tworzą jeden pierścień. Komunikacja pomiędzy rojami jest dwustronna. Z perspektywy cząstek wewnątrz roju, sąsiedni rój jest reprezentowany przez tzw. cząstkę proxy, która również implementuje interfejs IParticle, przez co nie wymaga oddzielnego traktowania - komunikacja z zewnętrznymi rojami jest przezroczysta dla innych cząstek i samego algorytmu. 
+
+Cząstka proxy posiada odpowiadającą jej, "zespoloną" z nią cząstkę [[[proxy?]]] z innego roju.
+
+[[[Jakiś obrazek]]]
+
+Cząstka proxy nie wykonuje ewaluacji funkcji celu, a przekazuje jedynie najlepsze znane położenie cząstki z nią zespolonej pomiędzy rojami. Do własnego roju podaje najlepszy wynik znany cząstce proxy z roju sąsiedniego, natomiast do niej przekazuje informacje od lokalnej cząstki. Odbywa się to w momencie, gdy cząstka proxy pytana jest o najlepsze znane sobie położenie, jednakże nie za każdym razem odpytywana jest cząstka z sąsiedniego roju - dzieje się tak tylko co pewną liczbę iteracji określoną parametrem RemoteCheckInterval, który domyślnie przyjmuje wartość 200, a wprowadzony został w celu ograniczenia spadku wydajności, który zauważyliśmy, gdy komunikacja pomiędzy rojami zachodziła zbyt często.
+
+\begin{lstlisting}[frame=single]
+public override ParticleState PersonalBest
+{
+	get
+	{
+		if (_getBestCounter == RemoteCheckInterval)
+		{
+			_getBestCounter = 0;
+			_proxyManager.GetRemoteBestState();
+		}
+		_getBestCounter++;
+		return _proxyManager.GetBestState();
+	}
+}
+\end{lstlisting}
 
 
-\subsection{Infrastruktura klastra}
+Poza informacjami przekazywanymi przez cząstki proxy, po zakończeniu obliczeń każdy z węzłów rozsyła do pozostałych informację o najlepszym znalezionym przez siebie wyniku.
 
+Cząstka proxy komunikuje się z innymi cząstkami proxy za pomocą jeszcze jednej warstwy pośredniczącej - ProxyManagera.
 
+ProxyManager jest odpowiednikiem klasy NetworkNodeManager dla komunikacji między cząstkami - i podobnie jak NetworkNodeManager posiadający interfejs sieciowy w postaci INodeService, tak ProxyManager posiada IParticleService, który jest interfejsem sieciowej komunikacji między cząstkami i udostępnia jedną operację:
 
-Klaster obliczeniowy jest oparty na topologii pełnej siatki, w której każdy węzeł połączony jest z wszystkimi pozostałymi. Każdy z wątków procesora jest dołączany do sieci niezależnie od pozostałych. Komunikacja realizowana jest za pomocą usług WCF korzystających z protokołu sieciowego TCP. Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów. Każdy z węzłów jest równoważny wszystkim pozostałym, to znaczy nie istnieje centralny serwer zarządzający pracą sieci, dzięki czemu obliczenia mogą być zapoczątkowane przez dowolny z nich. 
+GetBestState - zwraca najlepszą znaną cząstce pozycję, czyli najlepszą znaną wartość wśród cząstek jej sąsiedztwa.
+ 
 
-\begin{figure}[H]
-    \centering
- \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{wholeCluster.png}
- \caption{Infrastuktura klastra}
-\end{figure}
+\subsubsection{Wykrywanie awarii}
+ProxyManager jest jednocześnie miejscem, w którym zachodzi wykrywanie awarii. W przypadku, gdy cząstka sąsiedniego roju, z którym próbujemy się połączyć, wielokrotnie nie odpowiada na zapytanie, zgłaszane jest wydarzenie CommunicationBreakdown, a jednocześnie jako wynik zapytania zwracana jest domyślna wartość.
+
+\begin{lstlisting}[frame=single]
+try
+{
+	var s = _particleClient.GetBestState();
+	_particleService.UpdateBestState(s);
+	_communicationErrorCount = 0;
+	return s;
+}
+catch
+{
+	_communicationErrorCount++;
+	if (CommunicationBreakdown != null && _communicationErrorCount == 						_communicationErrorLimit)
+	{
+		CommunicationBreakdown();		
+	}
+	return new ParticleState();
+}
+\end{lstlisting}
+
 
 \section{Obliczenia na procesorze graficznym}
 \subsection{Krótkie wprowadzenie do architektury CUDA}
