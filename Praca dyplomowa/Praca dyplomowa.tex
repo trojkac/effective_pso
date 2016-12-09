@@ -407,6 +407,8 @@ Klaster obliczeniowy jest oparty na topologii pełnej siatki, w której każdy w
  \caption{Infrastuktura klastra}
 \end{figure}
 
+\newpage
+
 \section{Obliczenia na procesorze graficznym}
 \subsection{Porównanie implementacji PSO na CPU i GPU}
 Implementacja na CPU, w uproszczeniu, wygląda następująco:
@@ -442,13 +444,13 @@ Podstawową jednostką obliczeniową
 w architekturze CUDA jest pojedynczy wątek GPU. Dzięki dostępowi do tysięcy wątków na procesorze graficznym możliwe jest stosowanie modelu SIMT (Single Instruction Multiple Threads). Każdy wątek ma dostęp do swojej lokalnej pamięci wątku. \\
 Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątków. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
 
-\subsection{Implementacja algorytmu dla procesora graficznego}
-
 \begin{figure}[H]
     \centering
- \includegraphics[width=27cm, height=20cm]{gpu_schema.png}
+ \includegraphics[scale=0.75]{gpu_diagram.pdf}
  \caption{Schemat działania algorytmu PSO na GPU}
 \end{figure}
+
+\subsection{Implementacja algorytmu dla procesora graficznego}
 
 Architektura części naszego programu odpowiadającej za obliczenia na GPU jest inspirowana pracami wspomnianymi powyżej. \cite{PsoCuda} \cite{GpuBasedPso} Całość opiera się na topologii pierścienia.
 
