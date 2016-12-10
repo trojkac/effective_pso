@@ -19,9 +19,9 @@
   <ParticleIterationsToRestart>40</ParticleIterationsToRestart>
   <Epsilon>1e-10</Epsilon>
   <GpuParameters>
-    <UseGpu>false</UseGpu>
+    <UseGpu>true</UseGpu>
     <ParticlesCount>640</ParticlesCount>
-    <Iterations>5000</Iterations>
+    <Iterations>100000</Iterations>
   </GpuParameters>
   <!--  <FunctionParameters>-->
   <!--    <FitnessFunctionType>quadratic</FitnessFunctionType>-->

@@ -206,7 +206,8 @@ namespace ManagedGPU
 
                 for (i = 0; i < Iterations; i++)
                 {
-                    if (i > 1000) token.ThrowIfCancellationRequested();
+                    token.ThrowIfCancellationRequested();
+                    PsoServiceLocator.Instance.GetService<EvaluationsLogger>().IncreaseGpuEvals(ParticlesCount);
                     RunUpdateVelocityKernel();
                     RunTransposeKernel();
 
@@ -220,7 +221,6 @@ namespace ManagedGPU
             {
 
             }
-            Console.WriteLine("Performed CUDA Iterations: {0}", i);
             HostPersonalBestValues = DevicePersonalBestValues;
             HostPersonalBests = DevicePersonalBests;
 

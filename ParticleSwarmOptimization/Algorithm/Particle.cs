@@ -86,8 +86,7 @@ namespace Algorithm
             var oldBest = PersonalBest;
             CurrentState = new ParticleState(newLocation, newVal);
 
-            if (
-                Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
+            if (Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
             {
                 PersonalBest = CurrentState;
                 _sinceLastImprovement = 0;

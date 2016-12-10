@@ -38,21 +38,9 @@ namespace ManagedGPU
             return CudaAlgorithmFactory.AlgorithmForFunction(parameters, proxy);
         }
 
-        private static double Random(Random rng)
-        {
-            return rng.NextDouble();
-        }
-
-        private static double RandomIn(Random rng, double min, double max)
-        {
-            return min + Random(rng) * (max - min);
-        }
-
         private static double HostFitnessFunction(double[] particle)
         {
             return particle.Sum(t => t*t);
         }
-
-
     }
 }
