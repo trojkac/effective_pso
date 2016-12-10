@@ -130,6 +130,7 @@ namespace CocoClusterApp
 
 
                     }
+                    fileLogger.GenerateLog();
                     benchmark.finalizeBenchmark();
                 }
                 catch (Exception e)
