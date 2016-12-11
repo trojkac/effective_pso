@@ -961,20 +961,21 @@ Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instanc
 \subsection{Obliczenia na GPU}
 
 \subsection{Obliczenia na klastrze}
-\subsubsection{Rój złożony ze standardowych cząstek}
-\begin{figure}[H]
-    \centering
- \includegraphics[width=1\textwidth,natwidth=410,natheight=442]{klasterBbobNoGPU1Node.pdf}
- \caption{Pojedynczy węzeł obliczeniowy}
-\end{figure}
 
 \subsubsection{Klaster złożony z dwóch węzłów}
-
+\begin{figure}[H]
+    \centering
+ \caption{Klaster obliczeniowy złożony z 2 węzłów}
+\end{figure}
 \subsubsection{Klaster złożony z czterech węzłów}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{klasterBbobNoGPU4Nodes.pdf} 
+ \caption{Klaster obliczeniowy złożony z 4 węzłów}
+\end{figure}
 
 \begin{figure}[H]
     \centering
- \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{klasterBbobWithGPU.pdf}
  \caption{Struktura węzła obliczneniowego. Rój złożony z 40 cząstek na CPU oraz 640 cząstek na GPU}
 \end{figure}
 
@@ -991,11 +992,40 @@ Wykorzystanie obliczeń na GPU również nie przyniosły istotnej poprawy wynik�
 
 \begin{figure}[H]
     \centering
- \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{klasterBbobNoGPU.pdf}
- \caption{Struktura klastra testowego}
+\includegraphics[scale=1]{klasterBbobWithGPU.pdf} 
+ \caption{1 węzeł obliczeniowy z uruchomianą jednostką GPU}
 \end{figure}
+
+
+
+
 \subsection{Obliczenia na klastrze}
 Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło widoczną poprawę wyników, tym większą, im więcej węzłów obliczeniowych zostało wykorzystanych do obliczeń. Poprawa widoczna jest dla każdego rodzaju funkcji.
+
+\subsubsection{Klaster złożony z dwóch węzłów}
+
+\begin{figure}[H]
+    \includegraphics[scale=1]{charts/2nodes.pdf} 
+ \caption{Wyniki zbiorcze klastra zbudowanego z 2 węzłów}
+\end{figure}
+
+\begin{figure}[H]
+    \includegraphics[scale=1]{charts/2nodes_5D.pdf} 
+ \caption{Wyniki klastra zbudowanego z 2 węzłów dla funkcji pięciowymiarowych}
+\end{figure}
+
+
+\subsubsection{Klaster złożony z czterech węzłów}
+
+\begin{figure}[H]
+    \includegraphics[scale=1]{charts/4nodes.pdf} 
+ \caption{Wyniki zbiorcze klastra zbudowanego z 4 węzłów}
+\end{figure}
+
+\begin{figure}[H]
+    \includegraphics[scale=1]{charts/4nodes_5D.pdf} \par
+ \caption{Wyniki klastra zbudowanego z 4 węzłów dla funkcji pięciowymiarowych}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
