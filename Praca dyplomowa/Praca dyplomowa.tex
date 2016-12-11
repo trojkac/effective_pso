@@ -229,8 +229,8 @@ $r_1, r_2$ - liczby z przedziału $[0,1]$ losowane w każdej iteracji\\
 
 \begin{figure}[H]
     \centering
- \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{PSO_2D.png}
- \caption{Algorytm PSO w dwóch wymiarach \cite{PSO_2D_img}}
+ \includegraphics[scale=0.2]{PSO2D.png}
+ \caption{Algorytm PSO w dwóch wymiarach}
 \end{figure}
 
 \section{Dotychczasowy stan badań nad PSO}
@@ -798,6 +798,7 @@ Klasa która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU.
  \caption{Schemat działania algorytmu PSO na GPU}
  \label{fig:gpu}
 \end{figure}
+
   
 Jak widać na schemacie \ref{fig:gpu}, wykonywaniem obliczeń na GPU zarządza wątek CPU. \\ 
 Przed uruchomieniem obliczeń obliczeń musi dojść do inicjalizacji algorytmu - kernele CUDA zostaną załadowane do pamięci oraz zostanie zaalokowana i zainicjowana pamięć na karcie graficznej. \\
@@ -935,7 +936,7 @@ Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadzili�
 \subsubsection{Rój złożony ze standardowych cząstek}
 \begin{figure}[H]
     \centering
- \includegraphics[width=1\textwidth,natwidth=410,natheight=442]{singleCPU.png}
+ \includegraphics[width=1\textwidth,natwidth=410,natheight=442]{klasterBbobNoGPU1Node.pdf}
  \caption{Pojedynczy węzeł obliczeniowy}
 \end{figure}
 
@@ -949,7 +950,7 @@ Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadzili�
 
 \begin{figure}[H]
     \centering
- \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{singleCpuGpu.png}
+ \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{klasterBbobWithGPU.pdf}
  \caption{Struktura węzła obliczneniowego. Rój złożony z 40 cząstek na CPU oraz 640 cząstek na GPU}
 \end{figure}
 
@@ -967,7 +968,7 @@ Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadzili�
 
 \begin{figure}[H]
     \centering
- \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{klasterBbobNoGPU.png}
+ \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{klasterBbobNoGPU.pdf}
  \caption{Struktura klastra testowego}
 \end{figure}
 

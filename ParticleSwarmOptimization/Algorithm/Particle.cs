@@ -10,7 +10,6 @@ namespace Algorithm
         private static int _idCounter;
         private readonly int _iterationsToRestart;
         protected int _id;
-        private double _restartEpsilon;
         private int _sinceLastImprovement;
         public DimensionBound[] Bounds;
         protected IMetric<double[]> Metric;
@@ -23,7 +22,6 @@ namespace Algorithm
             Optimization = PsoServiceLocator.Instance.GetService<IOptimization<double[]>>();
 
             _iterationsToRestart = iterationsToRestart;
-            _restartEpsilon = restartEpsilon;
         }
 
         protected IOptimization<double[]> Optimization { get; set; }
