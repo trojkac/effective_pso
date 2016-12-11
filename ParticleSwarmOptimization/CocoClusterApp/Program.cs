@@ -75,8 +75,18 @@ namespace CocoClusterApp
                     var observer = new Observer("bbob", observerOptions);
                     var benchmark = new Benchmark(suite, observer);
                     /* Iterate over all problems in the suite */
+                    var evalLogger = new EvaluationsLogger();
+                    PsoServiceLocator.Instance.Register<EvaluationsLogger>(evalLogger);
+                    var fileLogger = new FileLogger("evals.csv");
+                    fileLogger.Log("function_id,gpu_evals,cpu_evals,gpu/cpu");
+                    int instanceCounter = 0;
                     while ((Problem = benchmark.getNextProblem()) != null)
                     {
+                        instanceCounter = (instanceCounter + 1) % 15;
+                        if(instanceCounter == 0)
+                        {
+                            evalLogger.RestartCounters();
+                        }
                         var restarts = -1;
                         FitnessFunction function;
                         if (!functionsToOptimize.Contains(Problem.FunctionNumber)) continue;
@@ -109,12 +119,18 @@ namespace CocoClusterApp
                             var evalsDone = Problem.getEvaluations();
                             evaluationsLeft  = evaluations - evalsDone;
                         } while (!Problem.isFinalTargetHit() && evaluationsLeft > 0 );
+                        evalLogger.IncreaseCpuEvals((int)Problem.getEvaluations());
                         Console.WriteLine("{0} | {1} evaluations | {2} restarts | {3:e} BestEval ", Problem.Id, Problem.getEvaluations(), restarts, function.BestEvaluation.FitnessValue[0]);
-
+                        
+                        if(instanceCounter == 14)
+                        {
+                            fileLogger.Log(String.Format("{0},{1},{2},{3}", Problem.Id.Substring(5,4), evalLogger._cpuEvaluations, evalLogger._gpuEvaluations, evalLogger.Ratio));
+                        }
 
 
 
                     }
+                    fileLogger.GenerateLog();
                     benchmark.finalizeBenchmark();
                 }
                 catch (Exception e)
