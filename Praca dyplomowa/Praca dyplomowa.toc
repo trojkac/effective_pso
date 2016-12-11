@@ -1,44 +1,69 @@
 \select@language {polish}
 \select@language {polish}
-\contentsline {chapter}{\numberline {1}S\IeC {\l }owniczek}{4}
+\contentsline {chapter}{\numberline {1}S\IeC {\l }ownik}{4}
 \contentsline {chapter}{\numberline {2}Wst\IeC {\k e}p teoretyczny}{6}
 \contentsline {section}{\numberline {2.1}Czym jest PSO?}{6}
 \contentsline {section}{\numberline {2.2}Definicja algorytmu}{7}
 \contentsline {section}{\numberline {2.3}Dotychczasowy stan bada\IeC {\'n} nad PSO}{8}
-\contentsline {section}{\numberline {2.4}Istniej\IeC {\k a}ce implementacje i zastosowania PSO}{11}
-\contentsline {section}{\numberline {2.5}R\IeC {\'o}wnoleg\IeC {\l }e i rozproszone PSO}{12}
+\contentsline {section}{\numberline {2.4}Istniej\IeC {\k a}ce implementacje i zastosowania PSO}{10}
+\contentsline {section}{\numberline {2.5}R\IeC {\'o}wnoleg\IeC {\l }e i rozproszone PSO}{11}
 \contentsline {subsection}{\numberline {2.5.1}Stan bada\IeC {\'n} nad r\IeC {\'o}wnoleg\IeC {\l }ym i rozproszonym PSO}{12}
 \contentsline {chapter}{\numberline {3}Zaimplementowany system optymalizacyjny}{15}
 \contentsline {section}{\numberline {3.1}Architektura w\IeC {\k e}z\IeC {\l }a obliczeniowego}{15}
-\contentsline {subsection}{\numberline {3.1.1}MachineManager}{16}
+\contentsline {subsection}{\numberline {3.1.1}MachineManager}{15}
 \contentsline {subsection}{\numberline {3.1.2}VCpuManager}{16}
-\contentsline {subsection}{\numberline {3.1.3}PsoController}{17}
-\contentsline {section}{\numberline {3.2}Klaster i komunikacja mi\IeC {\k e}dzy w\IeC {\k e}z\IeC {\l }ami}{17}
-\contentsline {subsection}{\numberline {3.2.1}Komunikacja na poziomie algorytmu}{17}
-\contentsline {subsection}{\numberline {3.2.2}Infrastruktura klastra}{18}
-\contentsline {section}{\numberline {3.3}Obliczenia na procesorze graficznym}{19}
-\contentsline {subsection}{\numberline {3.3.1}Kr\IeC {\'o}tkie wprowadzenie do architektury CUDA}{19}
-\contentsline {subsection}{\numberline {3.3.2}Implementacja algorytmu dla procesora graficznego}{21}
-\contentsline {subsection}{\numberline {3.3.3}Komunikacja mi\IeC {\k e}dzy procesorami obliczeniowymi}{22}
-\contentsline {subsection}{\numberline {3.3.4}Szczeg\IeC {\'o}\IeC {\l }y implementacyjne}{23}
-\contentsline {chapter}{\numberline {4}Platforma COCO}{24}
-\contentsline {section}{\numberline {4.1}Testowanie algorytm\IeC {\'o}w optymalizacyjnych}{24}
-\contentsline {section}{\numberline {4.2}Wrapper}{25}
-\contentsline {subsection}{\numberline {4.2.1}Eksport\textbackslash import funkcji z j\IeC {\k e}zyka C}{26}
-\contentsline {subsection}{\numberline {4.2.2}Wykorzystanie wrappera}{27}
-\contentsline {chapter}{\numberline {5}Testy}{29}
-\contentsline {section}{\numberline {5.1}Wyniki test\IeC {\'o}w}{29}
-\contentsline {subsection}{\numberline {5.1.1}Pojedynczy w\IeC {\k e}ze\IeC {\l } obliczeniowy}{30}
-\contentsline {subsubsection}{R\IeC {\'o}j z\IeC {\l }o\IeC {\.z}ony ze standardowych cz\IeC {\k a}stek}{30}
-\contentsline {subsubsection}{R\IeC {\'o}j korzystaj\IeC {\k a}cy z GPU i z\IeC {\l }o\IeC {\.z}ony z cz\IeC {\k a}stek standardowych i na\IeC {\l }adowanych}{32}
-\contentsline {subsection}{\numberline {5.1.2}Klaster}{34}
-\contentsline {subsubsection}{Struktura klastra testowego}{34}
-\contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z 2 w\IeC {\k e}z\IeC {\l }\IeC {\'o}w obliczeniowych}{35}
-\contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z 4 w\IeC {\k e}z\IeC {\l }\IeC {\'o}w obliczeniowych}{36}
-\contentsline {section}{\numberline {5.2}Interpretacja wynik\IeC {\'o}w}{36}
-\contentsline {chapter}{\numberline {6}Wymagania techniczne i instrukcja}{39}
-\contentsline {section}{\numberline {6.1}Wymagania sprz\IeC {\k e}towe i programowe}{39}
-\contentsline {section}{\numberline {6.2}Instrukcja u\IeC {\.z}ytkownika}{39}
-\contentsline {subsection}{\numberline {6.2.1}Interfejs u\IeC {\.z}ytkownika}{39}
-\contentsline {subsubsection}{Klaster obliczeniowy}{40}
-\contentsline {subsubsection}{Algorytm PSO}{40}
+\contentsline {subsection}{\numberline {3.1.3}IPsoController}{16}
+\contentsline {section}{\numberline {3.2}Implementacja algorytmu}{17}
+\contentsline {subsection}{\numberline {3.2.1}Algorytm}{18}
+\contentsline {subsection}{\numberline {3.2.2}Cz\IeC {\k a}stka PSO}{19}
+\contentsline {subsubsection}{StandardParticle}{19}
+\contentsline {subsection}{\numberline {3.2.3}Funkcja celu}{21}
+\contentsline {subsubsection}{PsoController}{22}
+\contentsline {subsection}{\numberline {3.2.4}IPsoManager}{22}
+\contentsline {subsubsection}{PsoRingManager}{23}
+\contentsline {subsection}{\numberline {3.2.5}NetworkNodeManager}{23}
+\contentsline {subsection}{\numberline {3.2.6}INodeService}{24}
+\contentsline {subsubsection}{NodeService}{25}
+\contentsline {subsubsection}{NodeServiceClient}{25}
+\contentsline {section}{\numberline {3.3}Komunikacja w klastrze obliczeniowym}{25}
+\contentsline {subsection}{\numberline {3.3.1}Komunikacja pomi\IeC {\k e}dzy w\IeC {\k e}z\IeC {\l }ami obliczeniowymi}{26}
+\contentsline {subsubsection}{Awaria}{26}
+\contentsline {subsection}{\numberline {3.3.2}Komunikacja na poziomie algorytmu PSO}{27}
+\contentsline {subsubsection}{Wykrywanie awarii}{28}
+\contentsline {section}{\numberline {3.4}Implementacja PSO na GPU}{30}
+\contentsline {subsection}{\numberline {3.4.1}Por\IeC {\'o}wnanie implementacji PSO na CPU i GPU}{30}
+\contentsline {subsection}{\numberline {3.4.2}Kr\IeC {\'o}tkie wprowadzenie do architektury CUDA}{30}
+\contentsline {subsection}{\numberline {3.4.3}Implementacja algorytmu}{31}
+\contentsline {subsubsection}{managedCuda}{31}
+\contentsline {subsubsection}{NativeGPU}{31}
+\contentsline {subsubsection}{update\_velocity\_kernel.cu}{32}
+\contentsline {subsubsection}{Pliki dla optymalizowanych funkcji}{32}
+\contentsline {subsubsection}{bbob\_generators.cuh}{32}
+\contentsline {subsubsection}{ManagedGPU}{33}
+\contentsline {subsubsection}{ManagedGPU.GpuController}{33}
+\contentsline {subsubsection}{ManagedGPU.CudaAlgorithm}{33}
+\contentsline {subsubsection}{ManagedGPU.CudaParticle}{34}
+\contentsline {subsubsection}{Organizacja cz\IeC {\k a}stek na GPU}{35}
+\contentsline {subsubsection}{Synchronizacja CPU i GPU}{35}
+\contentsline {subsubsection}{Dodawanie w\IeC {\l }asnych funkcji optymalizacyjnych}{36}
+\contentsline {chapter}{\numberline {4}Platforma COCO}{37}
+\contentsline {section}{\numberline {4.1}Testowanie algorytm\IeC {\'o}w optymalizacyjnych}{37}
+\contentsline {section}{\numberline {4.2}Wrapper}{38}
+\contentsline {subsection}{\numberline {4.2.1}Eksport\textbackslash import funkcji z j\IeC {\k e}zyka C}{39}
+\contentsline {subsection}{\numberline {4.2.2}Wykorzystanie wrappera}{40}
+\contentsline {chapter}{\numberline {5}Testy}{42}
+\contentsline {section}{\numberline {5.1}Wyniki test\IeC {\'o}w}{42}
+\contentsline {subsection}{\numberline {5.1.1}Pojedynczy w\IeC {\k e}ze\IeC {\l } obliczeniowy}{43}
+\contentsline {subsubsection}{R\IeC {\'o}j z\IeC {\l }o\IeC {\.z}ony ze standardowych cz\IeC {\k a}stek}{43}
+\contentsline {subsubsection}{R\IeC {\'o}j korzystaj\IeC {\k a}cy z GPU i z\IeC {\l }o\IeC {\.z}ony z cz\IeC {\k a}stek standardowych i na\IeC {\l }adowanych}{45}
+\contentsline {subsection}{\numberline {5.1.2}Klaster}{47}
+\contentsline {subsubsection}{Struktura klastra testowego}{47}
+\contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z 2 w\IeC {\k e}z\IeC {\l }\IeC {\'o}w obliczeniowych}{48}
+\contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z 4 w\IeC {\k e}z\IeC {\l }\IeC {\'o}w obliczeniowych}{49}
+\contentsline {section}{\numberline {5.2}Interpretacja wynik\IeC {\'o}w}{49}
+\contentsline {chapter}{\numberline {6}Wymagania techniczne i instrukcja}{53}
+\contentsline {section}{\numberline {6.1}Wymagania sprz\IeC {\k e}towe i programowe}{53}
+\contentsline {section}{\numberline {6.2}Instrukcja u\IeC {\.z}ytkownika}{53}
+\contentsline {subsection}{\numberline {6.2.1}Interfejs u\IeC {\.z}ytkownika}{53}
+\contentsline {subsubsection}{Klaster obliczeniowy}{54}
+\contentsline {subsubsection}{Algorytm PSO}{54}
