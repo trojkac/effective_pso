@@ -183,6 +183,14 @@ To assess our library was used benchmark BBOB 2015.\\
 
 \chapter{Wstęp}
 
+Algorytmy optymalizacyjne stanowią bardzo szeroką i bogatą klasę algorytmów komputerowych, służących do znajdowania optymalnych wartości funkcji. Wśród algorytmów optymalizacyjnych znajdują się takie, które zostały opracowane z myślą o jak najszerszym zastosowaniu i dają dobre rezultaty dla wielu rodzajów problemów, jak i takie, które opracowano z myślą o bardzo wąskiej gamie zastosowań i dzięki specjalizacji osiągają często w swojej dziedzinie najlepsze wyniki.
+
+Jednym z algorytmów optymalizacyjnych jest algorytm Particle Swarm Optimization (PSO), należący do klasy algorytmów populacyjnych - jego populację tworzą niezależne cząsteczki poruszające się w przestrzeni rozwiązań, które, komunikując się między sobą i wymieniając informacje o znalezionych rozwiązaniach, mają w zamierzeniu odkryć rozwiązanie optymalne lub jak najbardziej zbliżone do optymalnego.
+
+W naszej pracy prezentujemy system optymalizacyjny korzystający z obliczeń rozproszonych i równoległych. Cechy algorytmu PSO takie, jak prostota koncepcyjna i prostota implementacji, powodują, że stanowi on algorytm bazowy dla naszego systemu. Co więcej, jest on algorytmem populacyjnym z dużą niezależnością cząstek i nie wymagającym sztywnej synchronizacji między nimi, co powoduje, że w klarowny sposób nadaje się do zrównoleglenia i rozproszenia obliczeń. Te cechy algorytmu wykorzystujemy w naszym systemie, tworząc klaster umożliwiający prowadzenie równoczesnych obliczeń na wielu węzłach obliczeniowych i projektując schemat komunikacji pomiędzy rojami cząstek. W celu poprawy rozwiązania używamy też technologii CUDA, umożliwiającej w dość łatwy sposób wykorzystanie mocy obliczeniowych karty graficznej i jej zdolności do efektywnego realizowania obliczeń równoległych.
+
+Ze względu na fakt, że nie istnieje jeden najlepszy algorytm optymalizacyjny, który poradziłby sobie w każdej sytuacji, liczba dostępnych algorytmów optymalizacyjnych jest bardzo duża, a badania nad nimi są wciąż rozwijane, bardzo potrzebna jest możliwość porównania między sobą algorytmów dla różnych rodzajów problemów optymalizacyjnych. Porównanie takie umożliwiają m.in. benchmarki oparte na platformie COCO, których używamy w celu skonfrontowania jakości otrzymanego przez nas wyniku z ogólnie dostępnymi danymi dotyczącymi innych algorytmów jak i w celu ukazania zysku z rozproszenia i zrównoleglenia obliczeń.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Opis teoretyczny} %[bez wspominania naszej pracy]
@@ -988,7 +996,7 @@ Przy interpretacji wyników najbardziej istotne dla nas było względne porówna
 Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu połowy cząstek roju cząstkami naładowanymi wskazuje niestety na jedynie niewielką poprawę działania, wyraźnie widoczną jedynie dla niektórych funkcji, takich jak funkcja sferyczna oraz funkcja Gallaghera oraz nieznaczne pogorszenie wyników w innych przypadkach. Charged PSO zostało pierwotnie stworzone z myślą o zastosowaniu w problemie optymalizacji dynamicznej, zaś w badanych przez nas scenariuszach sprawdza się bardzo podobnie do standardowego PSO.
 
 \subsection{Obliczenia na GPU}
-Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy jedynie nieznaczną poprawę jakości. Pomimo faktu, że na rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt, że implementował on jedynie najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność. 
+Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczną poprawę jakości. Pomimo faktu, że na rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt, że implementował on jedynie najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność. Nieco bardziej zauważalna poprawa nastąpiła jedynie dla funkcji sferycznej oraz elipsoidalnej. 
 
 \begin{figure}[H]
     \centering
