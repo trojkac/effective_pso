@@ -118,7 +118,8 @@ Kacper Trojanowski
 \vfill
 \begin{center}
 \Large
-Promotor: mgr inż. Michał Okulewicz
+Promotor: mgr inż. Michał Okulewicz\\
+Opiekun naukowy: prof. dr hab. inż. Jacek Mańdziuk
 \end{center}
 \vfill
 \begin{center}
@@ -149,13 +150,13 @@ podpis promotora & \hspace*{100pt} & podpis autora
 \selectlanguage{polish}
 
 \begin{abstract}
-W niniejszej pracy inżynierskiej prezentujemy rozproszony system do optymalizacji funkcji umożliwiający uruchomienie obliczeń na klastrze złożonym z kilku komputerów, którego bazowym silnikiem optymalizacyjnym jest algorytm Particle Swarm Optimization. Program napisany został ze szczególnym uwzględnieniem optymalizacji funkcji ciągłych z benchmarku BBOB jednak umożliwia programiście rozszerzenie funkcjonalności do dowolnego rodzaju funkcji. Algorytm zaimplementowany został w postaci biblioteki w technologii .NET umożliwiającej dopasowanie się do sprzętu, na którym jest uruchamiana i wykorzystanie wieloprocesorowości lokalnej maszyny, a także uruchomienie obliczeń rozproszonych na wielu komputerach jednocześnie wykorzystując usługi WCF. Biblioteka pozwala też na wykorzystanie do obliczeń równoległych procesorów graficznych obsługujących technologię CUDA oraz udostępnia interfejs programistyczny, dający możliwość zaimplementowania własnej wersji algorytmu PSO, co obrazujemy przygotowując przykładową implementację dwóch wersji algorytmu. Jako test działania prezentujemy wyniki testów naszej biblioteki przy użyciu platformy COCO oraz benchmarku optymalizacyjnego wykorzystanego podczas warsztatów BBOB. Wyniki testów wskazują na wyraźny zysk przy uruchomieniu obliczeń rozproszonych na wielu węzłach klastra, przy jednocześnie niewielkim zysku, jaki udało nam się uzyskać przy wykorzystaniu obliczeń równoległych na karcie graficznej.\\
+W niniejszej pracy inżynierskiej prezentujemy rozproszony system do optymalizacji funkcji umożliwiający uruchomienie obliczeń na klastrze złożonym z kilku węzłów obliczeniowych, którego bazowym silnikiem optymalizacyjnym jest algorytm Particle Swarm Optimization. Program napisany został ze szczególnym uwzględnieniem optymalizacji funkcji ciągłych z benchmarku BBOB, jednak umożliwia programiście rozszerzenie funkcjonalności do dowolnego rodzaju funkcji. System zaimplementowany został w postaci biblioteki w technologii .NET umożliwiającej dopasowanie się do sprzętu, na którym jest uruchamiana i wykorzystanie wieloprocesorowości lokalnej maszyny, a także uruchomienie obliczeń rozproszonych na wielu komputerach jednocześnie wykorzystując usługi WCF. Biblioteka pozwala też na wykorzystanie do obliczeń równoległych procesorów graficznych obsługujących technologię CUDA. Udostępnia również interfejs programistyczny, dający możliwość zaimplementowania własnej wersji algorytmu PSO, co obrazujemy przygotowując przykładową implementację dwóch wersji algorytmu. Działanie aplikacji prezentujemy poprzez wyniki testów naszej biblioteki przeprowadzonych przy użyciu platformy COCO. Wyniki wskazują na wyraźny zysk przy uruchomieniu obliczeń rozproszonych na wielu węzłach klastra, przy jednocześnie niewielkim zysku, jaki udało nam się uzyskać przy wykorzystaniu obliczeń równoległych na karcie graficznej.\\
 
 %W niniejszej pracy inżynierskiej prezentujemy implementację wybranego przez nas algorytmu optymalizacji globalnej - Particle Swarm Optimization. Zaimplementowana przez nas biblioteka dostosowuje się do dostępnego sprzętu i pozwala na uruchomienie obliczeń na wielu procesorach, wielu maszynach i z wykorzystaniem kart graficznych. \\
 %Biblioteka została stworzona w technologii .NET, wykorzystuje framework WCF do obliczeń rozproszonych oraz technologię CUDA do zlecania obliczeń na procesor graficzny wspierający tę architekturę. \\
 %Do oceny naszej biblioteki wykorzystany został benchmark BBOB 2015.\\
 
-\noindent \textbf{Słowa kluczowe.} Algorytm optymalizacyjny, Particle Swarm Optimization, CUDA
+\noindent \textbf{Słowa kluczowe.} Algorytm optymalizacyjny, PSO, CUDA
 
 %W niniejszej pracy inżynierskiej prezentujemy stworzoną przez nas implementację algorytmu Particle Swarm Optimization. Algorytm zaimplementowany został w postaci biblioteki w technologii .NET umożliwiającej dopasowanie się do sprzętu, na którym jest uruchamiana wykorzystując wieloprocesorowość lokalnej maszyny oraz umożliwiającej uruchomienie obliczeń rozproszonych na wielu komputerach jednocześnie wykorzystując usługi WCF. Biblioteka pozwala też na wykorzystanie do obliczeń równoległych procesorów graficznych obsługujących technologię CUDA. Prezentujemy również wyniki testów naszej biblioteki m.in. na benchmarku optymalizacyjnym BBOB.
 \end{abstract}
@@ -164,9 +165,9 @@ W niniejszej pracy inżynierskiej prezentujemy rozproszony system do optymalizac
 \newpage
 \selectlanguage{english}
 \begin{abstract}
-In this paper, we present a distributed system engineering optimization function allows to run calculations on a cluster of several computers, the base engine optimization algorithm Particle Swarm Optimization. The program was written with particular emphasis on the optimization of continuous functions with the benchmark BBOB but allows the programmer to extend the functionality to any type of function. The algorithm was implemented in the form of libraries in .NET that allows adjustment to the hardware on which it runs, and the use of multiprocessing local machine, as well as launching distributed computing on multiple computers simultaneously using a WCF service. The library also allows for the use of parallel computing GPUs support CUDA technology, and provides a programming interface that gives the opportunity to implement their own version of the PSO algorithm, which portray preparing a sample implementation of the two versions of the algorithm. As a test of the present test results of our library using the platform COCO and optimization benchmark used during the workshop BBOB. Test results show a clear profit at the start of distributed computing on multiple cluster nodes at the same time a small profit, which we managed to get by using parallel computing on the graphics card.\\
+In this paper, we present a distributed system for optimizing functions that allows user to run calculations on a cluster of several computing nodes. The base optimization algorithm used in our system is Particle Swarm Optimization algorithm. The program was written with particular emphasis on the optimization of continuous functions of Black-Box Optimization Benchmarking workshops, but allows the programmer to extend the functionality to any type of function. The system was implemented in the form of .NET library that allows adjustment to the hardware on which it runs, and the use of multiprocessing, as well as launching distributed computing on multiple computers simultaneously using a WCF service. The library allows to utilize parallel computing using GPUs that support CUDA technology. It also provides a programming interface that gives the ability to implement other versions of the PSO algorithm, which we present with a sample implementation of the two versions of the algorithm. Application performance is assesed by the results of tests conducted using the COmparing Continuous Optimisers platform. Distributed computing on multiple cluster nodes resulted with noticeable profit however we only managed to achieve small gains using parallel computing on the graphics card. \\
 
-\noindent \textbf{Keywords.} Optimization algorithm, Particle Swarm Optimization, CUDA
+\noindent \textbf{Keywords.} Optimization algorithm, PSO, CUDA
 \end{abstract}
 
 
@@ -948,6 +949,91 @@ Problem = benchmark.getNextProblem()
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\chapter{Instrukcja użytkownika}
+
+\section{Interfejs użytkownika}
+Interfejs użytkownika pozwala na uruchomienie obliczeń dla jednej z zestawu predefiniowanych funkcji celu, włączając w to funkcje z benchmarku BBOB, używając zaimplementowanych typów algorytmu PSO. Umożliwia on odpowiednie dobranie parametrów funkcji celu oraz algorytmu. Za jego pomocą możliwym jest również utworzenie klastra obliczeniowego na wielu komputerach. Wybór oraz parametryzacja funkcji, algorytmu oraz konfiguracja klastra są kontrolowane przez odpowiednie pliki konfiguracyjne. 
+
+\subsection{Klaster obliczeniowy}
+Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwie NodeParameters. 
+Dziećmi elementu głównego są elementy:
+\begin{enumerate}
+	\item NrOfVCpu - wartość liczbowa definiująca liczbę węzłów, które zostaną utworzone przez program. Gdy przypiszemy mu wartość -1 obliczenia zostaną uruchomione na liczbie wątków dopasowanej do procesora.
+	\item Ip - adres interfejsu sieciowego maszyny, z którą będą mogły połączyć się pozostałe wątki klastra
+	\item Ports - tablica integerów z numerami portów, na których nasłuchiwać będą usługi WCF
+	\item PeerAddress - element zawierający adres węzła, do którego aplikacja powinna się podłączyć. Powinien zostać pominięty w przypadku, gdy użytkownik nie ma zamiaru łączyć się z innymi jednostkami
+\end{enumerate}
+Przykładowy plik konfiguracyjny klastra:
+\lstset{language=XML}
+\begin{lstlisting}[frame=single]
+<?xml version="1.0" encoding="utf-8"?>
+<NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <NrOfVCpu>1</NrOfVCpu>
+  <Ip>25.123.241.71</Ip>
+  <Ports>
+    <int>8000</int>
+  </Ports>
+  <PeerAddress>net.tcp://25.123.244.149:8000/NodeService</PeerAddress>
+</NodeParameters>
+\end{lstlisting}
+
+\subsection{Algorytm PSO}
+Plik konfigurujący algorytm PSO oraz funkcję celu również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
+Dziećmi elementu głównego są elementy:
+\begin{enumerate}
+	\item Particles - tablica definiująca liczbę oraz rodzaj cząstek użytych do obliczeń
+	\item IterationsLimitCondition, Iterations - wartość logiczna określająca czy warunek stopu ze względu na liczbę iteracji powinien być zastosowany oraz liczba iteracji do wykonania
+	\item TargetValueCondition, TargetValue, Epsilon - wartość logiczna określająca czy warunek stopu ze względu na osiągnięcie optimum powinien być zastosowany, optimum funkcji celu do wykonania oraz dokładność z jaką powinno być osiągnięte
+	\item FunctionParameters - definiujące parametry funkcji celu. Dziećmi tego elementu są:
+	\begin{enumerate}
+		\item FitnessFunctionType - typ funkcji celu. Id funkcji w przypadku funkcji z benchmarku BBOB
+		\item Dimension - wymiar funkcji
+		\item Coefficients - współczynniki funkcji
+		\item SearchSpace - tablica zawierająca dolną i górną granicę dziedziny poszukiwań
+	\end{enumerate}
+	\item GpuParameters - definiujące parametry roju GPU. Dziećmi tego elementu są:
+	\begin{enumerate}
+		\item UseGpu - wartość logiczna decydująca o tym, czy używać GPU w obliczeniach
+		\item ParticlesCount - liczba cząstek na GPU
+		\item Iterations - maksymalna liczba iteracji do wykonania na GPU
+	\end{enumerate}
+	\item PsoIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku, która musi zostać wykonana zanim zostanie on zatrzymany
+	\item ParticleIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku danej cząstki, po której cząstka zostanie zrestartowana
+
+\end{enumerate}
+\clearpage
+Przykładowy plik konfiguracyjny algorytmu PSO:
+
+\begin{lstlisting}[frame=single]
+.\CocoClusterApp.exe <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>
+\end{lstlisting}
+gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru \{2,3,5,10,20,40\} , drugim i trzecim są liczby definiujące przedział optymalizowanych funkcji od 1 do 24, natomiast ostatnim jest budżet algorytmu 
+
+\section{Wyjście programu}
+W trakcie działania programu na ekran konsoli wypisywana jest nazwa ostatnio zakończonej funkcji, liczba ewaluacji przeprowadzonych na danym węźle (bez GPU), liczba restartów algorytmu oraz najlepsza osiągnięta wartość.\\
+
+Szczegółowe dane dotyczące przebiegu algorytmu zapisywane są przez bibliotekę COCO w folderze \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}. W folderze tym, dla każdej funkcji znajduje się folder z danymi oraz plik o rozszerzeniu .info . Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
+Plik, do którego kieruje pierwsza kolumna, znajduje się we wspomnianym wcześniej folderze. Można z niego odczytać numery ewaluacji, dla których PSO odnalazło dotychczas najniższą wartość funkcji, dokładną wartość minimum funkcji, oraz znalezione przez algorytm punkty (współrzędne wraz z dokładnością). Struktura pliku opisana jest w jego nagłówku. 
+
+
+\chapter{Wykorzystane biblioteki i technologie}
+Żadna z wykorzystanych przez nas bibliotek nie nakłada ograniczeń na sposób licencjonowania projektu. \\
+
+Wykorzystane przez nas biblioteki:
+
+\begin{itemize}
+\item managedCuda, licencja LGPL, https://github.com/kunzmi/managedCuda
+\item Chronometer, licencja MIT, https://github.com/narkhedegs/Chronometer
+\item CUDA Toolkit, licencja NVIDIA pozwala na wykorzystanie w naszym projekcie, https://developer.nvidia.com/cuda-toolkit
+\end{itemize}
+
+\section{Wymagania techniczne}
+
+Do uruchomienia aplikacji niezbędny jest komputer z systemem operacyjnym Windows z
+platformą .NET 4.5. W celu uruchomienia obliczeń na procesorze graficznym wymagana jest karta graficzna wspierająca wersję (compute capability) 2.0 architektury CUDA.
+Użytkownik w celu zestawienia klastra komunikującego się przez zewnętrzne interfejsy sieciowe powinien posiadać uprawnienia administratora. Należy pamiętać również, o zezwoleniu aplikacji na nawiązywanie połączeń internetowych (dodać wyjątek do firewalla).
+
+
 \chapter{Testy}
 
 Poniżej znajdują się wyniki i interpretacja testów naszej biblioteki przeprowadzonych przy użyciu platformy COCO oraz zestawu benchmarków z warsztatów BBOB.
@@ -1119,29 +1205,17 @@ Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło wido
  \caption{Wykres porównujący wyniki na pojedynczym węźle z wynikami klastra złożonego z 2 oraz z 4 węzłów}
 \end{figure}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\chapter{Wykorzystane biblioteki i technologie}
-Żadna z wykorzystanych przez nas bibliotek nie nakłada ograniczeń na sposób licencjonowania projektu. \\
-
-Wykorzystane przez nas biblioteki:
-
-\begin{itemize}
-\item managedCuda, licencja LGPL, https://github.com/kunzmi/managedCuda
-\item Chronometer, licencja MIT, https://github.com/narkhedegs/Chronometer
-\item CUDA Toolkit, licencja NVIDIA pozwala na wykorzystanie w naszym projekcie, https://developer.nvidia.com/cuda-toolkit
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Podział pracy}
 Podział pracy prezentował się następująco:\\
 
-\textbf{Paweł Kupidura} - 870,299 linii kodu.\\
+\textbf{Paweł Kupidura} - Odpowiadał za implementację algorytmu w technologii CUDA oraz komunikację pomiędzy CPU a GPU. Dodatkowo stworzył pierwotną implementacją algorytmu PSO w C/C++.\\
 
-\textbf{Hubert Rosiak} - 53,818 linii kodu.\\
+\textbf{Hubert Rosiak} - Odpowiadał za stworzenie wrappera do platformy COCO. Brał udział w tworzeniu struktury węzła obliczeniowego.\\
 
-\textbf{Kacper Trojanowski} - 1,827,931 linii kodu.\\
+\textbf{Kacper Trojanowski} - Odpowiadał za stworzenie struktury klastra obliczeniowego i komunikacji pomiędzy jego węzłami. Stworzył algorytm PSO w C\# umożliwiający jego łatwą modyfikację i hybrydyzację.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1170,82 +1244,6 @@ Udało nam się zrealizować początkowe założenia projektu, czyli, m.in. zaim
 Klaster obliczeniowy spełnił swoje zadanie i w widoczny sposób poprawił wydajność naszego algorytmu optymalizacyjnego. Niestety implementacja PSO na karty graficzne, choć poprawna, nie przyniosła oczekiwanych rezultatów w postaci zysku czasowego, co prawdopodobnie wynika z zaimplementowania jedynie najprostszej wersji algorytmu oraz mało wydajnego procesu wymiany danych pomiędzy CPU a GPU. 
 
 Zaadresowanie tych problemów powinno być kolejnym krokiem w procesie udoskonalania systemu. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\chapter{Wymagania techniczne i instrukcja}
-
-\section{Wymagania sprzętowe i programowe}
-
-Do uruchomienia aplikacji niezbędny jest komputer z systemem operacyjnym Windows z
-platformą .NET 4.5. W celu uruchomienia obliczeń na procesorze graficznym wymagana jest karta graficzna wspierająca wersję (compute capability) 2.0 architektury CUDA.
-
-\section{Instrukcja użytkownika}
-
-\subsection{Interfejs użytkownika}
-Interfejs użytkownika pozwala na uruchomienie obliczeń dla jednej z zestawu predefiniowanych funkcji celu, włączając w to funkcje z benchmarku BBOB, używając zaimplementowanych typów algorytmu PSO. Umożliwia on odpowiednie dobranie parametrów funkcji celu oraz algorytmu. Za jego pomocą możliwym jest również utworzenie klastra obliczeniowego na wielu komputerach. Wybór oraz parametryzacja funkcji, algorytmu oraz konfiguracja klastra są kontrolowane przez odpowiednie pliki konfiguracyjne. 
-
-\subsubsection{Klaster obliczeniowy}
-Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwie NodeParameters. 
-Dziećmi elementu głównego są elementy:
-\begin{enumerate}
-	\item NrOfVCpu - wartość liczbowa definiująca liczbę węzłów, które zostaną utworzone przez program. Gdy przypiszemy mu wartość -1 obliczenia zostaną uruchomione na liczbie wątków dopasowanej do procesora.
-	\item Ip - adres interfejsu sieciowego maszyny, z którą będą mogły połączyć się pozostałe wątki klastra
-	\item Ports - tablica integerów z numerami portów, na których nasłuchiwać będą usługi WCF
-	\item PeerAddress - element zawierający adres węzła, do którego aplikacja powinna się podłączyć. Powinien zostać pominięty w przypadku, gdy użytkownik nie ma zamiaru łączyć się z innymi jednostkami
-\end{enumerate}
-Przykładowy plik konfiguracyjny klastra:
-\lstset{language=XML}
-\begin{lstlisting}[frame=single]
-<?xml version="1.0" encoding="utf-8"?>
-<NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <NrOfVCpu>1</NrOfVCpu>
-  <Ip>25.123.241.71</Ip>
-  <Ports>
-    <int>8000</int>
-  </Ports>
-  <PeerAddress>net.tcp://25.123.244.149:8000/NodeService</PeerAddress>
-</NodeParameters>
-\end{lstlisting}
-
-\subsubsection{Algorytm PSO}
-Plik konfigurujący algorytm PSO oraz funkcję celu również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
-Dziećmi elementu głównego są elementy:
-\begin{enumerate}
-	\item Particles - tablica definiująca liczbę oraz rodzaj cząstek użytych do obliczeń
-	\item IterationsLimitCondition, Iterations - wartość logiczna określająca czy warunek stopu ze względu na liczbę iteracji powinien być zastosowany oraz liczba iteracji do wykonania
-	\item TargetValueCondition, TargetValue, Epsilon - wartość logiczna określająca czy warunek stopu ze względu na osiągnięcie optimum powinien być zastosowany, optimum funkcji celu do wykonania oraz dokładność z jaką powinno być osiągnięte
-	\item FunctionParameters - definiujące parametry funkcji celu. Dziećmi tego elementu są:
-	\begin{enumerate}
-		\item FitnessFunctionType - typ funkcji celu. Id funkcji w przypadku funkcji z benchmarku BBOB
-		\item Dimension - wymiar funkcji
-		\item Coefficients - współczynniki funkcji
-		\item SearchSpace - tablica zawierająca dolną i górną granicę dziedziny poszukiwań
-	\end{enumerate}
-	\item GpuParameters - definiujące parametry roju GPU. Dziećmi tego elementu są:
-	\begin{enumerate}
-		\item UseGpu - wartość logiczna decydująca o tym, czy używać GPU w obliczeniach
-		\item ParticlesCount - liczba cząstek na GPU
-		\item Iterations - maksymalna liczba iteracji do wykonania na GPU
-	\end{enumerate}
-	\item PsoIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku, która musi zostać wykonana zanim zostanie on zatrzymany
-	\item ParticleIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku danej cząstki, po której cząstka zostanie zrestartowana
-
-\end{enumerate}
-\clearpage
-Przykładowy plik konfiguracyjny algorytmu PSO:
-
-\begin{lstlisting}[frame=single]
-.\CocoClusterApp.exe <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>
-\end{lstlisting}
-gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru \{2,3,5,10,20,40\} , drugim i trzecim są liczby definiujące przedział optymalizowanych funkcji od 1 do 24, natomiast ostatnim jest budżet algorytmu 
-
-\subsection{Wyjście programu}
-W trakcie działania programu na ekran konsoli wypisywana jest nazwa ostatnio zakończonej funkcji, liczba ewaluacji przeprowadzonych na danym węźle (bez GPU), liczba restartów algorytmu oraz najlepsza osiągnięta wartość.\\
-
-Szczegółowe dane dotyczące przebiegu algorytmu zapisywane są przez bibliotekę COCO w folderze \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}. W folderze tym, dla każdej funkcji znajduje się folder z danymi oraz plik o rozszerzeniu .info . Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
-Plik, do którego kieruje pierwsza kolumna, znajduje się we wspomnianym wcześniej folderze. Można z niego odczytać numery ewaluacji, dla których PSO odnalazło dotychczas najniższą wartość funkcji, dokładną wartość minimum funkcji, oraz znalezione przez algorytm punkty (współrzędne wraz z dokładnością). Struktura pliku opisana jest w jego nagłówku. 
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
