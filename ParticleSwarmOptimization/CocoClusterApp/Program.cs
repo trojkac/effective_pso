@@ -41,7 +41,7 @@ namespace CocoClusterApp
             {
                 if (args.Length < 3)
                 {
-                    Console.WriteLine("CocoSingleCpuApp <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>");
+                    Console.WriteLine("CocoClusterApp <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>");
                     return;
                 }
                 var dims = args[0];
