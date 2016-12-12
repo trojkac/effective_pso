@@ -649,8 +649,8 @@ Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 
 [[[Diagram sekwencyjny]]]
 
-\begin{figure}[H]
-\includegraphics[scale=0.75]{communicationDiagram.pdf} 
+\begin{figure}
+\includegraphics[scale=1]{communicationDiagram.pdf} 
  \caption{Diagram przedstawiający przykładowy przebieg komunikacji w klastrze}
 \end{figure}
 
@@ -946,6 +946,30 @@ Testów dokonujemy na trzech płaszczyznach:
 2. Wspomagamy algorytm obliczeniami równoległymi na karcie graficznej.
 
 3. Uruchamiamy obliczenia na klastrze obliczeniowym, złożonym z różnej liczby węzłów.
+
+\begin{table}[t]
+\caption{Tabela przedstawiająca przeprowadzone przez nas eksperymenty}
+\label{Zestawienie testów}
+\setlength{\tabcolsep}{15pt}
+\begin{tabular}{c c|c|c|c|}
+  \cline{3-5}
+  & & \multicolumn{3}{|c|}{Liczba cząstek}  \\
+  \hline
+   \multicolumn{1}{|c|}{Id.} & L. węzłów & Standard CPU & Charged CPU & Standard GPU \\ 
+  \hline
+  	\multicolumn{1}{|c|}{1} & 1 & 40 & 0 & 0 \\
+  \hline
+    \multicolumn{1}{|c|}{2} & 1 & 20 & 20 & 0 \\
+  \hline
+    \multicolumn{1}{|c|}{3} & 1 & 40 & 0 & 640 \\
+  \hline
+    \multicolumn{1}{|c|}{4} & 2 & 40 & 0 & 0 \\
+  \hline
+    \multicolumn{1}{|c|}{5} & 4 & 40 & 0 & 0 \\
+  \hline
+\end{tabular} 
+\end{table}
+
 
 \section{Wyniki}
 

@@ -28,7 +28,7 @@
 \contentsline {subsubsection}{NodeServiceClient}{27}
 \contentsline {section}{\numberline {4.3}Komunikacja w klastrze obliczeniowym}{27}
 \contentsline {subsection}{\numberline {4.3.1}Komunikacja pomi\IeC {\k e}dzy w\IeC {\k e}z\IeC {\l }ami obliczeniowymi}{28}
-\contentsline {subsubsection}{Awaria}{29}
+\contentsline {subsubsection}{Awaria}{28}
 \contentsline {subsection}{\numberline {4.3.2}Komunikacja na poziomie algorytmu PSO}{30}
 \contentsline {subsubsection}{Wykrywanie awarii}{31}
 \contentsline {section}{\numberline {4.4}Implementacja PSO na GPU}{33}
@@ -57,13 +57,13 @@
 \contentsline {section}{\numberline {6.2}Plan test\IeC {\'o}w}{46}
 \contentsline {section}{\numberline {6.3}Wyniki}{47}
 \contentsline {subsection}{\numberline {6.3.1}Jak czyta\IeC {\'c}}{47}
-\contentsline {subsection}{\numberline {6.3.2}Wyniki bazowe roju standardowego}{47}
-\contentsline {subsection}{\numberline {6.3.3}Hybrydyzacja PSO}{47}
-\contentsline {subsection}{\numberline {6.3.4}Obliczenia na GPU}{47}
-\contentsline {subsection}{\numberline {6.3.5}Obliczenia na klastrze}{47}
-\contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z dw\IeC {\'o}ch w\IeC {\k e}z\IeC {\l }\IeC {\'o}w}{47}
+\contentsline {subsection}{\numberline {6.3.2}Wyniki bazowe roju standardowego}{48}
+\contentsline {subsection}{\numberline {6.3.3}Hybrydyzacja PSO}{48}
+\contentsline {subsection}{\numberline {6.3.4}Obliczenia na GPU}{48}
+\contentsline {subsection}{\numberline {6.3.5}Obliczenia na klastrze}{48}
+\contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z dw\IeC {\'o}ch w\IeC {\k e}z\IeC {\l }\IeC {\'o}w}{48}
 \contentsline {subsubsection}{Klaster z\IeC {\l }o\IeC {\.z}ony z czterech w\IeC {\k e}z\IeC {\l }\IeC {\'o}w}{48}
-\contentsline {section}{\numberline {6.4}Interpretacja wynik\IeC {\'o}w}{48}
+\contentsline {section}{\numberline {6.4}Interpretacja wynik\IeC {\'o}w}{49}
 \contentsline {subsection}{\numberline {6.4.1}Hybrydyzacja PSO}{49}
 \contentsline {subsection}{\numberline {6.4.2}Obliczenia na GPU}{49}
 \contentsline {subsection}{\numberline {6.4.3}Obliczenia na klastrze}{50}
