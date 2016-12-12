@@ -1054,7 +1054,7 @@ Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu po�
 \end{figure}
 
 \subsection{Obliczenia na GPU}
-Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczną poprawę jakości. Pomimo faktu, że na rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt, że implementował on jedynie najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność. Nieco bardziej zauważalna poprawa nastąpiła jedynie dla funkcji sferycznej oraz elipsoidalnej. 
+Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczną poprawę jakości. Pomimo tego, że rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt że implementował on najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność. Nieco bardziej zauważalna poprawa nastąpiła jedynie dla funkcji sferycznej oraz elipsoidalnej. 
 
 \begin{figure}[H]
     \centering
@@ -1164,14 +1164,13 @@ platformą .NET 4.5. W celu uruchomienia obliczeń na procesorze graficznym wyma
 Interfejs użytkownika pozwala na uruchomienie obliczeń dla jednej z zestawu predefiniowanych funkcji celu, włączając w to funkcje z benchmarku BBOB, używając zaimplementowanych typów algorytmu PSO. Umożliwia on odpowiednie dobranie parametrów funkcji celu oraz algorytmu. Za jego pomocą możliwym jest również utworzenie klastra obliczeniowego na wielu komputerach. Wybór oraz parametryzacja funkcji, algorytmu oraz konfiguracja klastra są kontrolowane przez odpowiednie pliki konfiguracyjne. 
 
 \subsubsection{Klaster obliczeniowy}
-Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwe NodeParameters. 
+Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwie NodeParameters. 
 Dziećmi elementu głównego są elementy:
 \begin{enumerate}
 	\item NrOfVCpu - wartość liczbowa definiująca liczbę węzłów, które zostaną utworzone przez program. Gdy przypiszemy mu wartość -1 obliczenia zostaną uruchomione na liczbie wątków dopasowanej do procesora.
-	\item IsGpu - wartość logiczna włączająca/wyłączająca obliczenia na GPU
-	\item Ip - adres interfejsu sieciowego maszyny, z którym będą mogły połączyć się pozostałe wątki klastra
+	\item Ip - adres interfejsu sieciowego maszyny, z którą będą mogły połączyć się pozostałe wątki klastra
 	\item Ports - tablica integerów z numerami portów, na których nasłuchiwać będą usługi WCF
-	\item PeerAddress - element zawierający adres węzła, do którego aplikacja powinna się podłączyć. Powinien zostać pominięty w przypadku, gdy użytkownik nie ma zamiaru łączyć się z innymi stacjami
+	\item PeerAddress - element zawierający adres węzła, do którego aplikacja powinna się podłączyć. Powinien zostać pominięty w przypadku, gdy użytkownik nie ma zamiaru łączyć się z innymi jednostkami
 \end{enumerate}
 Przykładowy plik konfiguracyjny klastra:
 \lstset{language=XML}
@@ -1179,7 +1178,6 @@ Przykładowy plik konfiguracyjny klastra:
 <?xml version="1.0" encoding="utf-8"?>
 <NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <NrOfVCpu>1</NrOfVCpu>
-  <IsGpu>false</IsGpu>
   <Ip>25.123.241.71</Ip>
   <Ports>
     <int>8000</int>
@@ -1202,45 +1200,30 @@ Dziećmi elementu głównego są elementy:
 		\item Coefficients - współczynniki funkcji
 		\item SearchSpace - tablica zawierająca dolną i górną granicę dziedziny poszukiwań
 	\end{enumerate}
+	\item GpuParameters - definiujące parametry roju GPU. Dziećmi tego elementu są:
+	\begin{enumerate}
+		\item UseGpu - wartość logiczna decydująca o tym, czy używać GPU w obliczeniach
+		\item ParticlesCount - liczba cząstek na GPU
+		\item Iterations - maksymalna liczba iteracji do wykonania na GPU
+	\end{enumerate}
+	\item PsoIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku, która musi zostać wykonana zanim zostanie on zatrzymany
+	\item ParticleIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku danej cząstki, po której cząstka zostanie zrestartowana
 
 \end{enumerate}
 \clearpage
 Przykładowy plik konfiguracyjny algorytmu PSO:
-\lstset{language=XML}
+
 \begin{lstlisting}[frame=single]
-<?xml version="1.0" encoding="utf-8"?>
-<PsoParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Particles>
-    <ParticlesCount>
-      <ParticleType>Standard</ParticleType>
-      <Count>6</Count>
-    </ParticlesCount>
-  </Particles>
-  <IterationsLimitCondition>true</IterationsLimitCondition>
-  <Iterations>1000</Iterations>
-  <TargetValueCondition>false</TargetValueCondition>
-  <TargetValue>0</TargetValue>
-  <Epsilon>0</Epsilon>
-      <FunctionParameters>
-        <FitnessFunctionType>quadratic</FitnessFunctionType>
-        <Dimension>2</Dimension>
-        <Coefficients>
-          <double>1.0</double>
-          <double>1.0</double>
-        </Coefficients>
-        <SearchSpace>
-          <DimensionBound>
-            <Min>-5</Min>
-            <Max>5</Max>
-          </DimensionBound>
-    	  <DimensionBound>
-            <Min>-5</Min>
-            <Max>5</Max>
-          </DimensionBound>
-        </SearchSpace>
-      </FunctionParameters>
-</PsoParameters>
+.\CocoClusterApp.exe <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>
 \end{lstlisting}
+gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru \{2,3,5,10,20,40\} , drugim i trzecim są liczby definiujące przedział optymalizowanych funkcji od 1 do 24, natomiast ostatnim jest budżet algorytmu 
+
+\subsection{Wyjście programu}
+W trakcie działania programu na ekran konsoli wypisywana jest nazwa ostatnio zakończonej funkcji, liczba ewaluacji przeprowadzonych na danym węźle (bez GPU), liczba restartów algorytmu oraz najlepsza osiągnięta wartość.\\
+
+Szczegółowe dane dotyczące przebiegu algorytmu zapisywane są przez bibliotekę COCO w folderze \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}. W folderze tym, dla każdej funkcji znajduje się folder z danymi oraz plik o rozszerzeniu .info . Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
+Plik, do którego kieruje pierwsza kolumna, znajduje się we wspomnianym wcześniej folderze. Można z niego odczytać numery ewaluacji, dla których PSO odnalazło dotychczas najniższą wartość funkcji, dokładną wartość minimum funkcji, oraz znalezione przez algorytm punkty (współrzędne wraz z dokładnością). Struktura pliku opisana jest w jego nagłówku. 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
