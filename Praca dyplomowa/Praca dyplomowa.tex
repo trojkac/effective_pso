@@ -30,7 +30,6 @@
 {
   basicstyle=\ttfamily\tiny,
   morestring=[b]",
-  morestring=[s]{>}{<},
   morecomment=[s]{<?}{?>},
   stringstyle=\color{black},
   identifierstyle=\color{blue},
@@ -182,6 +181,14 @@ Do oceny naszej biblioteki wykorzystany został benchmark BBOB 2015.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Wstęp}
+
+Algorytmy optymalizacyjne stanowią bardzo szeroką i bogatą klasę algorytmów komputerowych, służących do znajdowania optymalnych wartości funkcji. Wśród algorytmów optymalizacyjnych znajdują się takie, które zostały opracowane z myślą o jak najszerszym zastosowaniu i dają dobre rezultaty dla wielu rodzajów problemów, jak i takie, które opracowano z myślą o bardzo wąskiej gamie zastosowań i dzięki specjalizacji osiągają często w swojej dziedzinie najlepsze wyniki.
+
+Jednym z algorytmów optymalizacyjnych jest algorytm Particle Swarm Optimization (PSO), należący do klasy algorytmów populacyjnych - jego populację tworzą niezależne cząsteczki poruszające się w przestrzeni rozwiązań, które, komunikując się między sobą i wymieniając informacje o znalezionych rozwiązaniach, mają w zamierzeniu odkryć rozwiązanie optymalne lub jak najbardziej zbliżone do optymalnego.
+
+W naszej pracy prezentujemy system optymalizacyjny korzystający z obliczeń rozproszonych i równoległych. Cechy algorytmu PSO takie, jak prostota koncepcyjna i prostota implementacji, powodują, że stanowi on algorytm bazowy dla naszego systemu. Co więcej, jest on algorytmem populacyjnym z dużą niezależnością cząstek i nie wymagającym sztywnej synchronizacji między nimi, co powoduje, że w klarowny sposób nadaje się do zrównoleglenia i rozproszenia obliczeń. Te cechy algorytmu wykorzystujemy w naszym systemie, tworząc klaster umożliwiający prowadzenie równoczesnych obliczeń na wielu węzłach obliczeniowych i projektując schemat komunikacji pomiędzy rojami cząstek. W celu poprawy rozwiązania używamy też technologii CUDA, umożliwiającej w dość łatwy sposób wykorzystanie mocy obliczeniowych karty graficznej i jej zdolności do efektywnego realizowania obliczeń równoległych.
+
+Ze względu na fakt, że nie istnieje jeden najlepszy algorytm optymalizacyjny, który poradziłby sobie w każdej sytuacji, liczba dostępnych algorytmów optymalizacyjnych jest bardzo duża, a badania nad nimi są wciąż rozwijane, bardzo potrzebna jest możliwość porównania między sobą algorytmów dla różnych rodzajów problemów optymalizacyjnych. Porównanie takie umożliwiają m.in. benchmarki oparte na platformie COCO, których używamy w celu skonfrontowania jakości otrzymanego przez nas wyniku z ogólnie dostępnymi danymi dotyczącymi innych algorytmów jak i w celu ukazania zysku z rozproszenia i zrównoleglenia obliczeń.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -374,11 +381,11 @@ Stworzony przez nas system optymalizacyjny składa się z jednakowych węzłów 
 
 Poniżej przedstawiamy najważniejsze klasy składające się na pojedynczy węzeł obliczeniowy. 
 
-%\begin{figure}[H]
-%    \centering
-% \includegraphics[width=1\textwidth,natwidth=610,natheight=642]{WezlaArch.png}
-% \caption{Architektura węzła obliczeniowego}
-%\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{WezlaArch.pdf} 
+ \caption{Ogólna architektura węzła obliczeniowego}
+\end{figure}
 
 \subsection{MachineManager}
 Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej na komputerze liczby procesorów. Jest obiektem zaimplementowanym według wzorca fasada, odpowiedzialnym za rozpoczęcie obliczeń algorytmu (metoda StartPsoAlgorithm) oraz pobranie wyników (metoda GetResult zwracająca obiekt klasy ParticleResult), zaś za pomocą metody \emph{Register} możemy podłączyć maszynę do klastra obliczeniowego. Obiekt klasy MachineManager posiada tablicę VCpuManager'ów, których liczba domyślnie odpowiada liczbie wątków procesora, lecz programista może ją ręcznie zmienić.
@@ -647,7 +654,11 @@ CalculationsFinished -
 
 Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 
-[[[Diagram sekwencyjny]]]
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{communicationDiagram.pdf} 
+ \caption{Diagram sekwencyjny komunikacji w klastrze obliczeniowym}
+\end{figure}
 
 \begin{figure}
 \includegraphics[scale=1]{communicationDiagram.pdf} 
@@ -660,7 +671,7 @@ Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki c
 \subsection{Komunikacja na poziomie algorytmu PSO}
 Komunikacja pomiędzy rojami PSO na różnych węzłach obliczeniwych zarządzana jest przez interfejs IPsoManager, który posiadając informacje o połączonych jednostkach, definiuje sąsiedztwa pomiędzy nimi. W przypadku naszego klastra implementuje on strukturę pierścienia, w której każdy węzeł posiada dwóch sąsiadów. Połączenia pomiędzy rojami działającymi wewnątrz jednej maszyny, ale korzystające z różnych wątków procesora przebiegają w ten sam sposób co połączenia między różnymi maszynami. Wszystkie wątki, a dokładniej VCpuManager'y wszystkich maszyn tworzą jeden pierścień. Komunikacja pomiędzy rojami jest dwustronna. Z perspektywy cząstek wewnątrz roju, sąsiedni rój jest reprezentowany przez tzw. cząstkę proxy, która również implementuje interfejs IParticle, przez co nie wymaga oddzielnego traktowania - komunikacja z zewnętrznymi rojami jest przezroczysta dla innych cząstek i samego algorytmu. 
 
-Cząstka proxy posiada odpowiadającą jej, "zespoloną" z nią cząstkę [[[proxy?]]] z innego roju.
+Cząstka proxy posiada odpowiadającą jej, ,,zespoloną'' z nią cząstkę proxy? z innego roju.
 
 [[[Jakiś obrazek]]]
 
@@ -691,6 +702,11 @@ ProxyManager jest odpowiednikiem klasy NetworkNodeManager dla komunikacji międz
 
 GetBestState - zwraca najlepszą znaną cząstce pozycję, czyli najlepszą znaną wartość wśród cząstek jej sąsiedztwa.
  
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.65]{particleDiagram.pdf} 
+ \caption{Diagram klas związanych z cząstką PSO}
+\end{figure}
 
 \subsubsection{Wykrywanie awarii}
 ProxyManager jest jednocześnie miejscem, w którym zachodzi wykrywanie awarii. W przypadku, gdy cząstka sąsiedniego roju, z którym próbujemy się połączyć, wielokrotnie nie odpowiada na zapytanie, zgłaszane jest wydarzenie CommunicationBreakdown, a jednocześnie jako wynik zapytania zwracana jest domyślna wartość.
@@ -910,6 +926,12 @@ public static unsafe String cocoProblemGetName(long problemPointer)
 
 gdzie należy dokonać odpowiedniego marshallingu argumentów, czyli zmiany sposobu reprezentacji danych w pamięci do formatu właściwego dla transmisji do innego fragmentu programu.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{wrapperDiagram.pdf} 
+ \caption{Schemat wrappera}
+\end{figure}
+
 \subsection{Wykorzystanie wrappera}
 
 Wrapper wykorzystany został w naszym programie do uruchomienia zestawu benchmarków. Inicjalizacja odpowiednich klas dokonywana jest w następujący sposób:
@@ -930,7 +952,6 @@ Problem = benchmark.getNextProblem()
 
 \chapter{Testy}
 
-\section{Wyniki testów}
 Poniżej znajdują się wyniki testów naszej biblioteki przeprowadzone przy użyciu platformy COCO. % oraz %niezależnych od niej testów czasowych.
 
 % przenieść to do rozdziału o PSO 
@@ -982,14 +1003,22 @@ Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instanc
 \subsection{Hybrydyzacja PSO}
 
 \subsection{Obliczenia na GPU}
+\subsection{Konfiguracje testowe}
 
-\subsection{Obliczenia na klastrze}
+\subsubsection{Pojedynczy węzeł obliczeniowy z GPU}
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{klasterBbobWithGPU.pdf} 
+ \caption{Struktura węzła obliczeniowego. Rój złożony z 40 cząstek na CPU oraz 640 cząstek na GPU}
+\end{figure}
 
 \subsubsection{Klaster złożony z dwóch węzłów}
 \begin{figure}[H]
     \centering
+    \includegraphics[scale=1]{klasterBbobNoGPU2Nodes.pdf} 
  \caption{Klaster obliczeniowy złożony z 2 węzłów}
 \end{figure}
+
 \subsubsection{Klaster złożony z czterech węzłów}
 \begin{figure}[H]
     \centering
@@ -997,29 +1026,59 @@ Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instanc
  \caption{Klaster obliczeniowy złożony z 4 węzłów}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
- \caption{Struktura węzła obliczneniowego. Rój złożony z 40 cząstek na CPU oraz 640 cząstek na GPU}
-\end{figure}
+\section{Wyniki i ich interpretacja}
 
-\section{Interpretacja wyników}
-Otrzymane wyniki standardowej wersji PSO na pojedynczym węźle obliczeniowym są zgodne z oczekiwaniami - algorytm radzi sobie dość dobrze z prostymi funkcjami przy niskiej liczbie wymiarów i szybko znajduje dal nich optimum z dużą dokładnością, jednakże dla funkcji trudnych, zwłaszcza w większym wymiarze, PSO osiąga bardzo niską skuteczność.
+\subsection{Jak czytać}
+Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instancji funkcji, różniących się przesunięciem względem początku układu współrzędnych, obrotem, rozciągnięciem lub inną prostą transformacją nie wpływającą na istotę problemu - wyniki dla tych instancji są następnie uśredniane i prezentowane jako wyniki dla danej funkcji celu. Dodatkowo dla każdej konkretnej instancji funkcji celu bierzemy pod uwagę różne progi odległości od optimum i prezentujemy liczbę funkcji, dla których choć w jednej instancji udało się osiągnąć najtrudniejszy próg, czyli odległość od optimum nie większą niż $10^{-8}$.
+
+\subsection{Rezultaty}
+
+\subsection{Standardowe PSO}
+Otrzymane rezultaty standardowej wersji PSO na pojedynczym węźle obliczeniowym są zgodne z oczekiwaniami - algorytm radzi sobie dość dobrze z prostymi funkcjami przy niskiej liczbie wymiarów i szybko znajduje dal nich optimum z dużą dokładnością, jednakże dla funkcji trudnych, zwłaszcza w większym wymiarze, PSO osiąga bardzo niską skuteczność.
 
 Przy interpretacji wyników najbardziej istotne dla nas było względne porównanie różnych konfiguracji, aby stwierdzić, czy przynoszą one zysk względem konfiguracji bazowej. Nie skupialiśmy się na bezwzględnych wynikach testów.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{charts/1node40st.pdf} 
+ \caption{Wyniki zbiorcze dla roju złożonego z 40 cząstek standardowych}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{charts/1node40st_5D.pdf} 
+ \caption{Wyniki dla roju złożonego z 40 cząstek standardowych dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
+\end{figure}
 
 \subsection{Hybrydyzacja PSO}
 Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu połowy cząstek roju cząstkami naładowanymi wskazuje niestety na jedynie niewielką poprawę działania, widoczną jedynie dla niektórych funkcji [[[jakich funkcji?]]]. Charged PSO zostało pierwotnie stworzone z myślą o zastosowaniu w problemie optymalizacji dynamicznej, zaś w badanych przez nas scenariuszach sprawdza się bardzo podobnie do standardowego PSO.
 
-\subsection{Obliczenia na GPU}
-Wykorzystanie obliczeń na GPU również nie przyniosły istotnej poprawy wyników. Pomimo faktu, że na rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt, że implementował on jedynie najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność.
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{charts/1node20ch20st.pdf} 
+ \caption{Wyniki zbiorcze dla roju złożonego z 20 cząstek standardowych i 20 cząstek naładowanych}
+\end{figure}
 
 \begin{figure}[H]
     \centering
-\includegraphics[scale=1]{klasterBbobWithGPU.pdf} 
- \caption{1 węzeł obliczeniowy z uruchomianą jednostką GPU}
+    \includegraphics[scale=1]{charts/1node20ch20st_5D.pdf} 
+ \caption{Wyniki dla roju złożonego z 20 cząstek standardowych i 20 cząstek naładowanych dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
+\subsection{Obliczenia na GPU}
+Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczną poprawę jakości. Pomimo faktu, że na rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt, że implementował on jedynie najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność. Nieco bardziej zauważalna poprawa nastąpiła jedynie dla funkcji sferycznej oraz elipsoidalnej. 
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{charts/1node40stGPU.pdf} 
+ \caption{Wyniki zbiorcze dla roju złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{charts/1node40stGPU_5D.pdf} 
+ \caption{Wyniki dla roju złożonego złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
+\end{figure}
 
 
 \subsection{Obliczenia na klastrze}
@@ -1034,7 +1093,7 @@ Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło wido
 
 \begin{figure}[H]
     \includegraphics[scale=1]{charts/2nodes_5D.pdf} 
- \caption{Wyniki klastra zbudowanego z 2 węzłów dla funkcji pięciowymiarowych}
+ \caption{Wyniki klastra zbudowanego z 2 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
 
@@ -1046,13 +1105,27 @@ Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło wido
 \end{figure}
 
 \begin{figure}[H]
-    \includegraphics[scale=1]{charts/4nodes_5D.pdf} 
- \caption{Wyniki klastra zbudowanego z 4 węzłów dla funkcji pięciowymiarowych}
+    \includegraphics[scale=1]{charts/4nodes_5D.pdf}
+ \caption{Wyniki klastra zbudowanego z 4 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Przemyślenia własne}
+\chapter{Wykorzystane biblioteki i technologie}
+Żadna z wykorzystanych przez nas bibliotek nie nakłada ograniczeń na sposób licencjonowania projektu. \\
+
+Wykorzystane przez nas biblioteki:
+
+\begin{itemize}
+\item managedCuda, licencja LGPL, https://github.com/kunzmi/managedCuda
+\item Chronometer, licencja MIT, https://github.com/narkhedegs/Chronometer
+\item CUDA Toolkit, licencja NVIDIA pozwala na wykorzystanie w naszym projekcie, https://developer.nvidia.com/cuda-toolkit
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Podział pracy}
+Podział pracy prezentował się następująco:\\
 
 %1. o procesie produkcji
 %	a. co było proste
