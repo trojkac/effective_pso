@@ -1,9 +1,9 @@
-\documentclass[12pt, twoside, openany]{report}
+\documentclass[12pt, twoside, openany, abstract=on]{report}
 
 %%%%%%%%%%%%%%% moje dodanie
 
 \usepackage[T1]{fontenc}
-\usepackage[polish]{babel}
+\usepackage[polish, english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \selectlanguage{polish}
@@ -100,8 +100,11 @@ bindingoffset=10mm, top=25mm, bottom=25mm}
 % \vfill
 \begin{center}
 \Huge
-\textbf{Efektywna implementacja wybranego algorytmu optymalizacji globalnej}
+\textbf{Efektywna implementacja wybranego algorytmu optymalizacji globalnej}\\
 \end{center}
+
+\large Efficient implementation of a chosen global optimization algorithm
+
 % \vfill\vfill
 \vfill
 \begin{center}
@@ -120,7 +123,7 @@ Promotor: mgr inż. Michał Okulewicz
 \vfill
 \begin{center}
 \large
-Warszawa, wrzesień 2016
+Warszawa, grudzień 2016
 \end{center}
 \newpage
 \hfill
@@ -143,40 +146,37 @@ podpis promotora & \hspace*{100pt} & podpis autora
 \hyphenation{Syl-ves-tra}
 \hyphenation{Syl-ves-ter-a}
 
+\selectlanguage{polish}
+
 \begin{abstract}
 %W niniejszej pracy inżynierskiej prezentujemy rozproszony system do optymalizacji funkcji wielu zmiennych [[[?]]] umożliwiający uruchomienie obliczeń na klastrze złożonym z kilku komputerów, którego bazowym silnikiem optymalizacyjnym jest algorytm Particle Swarm Optimization. Program napisany został ze szczególnym uwzględnieniem optymalizacji funkcji ciągłych z benchmarku BBOB jednak umożliwia programiście rozszerzenie funkcjonalności do dowolnego rodzaju funkcji. Algorytm zaimplementowany został w postaci biblioteki w technologii .NET umożliwiającej dopasowanie się do sprzętu, na którym jest uruchamiana wykorzystując wieloprocesorowość lokalnej maszyny oraz umożliwiającej uruchomienie obliczeń rozproszonych na wielu komputerach jednocześnie wykorzystując usługi WCF. Biblioteka pozwala też na wykorzystanie do obliczeń równoległych procesorów graficznych obsługujących technologię CUDA. Jako test działania prezentujemy wyniki testów naszej biblioteki na benchmarku optymalizacyjnym BBOB.
 
-W niniejszej pracy inzynierskiej prezentujemy implementację wybranego przez nas algorytmu optymalizacji globalnej - Particle Swarm Optimization. Zaimplementowana przez nas biblioteka dostosowuje się do dostępnego sprzętu i pozwala na uruchomienie obliczeń na wielu procesorach, wielu maszynach i z wykorzystaniem kart graficznych. \\
+W niniejszej pracy inżynierskiej prezentujemy implementację wybranego przez nas algorytmu optymalizacji globalnej - Particle Swarm Optimization. Zaimplementowana przez nas biblioteka dostosowuje się do dostępnego sprzętu i pozwala na uruchomienie obliczeń na wielu procesorach, wielu maszynach i z wykorzystaniem kart graficznych. \\
 Biblioteka została stworzona w technologii .NET, wykorzystuje framework WCF do obliczeń rozproszonych oraz technologię CUDA do zlecania obliczeń na procesor graficzny wspierający tę architekturę. \\
-Do oceny naszej biblioteki wykorzystany został benchmark BBOB 2015.
+Do oceny naszej biblioteki wykorzystany został benchmark BBOB 2015.\\
+
+\noindent \textbf{Słowa kluczowe.} Algorytm optymalizacyjny, PSO, CUDA
 
 %W niniejszej pracy inżynierskiej prezentujemy stworzoną przez nas implementację algorytmu Particle Swarm Optimization. Algorytm zaimplementowany został w postaci biblioteki w technologii .NET umożliwiającej dopasowanie się do sprzętu, na którym jest uruchamiana wykorzystując wieloprocesorowość lokalnej maszyny oraz umożliwiającej uruchomienie obliczeń rozproszonych na wielu komputerach jednocześnie wykorzystując usługi WCF. Biblioteka pozwala też na wykorzystanie do obliczeń równoległych procesorów graficznych obsługujących technologię CUDA. Prezentujemy również wyniki testów naszej biblioteki m.in. na benchmarku optymalizacyjnym BBOB.
 \end{abstract}
 
+
+\newpage
+\selectlanguage{english}
+\begin{abstract}
+In this paper we present the engineering implementation of our chosen global optimization algorithm - Particle Swarm Optimization. Implemented by our library adapts to the available hardware and allows you to run calculations on multiple processors, multiple machines and using graphics cards. \\
+The library was created in .NET technology, it uses WCF framework for distributed computing and CUDA technology to commission calculations on the GPU supporting architecture. \\
+To assess our library was used benchmark BBOB 2015.\\
+
+\noindent \textbf{Keywords.} Optimization algorithm, PSO, CUDA
+\end{abstract}
+
+
+\selectlanguage{polish}
+
 \tableofcontents
 
 %-----------Początek części zasadniczej-----------
-
-\chapter{Słownik}
-
-\textbf{Algorytm optymalizacyjny} - Algorytm rozwiązujący problem optymalizacji.\\
-\textbf{Benchmark} - Sposób oceny jakości sprzętu lub programu komputerowego polegający na uruchomieniu zestawu testów i porównaniu ich ze znanymi standardami.\\
-\textbf{BBOB} - Black-Box Optimization Benchmarking. Warsztaty na temat optymalizacji odbywające się podczas konferencji Genetic and Evolutionary Computation Conference (GECCO).
-\textbf{Black-box optimization} - Rodzaj zadania optymalizacyjnego, w którym algorytm optymalizacyjny nie zna postaci funkcji celu, a może jedynie zapytać się o jej wartość w danym punkcie.\\
-\textbf{COCO} - COmparing Continuous Optimisers. Platforma do porównywania algorytmów optymalizacyjnych.
-\textbf{CUDA} - Platforma programistyczna firmy NVIDIA umożliwiająca wykorzystywanie procesorów graficznych w obliczeniach\\
-\textbf{Framework} - Platforma programistyczna. Szkielet aplikacji definiujący jej ogólną strukturę i mechanizm działania lub dostarczający komponenty wykonujące określone zadania.\\
-\textbf{Funkcja celu} - Funkcja, której ekstremum jest poszukiwane w zagadnieniu optymalizacji.\\
-\textbf{GPU} - Graphics Processing Unit. Wyspecjalizowana jednostka obliczeniowa typu SIMD przystosowana do efektywnego przetwarzania grafiki komputerowej. Może być również wykorzystywana do obliczeń równoległych na dużych zbiorach danych.\\
-\textbf{Klaster obliczeniowy} - Zespół węzłów obliczeniowych połączonych ze sobą siecią, umożliwiający prowadzenie wspólnych obliczeń.\\
-\textbf{Obliczenia rozproszone} - Obliczenia prowadzone jednocześnie na wielu jednostkach obliczeniowych, mogących różnić się między sobą architekturą i położeniem geograficznym, ale komunikujących się ze sobą i mogących korzystać ze wspólnych zasobów. Synchronizacja między jednostkami zachodzi w szerszej skali niż w przypadku obliczeń równoległych.\\
-\textbf{Obliczenia równoległe} - Zsynchronizowane obliczenia prowadzone jednocześnie na kilku jednostkach obliczeniowych, zazwyczaj procesorach na jednej maszynie.\\
-\textbf{Optymalizacja} - Zagadnienie znajdowania wartości ekstremalnej (najczęściej minimalnej lub maksymalnej) zadanej funkcji celu.\\
-\textbf{PSO} - Particle Swarm Optimization. Populacyjny algorytm optymalizacyjny, wykorzystujący populację cząstek poruszających się w przestrzeni możliwych rozwiązań.\\
-\textbf{WCF} - Windows Communication Foundation. Platforma programistyczna wykorzystywana przy budowie aplikacji korzystających z komunikacji sieciowej.\\
-\textbf{Wrapper} - Zestaw funkcji i klas mających za zadanie pośredniczenie między dwiema różnymi warstwami aplikacji.\\
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -660,10 +660,11 @@ Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
  \caption{Diagram sekwencyjny komunikacji w klastrze obliczeniowym}
 \end{figure}
 
-\begin{figure}
-\includegraphics[scale=1]{communicationDiagram.pdf} 
- \caption{Diagram przedstawiający przykładowy przebieg komunikacji w klastrze}
-\end{figure}
+%\begin{figure}[H]
+%    \centering
+% \includegraphics[width=1\textwidth,natwidth=610,natheight=642]%{wholeCluster.png}
+% \caption{Infrastuktura klastra}
+%\end{figure}
 
 \subsubsection{Awaria}
 Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów.
@@ -701,7 +702,7 @@ Cząstka proxy komunikuje się z innymi cząstkami proxy za pomocą jeszcze jedn
 ProxyManager jest odpowiednikiem klasy NetworkNodeManager dla komunikacji między cząstkami - i podobnie jak NetworkNodeManager posiadający interfejs sieciowy w postaci INodeService, tak ProxyManager posiada IParticleService, który jest interfejsem sieciowej komunikacji między cząstkami i udostępnia jedną operację:
 
 GetBestState - zwraca najlepszą znaną cząstce pozycję, czyli najlepszą znaną wartość wśród cząstek jej sąsiedztwa.
- 
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.65]{particleDiagram.pdf} 
@@ -990,19 +991,6 @@ Testów dokonujemy na trzech płaszczyznach:
   \hline
 \end{tabular} 
 \end{table}
-
-
-\section{Wyniki}
-
-\subsection{Jak czytać}
-Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instancji funkcji, różniących się przesunięciem względem początku układu współrzędnych, obrotem, rozciągnięciem lub inną prostą transformacją nie wpływającą na istotę problemu - wyniki dla tych instancji są następnie uśredniane i prezentowane jako wyniki dla danej funkcji celu. Dodatkowo dla każdej konkretnej instancji funkcji celu bierzemy pod uwagę różne progi odległości od optimum i prezentujemy liczbę funkcji, dla których choć w jednej instancji udało się osiągnąć najtrudniejszy próg, czyli odległość od optimum nie większą niż $10^{-8}$.
-
-
-\subsection{Wyniki bazowe roju standardowego}
-
-\subsection{Hybrydyzacja PSO}
-
-\subsection{Obliczenia na GPU}
 \subsection{Konfiguracje testowe}
 
 \subsubsection{Pojedynczy węzeł obliczeniowy z GPU}
@@ -1051,7 +1039,7 @@ Przy interpretacji wyników najbardziej istotne dla nas było względne porówna
 \end{figure}
 
 \subsection{Hybrydyzacja PSO}
-Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu połowy cząstek roju cząstkami naładowanymi wskazuje niestety na jedynie niewielką poprawę działania, widoczną jedynie dla niektórych funkcji [[[jakich funkcji?]]]. Charged PSO zostało pierwotnie stworzone z myślą o zastosowaniu w problemie optymalizacji dynamicznej, zaś w badanych przez nas scenariuszach sprawdza się bardzo podobnie do standardowego PSO.
+Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu połowy cząstek roju cząstkami naładowanymi wskazuje niestety na jedynie niewielką poprawę działania, wyraźnie widoczną jedynie dla niektórych funkcji, takich jak funkcja sferyczna oraz funkcja Gallaghera oraz nieznaczne pogorszenie wyników w innych przypadkach. Charged PSO zostało pierwotnie stworzone z myślą o zastosowaniu w problemie optymalizacji dynamicznej, zaś w badanych przez nas scenariuszach sprawdza się bardzo podobnie do standardowego PSO.
 
 \begin{figure}[H]
     \centering
@@ -1105,7 +1093,7 @@ Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło wido
 \end{figure}
 
 \begin{figure}[H]
-    \includegraphics[scale=1]{charts/4nodes_5D.pdf}
+    \includegraphics[scale=1]{charts/4nodes_5D.pdf} \par
  \caption{Wyniki klastra zbudowanego z 4 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
@@ -1126,6 +1114,16 @@ Wykorzystane przez nas biblioteki:
 
 \chapter{Podział pracy}
 Podział pracy prezentował się następująco:\\
+
+\textbf{Paweł Kupidura} - 870,299 linii kodu.\\
+
+\textbf{Hubert Rosiak} - 53,818 linii kodu.\\
+
+\textbf{Kacper Trojanowski} - 1,827,931 linii kodu.\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Podsumowanie}
 
 %1. o procesie produkcji
 %	a. co było proste
@@ -1243,6 +1241,28 @@ Przykładowy plik konfiguracyjny algorytmu PSO:
       </FunctionParameters>
 </PsoParameters>
 \end{lstlisting}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Słownik}
+
+\textbf{Algorytm optymalizacyjny} - Algorytm rozwiązujący problem optymalizacji.\\
+\textbf{Benchmark} - Sposób oceny jakości sprzętu lub programu komputerowego polegający na uruchomieniu zestawu testów i porównaniu ich ze znanymi standardami.\\
+\textbf{BBOB} - Black-Box Optimization Benchmarking. Warsztaty na temat optymalizacji odbywające się podczas konferencji Genetic and Evolutionary Computation Conference (GECCO).
+\textbf{Black-box optimization} - Rodzaj zadania optymalizacyjnego, w którym algorytm optymalizacyjny nie zna postaci funkcji celu, a może jedynie zapytać się o jej wartość w danym punkcie.\\
+\textbf{COCO} - COmparing Continuous Optimisers. Platforma do porównywania algorytmów optymalizacyjnych.
+\textbf{CUDA} - Platforma programistyczna firmy NVIDIA umożliwiająca wykorzystywanie procesorów graficznych w obliczeniach\\
+\textbf{Framework} - Platforma programistyczna. Szkielet aplikacji definiujący jej ogólną strukturę i mechanizm działania lub dostarczający komponenty wykonujące określone zadania.\\
+\textbf{Funkcja celu} - Funkcja, której ekstremum jest poszukiwane w zagadnieniu optymalizacji.\\
+\textbf{GPU} - Graphics Processing Unit. Wyspecjalizowana jednostka obliczeniowa typu SIMD przystosowana do efektywnego przetwarzania grafiki komputerowej. Może być również wykorzystywana do obliczeń równoległych na dużych zbiorach danych.\\
+\textbf{Klaster obliczeniowy} - Zespół węzłów obliczeniowych połączonych ze sobą siecią, umożliwiający prowadzenie wspólnych obliczeń.\\
+\textbf{Obliczenia rozproszone} - Obliczenia prowadzone jednocześnie na wielu jednostkach obliczeniowych, mogących różnić się między sobą architekturą i położeniem geograficznym, ale komunikujących się ze sobą i mogących korzystać ze wspólnych zasobów. Synchronizacja między jednostkami zachodzi w szerszej skali niż w przypadku obliczeń równoległych.\\
+\textbf{Obliczenia równoległe} - Zsynchronizowane obliczenia prowadzone jednocześnie na kilku jednostkach obliczeniowych, zazwyczaj procesorach na jednej maszynie.\\
+\textbf{Optymalizacja} - Zagadnienie znajdowania wartości ekstremalnej (najczęściej minimalnej lub maksymalnej) zadanej funkcji celu.\\
+\textbf{PSO} - Particle Swarm Optimization. Populacyjny algorytm optymalizacyjny, wykorzystujący populację cząstek poruszających się w przestrzeni możliwych rozwiązań.\\
+\textbf{WCF} - Windows Communication Foundation. Platforma programistyczna wykorzystywana przy budowie aplikacji korzystających z komunikacji sieciowej.\\
+\textbf{Wrapper} - Zestaw funkcji i klas mających za zadanie pośredniczenie między dwiema różnymi warstwami aplikacji.\\
+
 
 %-----------Koniec części zasadniczej-----------
 
