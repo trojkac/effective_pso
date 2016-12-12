@@ -149,13 +149,13 @@ podpis promotora & \hspace*{100pt} & podpis autora
 \selectlanguage{polish}
 
 \begin{abstract}
-%W niniejszej pracy inżynierskiej prezentujemy rozproszony system do optymalizacji funkcji wielu zmiennych [[[?]]] umożliwiający uruchomienie obliczeń na klastrze złożonym z kilku komputerów, którego bazowym silnikiem optymalizacyjnym jest algorytm Particle Swarm Optimization. Program napisany został ze szczególnym uwzględnieniem optymalizacji funkcji ciągłych z benchmarku BBOB jednak umożliwia programiście rozszerzenie funkcjonalności do dowolnego rodzaju funkcji. Algorytm zaimplementowany został w postaci biblioteki w technologii .NET umożliwiającej dopasowanie się do sprzętu, na którym jest uruchamiana wykorzystując wieloprocesorowość lokalnej maszyny oraz umożliwiającej uruchomienie obliczeń rozproszonych na wielu komputerach jednocześnie wykorzystując usługi WCF. Biblioteka pozwala też na wykorzystanie do obliczeń równoległych procesorów graficznych obsługujących technologię CUDA. Jako test działania prezentujemy wyniki testów naszej biblioteki na benchmarku optymalizacyjnym BBOB.
+W niniejszej pracy inżynierskiej prezentujemy rozproszony system do optymalizacji funkcji umożliwiający uruchomienie obliczeń na klastrze złożonym z kilku komputerów, którego bazowym silnikiem optymalizacyjnym jest algorytm Particle Swarm Optimization. Program napisany został ze szczególnym uwzględnieniem optymalizacji funkcji ciągłych z benchmarku BBOB jednak umożliwia programiście rozszerzenie funkcjonalności do dowolnego rodzaju funkcji. Algorytm zaimplementowany został w postaci biblioteki w technologii .NET umożliwiającej dopasowanie się do sprzętu, na którym jest uruchamiana i wykorzystanie wieloprocesorowości lokalnej maszyny, a także uruchomienie obliczeń rozproszonych na wielu komputerach jednocześnie wykorzystując usługi WCF. Biblioteka pozwala też na wykorzystanie do obliczeń równoległych procesorów graficznych obsługujących technologię CUDA oraz udostępnia interfejs programistyczny, dający możliwość zaimplementowania własnej wersji algorytmu PSO, co obrazujemy przygotowując przykładową implementację dwóch wersji algorytmu. Jako test działania prezentujemy wyniki testów naszej biblioteki przy użyciu platformy COCO oraz benchmarku optymalizacyjnego wykorzystanego podczas warsztatów BBOB. Wyniki testów wskazują na wyraźny zysk przy uruchomieniu obliczeń rozproszonych na wielu węzłach klastra, przy jednocześnie niewielkim zysku, jaki udało nam się uzyskać przy wykorzystaniu obliczeń równoległych na karcie graficznej.\\
 
-W niniejszej pracy inżynierskiej prezentujemy implementację wybranego przez nas algorytmu optymalizacji globalnej - Particle Swarm Optimization. Zaimplementowana przez nas biblioteka dostosowuje się do dostępnego sprzętu i pozwala na uruchomienie obliczeń na wielu procesorach, wielu maszynach i z wykorzystaniem kart graficznych. \\
-Biblioteka została stworzona w technologii .NET, wykorzystuje framework WCF do obliczeń rozproszonych oraz technologię CUDA do zlecania obliczeń na procesor graficzny wspierający tę architekturę. \\
-Do oceny naszej biblioteki wykorzystany został benchmark BBOB 2015.\\
+%W niniejszej pracy inżynierskiej prezentujemy implementację wybranego przez nas algorytmu optymalizacji globalnej - Particle Swarm Optimization. Zaimplementowana przez nas biblioteka dostosowuje się do dostępnego sprzętu i pozwala na uruchomienie obliczeń na wielu procesorach, wielu maszynach i z wykorzystaniem kart graficznych. \\
+%Biblioteka została stworzona w technologii .NET, wykorzystuje framework WCF do obliczeń rozproszonych oraz technologię CUDA do zlecania obliczeń na procesor graficzny wspierający tę architekturę. \\
+%Do oceny naszej biblioteki wykorzystany został benchmark BBOB 2015.\\
 
-\noindent \textbf{Słowa kluczowe.} Algorytm optymalizacyjny, PSO, CUDA
+\noindent \textbf{Słowa kluczowe.} Algorytm optymalizacyjny, Particle Swarm Optimization, CUDA
 
 %W niniejszej pracy inżynierskiej prezentujemy stworzoną przez nas implementację algorytmu Particle Swarm Optimization. Algorytm zaimplementowany został w postaci biblioteki w technologii .NET umożliwiającej dopasowanie się do sprzętu, na którym jest uruchamiana wykorzystując wieloprocesorowość lokalnej maszyny oraz umożliwiającej uruchomienie obliczeń rozproszonych na wielu komputerach jednocześnie wykorzystując usługi WCF. Biblioteka pozwala też na wykorzystanie do obliczeń równoległych procesorów graficznych obsługujących technologię CUDA. Prezentujemy również wyniki testów naszej biblioteki m.in. na benchmarku optymalizacyjnym BBOB.
 \end{abstract}
@@ -164,11 +164,9 @@ Do oceny naszej biblioteki wykorzystany został benchmark BBOB 2015.\\
 \newpage
 \selectlanguage{english}
 \begin{abstract}
-In this paper we present the engineering implementation of our chosen global optimization algorithm - Particle Swarm Optimization. Implemented by our library adapts to the available hardware and allows you to run calculations on multiple processors, multiple machines and using graphics cards. \\
-The library was created in .NET technology, it uses WCF framework for distributed computing and CUDA technology to commission calculations on the GPU supporting architecture. \\
-To assess our library was used benchmark BBOB 2015.\\
+In this paper, we present a distributed system engineering optimization function allows to run calculations on a cluster of several computers, the base engine optimization algorithm Particle Swarm Optimization. The program was written with particular emphasis on the optimization of continuous functions with the benchmark BBOB but allows the programmer to extend the functionality to any type of function. The algorithm was implemented in the form of libraries in .NET that allows adjustment to the hardware on which it runs, and the use of multiprocessing local machine, as well as launching distributed computing on multiple computers simultaneously using a WCF service. The library also allows for the use of parallel computing GPUs support CUDA technology, and provides a programming interface that gives the opportunity to implement their own version of the PSO algorithm, which portray preparing a sample implementation of the two versions of the algorithm. As a test of the present test results of our library using the platform COCO and optimization benchmark used during the workshop BBOB. Test results show a clear profit at the start of distributed computing on multiple cluster nodes at the same time a small profit, which we managed to get by using parallel computing on the graphics card.\\
 
-\noindent \textbf{Keywords.} Optimization algorithm, PSO, CUDA
+\noindent \textbf{Keywords.} Optimization algorithm, Particle Swarm Optimization, CUDA
 \end{abstract}
 
 
@@ -354,7 +352,7 @@ PSO jest w naturalny sposób równoległe na poziomie algorytmicznym
  %[?] 
 W przeciwnym przypadku względnie niskiego kosztu ewaluacji funkcji celu, koszt komunikacji może dominować obliczenia.
 
-Wśród stosowanych podejść do problemu zrównoleglenia algorytmu PSO można wyróżnić dwa główne: podejście synchroniczne i asynchroniczne. W pierwszym z nich wszystkie procesory czekają na zakończenie ewaluacji funkcji celu dla wszystkich cząsteczek przed przejściem do kolejnej iteracji. Przeprowadzono wiele eksperymentów, które sugerują, że efektywność zrównoleglenie (parallel efficiency%[do słownika? Do poprzedniego rozdziału?]
+Wśród stosowanych podejść do problemu zrównoleglenia algorytmu PSO można wyróżnić dwa główne: podejście synchroniczne i asynchroniczne. W pierwszym z nich wszystkie procesory czekają na zakończenie ewaluacji funkcji celu dla wszystkich cząsteczek przed przejściem do kolejnej iteracji. Przeprowadzono wiele eksperymentów, które sugerują, że efektywność zrównoleglenia (parallel efficiency%[do słownika? Do poprzedniego rozdziału?]
 ) spada wraz z liczbą procesorów i jest daleka od idealnej 100 procent.
 %[źródło]
 W celu zrównoważenia nieefektywności wynikającej z nierównego rozłożenia obliczeń, zaproponowano podejście asynchroniczne - pozwala ono każdemu procesorowi (procesowi, wątkowi) przejść niezależnie do kolejnej iteracji po ukończeniu obliczania funkcji celu. Wyniki eksperymentów pokazały znaczący wzrost efektywności w porównaniu z wersją synchroniczna. 
@@ -448,6 +446,7 @@ public IState<double[],double[]> Run(CancellationToken token)
 }
 \end{lstlisting}
 
+Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadziliśmy do naszego rozwiązania, aby poprawić jego jakość są restarty algorytmu, gdy najlepsze znalezione rozwiązanie nie poprawi się przez odpowiednio długą liczbę iteracji oraz analogiczne restarty pojedynczych cząstek, które w przypadku braku poprawy znalezionego osobistego optimum, rozpoczynają poszukiwania od nowa w losowym punkcie dziedziny. Wyznaczona eksperymentalnie liczba iteracji, po których następują restarty 40 i 100 iteracji dla, odpowiednio, restartów cząstki i restartów globalnych.
 
 \subsection{Cząstka PSO}
 W naszym systemie cząstki są implementacją interfejsu IParticle, który zawiera właściwości potrzebne do identyfikacji cząstki, określenia jej położenia obecnego i najlepszego dotychczas odwiedzonego oraz metody   aktualizujące sąsiedztwo cząstki, jej prędkość i położenie. Od implementacji cząstek zależy topologia roju oraz sposób w jaki poruszają się po przestrzeni poszukiwań. 
@@ -672,9 +671,7 @@ Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki c
 \subsection{Komunikacja na poziomie algorytmu PSO}
 Komunikacja pomiędzy rojami PSO na różnych węzłach obliczeniwych zarządzana jest przez interfejs IPsoManager, który posiadając informacje o połączonych jednostkach, definiuje sąsiedztwa pomiędzy nimi. W przypadku naszego klastra implementuje on strukturę pierścienia, w której każdy węzeł posiada dwóch sąsiadów. Połączenia pomiędzy rojami działającymi wewnątrz jednej maszyny, ale korzystające z różnych wątków procesora przebiegają w ten sam sposób co połączenia między różnymi maszynami. Wszystkie wątki, a dokładniej VCpuManager'y wszystkich maszyn tworzą jeden pierścień. Komunikacja pomiędzy rojami jest dwustronna. Z perspektywy cząstek wewnątrz roju, sąsiedni rój jest reprezentowany przez tzw. cząstkę proxy, która również implementuje interfejs IParticle, przez co nie wymaga oddzielnego traktowania - komunikacja z zewnętrznymi rojami jest przezroczysta dla innych cząstek i samego algorytmu. 
 
-Cząstka proxy posiada odpowiadającą jej, ,,zespoloną'' z nią cząstkę proxy? z innego roju.
-
-[[[Jakiś obrazek]]]
+Cząstka proxy posiada odpowiadającą jej, ,,zespoloną'' z nią cząstkę proxy z innego roju.
 
 Cząstka proxy nie wykonuje ewaluacji funkcji celu, a przekazuje jedynie najlepsze znane położenie cząstki z nią zespolonej pomiędzy rojami. Do własnego roju podaje najlepszy wynik znany cząstce proxy z roju sąsiedniego, natomiast do niej przekazuje informacje od lokalnej cząstki. Odbywa się to w momencie, gdy cząstka proxy pytana jest o najlepsze znane sobie położenie, jednakże nie za każdym razem odpytywana jest cząstka z sąsiedniego roju - dzieje się tak tylko co pewną liczbę iteracji określoną parametrem RemoteCheckInterval, który domyślnie przyjmuje wartość 200, a wprowadzony został w celu ograniczenia spadku wydajności, który zauważyliśmy, gdy komunikacja pomiędzy rojami zachodziła zbyt często.
 
@@ -953,21 +950,20 @@ Problem = benchmark.getNextProblem()
 
 \chapter{Testy}
 
-Poniżej znajdują się wyniki testów naszej biblioteki przeprowadzone przy użyciu platformy COCO. % oraz %niezależnych od niej testów czasowych.
-
-% przenieść to do rozdziału o PSO 
-%Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadziliśmy do naszego rozwiązania, aby poprawić jego jakość są restarty algorytmu, gdy najlepsze znalezione rozwiązanie nie poprawi się przez odpowiednio długą liczbę iteracji oraz analogiczne restarty pojedynczych cząstek, które w przypadku braku poprawy znalezionego osobistego optimum, rozpoczynają poszukiwania od nowa w losowym punkcie dziedziny. Wyznaczona eksperymentalnie liczba iteracji, po których następują restarty 40 i 100 iteracji dla, odpowiednio, restartów cząstki i restartów globalnych.
+Poniżej znajdują się wyniki i interpretacja testów naszej biblioteki przeprowadzonych przy użyciu platformy COCO oraz zestawu benchmarków z warsztatów BBOB.
 
 \section{Plan testów}
-Bazową konfiguracją, względem której oceniamy wyniki pozostałych testów, jest rój złożony ze standardowych cząstek uruchomiony na jednym węźle obliczeniowym. 
+Bazową konfiguracją, względem której oceniamy wyniki pozostałych testów, jest rój złożony ze standardowych cząstek uruchomiony na jednym węźle obliczeniowym bez użycia GPU.\\
 
 Testów dokonujemy na trzech płaszczyznach:
 
-1. Dokonujemy hybrydyzacji algorytmu PSO, zamieniając połowę cząstek roju na cząstki charged (z charged-PSO).
+\begin{enumerate}
+\item{Dokonujemy hybrydyzacji algorytmu PSO, zamieniając połowę cząstek roju na cząstki naładowane (pochodzące z Charged PSO).}
 
-2. Wspomagamy algorytm obliczeniami równoległymi na karcie graficznej.
+\item{Wspomagamy algorytm obliczeniami równoległymi na karcie graficznej, na której znajduję się dużo większy rój złożony ze standardowych cząstek.}
 
-3. Uruchamiamy obliczenia na klastrze obliczeniowym, złożonym z różnej liczby węzłów.
+\item{Uruchamiamy obliczenia na klastrze obliczeniowym, złożonym z różnej liczby węzłów posiadających standardowy rój cząstek.}
+\end{enumerate}
 
 \begin{table}[t]
 \caption{Tabela przedstawiająca przeprowadzone przez nas eksperymenty}
@@ -993,21 +989,34 @@ Testów dokonujemy na trzech płaszczyznach:
 \end{table}
 \subsection{Konfiguracje testowe}
 
+
+\subsubsection{Pojedynczy węzeł obliczeniowy}
+Testów porównujących hybrydyzację algorytmu PSO ze standardowym algorytmem dokonujemy na pojedynczym węźle obliczeniowym, na którym znajduje się rój 40 cząstek, z których połowa stanowią cząstki naładowane.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=1]{klasterBbobNoGPU1Node.pdf} 
+ \caption{Struktura pojedynczego węzła obliczeniowego z rojem złożonym z 40 cząstek}
+\end{figure}
+
 \subsubsection{Pojedynczy węzeł obliczeniowy z GPU}
+Do zmierzenie zysku, jaki daje użycie obliczeń na karcie graficznej używamy standardowej wersji PSO na jednym węźle z 40 standardowymi cząstkami, którą wspomaga złożony z 640 cząstek rój na karcie graficznej.
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1]{klasterBbobWithGPU.pdf} 
- \caption{Struktura węzła obliczeniowego. Rój złożony z 40 cząstek na CPU oraz 640 cząstek na GPU}
+ \caption{Struktura węzła obliczeniowego z rojem złożonym z 40 cząstek na CPU oraz 640 cząstek na GPU}
 \end{figure}
 
-\subsubsection{Klaster złożony z dwóch węzłów}
+\subsubsection{Klaster obliczeniowy}
+W celu sprawdzenia zysku, jaki daje rozproszenie obliczeń na więcej węzłów obliczeniowych, zestawiliśmy do obliczeń dwa klastry - jeden złożony z 2 identycznych węzłów, drugi składający się z 4 identycznych węzłów. Na każdym węźle znajduje się rój złożony z 40 standardowych cząstek; żaden z węzłów nie korzysta z pomocy GPU.
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1]{klasterBbobNoGPU2Nodes.pdf} 
  \caption{Klaster obliczeniowy złożony z 2 węzłów}
 \end{figure}
 
-\subsubsection{Klaster złożony z czterech węzłów}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=1]{klasterBbobNoGPU4Nodes.pdf} 
@@ -1068,6 +1077,12 @@ Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczn
  \caption{Wyniki dla roju złożonego złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
+% porównanie
+
+\begin{figure}[H]
+    \includegraphics[scale=1]{charts/1nodeCompare_5D.pdf} \par
+ \caption{Wykres porównujący wyniki na pojedynczym węźle wersji standardowej z wersją z cząstkami naładowanymi oraz z wersją wykorzystującą GPU}
+\end{figure}
 
 \subsection{Obliczenia na klastrze}
 Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło widoczną poprawę wyników, tym większą, im więcej węzłów obliczeniowych zostało wykorzystanych do obliczeń. Poprawa widoczna jest dla każdego rodzaju funkcji.
@@ -1095,6 +1110,13 @@ Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło wido
 \begin{figure}[H]
     \includegraphics[scale=1]{charts/4nodes_5D.pdf} \par
  \caption{Wyniki klastra zbudowanego z 4 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
+\end{figure}
+
+% porównanie
+
+\begin{figure}[H]
+    \includegraphics[scale=1]{charts/124compare_5D.pdf} \par
+ \caption{Wykres porównujący wyniki na pojedynczym węźle z wynikami klastra złożonego z 2 oraz z 4 węzłów}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1139,7 +1161,7 @@ Podział pracy prezentował się następująco:\\
 
 Praca nad systemem do optymalizacji funkcji wielu zmiennych okazała się być trudnym, ale pouczającym doświadczeniem. 
 
-Implementacja algorytmu PSO na CPU, zarówno w wersji standardowej jak i zmodyfikowanej, nie stanowiła problemu - jedną z zalet algorytmu PSO jest jego prostota koncepcji i implementacji. Dzięki stworzeniu prostego interfejsu, mogliśmy w łatwy sposób wprowadzić do algorytmu modyfikacje, takie, jak np. hybrydyzacja z Charged PSO. Warto jednak wspomnieć, że zrezygnowaliśmy z początkowego pomysłu implementacji algorytmu w C/C++ na rzecz implementacji w języku C\# . [[[dlaczego?]]]
+Implementacja algorytmu PSO na CPU, zarówno w wersji standardowej jak i zmodyfikowanej, nie stanowiła problemu - jedną z zalet algorytmu PSO jest jego prostota koncepcji i implementacji. Dzięki stworzeniu prostego interfejsu, mogliśmy w łatwy sposób wprowadzić do algorytmu modyfikacje, takie, jak np. hybrydyzacja z Charged PSO. Warto jednak wspomnieć, że zrezygnowaliśmy z początkowego pomysłu implementacji algorytmu w C/C++ na rzecz implementacji w języku C\#.
 
 Trudniejszym zadaniem było napisanie algorytmu w technologii CUDA. Programowanie kart graficznych jest znacznie bardziej skomplikowane, toteż na GPU wyzwaniem okazało się już zaimplementowanie podstawowej wersji algorytmu i zapewnienie możliwości komunikacji roju cząstek na GPU z pozostałą częścią programu.
 
@@ -1248,9 +1270,9 @@ Przykładowy plik konfiguracyjny algorytmu PSO:
 
 \textbf{Algorytm optymalizacyjny} - Algorytm rozwiązujący problem optymalizacji.\\
 \textbf{Benchmark} - Sposób oceny jakości sprzętu lub programu komputerowego polegający na uruchomieniu zestawu testów i porównaniu ich ze znanymi standardami.\\
-\textbf{BBOB} - Black-Box Optimization Benchmarking. Warsztaty na temat optymalizacji odbywające się podczas konferencji Genetic and Evolutionary Computation Conference (GECCO).
+\textbf{BBOB} - Black-Box Optimization Benchmarking. Warsztaty na temat optymalizacji odbywające się podczas konferencji Genetic and Evolutionary Computation Conference (GECCO).\\
 \textbf{Black-box optimization} - Rodzaj zadania optymalizacyjnego, w którym algorytm optymalizacyjny nie zna postaci funkcji celu, a może jedynie zapytać się o jej wartość w danym punkcie.\\
-\textbf{COCO} - COmparing Continuous Optimisers. Platforma do porównywania algorytmów optymalizacyjnych.
+\textbf{COCO} - COmparing Continuous Optimisers. Platforma do porównywania algorytmów optymalizacyjnych.\\
 \textbf{CUDA} - Platforma programistyczna firmy NVIDIA umożliwiająca wykorzystywanie procesorów graficznych w obliczeniach\\
 \textbf{Framework} - Platforma programistyczna. Szkielet aplikacji definiujący jej ogólną strukturę i mechanizm działania lub dostarczający komponenty wykonujące określone zadania.\\
 \textbf{Funkcja celu} - Funkcja, której ekstremum jest poszukiwane w zagadnieniu optymalizacji.\\
