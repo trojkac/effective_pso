@@ -395,16 +395,16 @@ Poniżej przedstawiamy najważniejsze klasy składające się na pojedynczy węz
 \end{figure}
 
 \subsection{MachineManager}
-Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej na komputerze liczby procesorów. Jest obiektem zaimplementowanym według wzorca fasada, odpowiedzialnym za rozpoczęcie obliczeń algorytmu (metoda StartPsoAlgorithm) oraz pobranie wyników (metoda GetResult zwracająca obiekt klasy ParticleResult), zaś za pomocą metody \emph{Register} możemy podłączyć maszynę do klastra obliczeniowego. Obiekt klasy MachineManager posiada tablicę VCpuManager'ów, których liczba domyślnie odpowiada liczbie wątków procesora, lecz programista może ją ręcznie zmienić.
+Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej na komputerze liczby procesorów. Jest obiektem zaimplementowanym według wzorca fasada, odpowiedzialnym za rozpoczęcie obliczeń algorytmu (metoda \texttt{StartPsoAlgorithm}) oraz pobranie wyników (metoda \texttt{GetResult} zwracająca obiekt klasy \textit{ParticleResult}), zaś za pomocą metody \texttt{Register} możemy podłączyć maszynę do klastra obliczeniowego. Obiekt klasy \textit{MachineManager} posiada tablicę \textit{VCpuManager'ów}, których liczba domyślnie odpowiada liczbie wątków procesora, lecz programista może ją ręcznie zmienić.
 
 \subsection{VCpuManager}
 Klasa ta ma dwa zadania: 
-po pierwsze uruchamia obliczenia jednego roju cząstek PSO, po drugie, reprezentuje pojedynczy węzeł klastra obliczeniowego i odpowiada za nawiązanie połączenie z resztą klastra. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejs \emph{IPsoManager}, który zarządza warstwą logiczną klastra PSO i umożliwia m.in wywołanie metody Run, uruchamiającej obliczenia oraz obiekt klasy \emph{NetworkNodeManager} odpowiedzialny za komunikację pomiędzy węzłami, korzystający z technologii WCF. \emph{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
+po pierwsze uruchamia obliczenia jednego roju cząstek PSO, po drugie, reprezentuje pojedynczy węzeł klastra obliczeniowego i odpowiada za nawiązanie połączenia z resztą klastra. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejs \textit{IPsoManager}, który zarządza warstwą logiczną klastra PSO i umożliwia m.in wywołanie metody \texttt{Run}, uruchamiającej obliczenia oraz obiekt klasy \textit{NetworkNodeManager} odpowiedzialny za komunikację pomiędzy węzłami, korzystający z technologii WCF. \textit{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
 
 \subsection{IPsoController}
 Jest to interfejs odpowiedzialny za uruchomienie obliczeń algorytmu PSO na podstawie podanych parametrów wykonania.
 
-Następujące informacje konfiguracyjne, zamknięte w klasie \emph{PsoParams}, potrzebne są do uruchomienia algorytmu:  
+Następujące informacje konfiguracyjne, zamknięte w klasie \textit{PsoParams}, potrzebne są do uruchomienia algorytmu:  
 
 \begin{itemize}
 	\item Epsilon - dokładność obliczeń algorytmu
@@ -418,132 +418,19 @@ Następujące informacje konfiguracyjne, zamknięte w klasie \emph{PsoParams}, p
 	\item TargetValue - wartość ekstremalna funkcji celu, do której dąży wynik algorytmu
 	\item TargetValueCondition - wartość logiczna stanowiąca, czy zatrzymać algorytm po zbliżeniu się na odległość \emph{Epsilon} od \emph{TargetValue}
 \end{itemize}
-\section{Implementacja algorytmu}
-Algorytm PSO w wariencie uruchamianym na CPU został przez nas zaimplementowany w jęzku C\#, co różni się od wstępnych założeń projektu, w których zakładaliśmy jego implementację w języku C++ oraz opakowanie go klasą w technologii .NET . Początkowo algorytm został napisany zgodnie z założeniami systemu - algorytm w języku C++ natomiast jego opakowanie w języku C++/CLI. Jest to język oparty na C++ pozwalający na proste połączenie kodu natywnego C++ z kodem zarządzanym platformy .NET. Rozwiązanie takie było wystarczające dla tego modułu systemu, lecz okazało się być nadmierną komplikacją w budowie klastra oraz wykorzystaniu benchmarków BBOB.\\
-W pierwszym przypadku utrudnieniem była konieczność użycia klas udostępniających usługi WCF w natywnym kodzie C++, aby  z perspektywy cząstek komunikacja między zdalnymi węzłami przebiegała w sposób jednolity do interakcji z cząstkami lokalnymi, następnie opakowanie tych cząstek w klasy języka C\# .\\
-Drugi przypadek konfliktował z jednym z założeń, na podstawie którego programista mógł definiować funkcje celu w języku C\#. W celu spełnienia tego przekazywaliśmy funkcje z maszyny wirtualnej .NET do środowiska natywnego w celu ich wywołania przez cząstki. Wykorzystanie benchmarków wymagałoby dodatkowo odwrotnego opakowywania funkcji napisanych w C i rodziło dodatkowe komplikacje z odtwarzaniem funkcji dla zdalnych węzłów.
-\subsection{Algorytm}
-Zaimplementowanie algorytmu w języku C\# rozwiązało powyższe problemy oraz dodatkowo umożliwiło dużo przejrzystsze przekazywanie parametrów algorytmu oraz ułatwiało rozszerzanie algorytmu o nowe typy cząstek.
-Sam algorytm stworzony został przez nas w taki sposób, aby był jak najbardziej generyczny ze względu na rodzaj cząstek, przez co jest odpowiedzialny jedynie za przeprowadzenie odpowiednich kroków algorytmu, których dokładna implementacja zawarta jest w cząstkach. W pętli sprawdzane są warunki stopu oraz liczone iteracje od ostatniej poprawy algorytmu, jeśli któryś z warunków zostanie spełniony, lub iteracje bez poprawy osiągną ustalony limit działanie algorytmu zostaje przerwane.
 
-\lstset{style=sharpc}
-\begin{lstlisting}[frame=single]
-public IState<double[],double[]> Run(CancellationToken token)
-{
-	foreach(var particle in _particles)
-	{
-		var j = randomParticleIndex();	      
-		particle.Transpose(_fitnessFunction);
-	    particle.UpdateNeighborhood(_particles);
-		particle.InitializeVelocity(_particles[j]);
-	}
-	var _currentBest = GetCurrentBest();
-	_globalBest = new ParticleState(_currentBest.Location,
-	_currentBest.FitnessValue);
-	while (_conditionCheck())
-	{
-		foreach (var particle in _particles)
-		{
-	    	particle.Transpose(_fitnessFunction);
-	    }
-		foreach (var particle in _particles)
-	    {
-			particle.UpdateVelocity(_globalBest);
-		}
-	}
-	return _fitnessFunction.BestEvaluation;
-}
-\end{lstlisting}
-
-Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadziliśmy do naszego rozwiązania, aby poprawić jego jakość są restarty algorytmu, gdy najlepsze znalezione rozwiązanie nie poprawi się przez odpowiednio długą liczbę iteracji oraz analogiczne restarty pojedynczych cząstek, które w przypadku braku poprawy znalezionego osobistego optimum, rozpoczynają poszukiwania od nowa w losowym punkcie dziedziny. Wyznaczona eksperymentalnie liczba iteracji, po których następują restarty 40 i 100 iteracji dla, odpowiednio, restartów cząstki i restartów globalnych.
-
-\subsection{Cząstka PSO}
-W naszym systemie cząstki są implementacją interfejsu IParticle, który zawiera właściwości potrzebne do identyfikacji cząstki, określenia jej położenia obecnego i najlepszego dotychczas odwiedzonego oraz metody   aktualizujące sąsiedztwo cząstki, jej prędkość i położenie. Od implementacji cząstek zależy topologia roju oraz sposób w jaki poruszają się po przestrzeni poszukiwań. 
-
-\subsubsection{StandardParticle}
-W celu dokładniejszego opisu cząstki przestawimy przykładową cząstkę zbudowaną zgodnie z założeniami SPSO.%Czy aby napewno
-Rozszerza ona abstrakcyjną klasę Particle, która zawiera elementy wspólne pomiędzy różnymi wersjami cząstek. Topologia jest ustalana poprzez funkcję UpdateNeighborhood, która wybiera sąsiadów, z którymi się komunikuje dana cząstka.
-\lstset{style=sharpc}
-\begin{lstlisting}[frame=single]
-public override void UpdateNeighborhood(IParticle[] allParticles)
-{
-	Neighborhood = allParticles
-	.Where(particle => particle.Id != Id)
-	.ToArray();
-}
-\end{lstlisting}
-
-Funkcja UpdateVelocity aktualizuje prędkość cząstki uwzględniając najlepsze położenia swoje oraz cząstek sąsiednich. W danym przykładzie, aby uzyskać wzrost wydajności algorytmu pojedyncza cząstka nie szuka najlepszej pozycji sąsiadów tylko otrzymuje globalną najlepszą wartość jako parametr funkcji. Jest to wartość identyczna z najlepszą wartością sąsiedztwa cząstki, gdyż w tym przypadku jest nim cały rój.
-
-\lstset{style=sharpc}
-\begin{lstlisting}[frame=single]
-
-        public override void UpdateVelocity(IState<double[], double[]> globalBest)
-        {
-            // 1.  get vectors to personal and global best
-            var toPersonalBest = Metric
-            .VectorBetween(CurrentState.Location, PersonalBest.Location);
-            
-            var toGlobalBest = 
-            Metric
-            .VectorBetween(CurrentState.Location, globalBest.Location);
-
-            var phi1 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
-            var phi2 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
-
-            // 2. multiply velocity by Omega and add toGlobalBest and toPersonalBest
-            Velocity = Velocity.Select((v, i) => v * Constants.OMEGA + phi1[i] * toGlobalBest[i] + phi2[i] * toPersonalBest[i]).ToArray();
-        }
-
-\end{lstlisting}
-
-Funkcja Transpose jest odziedziczona z klasy Particle, ponieważ jest wspólna dla stosowanych przez nas typów cząstek. Zmienia ona obecne położenie cząstki licząc przy tym liczbę iteracji bez poprawy wartości funkcji celu. Jeśli przekroczy ona ustalony w konfiguracji algorytmu limit, cząstka jest restartowana, czyli losowane jest jej położenie początkowe oraz zapominane najlepsze dotychczas rozwiązanie.
-
-\lstset{style=sharpc}
-\begin{lstlisting}[frame=single]
-public virtual void Transpose(IFitnessFunction<double[], double[]> function)
-        {
-            double[] newLocation;
-            if (_sinceLastImprovement == _iterationsToRestart)
-            {
-                newLocation = randomLocation()
-                _sinceLastImprovement = 0;
-            }
-            else
-            {
-                newLocation = GetClampedLocation(CurrentState.Location + Velocity);
-            }
-            var newVal = function.Evaluate(newLocation);
-            var oldBest = PersonalBest;
-            CurrentState = new ParticleState(newLocation, newVal);
-
-            if (Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
-            {
-                PersonalBest = CurrentState;
-                _sinceLastImprovement = 0;
-            }
-            else
-            {
-                _sinceLastImprovement++;
-            }
-        }
-\end{lstlisting}
-
-\subsection{Funkcja celu}
-Funkcje celu są obiektami implementującymi interfejs IFitnessFunction. Udostępniają one liczbę przeprowadzonych ewaluacji funkcji, najlepszą ewaluację oraz informacje o wymiarze przestrzeni poszukiwań i wartości funkcji. Funkcje są tworzone przez fabrykę funkcji FunctionsFactory na podstawie przekazanych do niej parametrów. W celu stworzenia odpowiedniej funkcji klient musi przekazać odpowiednią nazwę funkcji. Jest to szczególnie ważne w przypadku funkcji benchamrkowych, gdyż w nazwie zakodowany jest rodzaj funkcji oraz jej odpowiednia instancja. Dodatkowo fabryka funkcji umożliwia zapisanie danej funkcji w cache'u. Konieczność zastosowania pamięci tymczasowej była wynikiem integracji systemu z biblioteką COCO, która wymagała użycia jednej instancji funkcji celu w całym systemie.
-
-Parametry te przekazywane są do metody Run.
+Parametry te przekazywane są do metody \texttt{Run}.
 
 \subsubsection{PsoController}
-Klasa PsoController implementująca IPsoController kontroluje wykonywanie obliczeń algorytmu PSO za pomocą obiektu \_algorithm klasy PsoAlgorithm oraz obiektu \_cudaAlgorithm klasy GenericCudaAlgorithm. 
+Klasa \textit{PsoController} implementująca \textit{IPsoController} kontroluje wykonywanie obliczeń algorytmu PSO za pomocą obiektu \_algorithm klasy \textit{PsoAlgorithm} oraz obiektu \_cudaAlgorithm klasy \textit{GenericCudaAlgorithm}. 
 
-Na podstawie informacji zawartych w obiekcie PsoParams, PsoController tworzy cząstki PSO (obiekty implementujące interfejs IParticle) oraz funkcję celu (obiekt implementujący interfejs IFitnessFunction), które służą następnie do uruchomienia właściwych obliczeń, co następuje w funkcji StartAlgorithm wywoływanej z funkcji Run:
+Na podstawie informacji zawartych w obiekcie \textit{PsoParams}, \textit{PsoController} tworzy cząstki PSO (obiekty implementujące interfejs \textit{IParticle}) oraz funkcję celu (obiekt implementujący interfejs \textit{IFitnessFunction}), które służą następnie do uruchomienia właściwych obliczeń, co następuje w funkcji \texttt{StartAlgorithm} wywoływanej z funkcji \texttt{Run}:
 
 \begin{lstlisting}[frame=single]
 _algorithm.Run(CancellationToken token)
 \end{lstlisting}
 
-W przypadku, gdy na maszynie dostępna jest karta graficzna spełniająca wymagania, na podstawie dostarczonych parametrów, w funkcji PrepareCudaAlgorithm przygotowywane jest również wywołanie algorytmu na GPU, zaś samo uruchomienie następuje w funkcji Run.
+W przypadku, gdy na maszynie dostępna jest karta graficzna spełniająca wymagania, na podstawie dostarczonych parametrów, w funkcji \texttt{PrepareCudaAlgorithm} przygotowywane jest również wywołanie algorytmu na GPU, zaś samo uruchomienie następuje w funkcji Run.
 
 Obliczenia na CPU jak i GPU wykonywane są asynchronicznie, z możliwością przerwania ich w dowolnym momencie.
 
@@ -552,7 +439,7 @@ Obliczenia na CPU jak i GPU wykonywane są asynchronicznie, z możliwością prz
 
 \subsection{IPsoManager}
 
-Interfejs IPsoManager odpowiada za komunikację pomiędzy rojami cząstek PSO znajdującymi się na różnych węzłach klastra obliczeniowego. Interfejs składa się z następujących metod:
+Interfejs \textit{IPsoManager} odpowiada za komunikację pomiędzy rojami cząstek PSO znajdującymi się na różnych węzłach klastra obliczeniowego. Interfejs składa się z następujących metod:
 
 \begin{lstlisting}[frame=single]
 void UpdatePsoNeighborhood(
@@ -569,7 +456,7 @@ event CommunicationBreakdown CommunicationLost;
 Komunikacja pomiędzy rojami cząstek zostanie opisana w dalszej części pracy.
 
 \subsubsection{PsoRingManager}
-PsoRingManager odpowiada za logiczne połączenie rojów na różnych węzłach obliczeniowych w pierścień (każdy rój posiada dwa roje sąsiednie).
+\textit{PsoRingManager} odpowiada za logiczne połączenie rojów na różnych węzłach obliczeniowych w pierścień (każdy rój posiada dwa roje sąsiednie).
 
 % Poniżej:
 % opis części węzła odpowiedzialnej za stworzenie klastra
@@ -585,11 +472,11 @@ public NodeService MyNodeService { get; set; }
 public List<NodeServiceClient> NodeServiceClients
 \end{lstlisting}
 
-Po otworzeniu za pomocą metody StartTcpNodeService serwisu \_tcpHost nasłuchującego na porcie \_tcpPort na połączenie TCP, NetworkNodeManager gotowy jest na przyjęcie połączenia TCP od innych węzłów. 
+Po otworzeniu za pomocą metody \texttt{StartTcpNodeService} serwisu \_tcpHost nasłuchującego na porcie \_tcpPort na połączenie TCP, \textit{NetworkNodeManager} gotowy jest na przyjęcie połączenia TCP od innych węzłów. 
 
-Interfejs sieciowy udostępniany przez węzeł obliczeniowy przedstawia klasa NodeService opisana poniżej.
+Interfejs sieciowy udostępniany przez węzeł obliczeniowy przedstawia klasa \textit{NodeService} opisana poniżej.
 
-Komunikacja w drugą stronę zachodzi przy użyciu obiektów klasy NodeServiceClient, które odpowiadają obiektom NodeService znajdującym się na zewnętrznych węzłach.
+Komunikacja w drugą stronę zachodzi przy użyciu obiektów klasy \textit{NodeServiceClient}, które odpowiadają obiektom \textit{NodeService} znajdującym się na zewnętrznych węzłach.
 
 \subsection{INodeService}
 Jest to interfejs sieciowy dla węzła obliczeniowego.
@@ -629,7 +516,7 @@ Dokładniejszy schemat komunikacji między węzłami klastra zostanie dokładnie
 Klasa ta stanowi implementację interfejsu sieciowego węzła obliczeniowego.
 
 \subsubsection{NodeServiceClient}
-Jest to klasa, za pomocą której obiekt implementujący INodeService jednego węzła wykonuje operacje na interfejsie sieciowym innego węzła. Technologia WCF umożliwia zaimplementowanie klienta usług sieciowych w prosty sposób - wystarczy dokonać następujące inicjalizacji:
+Jest to klasa, za pomocą której obiekt implementujący \textit{INodeService} jednego węzła wykonuje operacje na interfejsie sieciowym innego węzła. Technologia WCF umożliwia zaimplementowanie klienta usług sieciowych w prosty sposób - wystarczy dokonać następujące inicjalizacji:
 
 \begin{lstlisting}[frame=single]
 Address = new EndpointAddress(tcpAddress);
@@ -646,19 +533,21 @@ Komunikacja między węzłami przebiega na dwóch opisanych poniżej poziomach. 
 \subsection{Komunikacja pomiędzy węzłami obliczeniowymi}
 Klaster obliczeniowy jest oparty na topologii pełnej siatki, w której każdy węzeł połączony jest z wszystkimi pozostałymi i dołączany jest do sieci niezależnie od pozostałych. Każdy z węzłów jest równoważny wszystkim pozostałym, to znaczy nie istnieje centralny serwer zarządzający pracą sieci, dzięki czemu obliczenia mogą być zapoczątkowane przez dowolny z nich.
 
-Komunikacja realizowana jest za pomocą usług WCF korzystających z protokołu sieciowego TCP. Modułem odpowiadającym za komunikację na poziomie klastra jest w każdym węźle INodeService, który, jako serwis sieciowy, opisany jest atrybutem [ServiceContract]. Udostępnia on następujące usługi, z których każda posiada atrybut [OperationContract] i można ją wywołać zdalnie używając NodeTcpClient'a.
+Komunikacja realizowana jest za pomocą usług WCF korzystających z protokołu sieciowego TCP. Modułem odpowiadającym za komunikację na poziomie klastra jest w każdym węźle \textit{INodeService}, który, jako serwis sieciowy, opisany jest atrybutem \texttt{[ServiceContract]}. Udostępnia on następujące usługi, z których każda posiada atrybut \texttt{[OperationContract]} i można ją wywołać zdalnie używając \textit{NodeTcpClient'a}.
 
-UpdateNodes - 
+Następujące funkcje muszą się znaleźć w każdej implementacji interfejsu \textit{INodeService}:
 
-Register - dodaje węzeł wywołujący zdalnie tę usługę do listy znanych węzłów węzła, który wykonuje usługę.
+\texttt{UpdateNodes} - informuje dany węzeł obliczeniowy o innym węźle.
 
-Deregister - usuwa węzeł wywołujący zdalnie tę usługę z listy znanych węzłów węzła ją wykonującego.
+\texttt{Register} - dodaje węzeł wywołujący zdalnie tę usługę do listy znanych węzłów węzła, który wykonuje usługę.
 
-StartCalculation - nakazuje węzłowi rozpoczęcie obliczeń na podstawie podanych parametrów algorytmu.
+\texttt{Deregister} - usuwa węzeł wywołujący zdalnie tę usługę z listy znanych węzłów węzła ją wykonującego.
 
-StopCalculation - nakazuje przerwanie obliczeń i zwrócenie informacji o ich dotychczasowym wyniku.
+\texttt{StartCalculation} - nakazuje węzłowi rozpoczęcie obliczeń na podstawie podanych parametrów algorytmu.
 
-CalculationsFinished - 
+\texttt{StopCalculation} - nakazuje przerwanie obliczeń i zwrócenie informacji o ich dotychczasowym wyniku.
+
+\texttt{CalculationsFinished} - informuje o zakończeniu obliczeń na węźle.
 
 Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 
@@ -678,7 +567,7 @@ Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów.
 
 \subsection{Komunikacja na poziomie algorytmu PSO}
-Komunikacja pomiędzy rojami PSO na różnych węzłach obliczeniwych zarządzana jest przez interfejs IPsoManager, który posiadając informacje o połączonych jednostkach, definiuje sąsiedztwa pomiędzy nimi. W przypadku naszego klastra implementuje on strukturę pierścienia, w której każdy węzeł posiada dwóch sąsiadów. Połączenia pomiędzy rojami działającymi wewnątrz jednej maszyny, ale korzystające z różnych wątków procesora przebiegają w ten sam sposób co połączenia między różnymi maszynami. Wszystkie wątki, a dokładniej VCpuManager'y wszystkich maszyn tworzą jeden pierścień. Komunikacja pomiędzy rojami jest dwustronna. Z perspektywy cząstek wewnątrz roju, sąsiedni rój jest reprezentowany przez tzw. cząstkę proxy, która również implementuje interfejs IParticle, przez co nie wymaga oddzielnego traktowania - komunikacja z zewnętrznymi rojami jest przezroczysta dla innych cząstek i samego algorytmu. 
+Komunikacja pomiędzy rojami PSO na różnych węzłach obliczeniwych zarządzana jest przez interfejs \texttt{IPsoManage}r, który posiadając informacje o połączonych jednostkach, definiuje sąsiedztwa pomiędzy nimi. W przypadku naszego klastra implementuje on strukturę pierścienia, w której każdy węzeł posiada dwóch sąsiadów. Połączenia pomiędzy rojami działającymi wewnątrz jednej maszyny, ale korzystające z różnych wątków procesora przebiegają w ten sam sposób co połączenia między różnymi maszynami. Wszystkie wątki, a dokładniej \texttt{VCpuManager'y} wszystkich maszyn tworzą jeden pierścień. Komunikacja pomiędzy rojami jest dwustronna. Z perspektywy cząstek wewnątrz roju, sąsiedni rój jest reprezentowany przez tzw. cząstkę proxy, która również implementuje interfejs \texttt{IParticle}, przez co nie wymaga oddzielnego traktowania - komunikacja z zewnętrznymi rojami jest przezroczysta dla innych cząstek i samego algorytmu. 
 
 Cząstka proxy posiada odpowiadającą jej, ,,zespoloną'' z nią cząstkę proxy z innego roju.
 
@@ -703,11 +592,11 @@ public override ParticleState PersonalBest
 
 Poza informacjami przekazywanymi przez cząstki proxy, po zakończeniu obliczeń każdy z węzłów rozsyła do pozostałych informację o najlepszym znalezionym przez siebie wyniku.
 
-Cząstka proxy komunikuje się z innymi cząstkami proxy za pomocą jeszcze jednej warstwy pośredniczącej - ProxyManagera.
+Cząstka proxy komunikuje się z innymi cząstkami proxy za pomocą jeszcze jednej warstwy pośredniczącej - \textit{ProxyManagera}.
 
-ProxyManager jest odpowiednikiem klasy NetworkNodeManager dla komunikacji między cząstkami - i podobnie jak NetworkNodeManager posiadający interfejs sieciowy w postaci INodeService, tak ProxyManager posiada IParticleService, który jest interfejsem sieciowej komunikacji między cząstkami i udostępnia jedną operację:
+\textit{ProxyManager} jest odpowiednikiem klasy \textit{NetworkNodeManager} dla komunikacji między cząstkami - i podobnie jak \textit{NetworkNodeManager} posiadający interfejs sieciowy w postaci \textit{INodeService}, tak \textit{ProxyManager} posiada \textit{IParticleService}, który jest interfejsem sieciowej komunikacji między cząstkami i udostępnia jedną operację:
 
-GetBestState - zwraca najlepszą znaną cząstce pozycję, czyli najlepszą znaną wartość wśród cząstek jej sąsiedztwa.
+\texttt{GetBestState} - zwraca najlepszą znaną cząstce pozycję, czyli najlepszą znaną wartość wśród cząstek jej sąsiedztwa.
 
 \begin{figure}[H]
     \centering
@@ -716,7 +605,7 @@ GetBestState - zwraca najlepszą znaną cząstce pozycję, czyli najlepszą znan
 \end{figure}
 
 \subsubsection{Wykrywanie awarii}
-ProxyManager jest jednocześnie miejscem, w którym zachodzi wykrywanie awarii. W przypadku, gdy cząstka sąsiedniego roju, z którym próbujemy się połączyć, wielokrotnie nie odpowiada na zapytanie, zgłaszane jest wydarzenie CommunicationBreakdown, a jednocześnie jako wynik zapytania zwracana jest domyślna wartość.
+\textit{ProxyManager} jest jednocześnie miejscem, w którym zachodzi wykrywanie awarii. W przypadku, gdy cząstka sąsiedniego roju, z którym próbujemy się połączyć, wielokrotnie nie odpowiada na zapytanie, zgłaszane jest wydarzenie CommunicationBreakdown, a jednocześnie jako wynik zapytania zwracana jest domyślna wartość.
 
 \begin{lstlisting}[frame=single]
 try
@@ -737,6 +626,120 @@ catch
 }
 \end{lstlisting}
 
+\section{Implementacja algorytmu}
+Algorytm PSO w wariancie uruchamianym na CPU został przez nas zaimplementowany w jęzku C\#, co różni się od wstępnych założeń projektu, w których zakładaliśmy jego implementację w języku C++ oraz opakowanie go klasą w technologii .NET . Początkowo algorytm został napisany zgodnie z założeniami systemu - algorytm w języku C++ natomiast jego opakowanie w języku C++/CLI. Jest to język oparty na C++ pozwalający na proste połączenie kodu natywnego C++ z kodem zarządzanym platformy .NET. Rozwiązanie takie było wystarczające dla tego modułu systemu, lecz okazało się być nadmierną komplikacją w budowie klastra oraz wykorzystaniu benchmarków BBOB.\\
+W pierwszym przypadku utrudnieniem była konieczność użycia klas udostępniających usługi WCF w natywnym kodzie C++, aby  z perspektywy cząstek komunikacja między zdalnymi węzłami przebiegała w sposób jednolity do interakcji z cząstkami lokalnymi, następnie opakowanie tych cząstek w klasy języka C\# .\\
+Drugi przypadek konfliktował z jednym z założeń, na podstawie którego programista mógł definiować funkcje celu w języku C\#. W celu spełnienia tego przekazywaliśmy funkcje z maszyny wirtualnej .NET do środowiska natywnego w celu ich wywołania przez cząstki. Wykorzystanie benchmarków wymagałoby dodatkowo odwrotnego opakowywania funkcji napisanych w C i rodziło dodatkowe komplikacje z odtwarzaniem funkcji dla zdalnych węzłów.
+
+\subsection{Algorytm}
+Zaimplementowanie algorytmu w języku C\# rozwiązało powyższe problemy oraz dodatkowo umożliwiło dużo przejrzystsze przekazywanie parametrów algorytmu oraz ułatwiało rozszerzanie algorytmu o nowe typy cząstek.
+Sam algorytm stworzony został przez nas w taki sposób, aby był jak najbardziej generyczny ze względu na rodzaj cząstek, przez co jest odpowiedzialny jedynie za przeprowadzenie odpowiednich kroków algorytmu, których dokładna implementacja zawarta jest w cząstkach. W pętli sprawdzane są warunki stopu oraz liczone iteracje od ostatniej poprawy algorytmu, jeśli któryś z warunków zostanie spełniony, lub iteracje bez poprawy osiągną ustalony limit działanie algorytmu zostaje przerwane.
+
+\lstset{style=sharpc}
+\begin{lstlisting}[frame=single]
+public IState<double[],double[]> Run(CancellationToken token)
+{
+	foreach(var particle in _particles)
+	{
+		var j = randomParticleIndex();	      
+		particle.Transpose(_fitnessFunction);
+	    particle.UpdateNeighborhood(_particles);
+		particle.InitializeVelocity(_particles[j]);
+	}
+	var _currentBest = GetCurrentBest();
+	_globalBest = new ParticleState(_currentBest.Location,
+	_currentBest.FitnessValue);
+	while (_conditionCheck())
+	{
+		foreach (var particle in _particles)
+		{
+	    	particle.Transpose(_fitnessFunction);
+	    }
+		foreach (var particle in _particles)
+	    {
+			particle.UpdateVelocity(_globalBest);
+		}
+	}
+	return _fitnessFunction.BestEvaluation;
+}
+\end{lstlisting}
+
+Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadziliśmy do naszego rozwiązania, aby poprawić jego jakość są restarty algorytmu, gdy najlepsze znalezione rozwiązanie nie poprawi się przez odpowiednio długą liczbę iteracji oraz analogiczne restarty pojedynczych cząstek, które w przypadku braku poprawy znalezionego osobistego optimum, rozpoczynają poszukiwania od nowa w losowym punkcie dziedziny. Wyznaczona eksperymentalnie liczba iteracji, po których następują restarty 40 i 100 iteracji dla, odpowiednio, restartów cząstki i restartów globalnych.
+
+\subsection{Cząstka PSO}
+W naszym systemie cząstki są implementacją interfejsu IParticle, który zawiera właściwości potrzebne do identyfikacji cząstki, określenia jej położenia obecnego i najlepszego dotychczas odwiedzonego oraz metody   aktualizujące sąsiedztwo cząstki, jej prędkość i położenie. Od implementacji cząstek zależy topologia roju oraz sposób w jaki poruszają się po przestrzeni poszukiwań. 
+
+\subsubsection{StandardParticle}
+W celu dokładniejszego opisu cząstki przestawimy przykładową cząstkę zbudowaną zgodnie z założeniami SPSO. %Czy aby na pewno
+Rozszerza ona abstrakcyjną klasę Particle, która zawiera elementy wspólne pomiędzy różnymi wersjami cząstek. Topologia jest ustalana poprzez funkcję \texttt{UpdateNeighborhood}, która wybiera sąsiadów, z którymi się komunikuje dana cząstka.
+\lstset{style=sharpc}
+\begin{lstlisting}[frame=single]
+public override void UpdateNeighborhood(IParticle[] allParticles)
+{
+	Neighborhood = allParticles
+	.Where(particle => particle.Id != Id)
+	.ToArray();
+}
+\end{lstlisting}
+
+Funkcja \texttt{UpdateVelocity} aktualizuje prędkość cząstki uwzględniając najlepsze położenia swoje oraz cząstek sąsiednich. W danym przykładzie, aby uzyskać wzrost wydajności algorytmu pojedyncza cząstka nie szuka najlepszej pozycji sąsiadów tylko otrzymuje globalną najlepszą wartość jako parametr funkcji. Jest to wartość identyczna z najlepszą wartością sąsiedztwa cząstki, gdyż w tym przypadku jest nim cały rój.
+
+\lstset{style=sharpc}
+\begin{lstlisting}[frame=single]
+
+        public override void UpdateVelocity(IState<double[], double[]> globalBest)
+        {
+            // 1.  get vectors to personal and global best
+            var toPersonalBest = Metric
+            .VectorBetween(CurrentState.Location, PersonalBest.Location);
+            
+            var toGlobalBest = 
+            Metric
+            .VectorBetween(CurrentState.Location, globalBest.Location);
+
+            var phi1 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
+            var phi2 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
+
+            // 2. multiply velocity by Omega and add toGlobalBest and toPersonalBest
+            Velocity = Velocity.Select((v, i) => v * Constants.OMEGA + phi1[i] * toGlobalBest[i] + phi2[i] * toPersonalBest[i]).ToArray();
+        }
+
+\end{lstlisting}
+
+Funkcja \texttt{Transpose} jest odziedziczona z klasy \textit{Particle}, ponieważ jest wspólna dla stosowanych przez nas typów cząstek. Zmienia ona obecne położenie cząstki licząc przy tym liczbę iteracji bez poprawy wartości funkcji celu. Jeśli przekroczy ona ustalony w konfiguracji algorytmu limit, cząstka jest restartowana, czyli losowane jest jej położenie początkowe oraz zapominane najlepsze dotychczas rozwiązanie.
+
+\lstset{style=sharpc}
+\begin{lstlisting}[frame=single]
+public virtual void Transpose(IFitnessFunction<double[], double[]> function)
+        {
+            double[] newLocation;
+            if (_sinceLastImprovement == _iterationsToRestart)
+            {
+                newLocation = randomLocation()
+                _sinceLastImprovement = 0;
+            }
+            else
+            {
+                newLocation = GetClampedLocation(CurrentState.Location + Velocity);
+            }
+            var newVal = function.Evaluate(newLocation);
+            var oldBest = PersonalBest;
+            CurrentState = new ParticleState(newLocation, newVal);
+
+            if (Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
+            {
+                PersonalBest = CurrentState;
+                _sinceLastImprovement = 0;
+            }
+            else
+            {
+                _sinceLastImprovement++;
+            }
+        }
+\end{lstlisting}
+
+\subsection{Funkcja celu}
+Funkcje celu są obiektami implementującymi interfejs \textit{IFitnessFunction}. Udostępniają one liczbę przeprowadzonych ewaluacji funkcji, najlepszą ewaluację oraz informacje o wymiarze przestrzeni poszukiwań i wartości funkcji. Funkcje są tworzone przez fabrykę funkcji \texttt{FunctionsFactory} na podstawie przekazanych do niej parametrów. W celu stworzenia odpowiedniej funkcji klient musi przekazać odpowiednią nazwę funkcji. Jest to szczególnie ważne w przypadku funkcji benchmarkowych, gdyż w nazwie zakodowany jest rodzaj funkcji oraz jej odpowiednia instancja. Dodatkowo fabryka funkcji umożliwia zapisanie danej funkcji w cache'u. Konieczność zastosowania pamięci tymczasowej była wynikiem integracji systemu z biblioteką COCO, która wymagała użycia jednej instancji funkcji celu w całym systemie.
 
 \newpage
 
@@ -805,20 +808,20 @@ Moduł ten udostępnia API w języku C\# pozwalające na uruchomienie obliczeń 
 \subsubsection{ManagedGPU.GpuController} 
 Klasa odpowiadająca za wstępną konfigurację obliczeń na GPU oraz umożliwiająca sprawdzenie możliwości maszyny obliczeniowej. Metody udostępniane przez tę klasę:
 \begin{itemize}
-\item AnySupportedGpu - sprawdza, czy na maszynie jest dostępna karta graficzna wspierająca technologię CUDA w odpowiedniej wersji. Dostęp do informacji na temat sprzętu umożliwia biblioteka managedCuda.
-\item Setup - korzystając z otrzymanych parametrów tworzy reprezentację algorytmu (CudaAlgorithm) oraz cząstkę proxy (CudaParticle) która może być wykorzystana do synchronizacji obliczeń CPU i GPU. Zwrócona para obiektów jest wystarczająca do uruchomienia obliczeń na GPU samodzielnie lub w synchronizacji z CPU.
+\item \texttt{AnySupportedGpu} - sprawdza, czy na maszynie jest dostępna karta graficzna wspierająca technologię CUDA w odpowiedniej wersji. Dostęp do informacji na temat sprzętu umożliwia biblioteka managedCuda.
+\item \texttt{Setup} - korzystając z otrzymanych parametrów tworzy reprezentację algorytmu (\textit{CudaAlgorithm}) oraz cząstkę proxy (\textit{CudaParticle}) która może być wykorzystana do synchronizacji obliczeń CPU i GPU. Zwrócona para obiektów jest wystarczająca do uruchomienia obliczeń na GPU samodzielnie lub w synchronizacji z CPU.
 \end{itemize}
 
 \subsubsection{ManagedGPU.CudaAlgorithm} 
 Klasa która reprezentuje algorytm optymalizujący pewną funkcję. Jest to klasa abstrakcyjna - zawiera główną pętlę algorytmu i metody umożliwiające kontrolę wykonania algorytmu. Ważne metody:
 \begin{itemize}
-\item Initialize - metoda która przygotowuje zasoby do uruchomienia algorytmu na GPU. Wczytuje do pamięci odpowiedni dla optymalizowanej funkcji moduł PTX z funkcjami CUDA oraz alokuje pamięć na procesorze graficznym. Algorytm musi być zainicjalizowany przed uruchomieniem.
-\item Run - uruchamia obliczenia na karcie graficznej. Parametrem wywołania tej metody jest token, który służy do przerwania obliczeń na GPU na żądanie. Metoda ta zawiera w sobie główną pętlę algorytmu PSO na GPU w której wywoływane są kernele CUDA 
-\item Dispose - metoda zwalniająca zasoby zaalokowane przez instancję algorytmu. Powinna zostać wywołana po zakończeniu obczliczeń.
+\item \texttt{Initialize} - metoda która przygotowuje zasoby do uruchomienia algorytmu na GPU. Wczytuje do pamięci odpowiedni dla optymalizowanej funkcji moduł PTX z funkcjami CUDA oraz alokuje pamięć na procesorze graficznym. Algorytm musi być zainicjalizowany przed uruchomieniem.
+\item \texttt{Run} - uruchamia obliczenia na karcie graficznej. Parametrem wywołania tej metody jest token, który służy do przerwania obliczeń na GPU na żądanie. Metoda ta zawiera w sobie główną pętlę algorytmu PSO na GPU w której wywoływane są kernele CUDA 
+\item \texttt{Dispose} - metoda zwalniająca zasoby zaalokowane przez instancję algorytmu. Powinna zostać wywołana po zakończeniu obliczeń.
 \end{itemize}
 
 \subsubsection{ManagedGPU.CudaParticle} 
-Klasa która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU. Rozszerza ona klasę \textbf{Particle}, zatem może być traktowana jako zwykła cząstka z poziomu algorytmu CPU - umieszczenie takiej cząstki w roju na CPU symuluje sąsiedztwo między cząstkami na CPU i na GPU.
+Klasa która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU. Rozszerza ona klasę \textit{Particle}, zatem może być traktowana jako zwykła cząstka z poziomu algorytmu CPU - umieszczenie takiej cząstki w roju na CPU symuluje sąsiedztwo między cząstkami na CPU i na GPU.
 
 \newpage
 
@@ -840,10 +843,10 @@ W roju cząstek na GPU stosujemy topologię pierścienia - każda z cząstek ma 
 Przy wykonaniu kerneli CUDA każda cząstka obsługiwana jest przez jeden wątek. Potencjalnie jest możliwe zwiększenie stopnia zrównoleglenia poprzez delegowanie pojedynczego wątku na obsługę pojedynczego wymiaru pozycji/prędkości cząstki, ale taka organizacja wątków nie jest możliwa dla wszystkich optymalizowanych funkcji. Dlatego, dla spójności w naszej implementacji, przyjęliśmy jeden wątek GPU na jedną cząstkę PSO.
 
 \subsubsection{Synchronizacja CPU i GPU}
-Roje na GPU i CPU synchronizowane są poprzez specjalny typ cząstki CudaParticle. Cząstka tego typu wygląda różnie w zależności od strony ją obserwującej. \\
-Jeśli cząstka CudaParticle znajdzie się w roju cząstek na CPU, zapytanie o jej cechy (np. lokalizację) zwróci cechy pewnej cząstki z roju na GPU (z czasu ostatniej synchronizacji).  \\
-Od strony algorytmu na GPU cząstka ta ma cechy najlepszej cząstki z roju na CPU. Jednak wątek zarządzający algorytmem na GPU nie korzysta bezpośrednio z cząstki CudaParticle - zamiast tego CudaParticle i odpowiadający jej CudaAlgorithm współdzielą obiekt CudaProxy poprzez który udostępniają swój stan i pobierają stan z drugiej strony. \\
-Synchronizacja odbywa się co ustaloną liczbę iteracji algorytmu na GPU - w iteracji synchronizacji stan pierwszej cząstki z cząstek GPU zostaje pobrany z pamięci GPU i przekazywany jest do cząstki CudaParticle, a następnie stan najlepszej cząstki z CPU nadpisuje stan pierwszej cząstki na GPU. 
+Roje na GPU i CPU synchronizowane są poprzez specjalny typ cząstki \textit{CudaParticle}. Cząstka tego typu wygląda różnie w zależności od strony ją obserwującej. \\
+Jeśli cząstka \textit{CudaParticle} znajdzie się w roju cząstek na CPU, zapytanie o jej cechy (np. lokalizację) zwróci cechy pewnej cząstki z roju na GPU (z czasu ostatniej synchronizacji).  \\
+Od strony algorytmu na GPU cząstka ta ma cechy najlepszej cząstki z roju na CPU. Jednak wątek zarządzający algorytmem na GPU nie korzysta bezpośrednio z cząstki \textit{CudaParticle} - zamiast tego \textit{CudaParticle} i odpowiadający jej \textit{CudaAlgorithm} współdzielą obiekt \textit{CudaProxy} poprzez który udostępniają swój stan i pobierają stan z drugiej strony. \\
+Synchronizacja odbywa się co ustaloną liczbę iteracji algorytmu na GPU - w iteracji synchronizacji stan pierwszej cząstki z cząstek GPU zostaje pobrany z pamięci GPU i przekazywany jest do cząstki \textit{CudaParticle}, a następnie stan najlepszej cząstki z CPU nadpisuje stan pierwszej cząstki na GPU. 
   
 \subsubsection{Dodawanie własnych funkcji optymalizacyjnych}
 Architektura naszego rozwiązania pozwala na dodawanie nowych funkcji do optymalizacji na GPU. \\
@@ -851,7 +854,7 @@ Architektura naszego rozwiązania pozwala na dodawanie nowych funkcji do optymal
 Aby dodać nową funkcję należy:
 \begin{itemize}
 \item Dodać implementację funkcji w języku CUDA wraz z odpowiednim dla niej kernelem aktualizującym pozycję cząstki.
-\item Rozszerzyć klasę CudaAlgorithm dla implementowanej funkcji rozszerzając inicjalizację pamięci o dodatkowe współczynniki dla funkcji celu (jeśli potrzebne) oraz nadpisać wywołanie kernela aktualizującego pozycję cząstki.
+\item Rozszerzyć klasę \textit{CudaAlgorithm} dla implementowanej funkcji rozszerzając inicjalizację pamięci o dodatkowe współczynniki dla funkcji celu (jeśli potrzebne) oraz nadpisać wywołanie kernela aktualizującego pozycję cząstki.
 \item Dodać nową klasę do rejestru algorytmów ManagedCuda.CudaAlgorithmFactory z odpowiednim identyfikatorem (identyfikatory 1-24 zarezerwowane są dla funkcji z benchmarku BBOB.
 \end{itemize}
  
@@ -880,20 +883,20 @@ COCO framework składa się z biblioteki napisanej w języku C wraz z modułami 
 
 Stworzony przez nas wrapper ma za zadanie umożliwić wywołanie metod biblioteki COCO (CocoLibrary.c) napisanych w języku C z poziomu naszej aplikacji w języku C\#. Przy jego tworzeniu wzorowaliśmy się na dostępnym wrapperze dla języka Java wykorzystującym Java Native Interface (JNI), czyli framework umożliwiający komunikację z kodem napisanym w C/C++. 
 
-Pierwszym zadaniem było utworzenie klas języka C\# odpowiadających klasom Javy, wykorzystywanym we wspomnianym wrapperze, a które odpowiadają pewnym strukturom języka C z biblioteki COCO. Te klasy, to:
+Pierwszym zadaniem było utworzenie klas języka C\# odpowiadających klasom Javy, wykorzystywanym we wspomnianym wrapperze, a które odpowiadają pewnym strukturom języka C z biblioteki COCO. Te klasy, to:\\
 
-\textbf{Problem} - zawiera dane konkretnego problemu optymalizacyjnego.\\
-\textbf{Suite} - odpowiada całemu zestawowi problemów optymalizacyjnych.\\
-\textbf{Observer} - służy do zbierania danych w czasie wykonywania testów.\\
-\textbf{Benchmark} - klasa opakowująca, zawierająca w sobie obiekt klasy \textbf{Suite} oraz obiekt klasy \textbf{Observer}, umożliwiająca pobranie kolejnego problemu optymalizacyjnego z zestawu.\\
+\textit{Problem} - zawiera dane konkretnego problemu optymalizacyjnego.\\
+\textit{Suite} - odpowiada całemu zestawowi problemów optymalizacyjnych.\\
+\textit{Observer} - służy do zbierania danych w czasie wykonywania testów.\\
+\textit{Benchmark} - klasa opakowująca, zawierająca w sobie obiekt klasy \textit{Suite} oraz obiekt klasy \textit{Observer}, umożliwiająca pobranie kolejnego problemu optymalizacyjnego z zestawu.\\
 
 Klasy te stanowią interfejs benchmarku dla naszego programu - tworzone oraz inicjalizowane są w głównej pętli procedury testującej.
 
-Między powyżej opisanymi obiektami a funkcjami z \textit{CocoLibrary.c} pośredniczy jeszcze jedna warstwa, będąca prawdziwym wrapperem i zamknięta w klasie \textbf{CocoLibraryWrapper}.
+Między powyżej opisanymi obiektami a funkcjami z CocoLibrary.c pośredniczy jeszcze jedna warstwa, będąca prawdziwym wrapperem i zamknięta w klasie \textit{CocoLibraryWrapper}.
 
 \subsection{Eksport / import funkcji z języka C}
 
-Jedną z części klasy CocoLibraryWrapper stanowią zaimportowane funkcje z \textit{CocoLibrary.c}. Import funkcji jest konieczny, aby móc wywoływać je z poziomu języka C\#. Na przykładzie jednej z funkcji zaprezentujemy sposób ich importu, który wymaga następującej deklaracji:\\
+Jedną z części klasy \textit{CocoLibraryWrapper} stanowią zaimportowane funkcje z CocoLibrary.c. Import funkcji jest konieczny, aby móc wywoływać je z poziomu języka C\#. Na przykładzie jednej z funkcji zaprezentujemy sposób ich importu, który wymaga następującej deklaracji:\\
 
 \begin{lstlisting}[frame=single]
 [DllImport(
@@ -914,14 +917,14 @@ znajdującej się w pliku \textit{CocoLibrary.c}. Jak widać, aby zaimportować 
 
 Dodatkowo importowana funkcja musi zostać opatrzona modyfikatorami \textit{unsafe} (umożliwiający korzystanie ze wskaźników w języku C\#) oraz \textit{extern} (wskazująca, że implementacja funkcji znajduje się w innym miejscu).
 
-Sam import funkcji w naszej aplikacji nie wystarcza, aby uzyskać do nich dostęp. Konieczny był również ich eksport z samej biblioteki \textit{CocoLibrary.c}, aby po jej skompilowaniu do \textit{CocoLibrary.dll}, były one widoczne na zewnątrz. Eksport funkcji dokonuje się w następujący sposób:\\
+Sam import funkcji w naszej aplikacji nie wystarcza, aby uzyskać do nich dostęp. Konieczny był również ich eksport z samej biblioteki CocoLibrary.c, aby po jej skompilowaniu do CocoLibrary.dll, były one widoczne na zewnątrz. Eksport funkcji dokonuje się w następujący sposób:\\
 
 \begin{lstlisting}[frame=single]
 __declspec(dllexport) 
 const char *coco_problem_get_name(const coco_problem_t *problem);
 \end{lstlisting}
 
-Zaimportowanych funkcji nie wywołujemy bezpośrednio, a za pomocą jeszcze jednej warstwy pośredniczącej, z której to korzystają już opisane wcześniej klasy \textbf{Problem}, \textbf{Suite}, \textbf{Observer} i \textbf{Benchmark}. Dodatkowa warstwa była konieczna, aby zapewnić, że funkcje eksportowane z \textit{CocoLibrary.dll} wywoływane będą we właściwy sposób, jak np.:
+Zaimportowanych funkcji nie wywołujemy bezpośrednio, a za pomocą jeszcze jednej warstwy pośredniczącej, z której to korzystają już opisane wcześniej klasy \textit{Problem}, \textit{Suite}, \textit{Observer} i \textit{Benchmark}. Dodatkowa warstwa była konieczna, aby zapewnić, że funkcje eksportowane z CocoLibrary.dll wywoływane będą we właściwy sposób, jak np.:
 
 \begin{lstlisting}[frame=single]
 public static unsafe String cocoProblemGetName(long problemPointer)
@@ -949,7 +952,7 @@ var observer = new Observer("bbob", observerOptions);
 var benchmark = new Benchmark(suite, observer);
 \end{lstlisting}
 
-zaś w głównej pętli programu kolejny problem do optymalizacji pobierany jest z obiektu klasy \textbf{Bechmark}:
+zaś w głównej pętli programu kolejny problem do optymalizacji pobierany jest z obiektu klasy \textit{Bechmark}:
 
 \begin{lstlisting}[frame=single]
 Problem = benchmark.getNextProblem()
