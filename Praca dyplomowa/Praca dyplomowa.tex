@@ -634,7 +634,8 @@ try
 catch
 {
 	_communicationErrorCount++;
-	if (CommunicationBreakdown != null && _communicationErrorCount == 						_communicationErrorLimit)
+	if (CommunicationBreakdown != null &&
+	_communicationErrorCount == communicationErrorLimit)
 	{
 		CommunicationBreakdown();		
 	}
@@ -1228,7 +1229,9 @@ Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu po�
 \end{figure}
 
 \subsection{Obliczenia na GPU}
-Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczną poprawę jakości. Pomimo tego, że rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt że implementował on najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność. Nieco bardziej zauważalna poprawa nastąpiła jedynie dla funkcji sferycznej oraz elipsoidalnej. 
+Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczną poprawę jakości. Pomimo tego, że rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt że implementował on najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność, pomimo, że wykonywał on między 2-, a 11-krotnie więcej ewaluacji dla każdej z funkcji testowych. Nieco bardziej zauważalna poprawa nastąpiła jedynie dla funkcji sferycznej oraz elipsoidalnej. 
+
+
 
 \begin{figure}[H]
     \centering
@@ -1246,7 +1249,7 @@ Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczn
 
 \begin{figure}[H]
     \includegraphics[scale=.75]{charts/1nodeCompare_5D.pdf} \par
- \caption{Wykres porównujący wyniki na pojedynczym węźle wersji standardowej z wersją z cząstkami naładowanymi oraz z wersją wykorzystującą GPU}
+ \caption{Wykres porównujący wyniki na pojedynczym węźle wersji standardowej z wersją z cząstkami naładowanymi oraz z wersją wykorzystującą GPU. Wskazuje na brak wyraźnych różnic pomiędzy różnymi wersjami algorytmu działającymi na jednym węźle.}
 \end{figure}
 
 \subsection{Obliczenia na klastrze}
@@ -1281,7 +1284,7 @@ Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło wido
 
 \begin{figure}[H]
     \includegraphics[scale=.75]{charts/124compare_5D.pdf} \par
- \caption{Wykres porównujący wyniki na pojedynczym węźle z wynikami klastra złożonego z 2 oraz z 4 węzłów}
+ \caption{Wykres porównujący wyniki na pojedynczym węźle z wynikami klastra złożonego z 2 oraz z 4 węzłów. Można zauważyć poprawę wyników dla większej liczby węzłów obliczeniowych.}
 \end{figure}
 
 
