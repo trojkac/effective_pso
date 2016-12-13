@@ -32,11 +32,12 @@
   morestring=[b]",
   morecomment=[s]{<?}{?>},
   stringstyle=\color{black},
-  identifierstyle=\color{blue},
-  keywordstyle=\color{cyan},
-  morekeywords={xmlns,version,type}% list your attributes here
+  identifierstyle=\color{black},
+  keywordstyle=\bfseries,
+  morekeywords={xmlns,version,type,Count,Coefficients,,PsoParameters,Particles,ParticlesCount,ParticleType,IterationsLimitCondition,Iterations,TargetValue,TargetValueCondition,double,Epsilon,SearchSpace,Min,Max,DimensionBound,FunctionParameters,Dimension,FitnessFunctionType,NodeParameters,NrOfVCpu,Ip,Ports,int,PeerAddress}% list your attributes here
+  %
 }
-\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
+\lstdefinestyle{sharpc}{language=[Sharp]C, basicstyle=\ttfamily\small,morekeywords={var}, frame=lr, rulecolor=\color{blue!30!black}}
 
 
 
@@ -426,6 +427,7 @@ Klasa \textit{PsoController} implementująca \textit{IPsoController} kontroluje 
 
 Na podstawie informacji zawartych w obiekcie \textit{PsoParams}, \textit{PsoController} tworzy cząstki PSO (obiekty implementujące interfejs \textit{IParticle}) oraz funkcję celu (obiekt implementujący interfejs \textit{IFitnessFunction}), które służą następnie do uruchomienia właściwych obliczeń, co następuje w funkcji \texttt{StartAlgorithm} wywoływanej z funkcji \texttt{Run}:
 
+\lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 _algorithm.Run(CancellationToken token)
 \end{lstlisting}
@@ -441,6 +443,7 @@ Obliczenia na CPU jak i GPU wykonywane są asynchronicznie, z możliwością prz
 
 Interfejs \textit{IPsoManager} odpowiada za komunikację pomiędzy rojami cząstek PSO znajdującymi się na różnych węzłach klastra obliczeniowego. Interfejs składa się z następujących metod:
 
+\lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 void UpdatePsoNeighborhood(
 NetworkNodeInfo[] allNetworkNodes, 
@@ -465,6 +468,7 @@ Komunikacja pomiędzy rojami cząstek zostanie opisana w dalszej części pracy.
 \subsection{NetworkNodeManager}
 Jest to klasa odpowiadająca za infrastrukturę sieciową klastra. Najważniejszymi polami klasy są:
 
+\lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 private readonly int _tcpPort;
 private ServiceHost _tcpHost;
@@ -481,6 +485,7 @@ Komunikacja w drugą stronę zachodzi przy użyciu obiektów klasy \textit{NodeS
 \subsection{INodeService}
 Jest to interfejs sieciowy dla węzła obliczeniowego.
 
+\lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 [ServiceContract]
 public interface INodeService
@@ -518,6 +523,8 @@ Klasa ta stanowi implementację interfejsu sieciowego węzła obliczeniowego.
 \subsubsection{NodeServiceClient}
 Jest to klasa, za pomocą której obiekt implementujący \textit{INodeService} jednego węzła wykonuje operacje na interfejsie sieciowym innego węzła. Technologia WCF umożliwia zaimplementowanie klienta usług sieciowych w prosty sposób - wystarczy dokonać następujące inicjalizacji:
 
+
+\lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 Address = new EndpointAddress(tcpAddress);
 Binding = new NetTcpBinding(SecurityMode.None);
@@ -573,6 +580,7 @@ Cząstka proxy posiada odpowiadającą jej, ,,zespoloną'' z nią cząstkę prox
 
 Cząstka proxy nie wykonuje ewaluacji funkcji celu, a przekazuje jedynie najlepsze znane położenie cząstki z nią zespolonej pomiędzy rojami. Do własnego roju podaje najlepszy wynik znany cząstce proxy z roju sąsiedniego, natomiast do niej przekazuje informacje od lokalnej cząstki. Odbywa się to w momencie, gdy cząstka proxy pytana jest o najlepsze znane sobie położenie, jednakże nie za każdym razem odpytywana jest cząstka z sąsiedniego roju - dzieje się tak tylko co pewną liczbę iteracji określoną parametrem RemoteCheckInterval, który domyślnie przyjmuje wartość 200, a wprowadzony został w celu ograniczenia spadku wydajności, który zauważyliśmy, gdy komunikacja pomiędzy rojami zachodziła zbyt często.
 
+\lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 public override ParticleState PersonalBest
 {
@@ -607,6 +615,7 @@ Cząstka proxy komunikuje się z innymi cząstkami proxy za pomocą jeszcze jedn
 \subsubsection{Wykrywanie awarii}
 \textit{ProxyManager} jest jednocześnie miejscem, w którym zachodzi wykrywanie awarii. W przypadku, gdy cząstka sąsiedniego roju, z którym próbujemy się połączyć, wielokrotnie nie odpowiada na zapytanie, zgłaszane jest wydarzenie CommunicationBreakdown, a jednocześnie jako wynik zapytania zwracana jest domyślna wartość.
 
+\lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 try
 {
@@ -1013,13 +1022,59 @@ Dziećmi elementu głównego są elementy:
 \end{enumerate}
 \clearpage
 Przykładowy plik konfiguracyjny algorytmu PSO:
+\lstset{language=XML}
+\begin{lstlisting}[frame=single]
+<?xml version="1.0" encoding="utf-8"?>
+<PsoParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Particles>
+    <ParticlesCount>
+      <ParticleType>Standard</ParticleType>
+      <Count>6</Count>
+    </ParticlesCount>
+  </Particles>
+  <IterationsLimitCondition>true</IterationsLimitCondition>
+  <Iterations>1000</Iterations>
+  <TargetValueCondition>false</TargetValueCondition>
+  <TargetValue>0</TargetValue>
+  <Epsilon>1e-12</Epsilon>
+      <FunctionParameters>
+        <FitnessFunctionType>quadratic</FitnessFunctionType>
+        <Dimension>2</Dimension>
+        <Coefficients>
+          <double>1.0</double>
+          <double>1.0</double>
+        </Coefficients>
+        <SearchSpace>
+          <DimensionBound>
+            <Min>-5</Min>
+            <Max>5</Max>
+          </DimensionBound>
+    	  <DimensionBound>
+            <Min>-5</Min>
+            <Max>5</Max>
+          </DimensionBound>
+        </SearchSpace>
+      </FunctionParameters>
+</PsoParameters>
+\end{lstlisting}
+\section{CocoClusterApp}
+CocoClusterApp jest aplikacją kliencką naszej biblioteki umożliwiającą uruchomienie benchmarków COCO we wszystkich wspieranych przez nasz system konfiguracjach. Ustawienie programu przebiega niemal identycznie jak w przypadku opisanym powyżej, lecz aplikacja nadpisuje niektóre z ustawionych wartości. Są to:
 
+\begin{itemize}
+\item IterationsLimitCondition - zawsze ustawiany na true
+\item Iterations - limit iteracji jest ustawiany na podstawie wywołania programu
+\item TargetValueCondition - zawsze ustawiane na false, ponieważ benchmarki są zaimplementowane wg. doktryny black-box, czyli algorytm nie zna optimum funkcji
+\item FunctionParameters - poszczególne funkcje benchmarków są wczytywane i następnie ustawiane są jej parametry
+\end{itemize} 
+\subsection{Wywołanie programu}
+  Wywołanie programu następuje za pomocą poniższej komendy
 \begin{lstlisting}[frame=single]
 .\CocoClusterApp.exe <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>
 \end{lstlisting}
 gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru \{2,3,5,10,20,40\} , drugim i trzecim są liczby definiujące przedział optymalizowanych funkcji od 1 do 24, natomiast ostatnim jest budżet algorytmu 
 
-\section{Wyjście programu}
+\subsection{Wyjście programu}
 W trakcie działania programu na ekran konsoli wypisywana jest nazwa ostatnio zakończonej funkcji, liczba ewaluacji przeprowadzonych na danym węźle (bez GPU), liczba restartów algorytmu oraz najlepsza osiągnięta wartość.\\
 
 Szczegółowe dane dotyczące przebiegu algorytmu zapisywane są przez bibliotekę COCO w folderze \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}. W folderze tym, dla każdej funkcji znajduje się folder z danymi oraz plik o rozszerzeniu .info . Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
@@ -1035,7 +1090,8 @@ Wykorzystane przez nas biblioteki:
 \item managedCuda, licencja LGPL, https://github.com/kunzmi/managedCuda
 \item Chronometer, licencja MIT, https://github.com/narkhedegs/Chronometer
 \item CUDA Toolkit, licencja NVIDIA pozwala na wykorzystanie w naszym projekcie, https://developer.nvidia.com/cuda-toolkit
-\item COCO (Comparing Continuous Optimizers), licencja BSD, https://github.com/numbbo/coco/
+\item COCO (Comparing Continuous Optimizers), licencja BSD, 
+https://github.com/numbbo/coco/
 \end{itemize}
 
 \section{Wymagania techniczne}
