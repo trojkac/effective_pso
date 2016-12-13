@@ -683,11 +683,11 @@ public IState<double[],double[]> Run(CancellationToken token)
 Możliwość przerwania obliczeń przez brak poprawy wyniku jest jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadziliśmy do naszego rozwiązania, aby poprawić jego jakość. Umożliwia przeprowadzenie niezależnych restartów algorytmu po osiągnięciu wspomnianego wcześniej limitu. Analogiczne restarty pojedynczych cząstek, które w przypadku braku poprawy znalezionego osobistego optimum, rozpoczynają poszukiwania od nowa w losowym punkcie dziedziny. Wyznaczona eksperymentalnie liczba iteracji, po których następują restarty, dająca optymalne wyniki to 40 i 100 iteracji dla, odpowiednio, restartów cząstki i restartów globalnych.
 
 \subsection{Cząstka PSO}
-W naszym systemie cząstki są implementacją interfejsu IParticle, który zawiera właściwości potrzebne do identyfikacji cząstki, określenia jej położenia obecnego i najlepszego dotychczas odwiedzonego oraz metody   aktualizujące sąsiedztwo cząstki, jej prędkość i położenie. Od implementacji cząstek zależy topologia roju oraz sposób w jaki poruszają się po przestrzeni poszukiwań. 
+W naszym systemie cząstki są implementacją interfejsu \textit{IParticle}, który zawiera właściwości potrzebne do identyfikacji cząstki, określenia jej położenia obecnego i najlepszego dotychczas odwiedzonego oraz metody   aktualizujące sąsiedztwo cząstki, jej prędkość i położenie. Od implementacji cząstek zależy topologia roju oraz sposób w jaki poruszają się po przestrzeni poszukiwań. 
 
 \subsubsection{StandardParticle}
 W celu dokładniejszego opisu cząstki przestawimy przykładową cząstkę zbudowaną zgodnie z założeniami SPSO. %Czy aby na pewno
-Rozszerza ona abstrakcyjną klasę Particle, która zawiera elementy wspólne pomiędzy różnymi wersjami cząstek. Topologia jest ustalana poprzez funkcję \texttt{UpdateNeighborhood}, która wybiera sąsiadów, z którymi się komunikuje dana cząstka.
+Rozszerza ona abstrakcyjną klasę \textit{Particle}, która zawiera elementy wspólne pomiędzy różnymi wersjami cząstek. Topologia jest ustalana poprzez funkcję \texttt{UpdateNeighborhood}, która wybiera sąsiadów, z którymi się komunikuje dana cząstka.
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 public override void UpdateNeighborhood(IParticle[] allParticles)
@@ -702,7 +702,8 @@ Funkcja \texttt{UpdateVelocity} aktualizuje prędkość cząstki uwzględniając
 
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
-public override void UpdateVelocity(IState<double[], double[]> globalBest)
+public override void UpdateVelocity(
+IState<double[], double[]> globalBest)
 {
     var toPersonalBest = Metric
       .VectorBetween(CurrentState.Location, PersonalBest.Location);
@@ -725,7 +726,8 @@ Funkcja \texttt{Transpose} jest odziedziczona z klasy \textit{Particle}, poniewa
 
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
-public virtual void Transpose(IFitnessFunction<double[], double[]> function)
+public virtual void Transpose(
+IFitnessFunction<double[], double[]> function)
 {
   double[] newLocation;
   if (_sinceLastImprovement == _iterationsToRestart)
@@ -900,7 +902,7 @@ Stworzony przez nas wrapper ma za zadanie umożliwić wywołanie metod bibliotek
 
 Pierwszym zadaniem było utworzenie klas języka C\# odpowiadających klasom Javy, wykorzystywanym we wspomnianym wrapperze, a które odpowiadają pewnym strukturom języka C z biblioteki COCO. Te klasy, to:\\
 
-\textit{Problem} - zawiera dane konkretnego problemu optymalizacyjnego.\\
+\noindent \textit{Problem} - zawiera dane konkretnego problemu optymalizacyjnego.\\
 \textit{Suite} - odpowiada całemu zestawowi problemów optymalizacyjnych.\\
 \textit{Observer} - służy do zbierania danych w czasie wykonywania testów.\\
 \textit{Benchmark} - klasa opakowująca, zawierająca w sobie obiekt klasy \textit{Suite} oraz obiekt klasy \textit{Observer}, umożliwiająca pobranie kolejnego problemu optymalizacyjnego z zestawu.\\
@@ -1100,7 +1102,7 @@ Wykorzystane przez nas biblioteki:
 \item managedCuda, licencja LGPL, https://github.com/kunzmi/managedCuda
 \item Chronometer, licencja MIT, https://github.com/narkhedegs/Chronometer
 \item CUDA Toolkit, licencja NVIDIA pozwala na wykorzystanie w naszym projekcie, https://developer.nvidia.com/cuda-toolkit
-\item COCO (Comparing Continuous Optimizers), licencja BSD, 
+\item COCO (Comparing Continuous Optimizers), licencja BSD, \\
 https://github.com/numbbo/coco/
 \end{itemize}
 
@@ -1189,7 +1191,7 @@ W celu sprawdzenia zysku, jaki daje rozproszenie obliczeń na więcej węzłów 
 \section{Wyniki i ich interpretacja}
 
 \subsection{Jak czytać}
-Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instancji funkcji, różniących się przesunięciem względem początku układu współrzędnych, obrotem, rozciągnięciem lub inną prostą transformacją nie wpływającą na istotę problemu - wyniki dla tych instancji są następnie uśredniane i prezentowane jako wyniki dla danej funkcji celu. Dodatkowo dla każdej konkretnej instancji funkcji celu bierzemy pod uwagę różne progi odległości od optimum i prezentujemy liczbę funkcji, dla których choć w jednej instancji udało się osiągnąć najtrudniejszy próg, czyli odległość od optimum nie większą niż $10^{-8}$.
+Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instancji funkcji, różniących się przesunięciem względem początku układu współrzędnych, obrotem, rozciągnięciem lub inną prostą transformacją nie wpływającą na istotę problemu - wyniki dla tych instancji są następnie uśredniane i prezentowane jako wyniki dla danej funkcji celu. Dodatkowo dla każdej konkretnej instancji funkcji celu bierzemy pod uwagę różne progi odległości od optimum i prezentujemy liczbę funkcji, dla których choć w jednej instancji udało się osiągnąć odległość od optimum mniejszą niż $10^{1}$, $10^{-1}$, $10^{-4}$ oraz $10^{-8}$.
 
 \subsection{Rezultaty}
 
@@ -1292,7 +1294,7 @@ Podział pracy prezentował się następująco:\\
 
 \textbf{Hubert Rosiak} - Odpowiadał za stworzenie wrappera do platformy COCO. Brał udział w tworzeniu struktury węzła obliczeniowego.\\
 
-\textbf{Kacper Trojanowski} - Odpowiadał za stworzenie struktury klastra obliczeniowego i komunikacji pomiędzy jego węzłami. Stworzył algorytm PSO w C\# umożliwiający jego łatwą modyfikację i hybrydyzację.
+\textbf{Kacper Trojanowski} - Brał udział w tworzeniu struktury klastra obliczeniowego i odpowiadał za zaprojektowanie komunikacji pomiędzy jego węzłami. Stworzył algorytm PSO w C\# umożliwiający jego łatwą modyfikację i hybrydyzację.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
