@@ -482,32 +482,32 @@ Komunikacja w drugą stronę zachodzi przy użyciu obiektów klasy \textit{NodeS
 Jest to interfejs sieciowy dla węzła obliczeniowego.
 
 \begin{lstlisting}[frame=single]
- [ServiceContract]
-    public interface INodeService
-    {
-        [OperationContract] 
-        void UpdateNodes(NetworkNodeInfo[] nodes);
+[ServiceContract]
+public interface INodeService
+{
+    [OperationContract] 
+    void UpdateNodes(NetworkNodeInfo[] nodes);
 
-        [OperationContract]
-        NetworkNodeInfo[] Register(NetworkNodeInfo source);
+    [OperationContract]
+    NetworkNodeInfo[] Register(NetworkNodeInfo source);
 
-        [OperationContract]
-        void Deregister(NetworkNodeInfo brokenNodeInfo);
+    [OperationContract]
+    void Deregister(NetworkNodeInfo brokenNodeInfo);
 
-        [OperationContract]
-        void StartCalculation(
-        PsoParameters parameters, NetworkNodeInfo mainNodeInfo);
+    [OperationContract]
+    void StartCalculation(
+    PsoParameters parameters, NetworkNodeInfo mainNodeInfo);
 
-        [OperationContract]
-        ParticleState StopCalculation();
+    [OperationContract]
+    ParticleState StopCalculation();
 
-        [OperationContract]
-        void CalculationsFinished(
-        NetworkNodeInfo source, ParticleState result);
+    [OperationContract]
+    void CalculationsFinished(
+    NetworkNodeInfo source, ParticleState result);
 
-        [OperationContract]
-        void CheckStatus();
-    }
+    [OperationContract]
+    void CheckStatus();
+}
 \end{lstlisting}
 
 Dokładniejszy schemat komunikacji między węzłami klastra zostanie dokładniej opisany w późniejszym rozdziale.
@@ -676,9 +676,9 @@ Rozszerza ona abstrakcyjną klasę Particle, która zawiera elementy wspólne po
 \begin{lstlisting}[frame=single]
 public override void UpdateNeighborhood(IParticle[] allParticles)
 {
-	Neighborhood = allParticles
-	.Where(particle => particle.Id != Id)
-	.ToArray();
+  Neighborhood = allParticles
+   .Where(particle => particle.Id != Id)
+   .ToArray();
 }
 \end{lstlisting}
 
@@ -686,20 +686,22 @@ Funkcja \texttt{UpdateVelocity} aktualizuje prędkość cząstki uwzględniając
 
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
-        public override void UpdateVelocity(IState<double[], double[]> globalBest)
-        {
-            var toPersonalBest = Metric
-            .VectorBetween(CurrentState.Location, PersonalBest.Location);
+public override void UpdateVelocity(IState<double[], double[]> globalBest)
+{
+    var toPersonalBest = Metric
+      .VectorBetween(CurrentState.Location, PersonalBest.Location);
             
-            var toGlobalBest = 
-            Metric
-            .VectorBetween(CurrentState.Location, globalBest.Location);
+    var toGlobalBest = Metric
+      .VectorBetween(CurrentState.Location, globalBest.Location);
 
-            var phi1 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
-            var phi2 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
+    var phi1 = RandomGenerator.RandomVector(Dim, 0, Constants.PHI);
+    var phi2 = RandomGenerator.RandomVector(Dim, 0, Constants.PHI);
 
-            Velocity = Velocity.Select((v, i) => v * Constants.OMEGA + phi1[i] * toGlobalBest[i] + phi2[i] * toPersonalBest[i]).ToArray();
-        }
+    Velocity = Velocity.Select((v, i) => 
+      v * Constants.OMEGA 
+      + phi1[i] * toGlobalBest[i] 
+      + phi2[i] * toPersonalBest[i]).ToArray();
+}
 
 \end{lstlisting}
 
@@ -708,31 +710,31 @@ Funkcja \texttt{Transpose} jest odziedziczona z klasy \textit{Particle}, poniewa
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 public virtual void Transpose(IFitnessFunction<double[], double[]> function)
-        {
-            double[] newLocation;
-            if (_sinceLastImprovement == _iterationsToRestart)
-            {
-                newLocation = randomLocation()
-                _sinceLastImprovement = 0;
-            }
-            else
-            {
-                newLocation = GetClampedLocation(CurrentState.Location + Velocity);
-            }
-            var newVal = function.Evaluate(newLocation);
-            var oldBest = PersonalBest;
-            CurrentState = new ParticleState(newLocation, newVal);
+{
+  double[] newLocation;
+  if (_sinceLastImprovement == _iterationsToRestart)
+  {
+    newLocation = randomLocation()
+    _sinceLastImprovement = 0;
+  }
+  else
+  {
+    newLocation = GetClampedLocation(CurrentState.Location + Velocity);
+  }
+  var newVal = function.Evaluate(newLocation);
+  var oldBest = PersonalBest;
+  CurrentState = new ParticleState(newLocation, newVal);
 
-            if (Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
-            {
-                PersonalBest = CurrentState;
-                _sinceLastImprovement = 0;
-            }
-            else
-            {
-                _sinceLastImprovement++;
-            }
-        }
+  if (Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
+  {
+    PersonalBest = CurrentState;
+    _sinceLastImprovement = 0;
+  }
+  else
+  {
+    _sinceLastImprovement++;
+  }
+}
 \end{lstlisting}
 
 \subsection{Funkcja celu}
