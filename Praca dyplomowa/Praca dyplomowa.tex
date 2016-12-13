@@ -1076,10 +1076,13 @@ CocoClusterApp jest aplikacją kliencką naszej biblioteki umożliwiającą uruc
 \end{itemize} 
 \subsection{Wywołanie programu}
   Wywołanie programu następuje za pomocą poniższej komendy
+
+\lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
-.\CocoClusterApp.exe <Dim1[,Dim2,Dim3...]> <FunctionsFrom> <FunctionsTo> <Budget>
+.\CocoClusterApp.exe <Dim1[,Dim2,Dim3...]>\
+   <FunctionsFrom> <FunctionsTo> <Budget>
 \end{lstlisting}
-gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru \{2,3,5,10,20,40\} , drugim i trzecim są liczby definiujące przedział optymalizowanych funkcji od 1 do 24, natomiast ostatnim jest budżet algorytmu 
+gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru \{2,3,5,10,20,40\} , drugim i trzecim są liczby definiujące przedział optymalizowanych funkcji od 1 do 24, natomiast ostatnim jest budżet algorytmu, który dla każdej optymalizowanej funkcji jest ilorazem liczby jej ewaluacji i wymiaru.
 
 \subsection{Wyjście programu}
 W trakcie działania programu na ekran konsoli wypisywana jest nazwa ostatnio zakończonej funkcji, liczba ewaluacji przeprowadzonych na danym węźle (bez GPU), liczba restartów algorytmu oraz najlepsza osiągnięta wartość.\\
@@ -1197,13 +1200,13 @@ Przy interpretacji wyników najbardziej istotne dla nas było względne porówna
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{charts/1node40st.pdf} 
+    \includegraphics[scale=.75]{charts/1node40st.pdf} 
  \caption{Wyniki zbiorcze dla roju złożonego z 40 cząstek standardowych}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{charts/1node40st_5D.pdf} 
+    \includegraphics[scale=.75]{charts/1node40st_5D.pdf} 
  \caption{Wyniki dla roju złożonego z 40 cząstek standardowych dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
@@ -1212,13 +1215,13 @@ Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu po�
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{charts/1node20ch20st.pdf} 
+    \includegraphics[scale=.75]{charts/1node20ch20st.pdf} 
  \caption{Wyniki zbiorcze dla roju złożonego z 20 cząstek standardowych i 20 cząstek naładowanych}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{charts/1node20ch20st_5D.pdf} 
+    \includegraphics[scale=.75]{charts/1node20ch20st_5D.pdf} 
  \caption{Wyniki dla roju złożonego z 20 cząstek standardowych i 20 cząstek naładowanych dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
@@ -1227,20 +1230,20 @@ Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczn
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{charts/1node40stGPU.pdf} 
+    \includegraphics[scale=.75]{charts/1node40stGPU.pdf} 
  \caption{Wyniki zbiorcze dla roju złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{charts/1node40stGPU_5D.pdf} 
+    \includegraphics[scale=.75]{charts/1node40stGPU_5D.pdf} 
  \caption{Wyniki dla roju złożonego złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
 % porównanie
 
 \begin{figure}[H]
-    \includegraphics[scale=1]{charts/1nodeCompare_5D.pdf} \par
+    \includegraphics[scale=.75]{charts/1nodeCompare_5D.pdf} \par
  \caption{Wykres porównujący wyniki na pojedynczym węźle wersji standardowej z wersją z cząstkami naładowanymi oraz z wersją wykorzystującą GPU}
 \end{figure}
 
@@ -1250,12 +1253,12 @@ Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło wido
 \subsubsection{Klaster złożony z dwóch węzłów}
 
 \begin{figure}[H]
-    \includegraphics[scale=1]{charts/2nodes.pdf} 
+    \includegraphics[scale=.75]{charts/2nodes.pdf} 
  \caption{Wyniki zbiorcze klastra zbudowanego z 2 węzłów}
 \end{figure}
 
 \begin{figure}[H]
-    \includegraphics[scale=1]{charts/2nodes_5D.pdf} 
+    \includegraphics[scale=.75]{charts/2nodes_5D.pdf} 
  \caption{Wyniki klastra zbudowanego z 2 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
@@ -1263,19 +1266,19 @@ Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło wido
 \subsubsection{Klaster złożony z czterech węzłów}
 
 \begin{figure}[H]
-    \includegraphics[scale=1]{charts/4nodes.pdf} 
+    \includegraphics[scale=.75]{charts/4nodes.pdf} 
  \caption{Wyniki zbiorcze klastra zbudowanego z 4 węzłów}
 \end{figure}
 
 \begin{figure}[H]
-    \includegraphics[scale=1]{charts/4nodes_5D.pdf} \par
+    \includegraphics[scale=.75]{charts/4nodes_5D.pdf} \par
  \caption{Wyniki klastra zbudowanego z 4 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
 \end{figure}
 
 % porównanie
 
 \begin{figure}[H]
-    \includegraphics[scale=1]{charts/124compare_5D.pdf} \par
+    \includegraphics[scale=.75]{charts/124compare_5D.pdf} \par
  \caption{Wykres porównujący wyniki na pojedynczym węźle z wynikami klastra złożonego z 2 oraz z 4 węzłów}
 \end{figure}
 
