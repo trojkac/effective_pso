@@ -183,9 +183,9 @@ In this paper, we present a distributed system for optimizing functions that all
 
 Algorytmy optymalizacyjne stanowią bardzo szeroką i bogatą klasę algorytmów komputerowych, służących do znajdowania optymalnych wartości funkcji. Wśród algorytmów optymalizacyjnych znajdują się takie, które zostały opracowane z myślą o jak najszerszym zastosowaniu i dają dobre rezultaty dla wielu rodzajów problemów, jak i takie, które opracowano dla bardzo wąskiej gamy zastosowań i dzięki specjalizacji osiągają często w swojej dziedzinie najlepsze wyniki.
 
-Jednym z algorytmów optymalizacyjnych jest algorytm Particle Swarm Optimization (PSO), należący do klasy algorytmów populacyjnych - jego populację tworzą niezależne cząsteczki poruszające się w przestrzeni rozwiązań, które, komunikując się między sobą i wymieniając informacje o znalezionych rozwiązaniach, mają w zamierzeniu odkryć rozwiązanie optymalne lub jak najbardziej zbliżone do optymalnego.
+Jednym z algorytmów optymalizacyjnych jest algorytm Particle Swarm Optimization (PSO), należący do klasy algorytmów populacyjnych - jego populację tworzą niezależne cząsteczki poruszające się w przestrzeni rozwiązań, które komunikując się między sobą i wymieniając informacje o znalezionych rozwiązaniach, mają w zamierzeniu odkryć rozwiązanie optymalne lub jak najbardziej zbliżone do optymalnego.
 
-W naszej pracy prezentujemy system optymalizacyjny korzystający z obliczeń rozproszonych i równoległych. Cechy algorytmu PSO takie, jak prostota koncepcyjna i prostota implementacji, powodują, że wybraliśmy go jako algorytm bazowy dla naszego systemu. Co więcej, jest on algorytmem populacyjnym z dużą niezależnością cząstek i nie wymagającym sztywnej synchronizacji między nimi, co powoduje, że w klarowny sposób nadaje się do zrównoleglenia i rozproszenia obliczeń. Te cechy algorytmu wykorzystujemy w naszym systemie, tworząc klaster umożliwiający prowadzenie równoczesnych obliczeń na wielu węzłach obliczeniowych i projektując schemat komunikacji pomiędzy rojami cząstek. 
+W naszej pracy prezentujemy system optymalizacyjny korzystający z obliczeń rozproszonych i równoległych. Cechy algorytmu PSO takie, jak prosta koncepcja i implementacja, powodują, że wybraliśmy go jako algorytm bazowy dla naszego systemu. Co więcej, jest on algorytmem populacyjnym z dużą niezależnością cząstek i nie wymagającym sztywnej synchronizacji między nimi, co powoduje, że w klarowny sposób nadaje się do zrównoleglenia i rozproszenia obliczeń. Te cechy algorytmu wykorzystujemy w naszym systemie, tworząc klaster umożliwiający prowadzenie równoczesnych obliczeń na wielu węzłach obliczeniowych i projektując schemat komunikacji pomiędzy rojami cząstek. 
 
 Innym z usprawnień, które postanowiliśmy wprowadzić do naszego systemu, jest możliwość przeprowadzania obliczeń na kartach graficznych. Programowanie kart graficznych stało się w ostatnich latach znacznie łatwiejsze dzięki wprowadzeniu technologii CUDA, pozwalającej programiście na tworzenie w języku zbliżonym do C rozwiązań, mogących korzystać z obliczeń równoległych na procesorach graficznych.
 
@@ -333,7 +333,7 @@ Obliczenia rozproszone polegają na uruchomieniu jednoczesnych obliczeń na wię
 
 %[resztę rozdziału można usunąć – wystarczy pierwszy akapit z kolejnego %działu, aby opisać równoległą naturę PSO]
 
-Standardowa wersja algorytmu PSO wprost ze swojej natury nadaje się do zrównoleglenia obliczeń - niezależnie czy mówimy o zrównolegleniu na poziomie roju czy części roju cząstek.
+Standardowa wersja algorytmu PSO wprost ze swojej natury nadaje się do zrównoleglenia obliczeń - niezależnie czy mówimy o zrównolegleniu na poziomie roju, części roju, czy też pojedynczych cząstek.
 Obliczanie nowej prędkości dla każdej z cząstek zależy tylko od jej własności i własności sąsiadów z poprzedniej iteracji, zatem w oczywisty sposób potrzeby synchronizacji sprowadzają się do zaktualizowania zbioru cząstek 
 %[?]
  i wyboru globalnego minimum (maksimum). 
@@ -344,13 +344,13 @@ Obliczanie nowej prędkości dla każdej z cząstek zależy tylko od jej własno
 
 W niniejszym podrozdziale przedstawiamy obecny stan badań nad zrównolegleniem i rozproszeniem algorytmu PSO na podstawie dostępnej literatury.
 
-Algorytm PSO jest algorytmem w oczywisty sposób nadającym się do zrównoleglenia obliczeń, ze względu na fakt, że poszczególne osobniki populacji (w przypadku PSO – cząstki) 
+Algorytm PSO jest algorytmem w naturalny sposób nadającym się do zrównoleglenia obliczeń, ze względu na fakt, że poszczególne osobniki populacji
 %[?]
  są od siebie w mniejszym bądź większym stopniu niezależne i przeprowadzają samodzielne obliczenia. Dodatkowo, dla trudnych problemów optymalizacyjnych o wielu wymiarach, potrzebna liczba cząstek może być bardzo znacząca, co skłania do poszukiwania poprawy wydajności i przyspieszenia obliczeń właśnie na drodze zrównoleglenia czy rozproszenia. 
 Oczywiście wraz z zaletami programowania równoległego pojawiają się charakterystyczne dla niego problemy, które należy rozwiązać, takie jak: skalowalność, synchroniczna i asynchroniczna implementacja, spójność i komunikacja sieciowa. 
 %[może wyjaśnić te problemy? Chyba, że będą opisane w poprzednim rozdziale]
 
-W pracach \cite{AccelParallelPso} oraz \cite{ComparisonParallelGpuPso} przedstawiono po krótce niektóre z zaproponowanych do tej pory rozwiązań problemu paralelizacji algorytmu PSO. Większość z nich oparta jest na klastrach komputerów wymieniających się między sobą wiadomościami.
+W pracach \cite{AccelParallelPso} oraz \cite{ComparisonParallelGpuPso} przedstawiono pokrótce niektóre z zaproponowanych do tej pory rozwiązań problemu paralelizacji algorytmu PSO. Większość z nich oparta jest na klastrach komputerów wymieniających się między sobą wiadomościami.
 %[?]
 Niektóre z implementacji używają popularnego standardu OpenMP. Warto wspomnieć, że analiza przeprowadzona w \cite{Pso8} wskazuje, że pewien rodzaj równoległego PSO, w którym cząstki aktualizuje się grupami, nie zawsze wymagać musi większej liczby operacji niż implementacja sekwencyjna, w której cząstki aktualizowane są jedna po drugiej, zajmując przy tym mniej czasu.
 
@@ -364,7 +364,7 @@ W przeciwnym przypadku względnie niskiego kosztu ewaluacji funkcji celu, koszt 
 Wśród stosowanych podejść do problemu zrównoleglenia algorytmu PSO można wyróżnić dwa główne: podejście synchroniczne i asynchroniczne. W pierwszym z nich wszystkie procesory czekają na zakończenie ewaluacji funkcji celu dla wszystkich cząsteczek przed przejściem do kolejnej iteracji. Przeprowadzono wiele eksperymentów, które sugerują, że efektywność zrównoleglenia (parallel efficiency%[do słownika? Do poprzedniego rozdziału?]
 ) spada wraz z liczbą procesorów i jest daleka od idealnej.
 %[źródło]
-W celu zrównoważenia nieefektywności wynikającej z nierównego rozłożenia obliczeń, zaproponowano podejście asynchroniczne - pozwala ono każdemu procesorowi (procesowi, wątkowi) przejść niezależnie do kolejnej iteracji po ukończeniu obliczania funkcji celu. Wyniki eksperymentów pokazały znaczący wzrost efektywności w porównaniu z wersją synchroniczna. 
+W celu zrównoważenia nieefektywności wynikającej z nierównego rozłożenia obliczeń, zaproponowano podejście asynchroniczne - pozwala ono każdemu wątkowi przejść niezależnie do kolejnej iteracji po ukończeniu obliczania funkcji celu. Wyniki eksperymentów pokazały znaczący wzrost efektywności w porównaniu z wersją synchroniczną. 
 %[źródło]
 
 Jednym ze sposobów zrównoleglenia obliczeń jest wykorzystanie w tym celu procesorów graficznych (GPU). Skupimy się tutaj głównie na procesorach graficznych wspierających architekturę CUDA (Compute Unified Device Architecture) \cite{CudaProgGuide} stworzoną przez firmę NVIDIA. Platforma ta zyskała bardzo dużą popularność jako prostsza i bardziej intuicyjna alternatywa dla np. standardu OpenCL.
@@ -395,16 +395,16 @@ Poniżej przedstawiamy najważniejsze klasy składające się na pojedynczy węz
 \end{figure}
 
 \subsection{MachineManager}
-Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej na komputerze liczby procesorów. Jest obiektem zaimplementowanym według wzorca fasada, odpowiedzialnym za rozpoczęcie obliczeń algorytmu (metoda StartPsoAlgorithm) oraz pobranie wyników (metoda GetResult zwracająca obiekt klasy ParticleResult), zaś za pomocą metody \emph{Register} możemy podłączyć maszynę do klastra obliczeniowego. Obiekt klasy MachineManager posiada tablicę VCpuManager'ów, których liczba domyślnie odpowiada liczbie wątków procesora, lecz programista może ją ręcznie zmienić.
+Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej na komputerze liczby procesorów. Jest obiektem zaimplementowanym według wzorca fasada, odpowiedzialnym za rozpoczęcie obliczeń algorytmu (metoda StartPsoAlgorithm) oraz pobranie wyników (metoda GetResult zwracająca obiekt klasy ParticleState), zaś za pomocą metody \emph{Register} możemy podłączyć maszynę do klastra obliczeniowego. Obiekt klasy MachineManager posiada tablicę VCpuManager'ów, których liczba domyślnie odpowiada liczbie wątków procesora, lecz użytkownik może ją ręcznie zmienić.
 
 \subsection{VCpuManager}
 Klasa ta ma dwa zadania: 
-po pierwsze uruchamia obliczenia jednego roju cząstek PSO, po drugie, reprezentuje pojedynczy węzeł klastra obliczeniowego i odpowiada za nawiązanie połączenie z resztą klastra. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejs \emph{IPsoManager}, który zarządza warstwą logiczną klastra PSO i umożliwia m.in wywołanie metody Run, uruchamiającej obliczenia oraz obiekt klasy \emph{NetworkNodeManager} odpowiedzialny za komunikację pomiędzy węzłami, korzystający z technologii WCF. \emph{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
+po pierwsze uruchamia obliczenia jednego roju cząstek PSO, po drugie, reprezentuje pojedynczy węzeł klastra obliczeniowego i odpowiada za nawiązanie połączenie z resztą klastra. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejs \emph{IPsoController}, który zarządza warstwą logiczną klastra PSO i umożliwia m.in wywołanie metody Run, uruchamiającej obliczenia oraz obiekt klasy \emph{NetworkNodeManager} odpowiedzialny za komunikację pomiędzy węzłami, korzystający z technologii WCF. \emph{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
 
 \subsection{IPsoController}
 Jest to interfejs odpowiedzialny za uruchomienie obliczeń algorytmu PSO na podstawie podanych parametrów wykonania.
 
-Następujące informacje konfiguracyjne, zamknięte w klasie \emph{PsoParams}, potrzebne są do uruchomienia algorytmu:  
+Następujące informacje konfiguracyjne, zamknięte w klasie \emph{PsoParams}, wykorzystane są do uruchomienia algorytmu:  
 
 \begin{itemize}
 	\item Epsilon - dokładność obliczeń algorytmu
@@ -419,9 +419,9 @@ Następujące informacje konfiguracyjne, zamknięte w klasie \emph{PsoParams}, p
 	\item TargetValueCondition - wartość logiczna stanowiąca, czy zatrzymać algorytm po zbliżeniu się na odległość \emph{Epsilon} od \emph{TargetValue}
 \end{itemize}
 \section{Implementacja algorytmu}
-Algorytm PSO w wariencie uruchamianym na CPU został przez nas zaimplementowany w jęzku C\#, co różni się od wstępnych założeń projektu, w których zakładaliśmy jego implementację w języku C++ oraz opakowanie go klasą w technologii .NET . Początkowo algorytm został napisany zgodnie z założeniami systemu - algorytm w języku C++ natomiast jego opakowanie w języku C++/CLI. Jest to język oparty na C++ pozwalający na proste połączenie kodu natywnego C++ z kodem zarządzanym platformy .NET. Rozwiązanie takie było wystarczające dla tego modułu systemu, lecz okazało się być nadmierną komplikacją w budowie klastra oraz wykorzystaniu benchmarków BBOB.\\
+Algorytm PSO w wariencie uruchamianym na CPU został przez nas zaimplementowany w jęzku C\#, co różni się od wstępnej koncepcji projektu, w której zakładaliśmy jego implementację w języku C++ oraz opakowanie go klasą w technologii .NET . Początkowo algorytm został napisany zgodnie z założeniami systemu - algorytm w języku C++ natomiast jego wrapper w języku C++/CLI. Jest to język oparty na C++ pozwalający na proste połączenie kodu natywnego C++ z kodem zarządzanym platformy .NET. Rozwiązanie takie było wystarczające dla tego modułu systemu, lecz okazało się być nadmierną komplikacją w budowie klastra oraz wykorzystaniu benchmarków BBOB.\\
 W pierwszym przypadku utrudnieniem była konieczność użycia klas udostępniających usługi WCF w natywnym kodzie C++, aby  z perspektywy cząstek komunikacja między zdalnymi węzłami przebiegała w sposób jednolity do interakcji z cząstkami lokalnymi, następnie opakowanie tych cząstek w klasy języka C\# .\\
-Drugi przypadek konfliktował z jednym z założeń, na podstawie którego programista mógł definiować funkcje celu w języku C\#. W celu spełnienia tego przekazywaliśmy funkcje z maszyny wirtualnej .NET do środowiska natywnego w celu ich wywołania przez cząstki. Wykorzystanie benchmarków wymagałoby dodatkowo odwrotnego opakowywania funkcji napisanych w C i rodziło dodatkowe komplikacje z odtwarzaniem funkcji dla zdalnych węzłów.
+Drugi przypadek konfliktował z jednym z założeń, na podstawie którego programista mógł definiować funkcje celu w języku C\#. Spełnienie tych wymagań, osiągnęliśmy poprzez przekazywanie funkcji z maszyny wirtualnej .NET do środowiska natywnego, aby umożliwić ich wywołanie przez cząstki algorytmu. Wykorzystanie benchmarków wymagałoby dodatkowo odwrotnego opakowywania funkcji napisanych w C oraz ponadto rodziło dodatkowe komplikacje z odtwarzaniem funkcji dla zdalnych węzłów.
 \subsection{Algorytm}
 Zaimplementowanie algorytmu w języku C\# rozwiązało powyższe problemy oraz dodatkowo umożliwiło dużo przejrzystsze przekazywanie parametrów algorytmu oraz ułatwiało rozszerzanie algorytmu o nowe typy cząstek.
 Sam algorytm stworzony został przez nas w taki sposób, aby był jak najbardziej generyczny ze względu na rodzaj cząstek, przez co jest odpowiedzialny jedynie za przeprowadzenie odpowiednich kroków algorytmu, których dokładna implementacja zawarta jest w cząstkach. W pętli sprawdzane są warunki stopu oraz liczone iteracje od ostatniej poprawy algorytmu, jeśli któryś z warunków zostanie spełniony, lub iteracje bez poprawy osiągną ustalony limit działanie algorytmu zostaje przerwane.
@@ -455,7 +455,7 @@ public IState<double[],double[]> Run(CancellationToken token)
 }
 \end{lstlisting}
 
-Jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadziliśmy do naszego rozwiązania, aby poprawić jego jakość są restarty algorytmu, gdy najlepsze znalezione rozwiązanie nie poprawi się przez odpowiednio długą liczbę iteracji oraz analogiczne restarty pojedynczych cząstek, które w przypadku braku poprawy znalezionego osobistego optimum, rozpoczynają poszukiwania od nowa w losowym punkcie dziedziny. Wyznaczona eksperymentalnie liczba iteracji, po których następują restarty 40 i 100 iteracji dla, odpowiednio, restartów cząstki i restartów globalnych.
+Możliwość przerwania obliczeń przez brak poprawy wyniku jest jednym z usprawnień względem podstawowej wersji algorytmu, które wprowadziliśmy do naszego rozwiązania, aby poprawić jego jakość. Umożliwia przeprowadzenie niezależnych restartów algorytmu po osiągnięciu wspomnianego wcześniej limitu. Analogiczne restarty pojedynczych cząstek, które w przypadku braku poprawy znalezionego osobistego optimum, rozpoczynają poszukiwania od nowa w losowym punkcie dziedziny. Wyznaczona eksperymentalnie liczba iteracji, po których następują restarty, dająca optymalne wyniki to 40 i 100 iteracji dla, odpowiednio, restartów cząstki i restartów globalnych.
 
 \subsection{Cząstka PSO}
 W naszym systemie cząstki są implementacją interfejsu IParticle, który zawiera właściwości potrzebne do identyfikacji cząstki, określenia jej położenia obecnego i najlepszego dotychczas odwiedzonego oraz metody   aktualizujące sąsiedztwo cząstki, jej prędkość i położenie. Od implementacji cząstek zależy topologia roju oraz sposób w jaki poruszają się po przestrzeni poszukiwań. 
@@ -477,23 +477,22 @@ Funkcja UpdateVelocity aktualizuje prędkość cząstki uwzględniając najlepsz
 
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
-
-        public override void UpdateVelocity(IState<double[], double[]> globalBest)
-        {
-            // 1.  get vectors to personal and global best
-            var toPersonalBest = Metric
-            .VectorBetween(CurrentState.Location, PersonalBest.Location);
+public void UpdateVelocity(IState<double[], double[]> globalBest)
+{
+  var toPersonalBest = Metric
+    .VectorBetween(CurrentState.Location, PersonalBest.Location);
             
-            var toGlobalBest = 
-            Metric
-            .VectorBetween(CurrentState.Location, globalBest.Location);
+  var toGlobalBest = Metric
+    .VectorBetween(CurrentState.Location, globalBest.Location);
 
-            var phi1 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
-            var phi2 = RandomGenerator.RandomVector(CurrentState.Location.Length, 0, Constants.PHI);
+  var phi1 = RandomGenerator.RandomVector(Dim, 0, Constants.PHI);
+  var phi2 = RandomGenerator.RandomVector(Dim, 0, Constants.PHI);
 
-            // 2. multiply velocity by Omega and add toGlobalBest and toPersonalBest
-            Velocity = Velocity.Select((v, i) => v * Constants.OMEGA + phi1[i] * toGlobalBest[i] + phi2[i] * toPersonalBest[i]).ToArray();
-        }
+  Velocity = Velocity.Select((v, i) => 
+    v * Constants.OMEGA 
+    + phi1[i] * toGlobalBest[i] 
+    + phi2[i] * toPersonalBest[i]).ToArray();
+}
 
 \end{lstlisting}
 
@@ -501,36 +500,36 @@ Funkcja Transpose jest odziedziczona z klasy Particle, ponieważ jest wspólna d
 
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
-public virtual void Transpose(IFitnessFunction<double[], double[]> function)
-        {
-            double[] newLocation;
-            if (_sinceLastImprovement == _iterationsToRestart)
-            {
-                newLocation = randomLocation()
-                _sinceLastImprovement = 0;
-            }
-            else
-            {
-                newLocation = GetClampedLocation(CurrentState.Location + Velocity);
-            }
-            var newVal = function.Evaluate(newLocation);
-            var oldBest = PersonalBest;
-            CurrentState = new ParticleState(newLocation, newVal);
+public void Transpose(IFitnessFunction<double[], double[]> function)
+{
+  double[] newLocation;
+  if (_sinceLastImprovement == _iterationsToRestart)
+  {
+    newLocation = randomLocation()
+    _sinceLastImprovement = 0;
+  }
+  else
+  {
+    newLocation = ClampLocation(CurrentState.Location + Velocity);
+  }
+  var newVal = function.Evaluate(newLocation);
+  var oldBest = PersonalBest;
+  CurrentState = new ParticleState(newLocation, newVal);
 
-            if (Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
-            {
-                PersonalBest = CurrentState;
-                _sinceLastImprovement = 0;
-            }
-            else
-            {
-                _sinceLastImprovement++;
-            }
-        }
+  if (Optimization.IsBetter(newVal, PersonalBest.FitnessValue) < 0)
+  {
+    PersonalBest = CurrentState;
+    _sinceLastImprovement = 0;
+  }
+  else
+  {
+    _sinceLastImprovement++;
+  }
+}
 \end{lstlisting}
 
 \subsection{Funkcja celu}
-Funkcje celu są obiektami implementującymi interfejs IFitnessFunction. Udostępniają one liczbę przeprowadzonych ewaluacji funkcji, najlepszą ewaluację oraz informacje o wymiarze przestrzeni poszukiwań i wartości funkcji. Funkcje są tworzone przez fabrykę funkcji FunctionsFactory na podstawie przekazanych do niej parametrów. W celu stworzenia odpowiedniej funkcji klient musi przekazać odpowiednią nazwę funkcji. Jest to szczególnie ważne w przypadku funkcji benchamrkowych, gdyż w nazwie zakodowany jest rodzaj funkcji oraz jej odpowiednia instancja. Dodatkowo fabryka funkcji umożliwia zapisanie danej funkcji w cache'u. Konieczność zastosowania pamięci tymczasowej była wynikiem integracji systemu z biblioteką COCO, która wymagała użycia jednej instancji funkcji celu w całym systemie.
+Funkcje celu są obiektami implementującymi interfejs IFitnessFunction. Udostępniają one liczbę przeprowadzonych ewaluacji funkcji, najlepszą ewaluację oraz informacje o wymiarze przestrzeni rozwiązań i wartości funkcji. Funkcje są tworzone przez obiekt FunctionsFactory na podstawie przekazanych do niej parametrów. W celu stworzenia odpowiedniej funkcji klient musi przekazać jej odpowiednią nazwę. Jest to szczególnie ważne w przypadku funkcji benchamrkowych, gdyż w nazwie zakodowany jest typ funkcji oraz jej odpowiednia instancja. Dodatkowo obiekt FunctionsFactory umożliwia zapisanie danej funkcji w cache'u. Konieczność zastosowania pamięci tymczasowej była wynikiem integracji systemu z biblioteką COCO, która wymagała użycia jednej instancji funkcji celu w całym systemie.
 
 Parametry te przekazywane są do metody Run.
 
@@ -641,26 +640,26 @@ INodeService Proxy = ChannelFactory.CreateChannel(Address);
 Na obiekcie Proxy można w tej chwili wykonywać wszystkie operacje, które implementuje interfejs sieciowy węzła o adresie tcpAddress.
 
 \section{Komunikacja w klastrze obliczeniowym}
-Komunikacja między węzłami przebiega na dwóch opisanych poniżej poziomach. Fizyczny sposób połączenia węzłów w klastrze jest oddzielony od logicznego powiązania rojów PSO, dzięki czemu system umożliwia zaimplementowanie różnych topologii rojów bez konieczności ingerencji w strukturę połączeń pomiędzy węzłami.
+Komunikacja między węzłami przebiega na dwóch opisanych poniżej poziomach. Sposób połączenia węzłów w klastrze jest oddzielony od logicznego powiązania rojów PSO, dzięki czemu system umożliwia zaimplementowanie różnych topologii rojów bez konieczności ingerencji w strukturę połączeń pomiędzy węzłami.
 
 \subsection{Komunikacja pomiędzy węzłami obliczeniowymi}
 Klaster obliczeniowy jest oparty na topologii pełnej siatki, w której każdy węzeł połączony jest z wszystkimi pozostałymi i dołączany jest do sieci niezależnie od pozostałych. Każdy z węzłów jest równoważny wszystkim pozostałym, to znaczy nie istnieje centralny serwer zarządzający pracą sieci, dzięki czemu obliczenia mogą być zapoczątkowane przez dowolny z nich.
 
 Komunikacja realizowana jest za pomocą usług WCF korzystających z protokołu sieciowego TCP. Modułem odpowiadającym za komunikację na poziomie klastra jest w każdym węźle INodeService, który, jako serwis sieciowy, opisany jest atrybutem [ServiceContract]. Udostępnia on następujące usługi, z których każda posiada atrybut [OperationContract] i można ją wywołać zdalnie używając NodeTcpClient'a.
 
-UpdateNodes - 
+UpdateNodes - wysyła aktualne informacje o wszystkich zarejestrowanych węzłach klastra. Ten komunikat wysyłany jest po dołączeniu nowego węzła do sieci.
 
 Register - dodaje węzeł wywołujący zdalnie tę usługę do listy znanych węzłów węzła, który wykonuje usługę.
 
-Deregister - usuwa węzeł wywołujący zdalnie tę usługę z listy znanych węzłów węzła ją wykonującego.
+Deregister - usuwa węzeł podany jako parametr metody (zawartość wiadomości) z listy znanych węzłów węzła ją wykonującego.
 
 StartCalculation - nakazuje węzłowi rozpoczęcie obliczeń na podstawie podanych parametrów algorytmu.
 
 StopCalculation - nakazuje przerwanie obliczeń i zwrócenie informacji o ich dotychczasowym wyniku.
 
-CalculationsFinished - 
+CalculationsFinished - wysyła informację o zakończeniu obliczeń i osiągniętym wyniku do węzła inicjującego obliczenia.
 
-Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
+Przykładowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 
 \begin{figure}[H]
     \centering
@@ -687,16 +686,16 @@ Cząstka proxy nie wykonuje ewaluacji funkcji celu, a przekazuje jedynie najleps
 \begin{lstlisting}[frame=single]
 public override ParticleState PersonalBest
 {
-	get
-	{
-		if (_getBestCounter == RemoteCheckInterval)
-		{
-			_getBestCounter = 0;
-			_proxyManager.GetRemoteBestState();
-		}
-		_getBestCounter++;
-		return _proxyManager.GetBestState();
-	}
+  get
+  {
+    if (_getBestCounter == RemoteCheckInterval)
+    {
+      _getBestCounter = 0;
+      _proxyManager.GetRemoteBestState();
+    }
+    _getBestCounter++;
+    return _proxyManager.GetBestState();
+  }
 }
 \end{lstlisting}
 
@@ -784,7 +783,7 @@ Biblioteka ta umożliwia na wykorzystanie potencjału kart graficznych wspieraj�
 \subsubsection{NativeGPU}
 Moduł zawiera implementację algorytmu PSO oraz implementacje optymalizowanych funkcji w języku CUDA. \\
 
-Zaimplementowane funkcje nie są wykorzystywane bezpośrednio przez pozostałe moduły. Biblioteka managedCuda wykorzystuje format pośredni PTX. Pliki z kernelami kompilowane są do tego pośredniego formatu, a następnie są wczytywane do pamięci trakcie uruchomienia obliczeń z poziomu C\#. W ten sposob możemy wykorzystać te funkcje w prosty sposób z poziomu reszty systemu. \\
+Zaimplementowane funkcje nie są wykorzystywane bezpośrednio przez pozostałe moduły. Biblioteka managedCuda wykorzystuje format pośredni PTX. Pliki z kernelami kompilowane są do tego pośredniego formatu, a następnie są wczytywane do pamięci trakcie uruchomienia obliczeń z poziomu C\#. W ten sposób możemy wykorzystać te funkcje w prosty sposób z poziomu reszty systemu. \\
 
 Kod podzielony jest na pliki zawierające kernele będące częścią algorytmu PSO, implementacje optymalizowanych funkcji oraz pomocnicze funkcje do operacji na wektorach i macierzach.
 
@@ -864,7 +863,7 @@ Jednym z celów naszej pracy było przetestowanie jakości implementacji algoryt
 
 Benchmarkowanie algorytmów optymalizacyjnych polega w skrócie na uruchomieniu algorytmu na przygotowanym wcześniej zbiorze problemów i zebraniu oraz przedstawieniu wyników. Nie jest to jednak tak trywialne zadanie, na jakie mogłoby wyglądać na pierwszy rzut oka m.in. ze względu na częstą trudność w dokładnej interpretacji otrzymanych wyników czy też porównaniu ich z innymi.
 
-Odpowiedzią na te trudności jest platforma COCO umożliwiająca zautomatyzowanie procedury benchmarkowania algorytmów optymalizacyjnych. Ideą przyświecającą twórcom COCO było stworzenie środowiska zapewniającego wszystkie niezbędne do przeprowadzenie testów funkcjonalności oraz możliwość porównania danych i wyników zebranych przez różne zespoły uczonych na przestrzeni lat używających tego framewokra. 
+Odpowiedzią na te trudności jest platforma COCO umożliwiająca zautomatyzowanie procedury benchmarkowania algorytmów optymalizacyjnych. Ideą przyświecającą twórcom COCO było stworzenie środowiska zapewniającego wszystkie niezbędne do przeprowadzenie testów funkcjonalności oraz możliwość porównania danych i wyników zebranych przez różne zespoły uczonych na przestrzeni lat używających tego frameworka. 
 
 %[why coco]
 
@@ -874,7 +873,7 @@ Funkcje te są wybrane w ten sposób, aby dało się w jasny sposób zinterpreto
 
 Co bardzo istotne, cały framework używa tylko jednej miary jakości algorytmu – tzw. \textit{runtime}, czyli liczby ewaluacji funkcji celu potrzebnej do osiągnięcia zadanego wyniku, czyli znalezienia wartości funkcji celu odpowiednio bliskiej wartości optymalnej. Zalety takiego podejścia są opisane w \cite{CocoPlatform}.
 
-COCO framework składa się z biblioteki napisanej w języku C wraz z modułami odpowiedzialnymi za zbieranie (logowanie) wyników, ich obróbkę (skrypty Python przygotowujące odpowiednie wykresy) oraz prezentację danych (dokumenty html oraz pliki pdf generowane na podstawie przygotowanych szablonów LaTeX) - dodatkowo dostarczone są implementacje funkcji testowych z warsztatów BBOB. Twórcy frameworka przygotowali interfejsy w językach C/C++, Java, Matlab/Octave, Python (stan w grudniu 2016) zapewniające obsługiwanie napisanych przez użytkownika algorytmów optymalizacyjnych w wymienionych językach. Niestety w chwili pisania niniejszej pracy, nie był dostępny oficjalny interfejs do języka C\#, dlatego też zmuszeni byliśmy stworzyć własny, umożliwiający komunikację z platformą COCO.
+COCO framework składa się z biblioteki napisanej w języku C wraz z modułami odpowiedzialnymi za zbieranie i logowanie wyników, ich obróbkę (skrypty Python przygotowujące odpowiednie wykresy) oraz prezentację danych (dokumenty html oraz pliki pdf generowane na podstawie przygotowanych szablonów LaTeX) - dodatkowo dostarczone są implementacje funkcji testowych z warsztatów BBOB. Twórcy frameworka przygotowali interfejsy w językach C/C++, Java, Matlab/Octave, Python (stan w grudniu 2016) zapewniające obsługiwanie napisanych przez użytkownika algorytmów optymalizacyjnych w wymienionych językach. Niestety w chwili pisania niniejszej pracy, nie był dostępny oficjalny interfejs do języka C\#, dlatego też zmuszeni byliśmy stworzyć własny, umożliwiający komunikację z platformą COCO.
 
 \section{Wrapper}
 
@@ -910,7 +909,7 @@ Umożliwia ona import funkcji o sygnaturze
 const char *coco_problem_get_name(const coco_problem_t *problem)
 \end{lstlisting}
 
-znajdującej się w pliku \textit{CocoLibrary.c}. Jak widać, aby zaimportować funkcję, należy wskazać jej źródło (w tym przypadku bibliotekę \textit{CocoLibrary.dll}) oraz sposób wywołania (w tym przypadku Cdecl, czyli konwencja właściwa dla języka C). 
+znajdującej się w pliku \textit{CocoLibrary.c}. Jak widać, aby zaimportować funkcję, należy wskazać jej źródło (w tym przypadku bibliotekę \textit{CocoLibrary.dll}) oraz sposób wywołania (w tym przypadku cdecl, czyli konwencja właściwa dla języka C). 
 
 Dodatkowo importowana funkcja musi zostać opatrzona modyfikatorami \textit{unsafe} (umożliwiający korzystanie ze wskaźników w języku C\#) oraz \textit{extern} (wskazująca, że implementacja funkcji znajduje się w innym miejscu).
 
@@ -931,7 +930,7 @@ public static unsafe String cocoProblemGetName(long problemPointer)
         }
 \end{lstlisting}
 
-gdzie należy dokonać odpowiedniego marshallingu argumentów, czyli zmiany sposobu reprezentacji danych w pamięci do formatu właściwego dla transmisji do innego fragmentu programu.
+gdzie należy dokonać odpowiedniego marshallingu argumentów, czyli zmiany sposobu reprezentacji danych w pamięci na format właściwy dla transmisji do innego fragmentu programu.
 
 \begin{figure}[H]
     \centering
