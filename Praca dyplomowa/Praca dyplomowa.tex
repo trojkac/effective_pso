@@ -403,12 +403,12 @@ Poniżej przedstawiamy najważniejsze klasy składające się na pojedynczy węz
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{WezlaArch.pdf} 
+    \includegraphics[scale=0.7]{WezlaArchNewh.pdf} 
  \caption{Ogólna architektura węzła obliczeniowego}
 \end{figure}
 
 \subsection{MachineManager}
-Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej na komputerze liczby procesorów. Jest obiektem zaimplementowanym według wzorca fasada, odpowiedzialnym za rozpoczęcie obliczeń algorytmu (metoda \texttt{StartPsoAlgorithm}) oraz pobranie wyników (metoda \texttt{GetResult} zwracająca obiekt klasy \textit{ParticleState}), zaś za pomocą metody \texttt{Register} możemy podłączyć maszynę do klastra obliczeniowego. Obiekt klasy \textit{MachineManager} posiada tablicę \textit{VCpuManager'ów}, których liczba domyślnie odpowiada liczbie wątków procesora, lecz użytkownik może ją ręcznie zmienić.
+Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej na komputerze liczby procesorów. Jest obiektem zaimplementowanym według wzorca fasada, odpowiedzialnym za rozpoczęcie obliczeń algorytmu \newline (metoda \texttt{StartPsoAlgorithm}) oraz pobranie wyników (metoda \texttt{GetResult} zwracająca obiekt klasy \textit{ParticleState}), zaś za pomocą metody \texttt{Register} możemy podłączyć maszynę do klastra obliczeniowego. Obiekt klasy \textit{MachineManager} posiada tablicę \textit{VCpuManager'ów}, których liczba domyślnie odpowiada liczbie wątków procesora, lecz użytkownik może ją ręcznie zmienić.
 
 \subsection{VCpuManager}
 Klasa ta ma dwa zadania: 
@@ -435,7 +435,7 @@ Następujące informacje konfiguracyjne, zamknięte w klasie \textit{PsoParams},
 Parametry te przekazywane są do metody \texttt{Run}.
 
 \subsubsection{PsoController}
-Klasa \textit{PsoController} implementująca \textit{IPsoController} kontroluje wykonywanie obliczeń algorytmu PSO za pomocą obiektu \_algorithm klasy \textit{PsoAlgorithm} oraz obiektu \_cudaAlgorithm klasy \textit{GenericCudaAlgorithm}. 
+Klasa \textit{PsoController} implementująca \textit{IPsoController} kontroluje wykonywanie obliczeń algorytmu PSO za pomocą obiektu \texttt{\_algorithm} klasy \textit{PsoAlgorithm} oraz obiektu \texttt{\_cudaAlgorithm} klasy \textit{GenericCudaAlgorithm}. 
 
 Na podstawie informacji zawartych w obiekcie \textit{PsoParams}, \textit{PsoController} tworzy cząstki PSO (obiekty implementujące interfejs \textit{IParticle}) oraz funkcję celu (obiekt implementujący interfejs \textit{IFitnessFunction}), które służą następnie do uruchomienia właściwych obliczeń, co następuje w funkcji \texttt{StartAlgorithm} wywoływanej z funkcji \texttt{Run}:
 
@@ -471,7 +471,14 @@ event CommunicationBreakdown CommunicationLost;
 Komunikacja pomiędzy rojami cząstek zostanie opisana w dalszej części pracy.
 
 \subsubsection{PsoRingManager}
-\textit{PsoRingManager} odpowiada za logiczne połączenie rojów na różnych węzłach obliczeniowych w pierścień (każdy rój posiada dwa roje sąsiednie).
+\textit{PsoRingManager} posiadając informacje o połączonych w klastrze jednostkach odpowiada za budowę roju cząstek o topologii pierścienia poprzez połączenie podrojów cząstek prowadzących obliczenia na pojedynczym wątku procesora. Struktura konkretnego podroju jest niezależna od pozostałych - mogą one różnić się typami i ilościami cząstek, a co za tym idzie również i topologią, o czym piszemy w części poświęconej implementacji samej cząstki. Sposób dołączenia podrojów GPU jest niezależny od klasy \textit{PsoRingManager}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{wholeClusterNew.pdf} 
+ \caption{Diagram przedstawiający topologię roju cząstek w zaimplementowanym przez nas w klastrze}
+ \label{fig:wholeCluster}
+\end{figure}
 
 % Poniżej:
 % opis części węzła odpowiedzialnej za stworzenie klastra
@@ -573,7 +580,7 @@ Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{communicationDiagram.pdf} 
- \caption{Diagram sekwencyjny komunikacji w klastrze obliczeniowym}
+ \caption{Diagram sekwencyjny komunikacji w klastrze obliczeniowym, obrazujący komunikację między 4 węzłami wraz z wystąpieniem awarii węzła \#2.}
 \end{figure}
 
 %\begin{figure}[H]
@@ -586,26 +593,26 @@ Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów.
 
 \subsection{Komunikacja na poziomie algorytmu PSO}
-Komunikacja pomiędzy rojami PSO na różnych węzłach obliczeniwych zarządzana jest przez interfejs \texttt{IPsoManage}r, który posiadając informacje o połączonych jednostkach, definiuje sąsiedztwa pomiędzy nimi. W przypadku naszego klastra implementuje on strukturę pierścienia, w której każdy węzeł posiada dwóch sąsiadów. Połączenia pomiędzy rojami działającymi wewnątrz jednej maszyny, ale korzystające z różnych wątków procesora przebiegają w ten sam sposób co połączenia między różnymi maszynami. Wszystkie wątki, a dokładniej \texttt{VCpuManager'y} wszystkich maszyn tworzą jeden pierścień. Komunikacja pomiędzy rojami jest dwustronna. Z perspektywy cząstek wewnątrz roju, sąsiedni rój jest reprezentowany przez tzw. cząstkę proxy, która również implementuje interfejs \texttt{IParticle}, przez co nie wymaga oddzielnego traktowania - komunikacja z zewnętrznymi rojami jest przezroczysta dla innych cząstek i samego algorytmu. 
+Komunikacja pomiędzy rojami PSO na różnych węzłach obliczeniowych zarządzana jest przez interfejs \texttt{IPsoManager}, natomiast sama wymiana informacji o położeniach cząstek odbywa się poprzez tzw. cząstki proxy implementujące interfejs \texttt{IParticle} (wspólny dla wszystkich typów cząstek CPU). Z perspektywy cząstek komunikacja z zewnętrznymi rojami jest identyczna z komunikacją wewnątrz roju. 
 
-Cząstka proxy posiada odpowiadającą jej, ,,zespoloną'' z nią cząstkę proxy z innego roju.
+Cząstka proxy posiada odpowiadającą jej cząstkę proxy z innego roju, z którą wymienia informacje.
 
-Cząstka proxy nie wykonuje ewaluacji funkcji celu, a przekazuje jedynie najlepsze znane położenie cząstki z nią zespolonej pomiędzy rojami. Do własnego roju podaje najlepszy wynik znany cząstce proxy z roju sąsiedniego, natomiast do niej przekazuje informacje od lokalnej cząstki. Odbywa się to w momencie, gdy cząstka proxy pytana jest o najlepsze znane sobie położenie, jednakże nie za każdym razem odpytywana jest cząstka z sąsiedniego roju - dzieje się tak tylko co pewną liczbę iteracji określoną parametrem RemoteCheckInterval, który domyślnie przyjmuje wartość 200, a wprowadzony został w celu ograniczenia spadku wydajności, który zauważyliśmy, gdy komunikacja pomiędzy rojami zachodziła zbyt często.
+Cząstka proxy nie wykonuje ewaluacji funkcji celu, a przekazuje jedynie najlepsze znane położenia cząstki z nią zespolonej z roju lokalnego do odpowiadającej cząstki roju zdalnego, oraz położenie podane przez cząstkę roju zdalnego do roju lokalnego. Pozycja cząstki roju zdalnego podawana jest w ramach standardowego działania algorytmu, na zapytania pozostałych cząstek, jest ona aktualizowana co pewną liczbę iteracji określoną parametrem \texttt{RemoteCheckInterval}, który domyślnie przyjmuje wartość 200, a wprowadzony został w celu ograniczenia spadku wydajności, który zauważyliśmy, gdy komunikacja pomiędzy rojami zachodziła zbyt często.
 
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
 public override ParticleState PersonalBest
 {
-	get
-	{
-		if (_getBestCounter == RemoteCheckInterval)
-		{
-			_getBestCounter = 0;
-			_proxyManager.GetRemoteBestState();
-		}
-		_getBestCounter++;
-		return _proxyManager.GetBestState();
-	}
+  get
+  {
+    if (_getBestCounter == RemoteCheckInterval)
+    {
+      _getBestCounter = 0;
+      _proxyManager.GetRemoteBestState();
+    }
+    _getBestCounter++;
+    return _proxyManager.GetBestState();
+  }
 }
 \end{lstlisting}
 
@@ -621,7 +628,7 @@ Cząstka proxy komunikuje się z innymi cząstkami proxy za pomocą jeszcze jedn
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.60]{particleDiagram.pdf} 
- \caption{Diagram klas związanych z cząstką PSO}
+ \caption{Diagram klas związanych z cząstką PSO, prezentujący zarówno cząstki wykorzystywane do komunikacji jak i warianty PSO.}
 \end{figure}
 
 \subsubsection{Wykrywanie awarii}
@@ -649,7 +656,7 @@ catch
 \end{lstlisting}
 
 \section{Implementacja algorytmu}
-Algorytm PSO w wariancie uruchamianym na CPU został przez nas zaimplementowany w jęzku C\#, co różni się od wstępnej koncepcji projektu, w której zakładaliśmy jego implementację w języku C++ oraz opakowanie go klasą w technologii .NET . Początkowo algorytm został napisany zgodnie z założeniami systemu - algorytm w języku C++ natomiast jego wrapper w języku C++/CLI. Jest to język oparty na C++ pozwalający na proste połączenie kodu natywnego C++ z kodem zarządzanym platformy .NET. Rozwiązanie takie było wystarczające dla tego modułu systemu, lecz okazało się być nadmierną komplikacją w budowie klastra oraz wykorzystaniu benchmarków BBOB.\\
+Algorytm PSO w wariancie uruchamianym na CPU został przez nas zaimplementowany w jęzku C\#, co różni się od wstępnej koncepcji projektu, w której zakładaliśmy jego implementację w języku C++ oraz opakowanie go klasą w technologii .NET . Początkowo algorytm został napisany zgodnie z założeniami systemu - algorytm w języku C++ natomiast jego wrapper w języku C++/CLI \cite{cppcli}. Jest to język oparty na C++ pozwalający na proste połączenie kodu natywnego C++ z kodem zarządzanym platformy .NET. Rozwiązanie takie było wystarczające dla tego modułu systemu, lecz okazało się być nadmierną komplikacją w budowie klastra oraz wykorzystaniu benchmarków BBOB.\\
 W pierwszym przypadku utrudnieniem była konieczność użycia klas udostępniających usługi WCF w natywnym kodzie C++, aby  z perspektywy cząstek komunikacja między zdalnymi węzłami przebiegała w sposób jednolity do interakcji z cząstkami lokalnymi, następnie opakowanie tych cząstek w klasy języka C\# .\\
 Drugi przypadek konfliktował z jednym z założeń, na podstawie którego programista mógł definiować funkcje celu w języku C\#. Spełnienie tych wymagań, osiągnęliśmy poprzez przekazywanie funkcji z maszyny wirtualnej .NET do środowiska natywnego, aby umożliwić ich wywołanie przez cząstki algorytmu. Wykorzystanie benchmarków wymagałoby dodatkowo odwrotnego opakowywania funkcji napisanych w C oraz ponadto rodziło dodatkowe komplikacje związane z odtwarzaniem funkcji dla zdalnych węzłów.
 
@@ -1450,17 +1457,19 @@ S. Lanteri, J. Leduc, N. Melab, G. Mornet, R. Namyst, B. Quetier, O. Richard, \e
 
 % Accelerating parallel..
 
-\bibitem{AccelParallelPso} Y. Hung, W. Wang, \emph{Accelerating parallel particle swarm optimization via GPU}, 2012, Optimization Methods and Software, 27:1, 33-51, http://dx.doi.org/10.1080/10556788.2010.509435
+\bibitem{AccelParallelPso} Y. Hung, W. Wang, \emph{Accelerating parallel particle swarm optimization via GPU}, 2012, Optimization Methods and Software, 27:1, 33-51, Dostęp: 3 grudnia 2016, http://dx.doi.org/10.1080/10556788.2010.509435
 
 \bibitem{Pso8} M. Clerc, \emph{Particle swarm optimization}, ISTE Publishing Company, Newport Beach, CA, 2006
 
-\bibitem{PsoCuda} L. Mussi, S. Cagnoni, \emph{Particle swarm optimization within the CUDA architecture}, 2009, Availabe: http://www.gpgpgpu.com/gecco2009/1.pdf.
+\bibitem{PsoCuda} L. Mussi, S. Cagnoni, \emph{Particle swarm optimization within the CUDA architecture}, 2009, Dostęp: 5 grudnia 2016, http://www.gpgpgpu.com/gecco2009/1.pdf.
 
 \bibitem{CudaProgGuide} NVIDIA Corporation, \emph{NVIDIA CUDA Programming Guide}, Version 2.3.1, 2009
 
 \bibitem{GpuBasedPso} Y. Zhou, Y. Tan, \emph{GPU-based parallel particle swarm optimization}, IEEE Congress on Evolutionary Computation, 2009, pp. 1493-1500
 
 \bibitem{PsoGraphHardLocPat} W. Zhu, J. Curry, \emph{Particle swarm with graphics hardware acceleration and local pattern search on bound constrained problems}, IEEE Swarm Intelligence Symposium (SIS '09), 2009, pp. 1-8
+
+\bibitem{cppcli} ECMA 372, \emph{C++/CLI Language Specification, 1st Edition}, 2005, Dostęp: 5 grudnia 2016, http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-372.pdf 
 
 \end{thebibliography}
 %\tableofcontents
