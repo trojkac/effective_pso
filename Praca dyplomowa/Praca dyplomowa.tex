@@ -593,6 +593,12 @@ Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów.
 
 \subsection{Komunikacja na poziomie algorytmu PSO}
+\begin{figure}[H]
+    \centering
+ \includegraphics[scale=1]{ProxyCommunication.pdf}
+ \caption{Diagram przedstawiający komunikację za pomocą cząsteczek proxy z uwzględnieniem kierunków przepływu informacji z oraz do cząsteczek proxy}
+\end{figure}
+
 Komunikacja pomiędzy rojami PSO na różnych węzłach obliczeniowych zarządzana jest przez interfejs \texttt{IPsoManager}, natomiast sama wymiana informacji o położeniach cząstek odbywa się poprzez tzw. cząstki proxy implementujące interfejs \texttt{IParticle} (wspólny dla wszystkich typów cząstek CPU). Z perspektywy cząstek komunikacja z zewnętrznymi rojami jest identyczna z komunikacją wewnątrz roju. 
 
 Cząstka proxy posiada odpowiadającą jej cząstkę proxy z innego roju, z którą wymienia informacje.
