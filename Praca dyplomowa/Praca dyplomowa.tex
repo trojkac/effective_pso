@@ -391,6 +391,104 @@ W artykule \cite{GpuBasedPso} opisane zostało zrównoleglenie standardowego PSO
 Artykuł \cite{BlockOccupancyGpu} bada zależność między wydajnością algorytmu PSO, a wielkością bloku wątków, uzyskując przy tym 43-krotny zysk.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Platforma COCO}
+\section{Testowanie algorytmów optymalizacyjnych}
+Jednym z celów naszej pracy było przetestowanie jakości implementacji algorytmu PSO na stworzonym przez nas klastrze obliczeniowym. Do tego zadania postanowiliśmy wybrać platformę COCO (COmparing Continuous Optimisers) \cite{Coco}.
+
+Benchmarkowanie algorytmów optymalizacyjnych polega w skrócie na uruchomieniu algorytmu na przygotowanym wcześniej zbiorze problemów i zebraniu oraz przedstawieniu wyników. Nie jest to jednak tak trywialne zadanie, na jakie mogłoby wyglądać na pierwszy rzut oka m.in. ze względu na częstą trudność w dokładnej interpretacji otrzymanych wyników czy też porównaniu ich z innymi.
+
+Odpowiedzią na te trudności jest platforma COCO umożliwiająca zautomatyzowanie procedury benchmarkowania algorytmów optymalizacyjnych. Ideą przyświecającą twórcom COCO było stworzenie środowiska zapewniającego wszystkie niezbędne do przeprowadzenie testów funkcjonalności oraz możliwość porównania danych i wyników zebranych przez różne zespoły uczonych na przestrzeni lat używających tego frameworka. 
+
+%[why coco]
+
+Na platformie COCO oparty jest zestaw benchmarków wykorzystany po raz pierwszy podczas warsztatów Black-Box Optimization Benchmarking (BBOB) na odbywającej się w 2009 roku konferencji GECCO.
+Użyte funkcje do benchmarkowania są jawne dla użytkownika, jednakże sam algorytm, który poddajemy testom, nie ma o nich żadnej wiedzy (działają na zasadzie black-box). Lista wszystkich funkcji używanych przez BBOB dostępna jest w \cite{Coco}, jednakże my ograniczyliśmy się do pierwszych 24 funkcji (funkcje bez szumu).
+Funkcje te są wybrane w ten sposób, aby dało się w jasny sposób zinterpretować na nich działanie algorytmu optymalizacyjnego. Dodatkowo nie posiadają one żadnych sztucznych regularności, które mogłyby zostać wykorzystane przez algorytm oraz są skalowalne ze względu na wymiar.
+
+Co bardzo istotne, cały framework używa tylko jednej miary jakości algorytmu – tzw. \textit{runtime}, czyli liczby ewaluacji funkcji celu potrzebnej do osiągnięcia zadanego wyniku, czyli znalezienia wartości funkcji celu odpowiednio bliskiej wartości optymalnej. Zalety takiego podejścia są opisane w \cite{CocoPlatform}.
+
+COCO framework składa się z biblioteki napisanej w języku C wraz z modułami odpowiedzialnymi za zbieranie i logowanie wyników, ich obróbkę (skrypty Python przygotowujące odpowiednie wykresy) oraz prezentację danych (dokumenty html oraz pliki pdf generowane na podstawie przygotowanych szablonów LaTeX) - dodatkowo dostarczone są implementacje funkcji testowych z warsztatów BBOB. Twórcy frameworka przygotowali interfejsy w językach C/C++, Java, Matlab/Octave, Python (stan w grudniu 2016) zapewniające obsługiwanie napisanych przez użytkownika algorytmów optymalizacyjnych w wymienionych językach. Niestety w chwili pisania niniejszej pracy, nie był dostępny oficjalny interfejs do języka C\#, dlatego też zmuszeni byliśmy stworzyć własny, umożliwiający komunikację z platformą COCO.
+
+\section{Wrapper}
+
+Stworzony przez nas wrapper ma za zadanie umożliwić wywołanie metod biblioteki COCO (CocoLibrary.c) napisanych w języku C z poziomu naszej aplikacji w języku C\#. Przy jego tworzeniu wzorowaliśmy się na dostępnym wrapperze dla języka Java wykorzystującym Java Native Interface (JNI), czyli framework umożliwiający komunikację z kodem napisanym w C/C++. 
+
+Pierwszym zadaniem było utworzenie klas języka C\# odpowiadających klasom Javy, wykorzystywanym we wspomnianym wrapperze, a które odpowiadają pewnym strukturom języka C z biblioteki COCO. Te klasy, to:\\
+
+\noindent \textit{Problem} - zawiera dane konkretnego problemu optymalizacyjnego.\\
+\textit{Suite} - odpowiada całemu zestawowi problemów optymalizacyjnych.\\
+\textit{Observer} - służy do zbierania danych w czasie wykonywania testów.\\
+\textit{Benchmark} - klasa opakowująca, zawierająca w sobie obiekt klasy \textit{Suite} oraz obiekt klasy \textit{Observer}, umożliwiająca pobranie kolejnego problemu optymalizacyjnego z zestawu.\\
+
+Klasy te stanowią interfejs benchmarku dla naszego programu - tworzone oraz inicjalizowane są w głównej pętli procedury testującej.
+
+Między powyżej opisanymi obiektami a funkcjami z CocoLibrary.c pośredniczy jeszcze jedna warstwa, będąca prawdziwym wrapperem i zamknięta w klasie \textit{CocoLibraryWrapper}.
+
+\subsection{Eksport / import funkcji z języka C}
+
+Jedną z części klasy \textit{CocoLibraryWrapper} stanowią zaimportowane funkcje z CocoLibrary.c. Import funkcji jest konieczny, aby móc wywoływać je z poziomu języka C\#. Na przykładzie jednej z funkcji zaprezentujemy sposób ich importu, który wymaga następującej deklaracji:\\
+
+\begin{lstlisting}[frame=single]
+[DllImport(
+"CocoLibrary.dll", 
+CallingConvention = CallingConvention.Cdecl)]
+
+unsafe static extern char* 
+coco_problem_get_name(struct_pointer_t problem);
+\end{lstlisting}
+
+Umożliwia ona import funkcji o sygnaturze
+
+\begin{lstlisting}[frame=single]
+const char *coco_problem_get_name(const coco_problem_t *problem)
+\end{lstlisting}
+
+znajdującej się w pliku \textit{CocoLibrary.c}. Jak widać, aby zaimportować funkcję, należy wskazać jej źródło (w tym przypadku bibliotekę \textit{CocoLibrary.dll}) oraz sposób wywołania (w tym przypadku cdecl, czyli konwencja właściwa dla języka C). 
+
+Dodatkowo importowana funkcja musi zostać opatrzona modyfikatorami \textit{unsafe} (umożliwiający korzystanie ze wskaźników w języku C\#) oraz \textit{extern} (wskazująca, że implementacja funkcji znajduje się w innym miejscu).
+
+Sam import funkcji w naszej aplikacji nie wystarcza, aby uzyskać do nich dostęp. Konieczny był również ich eksport z samej biblioteki CocoLibrary.c, aby po jej skompilowaniu do CocoLibrary.dll, były one widoczne na zewnątrz. Eksport funkcji dokonuje się w następujący sposób:\\
+
+\begin{lstlisting}[frame=single]
+__declspec(dllexport) 
+const char *coco_problem_get_name(const coco_problem_t *problem);
+\end{lstlisting}
+
+Zaimportowanych funkcji nie wywołujemy bezpośrednio, a za pomocą jeszcze jednej warstwy pośredniczącej, z której to korzystają już opisane wcześniej klasy \textit{Problem}, \textit{Suite}, \textit{Observer} i \textit{Benchmark}. Dodatkowa warstwa była konieczna, aby zapewnić, że funkcje eksportowane z CocoLibrary.dll wywoływane będą we właściwy sposób, jak np.:
+
+\begin{lstlisting}[frame=single]
+public static unsafe String cocoProblemGetName(long problemPointer)
+        {
+            char* str = coco_problem_get_name(problemPointer);
+            return Marshal.PtrToStringAnsi((IntPtr)str);
+        }
+\end{lstlisting}
+
+gdzie należy dokonać odpowiedniego marshallingu argumentów, czyli zmiany sposobu reprezentacji danych w pamięci na format właściwy dla transmisji do innego fragmentu programu.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.7]{wrapperDiagram.pdf} 
+ \caption{Schemat wrappera}
+\end{figure}
+
+\subsection{Wykorzystanie wrappera}
+
+Wrapper wykorzystany został w naszym programie do uruchomienia zestawu benchmarków. Inicjalizacja odpowiednich klas dokonywana jest w następujący sposób:
+
+\begin{lstlisting}[frame=single]
+var suite = new Suite("bbob", "year: 2016", "dimensions: " + dims);
+var observer = new Observer("bbob", observerOptions);
+var benchmark = new Benchmark(suite, observer);
+\end{lstlisting}
+
+zaś w głównej pętli programu kolejny problem do optymalizacji pobierany jest z obiektu klasy \textit{Bechmark}:
+
+\begin{lstlisting}[frame=single]
+Problem = benchmark.getNextProblem()
+\end{lstlisting}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Zaimplementowany system optymalizacyjny}
 
@@ -896,105 +994,6 @@ Aby dodać nową funkcję należy:
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
  
-\chapter{Platforma COCO}
-
-\section{Testowanie algorytmów optymalizacyjnych}
-Jednym z celów naszej pracy było przetestowanie jakości implementacji algorytmu PSO na stworzonym przez nas klastrze obliczeniowym. Do tego zadania postanowiliśmy wybrać platformę COCO (COmparing Continuous Optimisers) \cite{Coco}.
-
-Benchmarkowanie algorytmów optymalizacyjnych polega w skrócie na uruchomieniu algorytmu na przygotowanym wcześniej zbiorze problemów i zebraniu oraz przedstawieniu wyników. Nie jest to jednak tak trywialne zadanie, na jakie mogłoby wyglądać na pierwszy rzut oka m.in. ze względu na częstą trudność w dokładnej interpretacji otrzymanych wyników czy też porównaniu ich z innymi.
-
-Odpowiedzią na te trudności jest platforma COCO umożliwiająca zautomatyzowanie procedury benchmarkowania algorytmów optymalizacyjnych. Ideą przyświecającą twórcom COCO było stworzenie środowiska zapewniającego wszystkie niezbędne do przeprowadzenie testów funkcjonalności oraz możliwość porównania danych i wyników zebranych przez różne zespoły uczonych na przestrzeni lat używających tego frameworka. 
-
-%[why coco]
-
-Na platformie COCO oparty jest zestaw benchmarków wykorzystany po raz pierwszy podczas warsztatów Black-Box Optimization Benchmarking (BBOB) na odbywającej się w 2009 roku konferencji GECCO.
-Użyte funkcje do benchmarkowania są jawne dla użytkownika, jednakże sam algorytm, który poddajemy testom, nie ma o nich żadnej wiedzy (działają na zasadzie black-box). Lista wszystkich funkcji używanych przez BBOB dostępna jest w \cite{Coco}, jednakże my ograniczyliśmy się do pierwszych 24 funkcji (funkcje bez szumu).
-Funkcje te są wybrane w ten sposób, aby dało się w jasny sposób zinterpretować na nich działanie algorytmu optymalizacyjnego. Dodatkowo nie posiadają one żadnych sztucznych regularności, które mogłyby zostać wykorzystane przez algorytm oraz są skalowalne ze względu na wymiar.
-
-Co bardzo istotne, cały framework używa tylko jednej miary jakości algorytmu – tzw. \textit{runtime}, czyli liczby ewaluacji funkcji celu potrzebnej do osiągnięcia zadanego wyniku, czyli znalezienia wartości funkcji celu odpowiednio bliskiej wartości optymalnej. Zalety takiego podejścia są opisane w \cite{CocoPlatform}.
-
-COCO framework składa się z biblioteki napisanej w języku C wraz z modułami odpowiedzialnymi za zbieranie i logowanie wyników, ich obróbkę (skrypty Python przygotowujące odpowiednie wykresy) oraz prezentację danych (dokumenty html oraz pliki pdf generowane na podstawie przygotowanych szablonów LaTeX) - dodatkowo dostarczone są implementacje funkcji testowych z warsztatów BBOB. Twórcy frameworka przygotowali interfejsy w językach C/C++, Java, Matlab/Octave, Python (stan w grudniu 2016) zapewniające obsługiwanie napisanych przez użytkownika algorytmów optymalizacyjnych w wymienionych językach. Niestety w chwili pisania niniejszej pracy, nie był dostępny oficjalny interfejs do języka C\#, dlatego też zmuszeni byliśmy stworzyć własny, umożliwiający komunikację z platformą COCO.
-
-\section{Wrapper}
-
-Stworzony przez nas wrapper ma za zadanie umożliwić wywołanie metod biblioteki COCO (CocoLibrary.c) napisanych w języku C z poziomu naszej aplikacji w języku C\#. Przy jego tworzeniu wzorowaliśmy się na dostępnym wrapperze dla języka Java wykorzystującym Java Native Interface (JNI), czyli framework umożliwiający komunikację z kodem napisanym w C/C++. 
-
-Pierwszym zadaniem było utworzenie klas języka C\# odpowiadających klasom Javy, wykorzystywanym we wspomnianym wrapperze, a które odpowiadają pewnym strukturom języka C z biblioteki COCO. Te klasy, to:\\
-
-\noindent \textit{Problem} - zawiera dane konkretnego problemu optymalizacyjnego.\\
-\textit{Suite} - odpowiada całemu zestawowi problemów optymalizacyjnych.\\
-\textit{Observer} - służy do zbierania danych w czasie wykonywania testów.\\
-\textit{Benchmark} - klasa opakowująca, zawierająca w sobie obiekt klasy \textit{Suite} oraz obiekt klasy \textit{Observer}, umożliwiająca pobranie kolejnego problemu optymalizacyjnego z zestawu.\\
-
-Klasy te stanowią interfejs benchmarku dla naszego programu - tworzone oraz inicjalizowane są w głównej pętli procedury testującej.
-
-Między powyżej opisanymi obiektami a funkcjami z CocoLibrary.c pośredniczy jeszcze jedna warstwa, będąca prawdziwym wrapperem i zamknięta w klasie \textit{CocoLibraryWrapper}.
-
-\subsection{Eksport / import funkcji z języka C}
-
-Jedną z części klasy \textit{CocoLibraryWrapper} stanowią zaimportowane funkcje z CocoLibrary.c. Import funkcji jest konieczny, aby móc wywoływać je z poziomu języka C\#. Na przykładzie jednej z funkcji zaprezentujemy sposób ich importu, który wymaga następującej deklaracji:\\
-
-\begin{lstlisting}[frame=single]
-[DllImport(
-"CocoLibrary.dll", 
-CallingConvention = CallingConvention.Cdecl)]
-
-unsafe static extern char* 
-coco_problem_get_name(struct_pointer_t problem);
-\end{lstlisting}
-
-Umożliwia ona import funkcji o sygnaturze
-
-\begin{lstlisting}[frame=single]
-const char *coco_problem_get_name(const coco_problem_t *problem)
-\end{lstlisting}
-
-znajdującej się w pliku \textit{CocoLibrary.c}. Jak widać, aby zaimportować funkcję, należy wskazać jej źródło (w tym przypadku bibliotekę \textit{CocoLibrary.dll}) oraz sposób wywołania (w tym przypadku cdecl, czyli konwencja właściwa dla języka C). 
-
-Dodatkowo importowana funkcja musi zostać opatrzona modyfikatorami \textit{unsafe} (umożliwiający korzystanie ze wskaźników w języku C\#) oraz \textit{extern} (wskazująca, że implementacja funkcji znajduje się w innym miejscu).
-
-Sam import funkcji w naszej aplikacji nie wystarcza, aby uzyskać do nich dostęp. Konieczny był również ich eksport z samej biblioteki CocoLibrary.c, aby po jej skompilowaniu do CocoLibrary.dll, były one widoczne na zewnątrz. Eksport funkcji dokonuje się w następujący sposób:\\
-
-\begin{lstlisting}[frame=single]
-__declspec(dllexport) 
-const char *coco_problem_get_name(const coco_problem_t *problem);
-\end{lstlisting}
-
-Zaimportowanych funkcji nie wywołujemy bezpośrednio, a za pomocą jeszcze jednej warstwy pośredniczącej, z której to korzystają już opisane wcześniej klasy \textit{Problem}, \textit{Suite}, \textit{Observer} i \textit{Benchmark}. Dodatkowa warstwa była konieczna, aby zapewnić, że funkcje eksportowane z CocoLibrary.dll wywoływane będą we właściwy sposób, jak np.:
-
-\begin{lstlisting}[frame=single]
-public static unsafe String cocoProblemGetName(long problemPointer)
-        {
-            char* str = coco_problem_get_name(problemPointer);
-            return Marshal.PtrToStringAnsi((IntPtr)str);
-        }
-\end{lstlisting}
-
-gdzie należy dokonać odpowiedniego marshallingu argumentów, czyli zmiany sposobu reprezentacji danych w pamięci na format właściwy dla transmisji do innego fragmentu programu.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=0.7]{wrapperDiagram.pdf} 
- \caption{Schemat wrappera}
-\end{figure}
-
-\subsection{Wykorzystanie wrappera}
-
-Wrapper wykorzystany został w naszym programie do uruchomienia zestawu benchmarków. Inicjalizacja odpowiednich klas dokonywana jest w następujący sposób:
-
-\begin{lstlisting}[frame=single]
-var suite = new Suite("bbob", "year: 2016", "dimensions: " + dims);
-var observer = new Observer("bbob", observerOptions);
-var benchmark = new Benchmark(suite, observer);
-\end{lstlisting}
-
-zaś w głównej pętli programu kolejny problem do optymalizacji pobierany jest z obiektu klasy \textit{Bechmark}:
-
-\begin{lstlisting}[frame=single]
-Problem = benchmark.getNextProblem()
-\end{lstlisting}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Instrukcja użytkownika}
 
@@ -1118,10 +1117,10 @@ Plik, do którego kieruje pierwsza kolumna, znajduje się we wspomnianym wcześn
 Wykorzystane przez nas biblioteki:
 
 \begin{itemize}
-\item managedCuda, licencja LGPL, https://github.com/kunzmi/managedCuda
-\item Chronometer, licencja MIT, https://github.com/narkhedegs/Chronometer
-\item CUDA Toolkit, licencja NVIDIA pozwala na wykorzystanie w naszym projekcie, https://developer.nvidia.com/cuda-toolkit
-\item COCO (Comparing Continuous Optimizers), licencja BSD, \\
+\item managedCuda, wersja 7.0.27, licencja LGPL, https://github.com/kunzmi/managedCuda
+\item Chronometer, wersja 0.0.3, licencja MIT, https://github.com/narkhedegs/Chronometer
+\item CUDA Toolkit, wersja 7.0.27, licencja NVIDIA pozwala na wykorzystanie w naszym projekcie, https://developer.nvidia.com/cuda-toolkit
+\item COCO (Comparing Continuous Optimizers), wersja 1.2.1,licencja BSD, \\
 https://github.com/numbbo/coco/
 \end{itemize}
 
@@ -1129,7 +1128,7 @@ https://github.com/numbbo/coco/
 
 Do uruchomienia aplikacji niezbędny jest komputer z systemem operacyjnym Windows z
 platformą .NET 4.5. W celu uruchomienia obliczeń na procesorze graficznym wymagana jest karta graficzna wspierająca wersję (compute capability) 2.0 architektury CUDA.
-Użytkownik w celu zestawienia klastra komunikującego się przez zewnętrzne interfejsy sieciowe powinien posiadać uprawnienia administratora. Należy pamiętać również, o zezwoleniu aplikacji na nawiązywanie połączeń internetowych (dodać wyjątek do firewalla).
+Użytkownik w celu zestawienia klastra komunikującego się przez zewnętrzne interfejsy sieciowe powinien mieć możliwość otwierania portów sieciowych. Należy pamiętać również, o zezwoleniu aplikacji na nawiązywanie połączeń internetowych (dodać wyjątek do firewalla).
 
 
 \chapter{Testy}
