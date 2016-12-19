@@ -87,7 +87,12 @@ namespace NetworkManager
             {
                 try
                 {
-                    bestFromNodes.Add(client.StopCalculation());
+                  var pState = client.StopCalculation();
+                  if (pState.Location != null && pState.Location.Length != 0)
+                  {
+                    bestFromNodes.Add(pState);
+                  }
+                    
                 }
                 catch
                 {

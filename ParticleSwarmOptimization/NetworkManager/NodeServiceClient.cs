@@ -106,6 +106,9 @@ namespace NetworkManager
         {
             Address = new EndpointAddress(tcpAddress);
             Binding = new NetTcpBinding(SecurityMode.None);
+          Binding.SendTimeout = new TimeSpan(0,0,5);
+          Binding.ReceiveTimeout = new TimeSpan(0, 0, 5);
+
             ChannelFactory = new ChannelFactory<INodeService>(Binding);
             Proxy = ChannelFactory.CreateChannel(Address);
         }

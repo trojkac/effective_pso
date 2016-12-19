@@ -66,10 +66,10 @@ namespace ManagedGPU
 
         private CudaDeviceVariable<double> _phis1;
         private CudaDeviceVariable<double> _phis2;
+      private EvaluationsLogger evalLogger;
 
 
-
-        protected GenericCudaAlgorithm(CudaParams parameters, StateProxy proxy)
+      protected GenericCudaAlgorithm(CudaParams parameters, StateProxy proxy)
         {
             Proxy = proxy;
             ParticlesCount = parameters.ParticlesCount;
@@ -79,6 +79,7 @@ namespace ManagedGPU
             SyncWithCpu = parameters.SyncWithCpu;
             FunctionNumber = parameters.FunctionNumber;
             InstanceNumber = parameters.InstanceNumber;
+            evalLogger = PsoServiceLocator.Instance.GetService<EvaluationsLogger>();
 
         }
 
@@ -207,7 +208,10 @@ namespace ManagedGPU
                 for (i = 0; i < Iterations; i++)
                 {
                     token.ThrowIfCancellationRequested();
-                    PsoServiceLocator.Instance.GetService<EvaluationsLogger>().IncreaseGpuEvals(ParticlesCount);
+                  if (evalLogger != null)
+                  {
+                    evalLogger.IncreaseGpuEvals(ParticlesCount);
+                  }
                     RunUpdateVelocityKernel();
                     RunTransposeKernel();
 

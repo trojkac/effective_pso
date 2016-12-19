@@ -85,7 +85,7 @@ namespace PsoService
             catch
             {
                 _communicationErrorCount++;
-                if (CommunicationBreakdown != null && _communicationErrorCount == _communicationErrorLimit)
+                if (CommunicationBreakdown != null && _communicationErrorCount >= _communicationErrorLimit)
                 {
                     CommunicationBreakdown();
                     Debug.WriteLine("{0} cannot connect to: {1}", Address, RemoteAddress);

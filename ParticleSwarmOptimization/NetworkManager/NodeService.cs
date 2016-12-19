@@ -94,7 +94,16 @@ namespace NetworkManager
         {
             var pState = new ParticleState();
             Debug.WriteLine("{0}: received stop calculations", Info.Id);
+          try
+          {
             if (StopCalculations != null) pState = StopCalculations();
+
+          }
+          catch (InvalidProgramException e)
+          {
+            Debug.WriteLine("{0}: received stop calculations but {1}", e.Message);
+            return pState;
+          }
             return pState;
         }
 
