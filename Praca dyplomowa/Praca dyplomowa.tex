@@ -519,7 +519,7 @@ Klasa zarządzająca działaniem maszyny, umożliwiająca rozpoznanie dostępnej
 
 \subsection{VCpuManager}
 Klasa ta ma dwa zadania: 
-po pierwsze uruchamia obliczenia jednego roju cząstek PSO, po drugie, reprezentuje pojedynczy węzeł klastra obliczeniowego i odpowiada za nawiązanie połączenia z resztą klastra. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejs \textit{IPsoController}, który zarządza warstwą logiczną klastra PSO i umożliwia m.in wywołanie metody \texttt{Run}, uruchamiającej obliczenia oraz obiekt klasy \textit{NetworkNodeManager} odpowiedzialny za komunikację pomiędzy węzłami, korzystający z technologii WCF. \textit{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
+po pierwsze uruchamia obliczenia jednego roju cząstek PSO, po drugie, reprezentuje pojedynczy węzeł klastra obliczeniowego i odpowiada za nawiązanie połączenia z resztą klastra. W celu oddzielenia infrastruktury sieciowej od logiki dotyczącej algorytmu PSO wykorzystuje ona interfejs \textit{IPsoController}, który zarządza warstwą logiczną klastra PSO i umożliwia m.in wywołanie metody \texttt{Run}, uruchamiającej obliczenia oraz obiekt klasy \textit{NetworkManager} odpowiedzialny za komunikację pomiędzy węzłami, korzystający z technologii WCF. \textit{VCpuManager} rozpoczyna oraz kończy nasłuchiwanie na portach TCP. Stosując wzorzec obserwator zaimplementowany za pomocą funkcjonalności wydarzeń języka C\# obsługuje nowe zapytania przesyłane przez pozostałe węzły zbudowanego klastra.
 
 \subsection{IPsoController}
 Jest to interfejs odpowiedzialny za uruchomienie obliczeń algorytmu PSO na podstawie podanych parametrów wykonania.
@@ -591,7 +591,7 @@ Komunikacja pomiędzy rojami cząstek zostanie opisana w dalszej części pracy.
 % opis części węzła odpowiedzialnej za stworzenie klastra
 % i komunikację w jego obrębie
 
-\subsection{NetworkNodeManager}
+\subsection{NetworkManager}
 Jest to klasa odpowiadająca za infrastrukturę sieciową klastra. Najważniejszymi polami klasy są:
 
 \lstset{style=sharpc}
@@ -602,7 +602,7 @@ public NodeService MyNodeService { get; set; }
 public List<NodeServiceClient> NodeServiceClients
 \end{lstlisting}
 
-Po otworzeniu za pomocą metody \texttt{StartTcpNodeService} serwisu \_tcpHost nasłuchującego na porcie \_tcpPort na połączenie TCP, \textit{NetworkNodeManager} gotowy jest na przyjęcie połączenia TCP od innych węzłów. 
+Po otworzeniu za pomocą metody \texttt{StartTcpNodeService} serwisu \_tcpHost nasłuchującego na porcie \_tcpPort na połączenie TCP, \textit{NetworkManager} gotowy jest na przyjęcie połączenia TCP od innych węzłów. 
 
 Interfejs sieciowy udostępniany przez węzeł obliczeniowy przedstawia klasa \textit{NodeService} opisana poniżej.
 
@@ -734,7 +734,7 @@ Poza informacjami przekazywanymi przez cząstki proxy, po zakończeniu obliczeń
 
 Cząstka proxy komunikuje się z innymi cząstkami proxy za pomocą jeszcze jednej warstwy pośredniczącej - \textit{ProxyManagera}.
 
-\textit{ProxyManager} jest odpowiednikiem klasy \textit{NetworkNodeManager} dla komunikacji między cząstkami - i podobnie jak \textit{NetworkNodeManager} posiadający interfejs sieciowy w postaci \textit{INodeService}, tak \textit{ProxyManager} posiada \textit{IParticleService}, który jest interfejsem sieciowej komunikacji między cząstkami i udostępnia jedną operację:
+\textit{ProxyManager} jest odpowiednikiem klasy \textit{NetworkManager} dla komunikacji między cząstkami - i podobnie jak \textit{NetworkManager} posiadający interfejs sieciowy w postaci \textit{INodeService}, tak \textit{ProxyManager} posiada \textit{IParticleService}, który jest interfejsem sieciowej komunikacji między cząstkami i udostępnia jedną operację:
 
 \texttt{GetBestState} - zwraca najlepszą znaną cząstce pozycję, czyli najlepszą znaną wartość wśród cząstek jej sąsiedztwa.
 
