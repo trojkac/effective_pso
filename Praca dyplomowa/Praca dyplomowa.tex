@@ -1014,7 +1014,7 @@ Aby dodać nową funkcję należy:
 Przygotowany przez nas system ma postać biblioteki .NET, jednakże dla wygody użytkownika oraz testera przygotowaliśmy aplikację pozwalającą na uruchomienie benchmarku BBOB. Szczegóły zostały opisane poniżej.
 
 \section{CocoClusterApp}
-CocoClusterApp jest aplikacją kliencką naszej biblioteki umożliwiającą uruchomienie benchmarków COCO we wszystkich wspieranych przez naszą bibliotekę ustawieniach.
+CocoClusterApp jest aplikacją kliencką naszej biblioteki umożliwiającą uruchomienie benchmarku BBOB we wszystkich wspieranych przez naszą bibliotekę ustawieniach.
 
 \subsection{Konfiguracja aplikacji}
 \subsubsection{Klaster obliczeniowy}
@@ -1088,7 +1088,7 @@ gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru
 \subsection{Wyjście programu}
 W trakcie działania programu na ekran konsoli wypisywana jest nazwa ostatnio zakończonej funkcji, liczba ewaluacji przeprowadzonych na danym węźle (bez GPU), liczba restartów algorytmu oraz najlepsza osiągnięta wartość.\\
 
-Szczegółowe dane dotyczące przebiegu algorytmu zapisywane są przez bibliotekę COCO w folderze:\\ \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}\\ W folderze tym, dla każdej funkcji znajduje się folder z danymi oraz plik o rozszerzeniu .info . Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
+Szczegółowe dane dotyczące przebiegu algorytmu PSO zapisywane są w folderze \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}. Dla każdej funkcji znajduje się tam folder z danymi oraz plik o rozszerzeniu \textit{.info}. Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
 Plik, do którego kieruje pierwsza kolumna, znajduje się we wspomnianym wcześniej folderze. Można z niego odczytać numery ewaluacji, dla których PSO odnalazło dotychczas najniższą wartość funkcji, dokładną wartość minimum funkcji, oraz znalezione przez algorytm punkty (współrzędne wraz z dokładnością). Struktura pliku opisana jest w jego nagłówku. 
 
 
