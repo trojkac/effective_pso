@@ -1003,11 +1003,10 @@ Aby dodać nową funkcję należy:
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
  
-
 \chapter{Instrukcja użytkownika}
 
 \section{Interfejs użytkownika}
-Przygotowany przez nas system ma postać biblioteki .NET, jednakże dla wygody użytkownika oraz testera przygotowaliśmy dwie aplikacje, umożliwiające natychmiastowe z niej skorzystanie. Aplikacja CocoClusterApp umożliwia uruchomienie testów benchmarku BBOB, zaś aplikacja UserInterface pozwala na proste przetestowanie działania aplikacji dla zdefiniowanych przez programistę parametrów. Szczegóły zostały opisane poniżej.
+Interfejs użytkownika pozwala na uruchomienie obliczeń dla jednej z zestawu predefiniowanych funkcji z benchmarku BBOB, używając zaimplementowanych typów algorytmu PSO. Umożliwia on odpowiednie dobranie parametrów algorytmu. Za jego pomocą możliwym jest również utworzenie klastra obliczeniowego na wielu komputerach. Wybór oraz parametryzacja funkcji, algorytmu oraz konfiguracja klastra są kontrolowane przez odpowiednie pliki konfiguracyjne. 
 
 \subsection{Klaster obliczeniowy}
 Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwie NodeParameters. 
@@ -1033,19 +1032,10 @@ Przykładowy plik konfiguracyjny klastra:
 \end{lstlisting}
 
 \subsection{Algorytm PSO}
-Plik konfigurujący algorytm PSO oraz funkcję celu również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
-Dziećmi elementu głównego są elementy:
+Plik konfigurujący algorytm PSO również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
+Dziećmi elementu głównego są:
 \begin{enumerate}
 	\item Particles - tablica definiująca liczbę oraz rodzaj cząstek użytych do obliczeń
-	\item IterationsLimitCondition, Iterations - wartość logiczna określająca czy warunek stopu ze względu na liczbę iteracji powinien być zastosowany oraz liczba iteracji do wykonania
-	\item TargetValueCondition, TargetValue, Epsilon - wartość logiczna określająca czy warunek stopu ze względu na osiągnięcie optimum powinien być zastosowany, optimum funkcji celu do wykonania oraz dokładność z jaką powinno być osiągnięte
-	\item FunctionParameters - definiujące parametry funkcji celu. Dziećmi tego elementu są:
-	\begin{enumerate}
-		\item FitnessFunctionType - typ funkcji celu. Id funkcji w przypadku funkcji z benchmarku BBOB
-		\item Dimension - wymiar funkcji
-		\item Coefficients - współczynniki funkcji
-		\item SearchSpace - tablica zawierająca dolną i górną granicę dziedziny poszukiwań
-	\end{enumerate}
 	\item GpuParameters - definiujące parametry roju GPU. Dziećmi tego elementu są:
 	\begin{enumerate}
 		\item UseGpu - wartość logiczna decydująca o tym, czy używać GPU w obliczeniach
@@ -1069,41 +1059,13 @@ Przykładowy plik konfiguracyjny algorytmu PSO:
       <Count>6</Count>
     </ParticlesCount>
   </Particles>
-  <IterationsLimitCondition>true</IterationsLimitCondition>
-  <Iterations>1000</Iterations>
-  <TargetValueCondition>false</TargetValueCondition>
-  <TargetValue>0</TargetValue>
   <Epsilon>1e-12</Epsilon>
-      <FunctionParameters>
-        <FitnessFunctionType>quadratic</FitnessFunctionType>
-        <Dimension>2</Dimension>
-        <Coefficients>
-          <double>1.0</double>
-          <double>1.0</double>
-        </Coefficients>
-        <SearchSpace>
-          <DimensionBound>
-            <Min>-5</Min>
-            <Max>5</Max>
-          </DimensionBound>
-    	  <DimensionBound>
-            <Min>-5</Min>
-            <Max>5</Max>
-          </DimensionBound>
-        </SearchSpace>
-      </FunctionParameters>
+  <PsoIterationsToRestart>100</PsoIterationsToRestart>
+  <ParticleIterationsToRestart>40</ParticleIterationsToRestart>
 </PsoParameters>
 \end{lstlisting}
-
 \section{CocoClusterApp}
-CocoClusterApp jest aplikacją kliencką naszej biblioteki umożliwiającą uruchomienie benchmarków COCO we wszystkich wspieranych przez nasz system konfiguracjach. Ustawienie programu przebiega niemal identycznie jak w przypadku opisanym powyżej, lecz aplikacja nadpisuje niektóre z ustawionych wartości. Są to:
-
-\begin{itemize}
-\item IterationsLimitCondition - zawsze ustawiany na true
-\item Iterations - limit iteracji jest ustawiany na podstawie wywołania programu
-\item TargetValueCondition - zawsze ustawiane na false, ponieważ benchmarki są zaimplementowane wg. doktryny black-box, czyli algorytm nie zna optimum funkcji
-\item FunctionParameters - poszczególne funkcje benchmarków są wczytywane i następnie ustawiane są jej parametry
-\end{itemize}
+CocoClusterApp jest aplikacją kliencką naszej biblioteki umożliwiającą uruchomienie benchmarków COCO we wszystkich wspieranych przez nasz system konfiguracjach.
 
 \subsection{Wywołanie programu}
   Wywołanie programu następuje za pomocą poniższej komendy
@@ -1118,8 +1080,9 @@ gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru
 \subsection{Wyjście programu}
 W trakcie działania programu na ekran konsoli wypisywana jest nazwa ostatnio zakończonej funkcji, liczba ewaluacji przeprowadzonych na danym węźle (bez GPU), liczba restartów algorytmu oraz najlepsza osiągnięta wartość.\\
 
-Szczegółowe dane dotyczące przebiegu algorytmu PSO zapisywane są w folderze \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}. Dla każdej funkcji znajduje się tam folder z danymi oraz plik o rozszerzeniu \textit{.info}. Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
+Szczegółowe dane dotyczące przebiegu algorytmu zapisywane są przez bibliotekę COCO w folderze \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}. W folderze tym, dla każdej funkcji znajduje się folder z danymi oraz plik o rozszerzeniu .info . Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
 Plik, do którego kieruje pierwsza kolumna, znajduje się we wspomnianym wcześniej folderze. Można z niego odczytać numery ewaluacji, dla których PSO odnalazło dotychczas najniższą wartość funkcji, dokładną wartość minimum funkcji, oraz znalezione przez algorytm punkty (współrzędne wraz z dokładnością). Struktura pliku opisana jest w jego nagłówku. 
+
 
 
 \chapter{Wykorzystane biblioteki i technologie}
