@@ -38,6 +38,10 @@ namespace Controller
 
         public ParticleState Stop()
         {
+          if (!CalculationsRunning)
+          {
+            return new ParticleState();
+          }
             stopCalculationsAndPrepareToken();
             return (ParticleState) _function.BestEvaluation;
         }
@@ -46,7 +50,15 @@ namespace Controller
         {
             _tokenSource.Cancel();
             RunningAlgorithm.Wait();
+          try
+          {
             _tokenSource.Dispose();
+
+          }
+          catch (AggregateException ex)
+          {
+            //disposing cancelled task token
+          }
             _tokenSource = new CancellationTokenSource();
         }
 

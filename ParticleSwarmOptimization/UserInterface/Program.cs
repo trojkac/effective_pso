@@ -14,7 +14,11 @@ namespace UserInterface
       var nodeParamsDeserialize = new ParametersSerializer<NodeParameters>();
       var nodeParams = nodeParamsDeserialize.Deserialize("nodeParams.xml");
       var machineManager = new MachineManager(nodeParams.Ip, nodeParams.Ports.ToArray());
+      if (nodeParams.PeerAddress != null)
+      {
+        machineManager.Register(nodeParams.PeerAddress);
 
+      }
       var cont = true;
       while (cont)
       {

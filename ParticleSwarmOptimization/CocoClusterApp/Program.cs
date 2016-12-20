@@ -28,7 +28,16 @@ namespace CocoClusterApp
             MachineManager machineManager = new MachineManager(nodeParams.Ip, nodeParams.Ports.ToArray(), nodeParams.NrOfVCpu);
             if (nodeParams.PeerAddress != null)
             {
+              try
+              {
                 machineManager.Register(nodeParams.PeerAddress);
+
+              }
+              catch (Exception e)
+              {
+                Console.WriteLine("Unexpected error occured. Plase try to connect once again.");
+                return;
+              }
                 Console.WriteLine("Working...");
                 Console.WriteLine("Press ENTER to finish");
                 ConsoleKeyInfo pressed = new ConsoleKeyInfo();

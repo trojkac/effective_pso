@@ -22,11 +22,18 @@ namespace Common
         }
 
         public T GetService<T>()
+          where T: class
         {
-            return (T)_servicesDictionary[typeof(T)];
+          object service;
+          if (_servicesDictionary.TryGetValue(typeof(T), out service))
+          {
+            return (T)service;
+          }
+          return null;
         }
 
         public PsoServiceLocator Register<T>(T service)
+          where T: class 
         {
             try
             {
