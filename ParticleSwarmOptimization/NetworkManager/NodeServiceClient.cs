@@ -31,7 +31,6 @@ namespace NetworkManager
             try
             {
                 return Proxy.Register(source);
-
             }
             catch
             {
@@ -106,8 +105,8 @@ namespace NetworkManager
         {
             Address = new EndpointAddress(tcpAddress);
             Binding = new NetTcpBinding(SecurityMode.None);
-          Binding.SendTimeout = new TimeSpan(0,0,5);
-          Binding.ReceiveTimeout = new TimeSpan(0, 0, 5);
+          Binding.SendTimeout = new TimeSpan(0,0,30);
+          Binding.ReceiveTimeout = new TimeSpan(0, 0, 30);
 
             ChannelFactory = new ChannelFactory<INodeService>(Binding);
             Proxy = ChannelFactory.CreateChannel(Address);
