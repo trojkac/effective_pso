@@ -301,6 +301,12 @@ Kontrolowanie bezwładności ma umożliwiać zrównoważenie zdolności eksploat
 % czym są bardziej złożone problemy, o których tu wspominamy?
 Duży wpływ na wydajność algorytmu ma też w oczywisty sposób topologia roju cząstek, czyli konfiguracja połączeń między nimi. J. Kennedy (jeden z twórców pierwotnej wersji algorytmu) stwierdził, że mniej liczne sąsiedztwo każdej cząsteczki sprawdza się lepiej w przypadku bardziej złożonych problemów, podczas gdy liczne sąsiedztwo działa lepiej dla prostych problemów \cite{TopologyPso}, \cite{PopStructPso}. 
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{topologie.png} 
+ \caption{Rysunek przedstawia kilka przykładowych topologii roju cząstek: (1) pełne sąsiedztwo, (2) pierścień, (3) topologia von Neumanna, (4) losowe sąsiedztwo. (Rysunek pochodzi z \cite{topologieRys}}
+\end{figure}
+
 % o jaką metrykę chodzi w tym akapicie?
 Ciekawym rozwiązaniem jest zaproponowane w \cite{PsoNeighOp} dynamicznie dostosowywane sąsiedztwo, które stopniowo powiększa się, aż do momentu objęcia całego roju. W artykule \cite{MultiobjDynNeighPso} Hu i Eberhart zaproponowali inny sposób dynamicznego modyfikowania sąsiedztwa – w każdej iteracji algorytmu cząsteczka na nowo wybiera sobie za sąsiadów te cząstki, które są jej bliskie według pewnej metryki. Wariant UPSO (Unified Particle Swarm Optimizer) \cite{UPso} stara się połączyć globalną eksplorację z lokalną eksploatacją.
 
@@ -1006,94 +1012,93 @@ Aby dodać nową funkcję należy:
 
 \chapter{Instrukcja użytkownika}
 
-\section{Interfejs użytkownika}
-Przygotowany przez nas system ma postać biblioteki .NET, jednakże dla wygody użytkownika oraz testera przygotowaliśmy dwie aplikacje, umożliwiające natychmiastowe z niej skorzystanie. Aplikacja CocoClusterApp umożliwia uruchomienie testów benchmarku BBOB, zaś aplikacja UserInterface pozwala na proste przetestowanie działania aplikacji dla zdefiniowanych przez programistę parametrów. Szczegóły zostały opisane poniżej.
+Przygotowany przez nas system ma postać biblioteki .NET, jednakże dla wygody użytkownika oraz testera przygotowaliśmy aplikację pozwalającą na uruchomienie benchmarku BBOB. Szczegóły zostały opisane poniżej.
 
-\subsection{Klaster obliczeniowy}
-Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwie NodeParameters. 
-Dziećmi elementu głównego są elementy:
-\begin{enumerate}
-	\item NrOfVCpu - wartość liczbowa definiująca liczbę węzłów, które zostaną utworzone przez program. Gdy przypiszemy mu wartość -1 obliczenia zostaną uruchomione na liczbie wątków dopasowanej do procesora.
-	\item Ip - adres interfejsu sieciowego maszyny, z którą będą mogły połączyć się pozostałe wątki klastra
-	\item Ports - tablica integerów z numerami portów, na których nasłuchiwać będą usługi WCF
-	\item PeerAddress - element zawierający adres węzła, do którego aplikacja powinna się podłączyć. Powinien zostać pominięty w przypadku, gdy użytkownik nie ma zamiaru łączyć się z innymi jednostkami
-\end{enumerate}
-Przykładowy plik konfiguracyjny klastra:
-\lstset{language=XML}
-\begin{lstlisting}[frame=single]
-<?xml version="1.0" encoding="utf-8"?>
-<NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <NrOfVCpu>1</NrOfVCpu>
-  <Ip>25.123.241.71</Ip>
-  <Ports>
-    <int>8000</int>
-  </Ports>
-  <PeerAddress>net.tcp://25.123.244.149:8000/NodeService</PeerAddress>
-</NodeParameters>
-\end{lstlisting}
-
-\subsection{Algorytm PSO}
-Plik konfigurujący algorytm PSO oraz funkcję celu również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
-Dziećmi elementu głównego są elementy:
-\begin{enumerate}
-	\item Particles - tablica definiująca liczbę oraz rodzaj cząstek użytych do obliczeń
-	\item IterationsLimitCondition, Iterations - wartość logiczna określająca czy warunek stopu ze względu na liczbę iteracji powinien być zastosowany oraz liczba iteracji do wykonania
-	\item TargetValueCondition, TargetValue, Epsilon - wartość logiczna określająca czy warunek stopu ze względu na osiągnięcie optimum powinien być zastosowany, optimum funkcji celu do wykonania oraz dokładność z jaką powinno być osiągnięte
-	\item FunctionParameters - definiujące parametry funkcji celu. Dziećmi tego elementu są:
-	\begin{enumerate}
-		\item FitnessFunctionType - typ funkcji celu. Id funkcji w przypadku funkcji z benchmarku BBOB
-		\item Dimension - wymiar funkcji
-		\item Coefficients - współczynniki funkcji
-		\item SearchSpace - tablica zawierająca dolną i górną granicę dziedziny poszukiwań
-	\end{enumerate}
-	\item GpuParameters - definiujące parametry roju GPU. Dziećmi tego elementu są:
-	\begin{enumerate}
-		\item UseGpu - wartość logiczna decydująca o tym, czy używać GPU w obliczeniach
-		\item ParticlesCount - liczba cząstek na GPU
-		\item Iterations - maksymalna liczba iteracji do wykonania na GPU
-	\end{enumerate}
-	\item PsoIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku, która musi zostać wykonana zanim zostanie on zatrzymany
-	\item ParticleIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku danej cząstki, po której cząstka zostanie zrestartowana
-
-\end{enumerate}
-\clearpage
-Przykładowy plik konfiguracyjny algorytmu PSO:
-\lstset{language=XML}
-\begin{lstlisting}[frame=single]
-<?xml version="1.0" encoding="utf-8"?>
-<PsoParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Particles>
-    <ParticlesCount>
-      <ParticleType>Standard</ParticleType>
-      <Count>6</Count>
-    </ParticlesCount>
-  </Particles>
-  <IterationsLimitCondition>true</IterationsLimitCondition>
-  <Iterations>1000</Iterations>
-  <TargetValueCondition>false</TargetValueCondition>
-  <TargetValue>0</TargetValue>
-  <Epsilon>1e-12</Epsilon>
-      <FunctionParameters>
-        <FitnessFunctionType>quadratic</FitnessFunctionType>
-        <Dimension>2</Dimension>
-        <Coefficients>
-          <double>1.0</double>
-          <double>1.0</double>
-        </Coefficients>
-        <SearchSpace>
-          <DimensionBound>
-            <Min>-5</Min>
-            <Max>5</Max>
-          </DimensionBound>
-    	  <DimensionBound>
-            <Min>-5</Min>
-            <Max>5</Max>
-          </DimensionBound>
-        </SearchSpace>
-      </FunctionParameters>
-</PsoParameters>
-\end{lstlisting}
+%\subsection{Klaster obliczeniowy}
+%Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwie NodeParameters. 
+%Dziećmi elementu głównego są elementy:
+%\begin{enumerate}
+%	\item NrOfVCpu - wartość liczbowa definiująca liczbę węzłów, które zostaną utworzone przez program. Gdy przypiszemy mu wartość -1 obliczenia zostaną uruchomione na liczbie wątków dopasowanej do procesora.
+%	\item Ip - adres interfejsu sieciowego maszyny, z którą będą mogły połączyć się pozostałe wątki klastra
+%	\item Ports - tablica integerów z numerami portów, na których nasłuchiwać będą usługi WCF
+%	\item PeerAddress - element zawierający adres węzła, do którego aplikacja powinna się podłączyć. Powinien zostać pominięty w przypadku, gdy użytkownik nie ma zamiaru łączyć się z innymi jednostkami
+%\end{enumerate}
+%Przykładowy plik konfiguracyjny klastra:
+%\lstset{language=XML}
+%\begin{lstlisting}[frame=single]
+%<?xml version="1.0" encoding="utf-8"?>
+%<NodeParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+%  <NrOfVCpu>1</NrOfVCpu>
+%  <Ip>25.123.241.71</Ip>
+%  <Ports>
+%    <int>8000</int>
+%  </Ports>
+%  <PeerAddress>net.tcp://25.123.244.149:8000/NodeService</PeerAddress>
+%</NodeParameters>
+%\end{lstlisting}
+%
+%\subsection{Algorytm PSO}
+%Plik konfigurujący algorytm PSO oraz funkcję celu również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
+%Dziećmi elementu głównego są elementy:
+%\begin{enumerate}
+%	\item Particles - tablica definiująca liczbę oraz rodzaj cząstek użytych do obliczeń
+%	\item IterationsLimitCondition, Iterations - wartość logiczna określająca czy warunek stopu ze względu na liczbę iteracji powinien być zastosowany oraz liczba iteracji do wykonania
+%	\item TargetValueCondition, TargetValue, Epsilon - wartość logiczna określająca czy warunek stopu ze względu na osiągnięcie optimum powinien być zastosowany, optimum funkcji celu do wykonania oraz dokładność z jaką powinno być osiągnięte
+%	\item FunctionParameters - definiujące parametry funkcji celu. Dziećmi tego elementu są:
+%	\begin{enumerate}
+%		\item FitnessFunctionType - typ funkcji celu. Id funkcji w przypadku funkcji z benchmarku BBOB
+%		\item Dimension - wymiar funkcji
+%		\item Coefficients - współczynniki funkcji
+%		\item SearchSpace - tablica zawierająca dolną i górną granicę dziedziny poszukiwań
+%	\end{enumerate}
+%	\item GpuParameters - definiujące parametry roju GPU. Dziećmi tego elementu są:
+%	\begin{enumerate}
+%		\item UseGpu - wartość logiczna decydująca o tym, czy używać GPU w obliczeniach
+%		\item ParticlesCount - liczba cząstek na GPU
+%		\item Iterations - maksymalna liczba iteracji do wykonania na GPU
+%	\end{enumerate}
+%	\item PsoIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku, która musi zostać wykonana zanim zostanie on zatrzymany
+%	\item ParticleIterationsToRestart - liczba iteracji algorytmu bez poprawy wyniku danej cząstki, po której cząstka zostanie zrestartowana
+%
+%\end{enumerate}
+%\clearpage
+%Przykładowy plik konfiguracyjny algorytmu PSO:
+%\lstset{language=XML}
+%\begin{lstlisting}[frame=single]
+%<?xml version="1.0" encoding="utf-8"?>
+%<PsoParameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+% xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+%  <Particles>
+%    <ParticlesCount>
+%      <ParticleType>Standard</ParticleType>
+%      <Count>6</Count>
+%    </ParticlesCount>
+%  </Particles>
+%  <IterationsLimitCondition>true</IterationsLimitCondition>
+%  <Iterations>1000</Iterations>
+%  <TargetValueCondition>false</TargetValueCondition>
+%  <TargetValue>0</TargetValue>
+%  <Epsilon>1e-12</Epsilon>
+%      <FunctionParameters>
+%        <FitnessFunctionType>quadratic</FitnessFunctionType>
+%        <Dimension>2</Dimension>
+%        <Coefficients>
+%          <double>1.0</double>
+%          <double>1.0</double>
+%        </Coefficients>
+%        <SearchSpace>
+%          <DimensionBound>
+%            <Min>-5</Min>
+%            <Max>5</Max>
+%          </DimensionBound>
+%    	  <DimensionBound>
+%            <Min>-5</Min>
+%            <Max>5</Max>
+%          </DimensionBound>
+%        </SearchSpace>
+%      </FunctionParameters>
+%</PsoParameters>
+%\end{lstlisting}
 
 \section{CocoClusterApp}
 CocoClusterApp jest aplikacją kliencką naszej biblioteki umożliwiającą uruchomienie benchmarków COCO we wszystkich wspieranych przez nasz system konfiguracjach. Ustawienie programu przebiega niemal identycznie jak w przypadku opisanym powyżej, lecz aplikacja nadpisuje niektóre z ustawionych wartości. Są to:
@@ -1488,6 +1493,11 @@ S. Lanteri, J. Leduc, N. Melab, G. Mornet, R. Namyst, B. Quetier, O. Richard, \e
 \bibitem{Coco} \emph{COCO homepage}, http://coco.gforge.inria.fr
 
 \bibitem{CocoPlatform} N. Hansen, A. Auger, O. Mersmann, T. Tusar, D. Brockhoff, \emph{COCO: a platform for comparing continuous optimizers in a black-box setting}, https://arxiv.org/pdf/1603.08785.pdf
+
+% rysunki
+
+\bibitem{topologieRys}http://dev.heuristiclab.com/trac.fcgi/raw-attachment/wiki/Documentation/
+Reference/Particle\%20Swarm\%20Optimization/PSO\_Topologies.png
 
 % podstawowe PSO
 
