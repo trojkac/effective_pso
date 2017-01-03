@@ -17,6 +17,27 @@
 \usepackage[xindy]{glossaries}
 \usepackage{mfirstuc}
 \usepackage{listings}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabu}
+\usepackage{caption, subcaption}
+
+\newcounter{tmp}
+
+% \MyIm{<figure name>}{<label>}
+\newcommand\MyIm[2]{%
+  \captionof*{subfigure}{}
+  \includegraphics[width=22em,height=20em]{#1}
+  \captionof{subfigure}{}\label{#2}%
+}
+
+\makeatletter
+\def\fixedlabel#1#2{%
+  \@bsphack%
+  \protected@write\@auxout{}%
+         {\string\newlabel{#1}{{#2}{\thepage}}}%
+  \@esphack}
+\makeatother
 
 \lstset{
   basicstyle=\ttfamily\small,
@@ -703,7 +724,7 @@ Typowy schemat komunikacji pomiędzy węzłami jest przedstawiony poniżej.
 %\end{figure}
 
 \subsubsection{Awaria}
-Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów.
+Obliczenia są niezależne od połączeń pomiędzy węzłami klastra, dzięki czemu po awarii jednego z nich obliczenia nie są przerywane, a topologia sąsiedztwa rojów algorytmu PSO jest dostosowywana do dostępnych w danym momencie węzłów. Niestety awaria węzła głównego, czyli tego, który rozpoczynał obliczenia, mimo, że ich nie przerywa, to jednak uniemożliwia późniejsze zebranie wyników, jako że jedynie na tym węźle są one gromadzone.
 
 \subsection{Komunikacja na poziomie algorytmu PSO}
 \begin{figure}[H]
@@ -905,7 +926,7 @@ while(condition) {
 }
 \end{lstlisting}
 
-Zatem dopóki nie zostanie pewien warunek zakończenia, dla każdej cząstki aktualizujemy jej pozycję, a następnie dla każdej cząstki aktualizujemy jej prędkość.
+Zatem dopóki nie zostanie spełniony pewien warunek zakończenia, dla każdej cząstki aktualizujemy jej pozycję, a następnie dla każdej cząstki aktualizujemy jej prędkość.
 
 Z kolei implementację algorytmu dla GPU, również w uproszczeniu, można przedstawić jako:
 
@@ -925,18 +946,18 @@ Opis części programu na GPU wymaga krótkiego wprowadzenia do organizacji wąt
 Podstawową jednostką obliczeniową 
 %[to chyba niezbyt dobre określenie] 
 w architekturze CUDA jest pojedynczy wątek GPU. Dzięki dostępowi do tysięcy wątków na procesorze graficznym możliwe jest stosowanie modelu SIMT (Single Instruction Multiple Threads). Każdy wątek ma dostęp do swojej lokalnej pamięci wątku. \\
-Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątków. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
+Wątki zorganizowane są w wielowymiarowe bloki wątków. W zależności od wersji architektury, blok może zawierać 512 lub 1024 wątki. Poza grupowaniem wątków każdy blok wątków ma swój segment pamięci zwany pamięcią dzieloną bloku. Dostęp do tej pamięci jest dużo szybszy niż do pamięci globalnej, do której dostęp ma dowolny wątek obliczeniowy. \cite{CudaProgGuide}
 
 \subsection{Implementacja algorytmu}
 Implementacja wsparcia dla obliczeń na procesorze graficznym składa się z dwóch modułów: NativeGPU oraz ManagedGPU. Integracja między tymi modułami, napisanymi w różnych językach programowania, odbywa się poprzez bibliotekę managedCuda.
 
 \subsubsection{managedCuda}
-Biblioteka ta umożliwia na wykorzystanie potencjału kart graficznych wspierających technologię CUDA z poziomu platformy .NET. Daje ona dostęp do informacji o dostępnym sprzęcie, ułatwia zarządzanie pamięcią karty graficznej oraz umożliwia wykonywanie kerneli CUDA z poziomu kodu C\#. 
+Biblioteka ta umożliwia wykorzystanie potencjału kart graficznych wspierających technologię CUDA z poziomu platformy .NET. Daje ona dostęp do informacji o dostępnym sprzęcie, ułatwia zarządzanie pamięcią karty graficznej oraz umożliwia wykonywanie kerneli CUDA z poziomu kodu C\#. 
 
 \subsubsection{NativeGPU}
 Moduł zawiera implementację algorytmu PSO oraz implementacje optymalizowanych funkcji w języku CUDA. \\
 
-Zaimplementowane funkcje nie są wykorzystywane bezpośrednio przez pozostałe moduły. Biblioteka managedCuda wykorzystuje format pośredni PTX. Pliki z kernelami kompilowane są do tego pośredniego formatu, a następnie są wczytywane do pamięci trakcie uruchomienia obliczeń z poziomu C\#. W ten sposób możemy wykorzystać te funkcje w prosty sposób z poziomu reszty systemu. \\
+Zaimplementowane funkcje nie są wykorzystywane bezpośrednio przez pozostałe moduły. Biblioteka managedCuda wykorzystuje format pośredni PTX. Pliki z kernelami kompilowane są do tego pośredniego formatu, a następnie są wczytywane do pamięci w trakcie uruchomienia obliczeń z poziomu C\#. W ten sposób możemy wykorzystać te funkcje w prosty sposób z poziomu reszty systemu. \\
 
 Kod podzielony jest na pliki zawierające kernele będące częścią algorytmu PSO, implementacje optymalizowanych funkcji oraz pomocnicze funkcje do operacji na wektorach i macierzach.
 
@@ -947,7 +968,7 @@ Zawiera kernel odpowiadający za wykonanie aktualizacji prędkości cząstek (pi
 Każdy z plików odpowiada różnej optymalizowanej funkcji i zawiera w sobie implementację tej funkcji w języku CUDA, kernel który inicjalizuje wartości specyficzne dla danej funkcji celu (współczynniki, macierze obrotów) oraz implementację kernela odpowiadającego za wykonanie aktualizacji lokalizacji cząstek (drugi krok w głównej pętli algorytmu PSO). Kernel aktualizujący lokalizacje różni się dla różnych optymalizowanych funkcji ze względu na różne parametry jakie te funkcje przyjmują.
 
 \subsubsection{bbob\_generators.cuh} 
-Zawiera implementacje przekształceń na wektorach i macierzach, które używane są w benchmarku BBOB, a także wiele prostych funkcji pomocniczych do działań na wektorach które były przydatne do implementacji funkcji celu lub algorytmu PSO.
+Zawiera implementacje przekształceń na wektorach i macierzach, które używane są w benchmarku BBOB, a także wiele prostych funkcji pomocniczych do działań na wektorach, które były przydatne do implementacji funkcji celu lub algorytmu PSO.
 
 \newpage
 
@@ -962,15 +983,15 @@ Klasa odpowiadająca za wstępną konfigurację obliczeń na GPU oraz umożliwia
 \end{itemize}
 
 \subsubsection{ManagedGPU.CudaAlgorithm} 
-Klasa która reprezentuje algorytm optymalizujący pewną funkcję. Jest to klasa abstrakcyjna - zawiera główną pętlę algorytmu i metody umożliwiające kontrolę wykonania algorytmu. Ważne metody:
+Klasa, która reprezentuje algorytm optymalizujący pewną funkcję. Jest to klasa abstrakcyjna - zawiera główną pętlę algorytmu i metody umożliwiające kontrolę wykonania algorytmu. Ważne metody:
 \begin{itemize}
-\item \texttt{Initialize} - metoda która przygotowuje zasoby do uruchomienia algorytmu na GPU. Wczytuje do pamięci odpowiedni dla optymalizowanej funkcji moduł PTX z funkcjami CUDA oraz alokuje pamięć na procesorze graficznym. Algorytm musi być zainicjalizowany przed uruchomieniem.
+\item \texttt{Initialize} - metoda, która przygotowuje zasoby do uruchomienia algorytmu na GPU. Wczytuje do pamięci odpowiedni dla optymalizowanej funkcji moduł PTX z funkcjami CUDA oraz alokuje pamięć na procesorze graficznym. Algorytm musi być zainicjalizowany przed uruchomieniem.
 \item \texttt{Run} - uruchamia obliczenia na karcie graficznej. Parametrem wywołania tej metody jest token, który służy do przerwania obliczeń na GPU na żądanie. Metoda ta zawiera w sobie główną pętlę algorytmu PSO na GPU w której wywoływane są kernele CUDA 
 \item \texttt{Dispose} - metoda zwalniająca zasoby zaalokowane przez instancję algorytmu. Powinna zostać wywołana po zakończeniu obliczeń.
 \end{itemize}
 
 \subsubsection{ManagedGPU.CudaParticle} 
-Klasa która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU. Rozszerza ona klasę \textit{Particle}, zatem może być traktowana jako zwykła cząstka z poziomu algorytmu CPU - umieszczenie takiej cząstki w roju na CPU symuluje sąsiedztwo między cząstkami na CPU i na GPU.
+Klasa, która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU. Rozszerza ona klasę \textit{Particle}, zatem może być traktowana jako zwykła cząstka z poziomu algorytmu CPU - umieszczenie takiej cząstki w roju na CPU symuluje sąsiedztwo między cząstkami na CPU i na GPU.
 
 \newpage
 
@@ -983,7 +1004,7 @@ Klasa która umożliwia synchronizację między rojem PSO na CPU i rojem na GPU.
 
   
 Jak widać na schemacie \ref{fig:gpu}, wykonywaniem obliczeń na GPU zarządza wątek CPU. \\ 
-Przed uruchomieniem obliczeń obliczeń musi dojść do inicjalizacji algorytmu - kernele CUDA zostaną załadowane do pamięci oraz zostanie zaalokowana i zainicjowana pamięć na karcie graficznej. \\
+Przed uruchomieniem obliczeń musi dojść do inicjalizacji algorytmu - kernele CUDA zostaną załadowane do pamięci oraz zostanie zaalokowana i zainicjowana pamięć na karcie graficznej. \\
 Uruchomienie algorytmu powoduje wystartowanie pętli, która działa przez zadaną liczbę iteracji lub dopóki nie zostanie wysłany sygnał z zewnątrz aby przerwać obliczenia (sygnał wysyłany jest przez Token będący parametrem metody uruchamiającej algorytm). \\
 W każdej iteracji tej pętli uruchamiane są dwa kernele: kernel aktualizujący prędkości cząstek oraz kernel aktualizujący pozycje cząstek. Po wykonaniu tych kroków algorytmu PSO może dojść do synchronizacji z CPU - synchronizacja zachodzi co ustaloną liczbę iteracji na GPU (w przypadku naszych testów była to empirycznie wyznaczona wartość 100 iteracji).
 
@@ -994,7 +1015,7 @@ Przy wykonaniu kerneli CUDA każda cząstka obsługiwana jest przez jeden wątek
 \subsubsection{Synchronizacja CPU i GPU}
 Roje na GPU i CPU synchronizowane są poprzez specjalny typ cząstki \textit{CudaParticle}. Cząstka tego typu wygląda różnie w zależności od strony ją obserwującej. \\
 Jeśli cząstka \textit{CudaParticle} znajdzie się w roju cząstek na CPU, zapytanie o jej cechy (np. lokalizację) zwróci cechy pewnej cząstki z roju na GPU (z czasu ostatniej synchronizacji).  \\
-Od strony algorytmu na GPU cząstka ta ma cechy najlepszej cząstki z roju na CPU. Jednak wątek zarządzający algorytmem na GPU nie korzysta bezpośrednio z cząstki \textit{CudaParticle} - zamiast tego \textit{CudaParticle} i odpowiadający jej \textit{CudaAlgorithm} współdzielą obiekt \textit{CudaProxy} poprzez który udostępniają swój stan i pobierają stan z drugiej strony. \\
+Od strony algorytmu na GPU cząstka ta ma cechy najlepszej cząstki z roju na CPU. Jednak wątek zarządzający algorytmem na GPU nie korzysta bezpośrednio z cząstki \textit{CudaParticle} - zamiast tego \textit{CudaParticle} i odpowiadający jej \textit{CudaAlgorithm} współdzielą obiekt \textit{CudaProxy}, poprzez który udostępniają swój stan i pobierają stan z drugiej strony. \\
 Synchronizacja odbywa się co ustaloną liczbę iteracji algorytmu na GPU - w iteracji synchronizacji stan pierwszej cząstki z cząstek GPU zostaje pobrany z pamięci GPU i przekazywany jest do cząstki \textit{CudaParticle}, a następnie stan najlepszej cząstki z CPU nadpisuje stan pierwszej cząstki na GPU. 
   
 \subsubsection{Dodawanie własnych funkcji optymalizacyjnych}
@@ -1014,10 +1035,13 @@ Aby dodać nową funkcję należy:
 Przygotowany przez nas system ma postać biblioteki .NET, jednakże dla wygody użytkownika oraz testera przygotowaliśmy aplikację pozwalającą na uruchomienie benchmarku BBOB. Szczegóły zostały opisane poniżej.
 
 \section{CocoClusterApp}
+
 CocoClusterApp jest aplikacją kliencką naszej biblioteki umożliwiającą uruchomienie benchmarku BBOB we wszystkich wspieranych przez naszą bibliotekę ustawieniach.
 
 \subsection{Konfiguracja aplikacji}
+
 \subsubsection{Klaster obliczeniowy}
+
 Plik konfigurujący klaster obliczeniowy jest napisany w języku XML. Korzeniem dokumentu jest element o nazwie \textit{NodeParameters}. 
 Dziećmi elementu głównego są elementy:
 \begin{enumerate}
@@ -1041,6 +1065,7 @@ Przykładowy plik konfiguracyjny klastra:
 \end{lstlisting}
 
 \subsubsection{Algorytm PSO}
+
 Plik konfigurujący algorytm PSO również napisany jest w języku XML. Korzeniem dokumentu jest element o nazwe PsoParameters. 
 Dziećmi elementu głównego są:
 \begin{enumerate}
@@ -1074,9 +1099,9 @@ Przykładowy plik konfiguracyjny algorytmu PSO:
 </PsoParameters>
 \end{lstlisting}
 
-
 \subsection{Wywołanie programu}
-  Wywołanie programu następuje za pomocą poniższej komendy
+
+Wywołanie programu następuje za pomocą poniższej komendy
 
 \lstset{style=sharpc}
 \begin{lstlisting}[frame=single]
@@ -1086,14 +1111,18 @@ Przykładowy plik konfiguracyjny algorytmu PSO:
 gdzie pierwszym parametrem jest oddzielona przecinkami lista wymiarów ze zbioru \{2,3,5,10,20,40\} , drugim i trzecim są liczby definiujące przedział optymalizowanych funkcji od 1 do 24, natomiast ostatnim jest budżet algorytmu, który dla każdej optymalizowanej funkcji jest ilorazem liczby jej ewaluacji i wymiaru.
 
 \subsection{Wyjście programu}
+
 W trakcie działania programu na ekran konsoli wypisywana jest nazwa ostatnio zakończonej funkcji, liczba ewaluacji przeprowadzonych na danym węźle (bez GPU), liczba restartów algorytmu oraz najlepsza osiągnięta wartość.\\
 
 Szczegółowe dane dotyczące przebiegu algorytmu PSO zapisywane są w folderze \textbf{./exdata/<ParticleIterationsToRestart>P\_<PsoIterationsToRestart>G}. Dla każdej funkcji znajduje się tam folder z danymi oraz plik o rozszerzeniu \textit{.info}. Plik info zawiera dla każdego wymiaru dwie linijki. W pierwszej są to Id funkcji, wymiar, precyzja oraz nazwę algorytmu. W drugiej linii w pierwszej kolumnie zawarta jest ścieżka do pliku ze szczegółowym przebiegiem algorytmu, natomiast w kolejnych kolumnach przedstawiony jest numer instancji funkcji, numer ewaluacji w której osiągnięto dla niej najlepszy wynik oraz jego dokładność. 
 Plik, do którego kieruje pierwsza kolumna, znajduje się we wspomnianym wcześniej folderze. Można z niego odczytać numery ewaluacji, dla których PSO odnalazło dotychczas najniższą wartość funkcji, dokładną wartość minimum funkcji, oraz znalezione przez algorytm punkty (współrzędne wraz z dokładnością). Struktura pliku opisana jest w jego nagłówku. 
 
+\subsection{Awaria}
 
+W przypadku awarii jednego lub większej liczby zwykłych węzłów obliczenia nie są przerywane, a klaster odtwarza topologię pierścienia. Jedynie utrata węzła głównego, rozpoczynającego obliczenia powoduje ich zakończenie wraz z zakończeniem przetwarzania obecnego problemu optymalizacyjnego przez pozostałe węzły, gdyż węzeł główny konieczny jest do zainicjowania obliczeń każdego kolejnego problemu oraz odpowiada za zbieranie wyników obliczeń z całego klastra.
 
 \chapter{Wykorzystane biblioteki i technologie}
+
 Żadna z wykorzystanych przez nas bibliotek nie nakłada ograniczeń na sposób licencjonowania projektu. \\
 
 Wykorzystane przez nas biblioteki:
@@ -1115,10 +1144,13 @@ Użytkownik w celu zestawienia klastra komunikującego się przez zewnętrzne in
 
 \chapter{Testy}
 
-Poniżej znajdują się wyniki i interpretacja testów naszej biblioteki przeprowadzonych przy użyciu platformy COCO oraz zestawu benchmarków z warsztatów BBOB.
+% o czym będzie ten rozdział
+
+Poniżej znajdują się wyniki i interpretacja testów naszej biblioteki przeprowadzonych przy użyciu platformy COCO oraz zestawu benchmarków BBOB.
 
 \section{Plan testów}
-Bazową konfiguracją, względem której oceniamy wyniki pozostałych testów, jest rój złożony ze standardowych cząstek uruchomiony na jednym węźle obliczeniowym bez użycia GPU.\\
+
+Bazową konfiguracją, względem której oceniamy wyniki pozostałych testów, jest rój złożony ze standardowych cząstek uruchomiony na jednym węźle obliczeniowym niekorzystającym z GPU.\\
 
 Testów dokonujemy na trzech płaszczyznach:
 
@@ -1152,155 +1184,251 @@ Testów dokonujemy na trzech płaszczyznach:
   \hline
 \end{tabular} 
 \end{table}
+
 \subsection{Konfiguracje testowe}
 
-
 \subsubsection{Pojedynczy węzeł obliczeniowy}
+
 Testów porównujących hybrydyzację algorytmu PSO ze standardowym algorytmem dokonujemy na pojedynczym węźle obliczeniowym, na którym znajduje się rój 40 cząstek, z których połowa stanowią cząstki naładowane.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=1]{klasterBbobNoGPU1Node.pdf} 
- \caption{Struktura pojedynczego węzła obliczeniowego z rojem złożonym z 40 cząstek}
+\centering
+\includegraphics[scale=1]{klasterBbobNoGPU1Node.pdf} 
+\caption{Struktura pojedynczego węzła obliczeniowego z rojem złożonym z 40 cząstek}
 \end{figure}
 
 \subsubsection{Pojedynczy węzeł obliczeniowy z GPU}
+
 Do zmierzenie zysku, jaki daje użycie obliczeń na karcie graficznej używamy standardowej wersji PSO na jednym węźle z 40 standardowymi cząstkami, którą wspomaga złożony z 640 cząstek rój na karcie graficznej.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=1]{klasterBbobWithGPU.pdf} 
- \caption{Struktura węzła obliczeniowego z rojem złożonym z 40 cząstek na CPU oraz 640 cząstek na GPU}
+\centering
+\includegraphics[scale=1]{klasterBbobWithGPU.pdf} 
+\caption{Struktura węzła obliczeniowego z rojem złożonym z 40 cząstek na CPU oraz 640 cząstek na GPU}
 \end{figure}
 
 \subsubsection{Klaster obliczeniowy}
-W celu sprawdzenia zysku, jaki daje rozproszenie obliczeń na więcej węzłów obliczeniowych, zestawiliśmy do obliczeń dwa klastry - jeden złożony z 2 identycznych węzłów, drugi składający się z 4 identycznych węzłów. Na każdym węźle znajduje się rój złożony z 40 standardowych cząstek; żaden z węzłów nie korzysta z pomocy GPU.
+
+W celu sprawdzenia zysku, jaki daje rozproszenie obliczeń na więcej węzłów obliczeniowych, przeprowadzamy testy na dwóch klastrach - jednym złożonym z 2 identycznych węzłów, drugim składający się z 4 identycznych węzłów. Na każdym węźle znajduje się rój złożony z 40 standardowych cząstek; żaden z węzłów nie korzysta z pomocy GPU.
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=1]{klasterBbobNoGPU2Nodes.pdf} 
- \caption{Klaster obliczeniowy złożony z 2 węzłów}
+\centering
+\includegraphics[scale=1]{klasterBbobNoGPU2Nodes.pdf} 
+\caption{Klaster obliczeniowy złożony z 2 węzłów}
 \end{figure}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[scale=1]{klasterBbobNoGPU4Nodes.pdf} 
- \caption{Klaster obliczeniowy złożony z 4 węzłów}
+\centering
+\includegraphics[scale=1]{klasterBbobNoGPU4Nodes.pdf} 
+\caption{Klaster obliczeniowy złożony z 4 węzłów}
 \end{figure}
 
-\section{Wyniki i ich interpretacja}
+\section{Wyniki}
 
-\subsection{Jak czytać}
-Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instancji funkcji, różniących się przesunięciem względem początku układu współrzędnych, obrotem, rozciągnięciem lub inną prostą transformacją nie wpływającą na istotę problemu - wyniki dla tych instancji są następnie uśredniane i prezentowane jako wyniki dla danej funkcji celu. Dodatkowo dla każdej konkretnej instancji funkcji celu bierzemy pod uwagę różne progi odległości od optimum i prezentujemy liczbę funkcji, dla których choć w jednej instancji udało się osiągnąć odległość od optimum mniejszą niż $10^{1}$, $10^{-1}$, $10^{-4}$ oraz $10^{-8}$.
+% * jak działają benchmarki (powtórka)
+% * jakie wyniki przedstawiamy
 
-\subsection{Rezultaty}
+Dla każdej z opisanych powyżej konfiguracji testowych przeprowadzamy taki sam zestaw testów, które, zgodnie z opisem benchmarku BBOB, składają się z 24 typów funkcji celu służących do zbudowania 15 konkretnych instancji funkcji, różniących się przesunięciem względem początku układu współrzędnych, obrotem, rozciągnięciem lub inną prostą transformacją nie wpływającą na istotę problemu - wyniki dla tych instancji są następnie uśredniane i prezentowane jako wyniki dla danej funkcji celu. Dodatkowym parametrem jest wymiar funkcji celu przyjmujący wartości ze zbioru \{2, 3, 5, 10, 20\} - dla każdego z nich przeprowadzamy pełen zestaw testów.
+
+Poniżej przedstawiamy dwa rodzaje wykresów:
+
+\begin{enumerate}
+
+\item Dla każdej z konfiguracji testowych prezentujemy uśredniony po wszystkich funkcjach wykres zależności proporcji osiągniętych celów od liczby ewaluacji funkcji celu (a dokładniej od $log_{10}(l. ewal. / wymiar)$) dla każdego z badanych wymiarów funkcji, a obok niego również uśredniony dla wszystkich funkcji wykres przedstawiający proporcję osiągniętych celów (odległości od optimum) w zależności od liczby ewaluacji ($log_{10}(l. ewal. / wymiar)$), dla różnych progów dokładności ze zbioru \{$10^{1}$, $10^{-1}$, $10^{-4}$, $10^{-8}$\}.
+
+\item Dla pojedynczego węzła oraz dla klastra obliczeniowego prezentujemy wykresy porównawcze, dla różnych rodzajów funkcji testowych. Na pierwszej grupie wykresów (obrazującej działanie pojedynczego węzła) znajduje się porównanie roju standardowego z rojem korzystającym z cząstek naładowanych oraz rojem korzystającym z pomocy GPU. Druga grupa wykresów przedstawia porównanie działania klastra dla 1, 2 i 4 węzłów obliczeniowych.
+
+\end{enumerate}
+
+%Każdy z 24 typów funkcji celu posłużył do zbudowania 15 konkretnych instancji funkcji, różniących się przesunięciem względem początku układu współrzędnych, obrotem, rozciągnięciem lub inną prostą transformacją nie wpływającą na istotę problemu - wyniki dla tych instancji są następnie uśredniane i prezentowane jako wyniki dla danej funkcji celu. Dodatkowo dla każdej konkretnej instancji funkcji celu bierzemy pod uwagę różne progi odległości od optimum i prezentujemy liczbę funkcji, dla których choć w jednej instancji udało się osiągnąć odległość od optimum mniejszą niż $10^{1}$, $10^{-1}$, $10^{-4}$ oraz $10^{-8}$.
+
+% pojedynczy węzeł
+
+\newcommand{\addpic}[1]{\includegraphics[width=20em, height=16.5em]{#1}}
+\newcolumntype{C}{>{\centering\arraybackslash}m{18em}}
+\begin{table}\sffamily
+\begin{tabular}{l*3{C}@{}}
+\toprule
+Id. & a & b \\ 
+\midrule
+1 & \addpic{wykresy/1node/ogolny_40st.pdf} & \addpic{wykresy/1node/okul_40st.pdf} \\ 
+2 & \addpic{wykresy/1node/ogolny_20ch_20st.pdf} & \addpic{wykresy/1node/okul_20ch_20st.pdf} \\
+3 & \addpic{wykresy/1node/ogolny_40st_gpu.pdf} & \addpic{wykresy/1node/okul_40st_gpu.pdf} \\ 
+\bottomrule 
+\end{tabular}
+\caption{Wyniki dla różnych konfiguracji 1 węzła obliczeniowego. Od góry są to: 1. 40 cząstek standardowych 2. 20 cząstek standardowych i 20 cząstek naładowanych 3. 40 cząstek standardowych i 640 cząstek GPU.}
+\end{table}
+
+\begin{table}\sffamily
+\begin{tabular}{l*3{C}@{}}
+\toprule
+Id. & a & b \\ 
+\midrule
+1 & \addpic{wykresy/1node/comp_10D_noiselessall.pdf} & \addpic{wykresy/1node/comp_10D_separ.pdf} \\ 
+1 & \addpic{wykresy/1node/comp_10D_lcond.pdf} & \addpic{wykresy/1node/comp_10D_hcond.pdf} \\
+1 & \addpic{wykresy/1node/comp_10D_multi.pdf} & \addpic{wykresy/1node/comp_10D_mult2.pdf} \\ 
+\bottomrule 
+\end{tabular}
+\caption{Porównanie wyników dla różnych konfiguracji 1 węzła obliczeniowego. 1a. Wszystkie funkcje 10D, 1b. Separable functions, 2a. Misc. moderate functions, 2b. Ill-conditioned functions, 3a. Multi-modal functions, 3b. Weak structure functions}
+\end{table}
+
+% klaster
+
+\begin{table}\sffamily
+\begin{tabular}{l*3{C}@{}}
+\toprule
+Id. & a & b \\ 
+\midrule
+1 & \addpic{wykresy/klaster/ogolny_1node.pdf} & \addpic{wykresy/klaster/okul_1node.pdf} \\ 
+2 & \addpic{wykresy/klaster/ogolny_2node.pdf} & \addpic{wykresy/klaster/okul_2node.pdf} \\
+3 & \addpic{wykresy/klaster/ogolny_4node.pdf} & \addpic{wykresy/klaster/okul_4node.pdf} \\ 
+\bottomrule 
+\end{tabular}
+\caption{Wyniki dla różnych konfiguracji klastra obliczeniowego. Od góry są to: 1. 1 węzeł obliczeniowy 2. 2 węzły obliczeniowe 3. 4 węzły obliczeniowe.}
+\end{table}
+
+\begin{table}\sffamily
+\begin{tabular}{l*3{C}@{}}
+\toprule
+Id. & a & b \\ 
+\midrule
+1 & \addpic{wykresy/klaster/comp_10D_noiselessall.pdf} & \addpic{wykresy/klaster/comp_10D_separ.pdf} \\ 
+1 & \addpic{wykresy/klaster/comp_10D_lcond.pdf} & \addpic{wykresy/klaster/comp_10D_hcond.pdf} \\
+1 & \addpic{wykresy/klaster/comp_10D_multi.pdf} & \addpic{wykresy/klaster/comp_10D_mult2.pdf} \\ 
+\bottomrule 
+\end{tabular}
+\caption{Porównanie wyników dla różnych konfiguracji klastra obliczeniowego. 1a. Wszystkie funkcje 10D, 1b. Separable functions, 2a. Misc. moderate functions, 2b. Ill-conditioned functions, 3a. Multi-modal functions, 3b. Weak structure functions}
+\end{table} 
+
+\section{Interpretacja}
 
 \subsection{Standardowe PSO}
-Otrzymane rezultaty standardowej wersji PSO na pojedynczym węźle obliczeniowym są zgodne z oczekiwaniami - algorytm radzi sobie dość dobrze z prostymi funkcjami przy niskiej liczbie wymiarów i szybko znajduje dal nich optimum z dużą dokładnością, jednakże dla funkcji trudnych, zwłaszcza w większym wymiarze, PSO osiąga bardzo niską skuteczność.
+
+Otrzymane rezultaty standardowej wersji PSO na pojedynczym węźle obliczeniowym są zgodne z oczekiwaniami - algorytm radzi sobie dość dobrze z prostymi funkcjami przy niskiej liczbie wymiarów i szybko znajduje dla nich optimum z dużą dokładnością, jednakże dla funkcji trudnych, zwłaszcza w większym wymiarze, PSO osiąga bardzo niską skuteczność.
 
 Przy interpretacji wyników najbardziej istotne dla nas było względne porównanie różnych konfiguracji, aby stwierdzić, czy przynoszą one zysk względem konfiguracji bazowej. Nie skupialiśmy się na bezwzględnych wynikach testów.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=.75]{charts/1node40st.pdf} 
- \caption{Wyniki zbiorcze dla roju złożonego z 40 cząstek standardowych}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=.75]{charts/1node40st_5D.pdf} 
- \caption{Wyniki dla roju złożonego z 40 cząstek standardowych dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\includegraphics[scale=.75]{charts/1node40st.pdf} 
+%\caption{Wyniki zbiorcze dla roju złożonego z 40 cząstek standardowych}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[scale=.75]{charts/1node40st_5D.pdf} 
+%\caption{Wyniki dla roju złożonego z 40 cząstek standardowych dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
+%\end{figure}
 
 \subsection{Hybrydyzacja PSO}
-Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu połowy cząstek roju cząstkami naładowanymi wskazuje niestety na jedynie niewielką poprawę działania, wyraźnie widoczną jedynie dla niektórych funkcji, takich jak funkcja sferyczna oraz funkcja Gallaghera oraz nieznaczne pogorszenie wyników w innych przypadkach. Charged PSO zostało pierwotnie stworzone z myślą o zastosowaniu w problemie optymalizacji dynamicznej, zaś w badanych przez nas scenariuszach sprawdza się bardzo podobnie do standardowego PSO.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=.75]{charts/1node20ch20st.pdf} 
- \caption{Wyniki zbiorcze dla roju złożonego z 20 cząstek standardowych i 20 cząstek naładowanych}
-\end{figure}
+Porównanie wyników standardowego PSO z wynikami uzyskanymi po zastąpieniu połowy cząstek roju cząstkami naładowanymi wskazuje niestety na niewielką różnicę roju zhybrydyzowanego w stosunku do roju standardowego. Nieliczne odstępstwa od tej reguły, takie jak znacząco lepszy wynik dla 20-wymiarowej funkcji sferycznej (funkcja nr 1 z BBOB) oraz poprawa dla 10- i 20-wymiarowych funkcji Gallaghera (funkcje nr 21 i 22) nie wpływają na średni wynik porównania. Charged PSO zostało pierwotnie stworzone z myślą o zastosowaniu w problemie optymalizacji dynamicznej, zaś w badanych przez nas scenariuszach sprawdza się bardzo podobnie do standardowego PSO.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=.75]{charts/1node20ch20st_5D.pdf} 
- \caption{Wyniki dla roju złożonego z 20 cząstek standardowych i 20 cząstek naładowanych dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\includegraphics[scale=.75]{charts/1node20ch20st.pdf} 
+%\caption{Wyniki zbiorcze dla roju złożonego z 20 cząstek standardowych i 20 cząstek naładowanych}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[scale=.75]{charts/1node20ch20st_5D.pdf} 
+%\caption{Wyniki dla roju złożonego z 20 cząstek standardowych i 20 cząstek naładowanych dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
+%\end{figure}
 
 \subsection{Obliczenia na GPU}
-Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczną poprawę jakości. Pomimo tego, że rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt że implementował on najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność, pomimo, że wykonywał on między 2-, a 11-krotnie więcej ewaluacji dla każdej z funkcji testowych. Nieco bardziej zauważalna poprawa nastąpiła jedynie dla funkcji sferycznej oraz elipsoidalnej. 
 
+Przy wykorzystaniu obliczeń na GPU zaobserwowaliśmy średnio jedynie nieznaczną poprawę jakości. Pomimo tego, że rój na karcie graficznej był 16-krotnie liczniejszy niż na CPU, fakt że implementował on najprostszą wersję PSO, nie wykorzystującą mechanizmu restartów cząstek, mógł odpowiadać za jego relatywnie niską skuteczność, pomimo, że duża liczba cząstek powodowała wykonywanie między 2-, a 11-krotnie więcej ewaluacji dla każdej z funkcji testowych. Podobnie jak w przypadku hybrydyzacji algorytmu z algorytmem charged PSO, również wykorzystanie GPU przyniosło znaczącą poprawę jedynie dla niewielu wybranych funkcji (m.in. 10-wymiarowej funkcji elipsoidalnej (funkcja nr 2)), jednak nie przełożyło się to na znaczącą średnią poprawę rezultatów. 
 
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=.75]{charts/1node40stGPU.pdf} 
- \caption{Wyniki zbiorcze dla roju złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[scale=.75]{charts/1node40stGPU_5D.pdf} 
- \caption{Wyniki dla roju złożonego złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\includegraphics[scale=.75]{charts/1node40stGPU.pdf} 
+%\caption{Wyniki zbiorcze dla roju złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami}
+%\end{figure}
+%
+%\begin{figure}[H]
+%\centering
+%\includegraphics[scale=.75]{charts/1node40stGPU_5D.pdf} 
+%\caption{Wyniki dla roju złożonego złożonego z 40 cząstek standardowych i z uruchomioną jednostką GPU z 640 cząstkami dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
+%\end{figure}
 
 % porównanie
 
-\begin{figure}[H]
-    \includegraphics[scale=.75]{charts/1nodeCompare_5D.pdf} \par
- \caption{Wykres porównujący wyniki na pojedynczym węźle wersji standardowej z wersją z cząstkami naładowanymi oraz z wersją wykorzystującą GPU. Wskazuje na brak wyraźnych różnic pomiędzy różnymi wersjami algorytmu działającymi na jednym węźle.}
-\end{figure}
+%\begin{figure}[H]
+%\includegraphics[scale=.75]{charts/1nodeCompare_5D.pdf} \par
+%\caption{Wykres porównujący wyniki na pojedynczym węźle wersji standardowej z wersją z cząstkami naładowanymi oraz z wersją wykorzystującą GPU. Wskazuje na brak wyraźnych różnic pomiędzy różnymi wersjami algorytmu działającymi na jednym węźle.}
+%\end{figure}
 
 \subsection{Obliczenia na klastrze}
+
 Wykorzystanie obliczeń rozproszonych na klastrze obliczeniowym przyniosło widoczną poprawę wyników, tym większą, im więcej węzłów obliczeniowych zostało wykorzystanych do obliczeń. Poprawa widoczna jest dla każdego rodzaju funkcji.
 
-\subsubsection{Klaster złożony z dwóch węzłów}
+%\subsubsection{Klaster złożony z dwóch węzłów}
 
-\begin{figure}[H]
-    \includegraphics[scale=.75]{charts/2nodes.pdf} 
- \caption{Wyniki zbiorcze klastra zbudowanego z 2 węzłów}
-\end{figure}
+%\begin{figure}[H]
+%\includegraphics[scale=.75]{charts/2nodes.pdf} 
+%\caption{Wyniki zbiorcze klastra zbudowanego z 2 węzłów}
+%\end{figure}
 
-\begin{figure}[H]
-    \includegraphics[scale=.75]{charts/2nodes_5D.pdf} 
- \caption{Wyniki klastra zbudowanego z 2 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
-\end{figure}
+%\begin{figure}[H]
+%\includegraphics[scale=.75]{charts/2nodes_5D.pdf} 
+%\caption{Wyniki klastra zbudowanego z 2 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
+%\end{figure}
 
+%\subsubsection{Klaster złożony z czterech węzłów}
 
-\subsubsection{Klaster złożony z czterech węzłów}
+%\begin{figure}[H]
+%\includegraphics[scale=.75]{charts/4nodes.pdf} 
+%\caption{Wyniki zbiorcze klastra zbudowanego z 4 węzłów}
+%\end{figure}
 
-\begin{figure}[H]
-    \includegraphics[scale=.75]{charts/4nodes.pdf} 
- \caption{Wyniki zbiorcze klastra zbudowanego z 4 węzłów}
-\end{figure}
-
-\begin{figure}[H]
-    \includegraphics[scale=.75]{charts/4nodes_5D.pdf} \par
- \caption{Wyniki klastra zbudowanego z 4 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
-\end{figure}
+%\begin{figure}[H]
+%\includegraphics[scale=.75]{charts/4nodes_5D.pdf} \par
+%\caption{Wyniki klastra zbudowanego z 4 węzłów dla funkcji pięciowymiarowych wraz z proporcją osiągniętych celów dla różnych progów dokładności}
+%\end{figure}
 
 % porównanie
 
-\begin{figure}[H]
-    \includegraphics[scale=.75]{charts/124compare_5D.pdf} \par
- \caption{Wykres porównujący wyniki na pojedynczym węźle z wynikami klastra złożonego z 2 oraz z 4 węzłów. Można zauważyć poprawę wyników dla większej liczby węzłów obliczeniowych.}
-\end{figure}
+%\begin{figure}[H]
+%\includegraphics[scale=.75]{charts/124compare_5D.pdf} \par
+%\caption{Wykres porównujący wyniki na pojedynczym węźle z wynikami klastra złożonego z 2 oraz z 4 węzłów. Można zauważyć poprawę wyników dla większej liczby węzłów obliczeniowych.}
+%\end{figure}
 
+% zauważyć, że im większy wymiar, tym dalej od best 2009
+
+\subsection{Wnioski}
+
+Obliczenia dla różnych konfiguracji testowych na pojedynczym węźle obliczeniowym wykazały, że zarówno wykorzystana przez nas hybrydyzacja algorytmu PSO z algorytmem charged PSO jak i wspomaganie obliczeń rojem cząstek na GPU nie przyniosło znaczącej poprawy wyników.
+
+Wykresy przedstawiające porównanie wyników dla różnych grup funkcji wskazują co prawda, że wykorzystanie GPU przynosiło zazwyczaj pewną poprawę wyników (najlepiej widoczną dla 10-wymiarowych funkcji u numerach 1-5), nie można jednak mówić o dużym wpływie obliczeń na procesorze graficznym na wyniki. Podobne średnie wyniki dla wszystkich trzech konfiguracji odpowiadają podobnym wynikom dla większości funkcji testowych. Jedynie w nielicznych przypadkach pojawiały się znaczące różnice między poszczególnymi wersjami algorytmu, jednakże często nie udawało się ich powtórzyć przy zmianie liczby wymiarów, toteż nie sposób wyciągnąć na tej podstawie wniosków co do lepszego radzenia sobie konkretnej konfiguracji z daną funkcją czy grupą funkcji.\\
+
+Zakładany postęp udało nam się osiągnąć dla obliczeń na klastrze, gdzie w wyraźny sposób większa liczba węzłów, a zatem większa moc obliczeniowa dawała lepsze wyniki testów. W niemal każdym przypadku większa liczba węzłów obliczeniowych skutkowała poprawą rezultatów (z ciekawym wyjątkiem 10- i 20-wymiarowej funkcji Gallaghera, gdzie klaster złożony z 2 węzłów zwracał lepszy wynik od klastra 4 węzłów), jednakże różna była skala poprawy. W niektórych przypadkach użycie klastra powodowało bardzo znaczącą różnicę, jak np. dla 20-wymiarowej funkcji elipsoidalnej, gdzie już 2 węzły powodowały osiągnięcie 10-krotnie większej liczby celów niż osiągał węzeł pojedynczy, w innych zaś, jak np. dla 10- i 20-wymiarowych funkcji wielomodalnych (funkcje o nr 15-19), różnica była bardzo słabo widoczna i praktycznie nieistotna.
+
+\subsection{Poprawa wyników}
+
+Brak wyraźnej poprawy wyników w przypadku zastosowania obliczeń równoległych na GPU jest zastanawiający w świetle przytoczonych we wstępie rezultatów wykorzystania procesorów graficznych do wspomagania algorytmu PSO, wskazujących na możliwość kilkunasto-, a nawet kilkudziesięciokrotnego przyspieszenia obliczeń przy ich pomocy. Podejrzewamy, że w przypadku naszego systemu wynika on z pewnych przyjętych przez nas uproszczeń przy implementacji algorytmu w technologii CUDA i łączeniu go z pozostałą częścią systemu. Po pierwsze, na GPU zaimplementowaliśmy jedynie najprostszą wersję algorytmu, nie korzystającą m.in. z restartów cząstek i rojów, które to znacząco poprawiły jakość naszego algorytmu w wersji na CPU. Dodatkowo na karcie graficznej nie przetestowaliśmy innych możliwych topologii roju, co również mogłoby wpłynąć na wynik. Innego rodzaju problemem okazała się komunikacja na poziomie algorytmu pomiędzy kartą graficzną a resztą systemu, która nie została przez nas zoptymalizowana.
+
+Hybrydyzacja algorytmu z charged PSO również nie przyniosła poprawy wyników, lecz w tym przypadku nie wydaje się to być wynikiem popełnionych przez nas błędów, a po prostu specyfiką tej wersji algorytmu.
+
+Pomimo zgodnego z oczekiwaniami działania klastra umożliwiającego wykorzystanie dostępnej mocy obliczeniowej, również ta część systemu nadaje się do usprawnienia. Należałoby sprawdzić, czy zmiana topologii klastra oraz zastosowanie różnych rodzajów rojów dla różnych węzłów może przynieść poprawę wyników w stosunku do przedstawionej wersji standardowej.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Podział pracy}
+
 Podział pracy prezentował się następująco:\\
 
-\textbf{Paweł Kupidura} - Odpowiadał za implementację algorytmu w technologii CUDA oraz komunikację pomiędzy CPU a GPU wraz z ich przetestowaniem. Dodatkowo stworzył pierwotną implementacją algorytmu PSO w C/C++.\\
+\textbf{Paweł Kupidura} - Odpowiadał za implementację algorytmu w technologii CUDA oraz komunikację pomiędzy CPU a GPU wraz z ich przetestowaniem i opisaniem w pracy. Dodatkowo stworzył pierwotną implementacją algorytmu PSO w C/C++.\\
 
-\textbf{Hubert Rosiak} - Odpowiadał za stworzenie wrappera do platformy COCO. Brał udział w tworzeniu struktury węzła obliczeniowego. Zajmował się przeglądem literatury dotyczącej PSO. Brał udział w planowaniu, przeprowadzaniu oraz dokumentacji i opracowaniu wyników.\\
+\textbf{Hubert Rosiak} - Odpowiadał za stworzenie wrappera do platformy COCO. Brał udział w tworzeniu struktury węzła obliczeniowego. Zajmował się przeglądem i opisem znanych rezultatów i zastosowań oraz literatury dotyczącej PSO. Brał udział w opisywaniu części systemu działającej na CPU oraz w planowaniu, przeprowadzaniu oraz dokumentacji i opracowaniu wyników.\\
 
-\textbf{Kacper Trojanowski} - Brał udział w tworzeniu struktury klastra obliczeniowego i odpowiadał za zaprojektowanie komunikacji pomiędzy jego węzłami oraz testowanie awaryjności. Stworzył algorytm PSO w C\# umożliwiający jego łatwą modyfikację i hybrydyzację. Brał udział w planowaniu, przeprowadzaniu oraz dokumentacji i opracowaniu wyników.
+\textbf{Kacper Trojanowski} - Brał udział w tworzeniu struktury klastra obliczeniowego i odpowiadał za zaprojektowanie komunikacji pomiędzy jego węzłami oraz testowanie awaryjności. Stworzył algorytm PSO w C\# umożliwiający jego łatwą modyfikację i hybrydyzację. Brał udział w opisywaniu części systemu działającej na CPU oraz w planowaniu, przeprowadzaniu oraz dokumentacji i opracowaniu wyników.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Podsumowanie}
+
+\section{Nasz program}
 
 % 1. o programie i procesie jego tworzenia
 
@@ -1352,6 +1480,7 @@ System do optymalizacji zaimplementowaliśmy jako bibliotekę w technologii .NET
 	
 Stworzony przez nas klaster obliczeniowy ma elastyczną strukturę, toteż awaria w postaci wyłączenia się jednego lub większej liczby węzłów, czy też utrata komunikacji nie powoduje przerwania obliczeń, a jedynie zmniejsza dostępną moc obliczeniową. Jedynie awaria węzła zbierającego wyniki może spowodować ich utratę, lecz była to sytuacja na tyle mało prawdopodobna w naszym środowisku testowym, że nie zabezpieczyliśmy się przed nią. W przypadku rozwijania systemu do pracy w innych środowiskach lub też do znacznie dłuższej pracy, należałoby zapewnić bezpieczniejsze przechowywanie wyników tymczasowych.
 	
+\section{Wyniki i benchmarki}	
 % 2. o wynikach i benchmarkach
 
 %	* jakie benchmarki i dlaczego
@@ -1376,6 +1505,8 @@ Uzyskane przez nas wyniki pokazały, że napisany klaster obliczeniowy przynosi 
 	Z drugiej strony włączenie do obliczeń procesora graficznego nie przyniosło widocznej poprawy rezultatów względem wersji korzystającej wyłącznie z obliczeń na CPU, co, jak podejrzewamy, wynika z niezbyt efektywnej implementacji algorytmu PSO w technologii CUDA oraz komunikacji pomiędzy GPU a CPU, która obecnie wymaga częstego przesyłania dużej ilości danych, co jest operacją kosztowną czasowo i niwelującą zyski, jakie uzyskujemy przetwarzając równolegle dużą liczbę cząstek.
 	Zweryfikowaliśmy także zachowanie systemu dla cząstek różnych rodzajów na przykładzie roju złożonego w części z cząstek typu Charged PSO. Testy wykazały brak problemów z integracją między cząstkami różnych typów, jednakże zmodyfikowany rój nie uzyskał znaczącej poprawy wyników względem roju "standardowego", choć widoczne różnice w zachowaniu dla niektórych funkcji z zestawu wskazują, że, zgodnie z oczekiwaniami, roje nie zachowywały się identycznie oraz daje nadzieję na poprawę wyników dla konkretnych problemów optymalizacyjnych przy odpowiednim doborze typów cząstek.
 
+\section{Nasze wnioski}
+
 % 3. własne przemyślenia
 
 %	* czego nauczyliśmy się przy okazji tej pracy
@@ -1387,20 +1518,6 @@ Praca nad systemem do optymalizacji funkcji okazała się być trudnym, ale pouc
 	Sama implementacja algorytmu z uwzględnieniem możliwości jego modyfikacji i hybrydyzacji okazała się prosta, podobnie jak stworzenie klastra zdolnego do przeprowadzania obliczeń na wielu węzłach, do czego przyczyniła się nasza wcześniejsza znajomość technologii .NET oraz łatwość wykorzystania frameworka WCF do zapewnienia komunikacji w naszym systemie.
 	Trudności pojawiały się na styku technologii i języków. Jednym z bardziej skomplikowanych pod względem implementacyjnym okazał się moduł odpowiedzialny za obliczenia na procesorach graficznych, gdyż wymagał napisania algorytmu od nowa w technologii CUDA, a także połączenia go algorytmem napisanym w C\#, co, mimo pomocy biblioteki managedCUDA, okazało się czasochłonne.
 	Podobnie, dużo czasu należało poświęcić na zaadaptowanie benchmarków BBOB oraz platformy COCO, aby umożliwić ich współdziałanie z naszą aplikacją.
-
-
-% wersja z 18.12
-%Praca nad systemem do optymalizacji funkcji  okazała się być trudnym, ale pouczającym doświadczeniem. 
-%
-%Implementacja algorytmu PSO na CPU, zarówno w wersji standardowej jak i zmodyfikowanej, nie stanowiła problemu - jedną z zalet algorytmu PSO jest jego prostota koncepcji i implementacji. Dzięki stworzeniu prostego interfejsu, mogliśmy w łatwy sposób wprowadzić do algorytmu modyfikacje, takie, jak np. hybrydyzacja z Charged PSO. Warto jednak wspomnieć, że zrezygnowaliśmy z początkowego pomysłu implementacji algorytmu w C/C++ na rzecz implementacji w języku C\#.
-%
-%Trudniejszym zadaniem było napisanie algorytmu w technologii CUDA. Programowanie kart graficznych jest znacznie bardziej skomplikowane, toteż na GPU wyzwaniem okazało się już zaimplementowanie podstawowej wersji algorytmu i zapewnienie możliwości komunikacji roju cząstek na GPU z pozostałą częścią programu. Niemniej jednak, udało nam się zrealizować ten cel, wraz z pozostałymi założeniami początkowymi projektu, czyli, m.in. stworzeniem klastra obliczeniowego umożliwiającego jego uruchomienie w ramach obliczeń rozproszonych.
-%
-%Klaster obliczeniowy spełnił swoje zadanie i w widoczny sposób poprawił wydajność naszego algorytmu optymalizacyjnego. Niestety implementacja PSO na karty graficzne, choć poprawna, nie przyniosła oczekiwanych rezultatów w postaci zysku czasowego, co prawdopodobnie wynika z zaimplementowania jedynie najprostszej wersji algorytmu oraz mało wydajnego procesu wymiany danych pomiędzy CPU a GPU. 
-%
-%Zaadresowanie tych problemów powinno być kolejnym krokiem w procesie udoskonalania systemu. 
-%
-%Wyzywaniem samym w sobie okazało się również przetestowanie naszego systemu optymalizacyjnego na zestawie benchmarków BBOB. Platforma testująca COCO, której w tym celu użyliśmy, napisana została w języku C, toteż wymagała stworzenie odpowiedniego wrappera umożliwiającego dostęp do niej z poziomu języka C\#.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
