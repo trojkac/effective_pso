@@ -311,7 +311,7 @@ Elastyczność definicji algorytmu sprawia, że wiele jego parametrów można zm
 Dobre podsumowanie stanu badań nad PSO znajduje się w pracy \cite{ComprLearnPso}, której autorzy wspominają, iż szybko zauważono, że niektóre słabości standardowej, opisanej powyżej wersji algorytmu, można usprawnić, wprowadzając do niego pewne dodatkowe elementy, często inspirowane lub wprost pochodzące od innych algorytmów optymalizacyjnych. Powstały w ten sposób różne warianty i hybrydy algorytmu PSO.
 
 % źródło?
-Jedna z prostszych modyfikacji klasycznej wersji algorytmu wprowadza parametr ,,bezwładności $\omega$'' do wzoru wyliczającego zaktualizowaną prędkość każdej cząstki, oznaczający, jak istotny jest wektor prędkości w poprzedniej iteracji przy obliczaniu nowej prędkości cząstki. Parametr bezwładności okazał się na tyle skutecznym, a zarazem prostym usprawnieniem algorytmu, że obecnie stosuje się go w większości wersji PSO.
+Jedna z prostszych modyfikacji klasycznej wersji algorytmu wprowadza parametr ,,bezwładności $\omega$'' do wzoru wyliczającego zaktualizowaną prędkość każdej cząstki (został umieszczony w przedstawionej w poprzednim podrozdziale standardowej wersji algorytmu), oznaczający, jak istotny jest wektor prędkości w poprzedniej iteracji przy obliczaniu nowej prędkości cząstki. Parametr bezwładności okazał się na tyle skutecznym, a zarazem prostym usprawnieniem algorytmu, że obecnie stosuje się go w większości wersji PSO.
 
 % do słownika: 
 % 1. eksploatacja vs eksploracja
@@ -325,7 +325,7 @@ Duży wpływ na wydajność algorytmu ma też w oczywisty sposób topologia roju
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{topologie.png} 
- \caption{Rysunek przedstawia kilka przykładowych topologii roju cząstek: (1) pełne sąsiedztwo, (2) pierścień, (3) topologia von Neumanna, (4) losowe sąsiedztwo. (Rysunek pochodzi z \cite{topologieRys}}
+ \caption{Rysunek przedstawia kilka przykładowych topologii roju cząstek, gdzie linie łączą cząstki będące sąsiadami: (1) pełne sąsiedztwo, (2) pierścień, (3) topologia von Neumanna, (4) losowe sąsiedztwo. (Rysunek pochodzi z \cite{topologieRys})}
 \end{figure}
 
 % o jaką metrykę chodzi w tym akapicie?
@@ -965,7 +965,7 @@ Kod podzielony jest na pliki zawierające kernele będące częścią algorytmu 
 Zawiera kernel odpowiadający za wykonanie aktualizacji prędkości cząstek (pierwszy krok w głównej pętli algorytmu PSO). W przeciwieństwie do kernela, który aktualizuje lokalizacje cząstek, ten kernel jest niezależny od optymalizowanej funkcji ponieważ nie ewaluuje on optymalizowanej funkcji, przez co ma stały zestaw argumentów.
 
 \subsubsection{Pliki dla optymalizowanych funkcji} 
-Każdy z plików odpowiada różnej optymalizowanej funkcji i zawiera w sobie implementację tej funkcji w języku CUDA, kernel który inicjalizuje wartości specyficzne dla danej funkcji celu (współczynniki, macierze obrotów) oraz implementację kernela odpowiadającego za wykonanie aktualizacji lokalizacji cząstek (drugi krok w głównej pętli algorytmu PSO). Kernel aktualizujący lokalizacje różni się dla różnych optymalizowanych funkcji ze względu na różne parametry jakie te funkcje przyjmują.
+Każdy z plików odpowiada różnej optymalizowanej funkcji i zawiera w sobie implementację tej funkcji w języku CUDA, kernel który inicjalizuje wartości specyficzne dla danej funkcji celu (współczynniki, macierze obrotów) oraz implementację kernela odpowiadającego za wykonanie aktualizacji pozycji cząstek (drugi krok w głównej pętli algorytmu PSO). Kernel aktualizujący pozycje różni się dla różnych optymalizowanych funkcji ze względu na różne parametry jakie te funkcje przyjmują.
 
 \subsubsection{bbob\_generators.cuh} 
 Zawiera implementacje przekształceń na wektorach i macierzach, które używane są w benchmarku BBOB, a także wiele prostych funkcji pomocniczych do działań na wektorach, które były przydatne do implementacji funkcji celu lub algorytmu PSO.
@@ -975,7 +975,7 @@ Zawiera implementacje przekształceń na wektorach i macierzach, które używane
 \subsubsection{ManagedGPU}
 Moduł ten udostępnia API w języku C\# pozwalające na uruchomienie obliczeń na karcie graficznej oraz synchronizację obliczeń na GPU z obliczeniami na CPU. 
 
-\subsubsection{ManagedGPU.GpuController} 
+\subsubsection{ManagedGPU.GPUController} 
 Klasa odpowiadająca za wstępną konfigurację obliczeń na GPU oraz umożliwiająca sprawdzenie możliwości maszyny obliczeniowej. Metody udostępniane przez tę klasę:
 \begin{itemize}
 \item \texttt{AnySupportedGpu} - sprawdza, czy na maszynie jest dostępna karta graficzna wspierająca technologię CUDA w odpowiedniej wersji. Dostęp do informacji na temat sprzętu umożliwia biblioteka managedCuda.
@@ -1420,7 +1420,7 @@ Podział pracy prezentował się następująco:\\
 
 \textbf{Paweł Kupidura} - Odpowiadał za implementację algorytmu w technologii CUDA oraz komunikację pomiędzy CPU a GPU wraz z ich przetestowaniem i opisaniem w pracy. Dodatkowo stworzył pierwotną implementacją algorytmu PSO w C/C++.\\
 
-\textbf{Hubert Rosiak} - Odpowiadał za stworzenie wrappera do platformy COCO. Brał udział w tworzeniu struktury węzła obliczeniowego. Zajmował się przeglądem i opisem znanych rezultatów i zastosowań oraz literatury dotyczącej PSO. Brał udział w opisywaniu części systemu działającej na CPU oraz w planowaniu, przeprowadzaniu oraz dokumentacji i opracowaniu wyników.\\
+\textbf{Hubert Rosiak} - Odpowiadał za stworzenie wrappera do platformy COCO. Brał udział w tworzeniu struktury węzła obliczeniowego. Zajmował się przeglądem i opisem literatury, znanych rezultatów i zastosowań algorytmu PSO. Brał udział w opisywaniu części systemu działającej na CPU oraz w planowaniu, przeprowadzaniu oraz dokumentacji i opracowaniu wyników.\\
 
 \textbf{Kacper Trojanowski} - Brał udział w tworzeniu struktury klastra obliczeniowego i odpowiadał za zaprojektowanie komunikacji pomiędzy jego węzłami oraz testowanie awaryjności. Stworzył algorytm PSO w C\# umożliwiający jego łatwą modyfikację i hybrydyzację. Brał udział w opisywaniu części systemu działającej na CPU oraz w planowaniu, przeprowadzaniu oraz dokumentacji i opracowaniu wyników.
 
@@ -1461,15 +1461,15 @@ Podział pracy prezentował się następująco:\\
 %		* czy PSO zostało zaimplementowane poprawnie
 %		* czy liczenie funkcji zostało zaimplementowane poprawnie
 
-Celem niniejszej pracy była implementacja wybranego populacyjnego algorytmu optymalizacji globalnej wraz z wykorzystującym ją systemem do optymalizacji funkcji, który zapewniałby możliwość wykorzystania zarówno obliczeń równoległych jak i rozproszonych w celu przyspieszenia obliczeń.
+Celem niniejszej pracy była implementacja wybranego populacyjnego algorytmu optymalizacji globalnej wraz z wykorzystującym ją systemem do optymalizacji funkcji, który zapewniałby możliwość wykorzystania zarówno obliczeń równoległych jak i rozproszonych w celu poprawy działania.
 
-Jako algorytm stanowiący bazę naszego systemu wybraliśmy PSO, jako posiadający wymagane przez nas cechy.
+Jako algorytm stanowiący bazę naszego systemu wybraliśmy PSO, gdyż posiada wymagane przez nas cechy.
 	Algorytm PSO naśladuje występujące w przyrodzie, czy też ogólniej - świecie rzeczywistym, zachowania rojów, stad czy społeczeństw i jest algorytmem koncepcyjnie bardzo prostym, a co więcej, prostota ta przekłada się na łatwość implementacji. 
 	W algorytmie PSO każda z cząstek jest niezależna od pozostałych i nie ma dla niej znaczenia, czy pozostałe cząstki jej roju są takiego samego rodzaju, ani jak się zachowują, dopóki tylko zachowana jest możliwość komunikacji najlepszych wyników pomiędzy cząstkami, którą zapewniliśmy tworząc odpowiedni interfejs, stanowiący jedyne wymaganie implementacyjne cząstki. 
 	Ten sam interfejs umożliwia bardzo prostą modyfikację algorytmu PSO poprzez modyfikację lub tworzenie zupełnie nowych klas cząstek.
 	Jako prostą w implementacji, wybraliśmy dla naszych rojów cząstek topologię pierścienia, jednakże podobnie jak szczegóły zachowania cząstek, może ona być w szerokim zakresie modyfikowana.
 	Inną z cech, które braliśmy pod uwagę wybierając algorytm była łatwość rozproszenia obliczeń oraz możliwość wykorzystania obliczeń równoległych. 
-	Algorytm PSO posiada obie właściwości - komunikacja pomiędzy rojami jest prosta, gdyż wymaga jedynie wymiany informacji na temat najlepszych znanych wartości funkcji wraz z argumentami, dla których są one przyjmowane, a dodatkowo nie wymaga ścisłej synchronizacji, gdyż nie ma znaczenia, czy oba roje wykonały identyczną liczbę iteracji algorytmu ani też, czy przekazywane wartości są aktualne, czy być może pochodzą sprzed jakiegoś czasu. Te same właściwości posiada komunikacja pomiędzy cząsteczkami w ramach jednego roju, co wykorzystaliśmy w naszej implementacji algorytmu, gdzie z punktu widzenia cząstki, komunikacja z cząstką z własnego roju wygląda tak samo, jak komunikacja z cząstką z innego roju.
+	Algorytm PSO posiada obie właściwości - komunikacja pomiędzy rojami jest nieskomplikowana, gdyż wymaga jedynie wymiany informacji na temat najlepszych znanych wartości funkcji wraz z argumentami, dla których są one przyjmowane, a dodatkowo nie wymaga ścisłej synchronizacji, ponieważ nie ma znaczenia, czy oba roje wykonały identyczną liczbę iteracji algorytmu ani też, czy przekazywane wartości są aktualne, czy być może pochodzą sprzed jakiegoś czasu. Te same właściwości posiada komunikacja pomiędzy cząsteczkami w ramach jednego roju, co wykorzystaliśmy w naszej implementacji algorytmu, gdzie z punktu widzenia cząstki, komunikacja z cząstką z własnego roju wygląda tak samo, jak komunikacja z cząstką z innego roju.
 	Algorytm PSO jest z natury algorytmem dającym się w łatwy sposób zrównoleglić, gdyż, w przypadku pojedynczego roju, wymaga przeprowadzenia bardzo podobnych operacji obliczenia nowej prędkości, przesunięcia oraz obliczenia wartości funkcji celu dla każdej z cząstek, których w roju może być bardzo dużo, a które to operacje nie muszą być wykonywane sekwencyjnie. 
 	
 Istotnym założeniem naszego projektu było również stworzenie całego systemu umożliwiającego uruchomienie opisanego algorytmu i wykorzystanie jego zdolności do rozproszenia i zrównoleglenia obliczeń.
@@ -1478,7 +1478,7 @@ System do optymalizacji zaimplementowaliśmy jako bibliotekę w technologii .NET
 	Do komunikacji zarówno pomiędzy rojami na pojedynczym komputerze jak i pomiędzy odrębnymi maszynami wykorzystaliśmy technologię WCF, która pozwoliła w przejrzysty i wygodny sposób zaprojektować konieczne usługi sieciowe. W ten sposób nasz system zyskał strukturę klastra obliczeniowego.
 	Aby dodatkowo zwiększyć wydajność naszego systemu postanowiliśmy wykorzystać możliwości procesorów graficznych do masowych obliczeń równoległych i zaimplementować w tym celu moduł systemu w technologii CUDA, który wykonywałby na nich algorytm PSO. Wymagało to napisania oddzielnej implementacji algorytmu dla karty graficznej oraz zapewnienia komunikacji między cząstkami znajdującymi się na GPU, a cząstkami będącymi na CPU. Do implementacji tego modułu wykorzystaliśmy bibliotekę managedCUDA, która pozwoliła nam na integrację z pozostałą, napisaną w języku C\#, częścią programu.
 	
-Stworzony przez nas klaster obliczeniowy ma elastyczną strukturę, toteż awaria w postaci wyłączenia się jednego lub większej liczby węzłów, czy też utrata komunikacji nie powoduje przerwania obliczeń, a jedynie zmniejsza dostępną moc obliczeniową. Jedynie awaria węzła zbierającego wyniki może spowodować ich utratę, lecz była to sytuacja na tyle mało prawdopodobna w naszym środowisku testowym, że nie zabezpieczyliśmy się przed nią. W przypadku rozwijania systemu do pracy w innych środowiskach lub też do znacznie dłuższej pracy, należałoby zapewnić bezpieczniejsze przechowywanie wyników tymczasowych.
+Stworzony przez nas klaster obliczeniowy ma elastyczną strukturę, toteż awaria w postaci wyłączenia się jednego lub większej liczby węzłów, czy też utrata komunikacji nie powoduje przerwania obliczeń, a jedynie zmniejsza dostępną moc obliczeniową. Jedynie awaria węzła zbierającego wyniki może spowodować ich utratę, lecz była to sytuacja na tyle mało prawdopodobna w naszym środowisku testowym, że nie zabezpieczyliśmy się przed nią. W przypadku rozwijania systemu do pracy w innych środowiskach lub też do znacznie dłuższych obliczeń, należałoby zapewnić bezpieczniejsze przechowywanie wyników tymczasowych.
 	
 \section{Wyniki i benchmarki}	
 % 2. o wynikach i benchmarkach
